@@ -22,14 +22,15 @@ const Home = ({ registerSection, onButtonHover, navigateTo }) => {
 
       <div className="section-content">
         <h1 className="section-title">
-          <span className="title-line">Websites.</span>
+          
           <span className="title-line">Marketing.</span>
           <span className="title-line">Branding.</span>
+          <span className="title-line">Websites.</span>
         </h1>
 
         <p className="section-description">
-        We bring your dream online presence to life with custom websites, 
-        SEO, digital marketing, branding, and Linux migration.
+        We bring your dream online presence to life with digital marketing, branding, custom websites, 
+        GEO/AEO/SEO, and Linux migration.
         </p>
 
         <div className="button-group">

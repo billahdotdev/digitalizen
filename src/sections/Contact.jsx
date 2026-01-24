@@ -30,7 +30,7 @@ const Contact = ({ registerSection, onButtonHover }) => {
     e.preventDefault()
     // Instead of simulating form submission, open WhatsApp
     const message = `Hi, my name is ${formData.name}. ${formData.message} (Reply to: ${formData.email})`
-    const whatsappUrl = `https://wa.me/1234567890?text=${encodeURIComponent(message)}`
+    const whatsappUrl = `https://wa.me/01711992558?text=${encodeURIComponent(message)}`
 
     // Show submitting status
     setFormStatus("submitting")
