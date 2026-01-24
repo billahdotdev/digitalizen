@@ -49,7 +49,7 @@ const Contact = ({ registerSection, onButtonHover }) => {
 
   const handleWhatsApp = () => {
     const message = "Hi, I'd like to get in touch about your services."
-    const whatsappUrl = `https://wa.me/1234567890?text=${encodeURIComponent(message)}`
+    const whatsappUrl = `https://wa.me/01711992558?text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, "_blank")
   }
 
@@ -72,7 +72,7 @@ const Contact = ({ registerSection, onButtonHover }) => {
                   onMouseEnter={() => onButtonHover(true, "Send Email")}
                   onMouseLeave={() => onButtonHover(false, "")}
                 >
-                  info.brandotory@gmail.com
+                  digitalizenbd@gmail.com
                 </a>
               </div>
 

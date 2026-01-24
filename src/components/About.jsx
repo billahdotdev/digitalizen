@@ -33,7 +33,7 @@ const About = ({ navigateTo }) => {
             </div>
             <div className="founder-details">
               <h3>Masum Billah</h3>
-              <p className="founder-title">Web Developer & Brand Consultant</p>
+              <p className="founder-title">Web Developer & Brand Strategist</p>
               <a href="https://billah.dev" target="_blank" rel="noopener noreferrer" className="personal-site-link">
                 billah.dev <ExternalLink size={14} />
               </a>
