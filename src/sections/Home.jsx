@@ -29,8 +29,8 @@ const Home = ({ registerSection, onButtonHover, navigateTo }) => {
         </h1>
 
         <p className="section-description">
-        We bring your dream online presence to life with digital marketing, branding, custom websites, 
-        GEO/AEO/SEO, and Linux migration.
+        We bring your dream online presence to life with digital marketing, branding, custom websites, AI integration,
+        AEO/GEO/SEO, and Linux migration.
         </p>
 
         <div className="button-group">
