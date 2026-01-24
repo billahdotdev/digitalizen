@@ -1,6 +1,6 @@
 "use client"
 
-import logo from "../assets/logo1.svg"
+import logo from "../assets/digitalizen.png"
 
 const BrandLogo = ({ size = "default", onHover, className = "" }) => {
   const getSize = () => {
