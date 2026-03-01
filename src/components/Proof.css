@@ -1,0 +1,132 @@
+.proof-section {
+  padding: 72px 0;
+  border-top: 1px solid var(--border);
+}
+
+.proof-heading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.proof-note {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.proof-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.proof-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.proof-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-blue);
+  transform: translateY(-2px);
+}
+
+.proof-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.proof-client-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proof-client-icon {
+  font-size: 1.2rem;
+}
+
+.proof-client {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.proof-result {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--blue);
+  white-space: nowrap;
+}
+
+.proof-detail {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.proof-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.proof-budget {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border-radius: 5px;
+  padding: 4px 10px;
+}
+
+.proof-change {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--green);
+  background: var(--green-bg);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* Placeholder */
+.proof-placeholder {
+  background: var(--bg);
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.placeholder-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.placeholder-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.placeholder-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+}

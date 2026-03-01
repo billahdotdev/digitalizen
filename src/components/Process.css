@@ -1,0 +1,154 @@
+.process-section {
+  padding: 72px 0;
+  border-top: 1px solid var(--border);
+}
+
+.process-heading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+
+.process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.process-step {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.step-num-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background: var(--blue);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(31,75,255,0.25);
+}
+
+.step-emoji {
+  font-size: 1.3rem;
+}
+
+.step-num {
+  display: none;
+}
+
+.step-connector {
+  width: 2px;
+  height: 28px;
+  background: linear-gradient(to bottom, var(--blue), var(--border));
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
+.step-body {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  flex: 1;
+  margin-bottom: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.step-body:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-blue);
+}
+
+.step-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.step-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.step-metric-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.step-metric-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--blue);
+  line-height: 1.1;
+}
+
+.step-metric-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.step-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* Formula */
+.process-formula {
+  background: var(--dark);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formula-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formula-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.formula-emoji {
+  font-size: 1.1rem;
+}
+
+.formula-arrow {
+  color: var(--blue);
+  font-size: 1.2rem;
+}
