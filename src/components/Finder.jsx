@@ -113,7 +113,7 @@ export default function Finder() {
                     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
                   }}
                 >
-                  💬 WhatsApp-এ অর্ডার করুন
+                  WhatsApp-এ অর্ডার করুন
                 </button>
                 <button className="btn-ghost" style={{ width: '100%' }} onClick={reset}>
                   আবার চেষ্টা করুন

@@ -47,7 +47,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="method-label">WhatsApp</p>
-                  <p className="method-value">+880 1X-XXXX-XXXX</p>
+                  <p className="method-value">+880 17119925588</p>
                   <p className="method-note">সকাল ৯টা – রাত ১০টা</p>
                 </div>
               </div>
