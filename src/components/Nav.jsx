@@ -3,7 +3,7 @@ import './Nav.css'
 
 const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
 
-const WA_NUMBER = '8801XXXXXXXXX'
+const WA_NUMBER = '8801711992558'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -91,7 +91,7 @@ export default function Nav() {
                 setOpen(false)
               }}
             >
-              💬 ফ্রি কল বুক করুন
+              ফ্রি কনসালটেশন কল বুক করুন
             </button>
           </div>
         </div>
