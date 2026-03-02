@@ -25,7 +25,7 @@ export default function About() {
             </div>
             <h2 className="about-heading">
               আমরা শুধু অ্যাড চালাই না —<br />
-              <span className="about-blue">আপনার টোটাল ডিজিটাল মার্কেটিং কাভার করি</span>
+              <span className="about-blue">আপনার টোটাল ডিজিটাল মার্কেটিং কভার করি</span>
             </h2>
             <p className="about-desc">
               Digitalizen একটি রেজাল্ট-ফোকাসড পারফরম্যান্স মার্কেটিং এজেন্সি। আমরা সোশ্যাল মিডিয়া অ্যাডসের মাধ্যমে সত্যিকারের স্কেলেবল গ্রোথ দিতে কাজ করি।
