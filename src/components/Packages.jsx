@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './Packages.css'
 
 const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
-const WA_NUMBER = '8801XXXXXXXXX'
+const WA_NUMBER = '8801711992558'
 
 const packages = [
   {
@@ -18,7 +18,7 @@ const packages = [
       'WhatsApp সাপোর্ট',
     ],
     ideal: 'নতুন ব্যবসা বা প্রথমবার অ্যাড টেস্ট',
-    wa: 'মাইক্রো টেস্ট (৳১,৪৫০)',
+    wa: 'মাইক্রো টেস্ট (৳১,৪৫০/$10)',
     highlight: 'দ্রুত শুরু',
   },
   {
@@ -40,7 +40,7 @@ const packages = [
   },
   {
     id: '003',
-    name: 'মাসিক ম্যানেজমেন্ট',
+    name: 'মান্থলি ম্যানেজমেন্ট',
     price: '৳৩০,০০০+',
     priceNote: 'প্রতি মাস',
     tagline: 'ফুল-ফানেল ম্যানেজমেন্ট, স্কেল ও রিপোর্টিং।',
@@ -150,7 +150,7 @@ function CompareModal({ ids, onClose }) {
           {pkgs.map(pkg => (
             <div key={pkg.id} className="cmp-cta-cell">
               <button className="btn-order cmp-order-btn" onClick={() => waOrder(pkg)}>
-                অর্ডার করুন
+                শুরু করতে চাই
               </button>
             </div>
           ))}
@@ -173,7 +173,7 @@ export default function Packages() {
 
   const waOrder = (pkg) => {
     pixel('AddToCart', { content_name: pkg.name, value: 0, currency: 'BDT' })
-    const msg = `হ্যালো, আমি ${pkg.wa} প্যাকেজ নিতে চাই। কীভাবে শুরু করতে পারি?`
+    const msg = `হ্যালো, আমি ${pkg.wa} কীভাবে শুরু করতে পারি?`
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
@@ -190,7 +190,7 @@ export default function Packages() {
           <span className="section-title-right">প্যাকেজ</span>
         </div>
 
-        <h2 className="packages-heading">সব প্যাকেজ একনজরে</h2>
+        <h2 className="packages-heading">একনজরে সব প্যাকেজ</h2>
         <p className="packages-hint">
           ২টি পর্যন্ত তুলনা করুন। অর্ডার করতে WhatsApp-এ ক্লিক করুন।
         </p>
@@ -253,7 +253,7 @@ export default function Packages() {
                   {compare.includes(pkg.id) ? '✓ যোগ হয়েছে' : '+ তুলনা করুন'}
                 </button>
                 <button className="btn-order" onClick={() => waOrder(pkg)}>
-                  WhatsApp-এ অর্ডার
+                  WhatsApp-এ আলোচনা করি
                 </button>
               </div>
             </div>

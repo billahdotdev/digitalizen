@@ -312,3 +312,28 @@
   border-color: var(--blue);
   transform: translateY(-1px);
 }
+
+/* LinkedIn */
+.founder-link--linkedin {
+  background: var(--bg);
+  color: #0077b5;
+  border: 1.5px solid var(--border);
+}
+.founder-link--linkedin:hover {
+  background: #e8f4f9;
+  border-color: #0077b5;
+  transform: translateY(-1px);
+}
+
+/* Dev.to */
+.founder-link--devto {
+  background: var(--bg);
+  color: #08090a;
+  border: 1.5px solid var(--border);
+}
+.founder-link--devto:hover {
+  background: #08090a;
+  color: #ffffff;
+  border-color: #08090a;
+  transform: translateY(-1px);
+}

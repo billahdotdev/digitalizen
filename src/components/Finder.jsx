@@ -11,11 +11,11 @@ const questions = [
       { label: '১,০০০–৫,০০০ টাকা', pkg: 'micro' },
       { label: '৫,০০০–২০,০০০ টাকা', pkg: 'weekly' },
       { label: '২০,০০০+ টাকা', pkg: 'monthly' },
-      { label: 'জানি না / আলোচনা করতে চাই', pkg: 'custom' },
+      { label: 'শিওর না / আলোচনা করতে চাই', pkg: 'custom' },
     ]
   },
   {
-    q: 'আপনার কনটেন্ট রেডি আছে?',
+    q: 'আপনার কনটেন্ট (বিজ্ঞাপনের জন্য ভিডিও/ছবি) রেডি আছে?',
     options: [
       { label: 'হ্যাঁ, ছবি/ভিডিও আছে', val: 'yes' },
       { label: 'না, কনটেন্ট তৈরি করতে হবে', val: 'no' },
@@ -26,7 +26,7 @@ const questions = [
 const pkgMap = {
   micro:   { name: 'মাইক্রো টেস্ট', price: '৳১,৪৫০', tag: 'ছোট বাজেটে শুরু', id: 'micro' },
   weekly:  { name: 'সাপ্তাহিক অপ্টিমাইজেশন', price: '৳১০,০০০–৳২০,০০০', tag: 'সবচেয়ে জনপ্রিয়', id: 'weekly' },
-  monthly: { name: 'মাসিক ম্যানেজমেন্ট', price: '৳৩০,০০০+', tag: 'সর্বোচ্চ ফলাফল', id: 'monthly' },
+  monthly: { name: 'মান্থলি ম্যানেজমেন্ট', price: '৳৩০,০০০+', tag: 'সর্বোচ্চ ফলাফল', id: 'monthly' },
   custom:  { name: 'কাস্টম সলিউশন', price: 'আলোচনা', tag: 'আপনার জন্য বিশেষ', id: 'custom' },
 }
 
@@ -113,7 +113,7 @@ export default function Finder() {
                     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
                   }}
                 >
-                  WhatsApp-এ অর্ডার করুন
+                  WhatsApp-এ আলোচনা করি
                 </button>
                 <button className="btn-ghost" style={{ width: '100%' }} onClick={reset}>
                   আবার চেষ্টা করুন

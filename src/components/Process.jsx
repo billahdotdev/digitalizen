@@ -5,7 +5,7 @@ const steps = [
     num: '১',
     emoji: '🧪',
     title: 'টেস্ট',
-    desc: 'ছোট বাজেটে ৩–৫টি অ্যাড ভেরিয়েন্ট চালাই। কনটেন্ট থাকলে ২৪ ঘণ্টায় শুরু।',
+    desc: 'ছোট বাজেটে ৩–৫টি অ্যাড ভেরিয়েন্ট চালাই। কনটেন্ট রেডি থাকলে দ্রুতই শুরু করা যায়।',
     metric: '৭ দিন',
     metricLabel: 'প্রথম ডেটা',
   },
@@ -21,7 +21,7 @@ const steps = [
     num: '৩',
     emoji: '🚀',
     title: 'স্কেল',
-    desc: 'প্রমাণিত উইনার অ্যাড স্কেল করি। ROAS ধরে রেখে আয় বাড়াই।',
+    desc: 'প্রমাণিত উইনার অ্যাড স্কেল করি। ROAS ধরে রেখে ইনকাম বাড়াই।',
     metric: '৩৪০%',
     metricLabel: 'গড় ROAS',
   },
@@ -33,10 +33,10 @@ export default function Process() {
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০২</span>
-          <span className="section-title-right">রেজাল্ট কীভাবে আসবে</span>
+          <span className="section-title-right">ভালো রেজাল্ট কীভাবে আসবে</span>
         </div>
 
-        <h2 className="process-heading">আমাদের প্রমাণিত পদ্ধতি</h2>
+        <h2 className="process-heading">আমাদের প্রুভেন মেথড</h2>
 
         <div className="process-steps">
           {steps.map((s, i) => (

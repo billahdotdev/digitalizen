@@ -33,7 +33,7 @@ export default function Contact() {
         </div>
 
         <h2 className="contact-heading">আমাদের সাথে যোগাযোগ করুন</h2>
-        <p className="contact-sub">প্রশ্ন আছে? আমরা সাহায্য করতে সদা প্রস্তুত।</p>
+        <p className="contact-sub">প্রশ্ন আছে? আমরা আছি আপনার পাশে।</p>
 
         <div className="contact-grid">
           {/* Contact info */}
@@ -140,7 +140,7 @@ export default function Contact() {
 
           {/* Quick form */}
           <div className="contact-form-card">
-            <h3 className="form-card-title">দ্রুত বার্তা পাঠান</h3>
+            <h3 className="form-card-title">দ্রুত মেসেজ পাঠান</h3>
             <div className="contact-form-fields">
               <div className="form-group">
                 <label className="form-label" htmlFor="ct-name">নাম</label>
@@ -159,17 +159,17 @@ export default function Contact() {
                   id="ct-phone"
                   type="tel"
                   className="form-input"
-                  placeholder="০১৮XXXXXXXX"
+                  placeholder="০১৭XXXXXXXX"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                 />
               </div>
               <div className="form-group">
-                <label className="form-label" htmlFor="ct-message">বার্তা</label>
+                <label className="form-label" htmlFor="ct-message">মেসেজ</label>
                 <textarea
                   id="ct-message"
                   className="form-input form-textarea"
-                  placeholder="আপনার প্রশ্ন বা বার্তা লিখুন..."
+                  placeholder="আপনার প্রশ্ন বা মেসেজ লিখুন..."
                   value={message}
                   onChange={e => setMessage(e.target.value)}
                   rows={3}
