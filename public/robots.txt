@@ -1,0 +1,64 @@
+
+# -- AI SEARCH CRAWLERS (explicitly welcomed) --
+
+# ================================================
+# robots.txt - Digitalizen (digitalizen.billah.dev)
+# Updated: 2026-03-02
+# ================================================
+
+User-agent: *
+Allow: /
+Disallow: /src/
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /.git/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /?s=
+
+# Google
+User-agent: Googlebot
+Allow: /
+User-agent: Googlebot-Image
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+# Bing
+User-agent: bingbot
+Allow: /
+Crawl-delay: 2
+
+# -- AI SEARCH CRAWLERS (explicitly welcomed) --
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Social preview bots
+User-agent: Twitterbot
+Allow: /
+User-agent: LinkedInBot
+Allow: /
+User-agent: facebookexternalhit
+Allow: /
+User-agent: WhatsApp
+Allow: /
+
+Sitemap: https://digitalizen.billah.dev/sitemap.xml
+Host: https://digitalizen.billah.dev
