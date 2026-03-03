@@ -11,10 +11,12 @@ import Resources from './components/Resources'
 import Faq from './components/Faq'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import InstallButton from './components/InstallButton'
 
 export default function App() {
   return (
     <>
+      <InstallButton />
       <Nav />
       <main>
         <Hero />
