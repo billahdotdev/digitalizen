@@ -6,7 +6,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="theme-color" content="#0f172a" />
 
-  <!-- PRIMARY SEO -->
   <title>Digitalizen | Performance Marketing & SEO Agency — Dhaka, Bangladesh</title>
   <meta name="description" content="Digitalizen is a performance-focused digital marketing agency in Dhaka, Bangladesh. We help startups and brands scale through data-driven SEO, Google Ads, Facebook Ads, and social media strategy. Founded by Masum Billah." />
   <meta name="keywords" content="digital marketing agency Dhaka, SEO agency Bangladesh, performance marketing, Google Ads management, Facebook Ads agency, social media marketing, startup growth marketing, Masum Billah, billahdotdev, Digitalizen" />
@@ -15,7 +14,6 @@
   <meta name="googlebot" content="index, follow" />
   <link rel="canonical" href="https://digitalizen.billah.dev/" />
 
-  <!-- OPEN GRAPH -->
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:site_name" content="Digitalizen" />
@@ -27,7 +25,6 @@
   <meta property="og:image:alt" content="Digitalizen – Performance Marketing Agency in Dhaka, Bangladesh" />
   <meta property="og:url" content="https://digitalizen.billah.dev/" />
 
-  <!-- TWITTER / X CARD -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@billahdotdev" />
   <meta name="twitter:creator" content="@billahdotdev" />
@@ -35,8 +32,6 @@
   <meta name="twitter:description" content="We scale startups through SEO, paid ads, and strategic content. Founded by Masum Billah (@billahdotdev)." />
   <meta name="twitter:image" content="https://digitalizen.billah.dev/marketing-og.jpg" />
 
-  <!-- AI / LLM DISCOVERABILITY
-       Helps ChatGPT, Perplexity, Gemini, Claude & AI search understand site entity -->
   <meta name="ai-content-description" content="Digitalizen is a digital marketing agency in Dhaka, Bangladesh founded by Masum Billah. Services: SEO, Google Ads, Facebook Ads, content strategy, social media management." />
   <meta name="topic" content="Digital Marketing, SEO, Performance Advertising, Social Media, Startup Growth" />
   <meta name="classification" content="Business/Marketing Agency" />
@@ -45,23 +40,19 @@
   <link rel="me" href="https://x.com/billahdotdev" />
   <link rel="me" href="https://linkedin.com/in/billahdotdev" />
 
-  <!-- GEO / LOCAL SEO -->
   <meta name="geo.region" content="BD-C" />
   <meta name="geo.placename" content="Dhaka" />
   <meta name="geo.position" content="23.8103;90.4125" />
   <meta name="ICBM" content="23.8103, 90.4125" />
 
-  <!-- ICONS & MANIFEST -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  
+  <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- STRUCTURED DATA — Schema.org JSON-LD for Google, Bing, and AI knowledge graphs -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -178,39 +169,79 @@
     ]
   }
   </script>
+
+  <style>
+    #initial-loader {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+    .spinner {
+      width: 45px;
+      height: 45px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff; /* Blue Theme */
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      margin-top: 15px;
+      color: #007bff;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+    .fallback-hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <div id="root">
-    <!-- Semantic fallback for crawlers & AI parsers (replaced by React at runtime) -->
-    <header>
-      <h1>Digitalizen: Performance Marketing &amp; SEO Agency in Dhaka, Bangladesh</h1>
-      <p>We scale startups through data-driven SEO, Google Ads, Facebook Ads, and social media marketing. Founded by <a href="https://billah.dev" rel="author">Masum Billah</a>.</p>
-    </header>
-    <main>
-      <section>
-        <h2>Our Digital Marketing Services</h2>
-        <ul>
-          <li><strong>SEO</strong> — Technical SEO, keyword research, on-page optimization, and link building.</li>
-          <li><strong>Google Ads</strong> — Search, Display, Shopping, and YouTube campaigns for maximum ROI.</li>
-          <li><strong>Facebook &amp; Instagram Ads</strong> — Meta advertising with precision targeting and conversion optimization.</li>
-          <li><strong>Social Media Management</strong> — Strategy, content creation, and analytics for brands.</li>
-          <li><strong>Content Strategy &amp; Brand Development</strong> — High-converting narratives and digital identity for startups.</li>
-        </ul>
-      </section>
-      <section>
-        <h2>About Digitalizen</h2>
-        <p>Digitalizen is a results-driven digital marketing agency in <strong>Dhaka, Bangladesh</strong>, serving clients worldwide. Founded by <a href="https://billah.dev" rel="author noopener">Masum Billah</a> (<a href="https://x.com/billahdotdev" rel="noopener noreferrer" target="_blank">@billahdotdev</a>).</p>
-      </section>
-    </main>
-    <footer>
-      <nav>
-        <a href="https://billah.dev" rel="author">Founder Portfolio</a> |
-        <a href="https://masum.billah.dev">Personal Site</a> |
-        <a href="https://x.com/billahdotdev" rel="noopener noreferrer" target="_blank">Twitter / X</a> |
-        <a href="https://linkedin.com/in/billahdotdev" rel="noopener noreferrer" target="_blank">LinkedIn</a>
-      </nav>
-      <p>&copy; 2026 Digitalizen. All rights reserved. | Dhaka, Bangladesh</p>
-    </footer>
+    <div id="initial-loader">
+      <div class="spinner"></div>
+      <div class="loading-text">Digitalizen is Loading...</div>
+
+      <div class="fallback-hidden">
+        <header>
+          <h1>Digitalizen: Performance Marketing &amp; SEO Agency in Dhaka, Bangladesh</h1>
+          <p>We scale startups through data-driven SEO, Google Ads, Facebook Ads, and social media marketing. Founded by <a href="https://billah.dev" rel="author">Masum Billah</a>.</p>
+        </header>
+        <main>
+          <section>
+            <h2>Our Digital Marketing Services</h2>
+            <ul>
+              <li><strong>SEO</strong> — Technical SEO, keyword research, on-page optimization, and link building.</li>
+              <li><strong>Google Ads</strong> — Search, Display, Shopping, and YouTube campaigns for maximum ROI.</li>
+              <li><strong>Facebook &amp; Instagram Ads</strong> — Meta advertising with precision targeting and conversion optimization.</li>
+              <li><strong>Social Media Management</strong> — Strategy, content creation, and analytics for brands.</li>
+              <li><strong>Content Strategy &amp; Brand Development</strong> — High-converting narratives and digital identity for startups.</li>
+            </ul>
+          </section>
+          <section>
+            <h2>About Digitalizen</h2>
+            <p>Digitalizen is a results-driven digital marketing agency in <strong>Dhaka, Bangladesh</strong>, serving clients worldwide. Founded by <a href="https://billah.dev" rel="author noopener">Masum Billah</a> (<a href="https://x.com/billahdotdev" rel="noopener noreferrer" target="_blank">@billahdotdev</a>).</p>
+          </section>
+        </main>
+        <footer>
+          <nav>
+            <a href="https://billah.dev" rel="author">Founder Portfolio</a> |
+            <a href="https://masum.billah.dev">Personal Site</a> |
+            <a href="https://x.com/billahdotdev" rel="noopener noreferrer" target="_blank">Twitter / X</a> |
+            <a href="https://linkedin.com/in/billahdotdev" rel="noopener noreferrer" target="_blank">LinkedIn</a>
+          </nav>
+          <p>&copy; 2026 Digitalizen. All rights reserved. | Dhaka, Bangladesh</p>
+        </footer>
+      </div>
+    </div>
   </div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
