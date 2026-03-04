@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import './Resources.css'
 
 /* ─────────────────────────────────────────────────────────────
@@ -9,56 +9,48 @@ const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
 /* ─────────────────────────────────────────────────────────────
    EBOOK CONFIG
    ─────────────────────────────────────────────────────────────
-   1. Place your PDF at: /public/ebook/meta-ads-playbook-2025.pdf
-   2. EBOOK_FORM_ACTION  → your Google Form's /formResponse URL
-   3. EBOOK_ENTRY_NAME   → entry.XXXXXXXXX for the "Name" field
-   4. EBOOK_ENTRY_EMAIL  → entry.XXXXXXXXX for the "Email" field
-   
-   How to find entry IDs:
-     Google Form → ⋮ → "Get pre-filled link" → fill fields →
-     "Get Link" → copy URL → look for entry.123456789=...
+   1. PDF   → /public/ebook/onlineMonline.pdf
+   2. Cover → /public/ebook/cover.png
+   3. EBOOK_FORM_ACTION    → your Google Form's /formResponse URL
+   4. EBOOK_ENTRY_NAME     → entry.XXXXXXXXX  (Name field)
+   5. EBOOK_ENTRY_WHATSAPP → entry.XXXXXXXXX  (WhatsApp field)
    ─────────────────────────────────────────────────────────────*/
-const EBOOK_FILENAME    = 'meta-ads-playbook-2025.pdf'
-const EBOOK_PATH        = '/ebook/' + EBOOK_FILENAME
-const EBOOK_FORM_ACTION = 'https://forms.gle/BqN5tbuYHydUfN35A'
-const EBOOK_ENTRY_NAME  = 'entry.000000001'
-const EBOOK_ENTRY_EMAIL = 'entry.000000002'
+const EBOOK_FILENAME       = 'onlineMonline.pdf'
+const EBOOK_PATH           = '/ebook/' + EBOOK_FILENAME
+const EBOOK_COVER          = '/ebook/cover.png'
+const EBOOK_FORM_ACTION    = 'https://docs.google.com/forms/d/e/1FAIpQLSc4az9GfiP2YaonvtjY_ACnkNes7XxnMuPih2520KbT4JC87A/formResponse'
+const EBOOK_ENTRY_NAME     = 'entry.32477795'
+const EBOOK_ENTRY_WHATSAPP = 'entry.70l7771'
 
 /* ─────────────────────────────────────────────────────────────
    NEWSLETTER CONFIG
-   ─────────────────────────────────────────────────────────────
-   EMAIL_FORM_ACTION  → Google Form /formResponse URL (email-only form)
-   EMAIL_ENTRY_EMAIL  → entry.XXXXXXXXX for the "Email" field
    ─────────────────────────────────────────────────────────────*/
-const EMAIL_FORM_ACTION = 'https://forms.gle/BqN5tbuYHydUfN35A'
-const EMAIL_ENTRY_EMAIL = 'entry.000000003'
+const EMAIL_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLScJH2QNcyqI1Lw1NFM5NqCNPWj4hGi9KMsOU1gnJ4X_ijvieA/formResponse'
+const EMAIL_ENTRY_EMAIL = 'entry.1911259922'
 
 /* ─────────────────────────────────────────────────────────────
-   SESSION TOKEN GATE
-   The download URL is never injected into the DOM.
-   A sessionStorage flag is set only after the form POST resolves.
-   The download is triggered entirely in JS — never as an <a href>.
+   SESSION STORAGE HELPERS
+   — ebook token : TOKEN_KEY → '1'
+   — newsletter  : NL_KEY   → the subscriber's email address
+     (storing the email lets the thank-you screen display it
+      even after a re-render or component remount)
    ─────────────────────────────────────────────────────────────*/
 const TOKEN_KEY = 'dz_ebook_v1'
+const NL_KEY    = 'dz_nl_v1'
 
-function issueToken() {
-  try { sessionStorage.setItem(TOKEN_KEY, '1') } catch (_) {}
+function ssSet(key, value) {
+  try { sessionStorage.setItem(key, value) } catch (_) {}
 }
-
-function hasToken() {
-  try { return sessionStorage.getItem(TOKEN_KEY) === '1' } catch (_) { return false }
+function ssGet(key) {
+  try { return sessionStorage.getItem(key) } catch (_) { return null }
 }
 
 /* ─────────────────────────────────────────────────────────────
    SILENT GOOGLE FORM SUBMISSION
-   Posts data into a detached hidden iframe — no page navigation,
-   no CORS error, no visible feedback. Google stores the response.
-   We resolve after 1.4s (POST is near-instant; delay = UX).
    ─────────────────────────────────────────────────────────────*/
 function submitToGoogleForm(action, fields) {
   return new Promise((resolve) => {
     const frameName = '_gf_' + Date.now()
-
     const iframe = document.createElement('iframe')
     iframe.name = frameName
     iframe.setAttribute('aria-hidden', 'true')
@@ -73,17 +65,16 @@ function submitToGoogleForm(action, fields) {
     form.style.cssText = 'display:none;'
 
     Object.entries(fields).forEach(([name, value]) => {
-      const input   = document.createElement('input')
-      input.type    = 'hidden'
-      input.name    = name
-      input.value   = value
+      const input = document.createElement('input')
+      input.type  = 'hidden'
+      input.name  = name
+      input.value = value
       form.appendChild(input)
     })
 
     document.body.appendChild(form)
     form.submit()
 
-    // Cleanup + resolve after delay
     setTimeout(() => {
       try { document.body.removeChild(iframe) } catch (_) {}
       try { document.body.removeChild(form)   } catch (_) {}
@@ -93,42 +84,70 @@ function submitToGoogleForm(action, fields) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   TRIGGER DOWNLOAD — URL is never exposed in the DOM.
-   We create a temporary <a> in JS, click it, then immediately
-   remove it. No href is ever rendered as HTML.
+   TRIGGER DOWNLOAD
+   — Uses the anchor `download` attribute (works in all modern
+     desktop browsers).
+   — Falls back to window.open only when `download` is not
+     supported (iOS Safari, very old browsers) — NOT on every
+     click, which would open two tabs unnecessarily.
    ─────────────────────────────────────────────────────────────*/
 function triggerDownload() {
-  if (!hasToken()) return   // hard guard: bail if no valid token
+  if (ssGet(TOKEN_KEY) !== '1') return
   pixel('Purchase', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
-  const a       = document.createElement('a')
-  a.href        = EBOOK_PATH
-  a.download    = EBOOK_FILENAME
-  a.style.cssText = 'display:none;'
-  document.body.appendChild(a)
-  a.click()
-  setTimeout(() => { try { document.body.removeChild(a) } catch (_) {} }, 100)
+
+  const a = document.createElement('a')
+  if (typeof a.download !== 'undefined') {
+    // Modern browsers: trigger a real file download
+    a.href     = EBOOK_PATH
+    a.download = EBOOK_FILENAME
+    a.style.cssText = 'display:none;'
+    document.body.appendChild(a)
+    a.click()
+    setTimeout(() => { try { document.body.removeChild(a) } catch (_) {} }, 100)
+  } else {
+    // Fallback (iOS Safari etc.): open PDF in a new tab
+    window.open(EBOOK_PATH, '_blank', 'noopener,noreferrer')
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   EBOOK SECTION
-   States: 'idle' → 'form' → 'loading' → 'done'
-   Gate:   PDF URL is NEVER present in rendered HTML/DOM.
-           The download only fires if sessionStorage token exists.
+   EBOOK MODAL
+   modal prop: 'form' | 'thanks' | null
 ═══════════════════════════════════════════════════════════════ */
-function EbookSection() {
-  const initialStep = hasToken() ? 'done' : 'idle'
-  const [step,    setStep]   = useState(initialStep)
-  const [name,    setName]   = useState('')
-  const [email,   setEmail]  = useState('')
-  const [errors,  setErrors] = useState({})
+function EbookModal({ modal, onClose, onSuccess, submittedName }) {
+  const [name, setName]       = useState('')
+  const [phone, setPhone]     = useState('')
+  const [errors, setErrors]   = useState({})
   const [loading, setLoading] = useState(false)
+  const nameRef    = useRef(null)
+  const overlayRef = useRef(null)
 
-  const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (modal) {
+      document.body.style.overflow = 'hidden'
+      if (modal === 'form') setTimeout(() => nameRef.current?.focus(), 60)
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [modal])
+
+  // Close on Escape.
+  // onClose is wrapped in useCallback in the parent so this effect
+  // only re-subscribes when the handler identity genuinely changes.
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  const isPhone = v => /^[0-9+\-\s]{7,15}$/.test(v.trim())
 
   const validate = () => {
     const e = {}
-    if (!name.trim())   e.name  = 'নাম লিখুন'
-    if (!isEmail(email)) e.email = 'সঠিক ইমেইল লিখুন'
+    if (!name.trim())    e.name  = 'নাম লিখুন'
+    if (!isPhone(phone)) e.phone = 'সঠিক নম্বর লিখুন'
     return e
   }
 
@@ -140,147 +159,238 @@ function EbookSection() {
     pixel('CompleteRegistration', { content_name: 'Ebook Lead Form Submitted' })
     try {
       await submitToGoogleForm(EBOOK_FORM_ACTION, {
-        [EBOOK_ENTRY_NAME]:  name.trim(),
-        [EBOOK_ENTRY_EMAIL]: email.trim(),
+        [EBOOK_ENTRY_NAME]:      name.trim(),
+        [EBOOK_ENTRY_WHATSAPP]:  phone.trim(),
       })
-    } catch (_) {
-      // Never block the user on network failure
-    }
-    issueToken()
+    } catch (_) {}
+    ssSet(TOKEN_KEY, '1')
     setLoading(false)
-    setStep('done')
-    // Auto-trigger download immediately after gate unlocks
-    setTimeout(triggerDownload, 200)
+    onSuccess(name.trim())
   }
 
+  if (!modal) return null
+
   return (
-    <div className="res-ebook-wrap">
-      <div className="res-book">
-        <div className="res-book-inner">
-          <span className="res-badge">ফ্রি ইবুক</span>
-          <h3 className="res-title">মেটা অ্যাডস প্লেবুক ২০২৫</h3>
-          <p className="res-sub">১৬০ পেজের বাংলা গাইড — শূন্য থেকে স্কেল পর্যন্ত সব কিছু।</p>
+    <div
+      className="eb-overlay"
+      ref={overlayRef}
+      onClick={e => { if (e.target === overlayRef.current) onClose() }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={modal === 'form' ? 'ইবুক ডাউনলোড ফর্ম' : 'ডাউনলোড প্রস্তুত'}
+    >
+      <div className={`eb-modal eb-modal--${modal}`}>
+        {/* Close button */}
+        <button className="eb-modal-close" onClick={onClose} aria-label="বন্ধ করুন">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M1 1l16 16M17 1L1 17" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
+          </svg>
+        </button>
 
-          <ul className="res-features">
-            {[
-              'টেস্ট থেকে স্কেল — স্টেপ-বাই-স্টেপ',
-              'রিয়েল ক্যাম্পেইন টেমপ্লেট',
-              'বাজেট বরাদ্দ কৌশল',
-            ].map(f => (
-              <li key={f}><span className="feat-tick" aria-hidden="true">✓</span>{f}</li>
-            ))}
-          </ul>
+        {/* ── FORM MODAL ── */}
+        {modal === 'form' && (
+          <>
+            <div className="eb-modal-icon">📘</div>
+            <h3 className="eb-modal-title">ফ্রি ইবুক পেতে তথ্য দিন</h3>
+            <p className="eb-modal-sub">মাত্র ২টি তথ্য দিন — তারপর ডাউনলোড বাটন পাবেন।</p>
 
-          {/* ── idle: show download CTA ── */}
-          {step === 'idle' && (
-            <button
-              className="btn-download"
-              onClick={() => {
-                pixel('Lead', { content_name: 'Ebook Download Intent' })
-                setStep('form')
-              }}
-            >
-              ↓ ফ্রি ডাউনলোড করুন
-            </button>
-          )}
-
-          {/* ── form: collect name + email ── */}
-          {step === 'form' && (
-            <div className="res-gate-form" role="form" aria-label="ইবুক ডাউনলোড ফর্ম">
-              <p className="gate-note">মাত্র ২টি তথ্য দিন, PDF সরাসরি পাবেন।</p>
-
-              <div className="gate-field">
-                <label className="gate-label" htmlFor="eb-name">আপনার নাম <span aria-hidden="true">*</span></label>
-                <input
-                  id="eb-name"
-                  type="text"
-                  className={'gate-input' + (errors.name ? ' gate-input--err' : '')}
-                  placeholder="যেমন: রাহেলা বেগম"
-                  value={name}
-                  onChange={e => { setName(e.target.value); setErrors(prev => ({ ...prev, name: '' })) }}
-                  autoComplete="name"
-                  disabled={loading}
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? 'eb-name-err' : undefined}
-                />
-                {errors.name && (
-                  <span id="eb-name-err" className="gate-err" role="alert">{errors.name}</span>
-                )}
-              </div>
-
-              <div className="gate-field">
-                <label className="gate-label" htmlFor="eb-email">ইমেইল ঠিকানা <span aria-hidden="true">*</span></label>
-                <input
-                  id="eb-email"
-                  type="email"
-                  className={'gate-input' + (errors.email ? ' gate-input--err' : '')}
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={e => { setEmail(e.target.value); setErrors(prev => ({ ...prev, email: '' })) }}
-                  onKeyDown={e => e.key === 'Enter' && !loading && handleSubmit()}
-                  autoComplete="email"
-                  disabled={loading}
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? 'eb-email-err' : undefined}
-                />
-                {errors.email && (
-                  <span id="eb-email-err" className="gate-err" role="alert">{errors.email}</span>
-                )}
-              </div>
-
-              <button
-                className={'btn-download gate-submit' + (loading ? ' gate-submit--loading' : '')}
-                onClick={handleSubmit}
+            <div className="eb-field">
+              <label className="eb-label" htmlFor="eb-name">আপনার নাম <span aria-hidden="true">*</span></label>
+              <input
+                ref={nameRef}
+                id="eb-name"
+                type="text"
+                className={'eb-input' + (errors.name ? ' eb-input--err' : '')}
+                placeholder="যেমন: রাহেলা বেগম"
+                value={name}
+                onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })) }}
+                autoComplete="name"
                 disabled={loading}
-                aria-busy={loading}
-              >
-                {loading ? (
-                  <span className="gate-spinner" aria-label="প্রক্রিয়া চলছে...">
-                    <span className="spinner-dot" /><span className="spinner-dot" /><span className="spinner-dot" />
-                  </span>
-                ) : '✓ সাবমিট করুন ও PDF পান'}
-              </button>
-
-              <p className="res-fine" style={{ marginTop: 10 }}>
-                আমরা স্প্যাম করি না। যেকোনো সময় আনসাবস্ক্রাইব করুন।
-              </p>
+                aria-invalid={!!errors.name}
+              />
+              {errors.name && <span className="eb-err" role="alert">{errors.name}</span>}
             </div>
-          )}
 
-          {/* ── done: unlock UI ── */}
-          {step === 'done' && (
-            <div className="res-unlock" aria-live="polite">
-              <div className="unlock-check" aria-hidden="true">✓</div>
-              <p className="unlock-title">
-                {name ? 'ধন্যবাদ, ' + name.split(' ')[0] + '! ইবুক আনলক হয়েছে।' : 'আপনি আগেই আনলক করেছেন!'}
-              </p>
-              <p className="unlock-sub">নিচের বাটনে ক্লিক করলে PDF ডাউনলোড শুরু হবে।</p>
-              <button className="btn-download unlock-btn" onClick={triggerDownload}>
-                ↓ PDF ডাউনলোড শুরু করুন
-              </button>
-              <p className="res-fine" style={{ marginTop: 8, color: 'rgba(255,255,255,0.55)' }}>
-                ডাউনলোড না হলে ব্রাউজার পপ-আপ ব্লকার বন্ধ করুন এবং আবার চেষ্টা করুন।
-              </p>
+            <div className="eb-field">
+              <label className="eb-label" htmlFor="eb-phone">WhatsApp নম্বর <span aria-hidden="true">*</span></label>
+              <input
+                id="eb-phone"
+                type="tel"
+                className={'eb-input' + (errors.phone ? ' eb-input--err' : '')}
+                placeholder="+880 1XXXXXXXXX"
+                value={phone}
+                onChange={e => { setPhone(e.target.value); setErrors(p => ({ ...p, phone: '' })) }}
+                onKeyDown={e => e.key === 'Enter' && !loading && handleSubmit()}
+                autoComplete="tel"
+                disabled={loading}
+                aria-invalid={!!errors.phone}
+              />
+              {errors.phone && <span className="eb-err" role="alert">{errors.phone}</span>}
             </div>
-          )}
 
-        </div>
+            <button
+              className={'eb-submit-btn' + (loading ? ' eb-submit-btn--loading' : '')}
+              onClick={handleSubmit}
+              disabled={loading}
+              aria-busy={loading}
+            >
+              {loading ? (
+                <span className="eb-spinner" aria-label="প্রক্রিয়া চলছে...">
+                  <span /><span /><span />
+                </span>
+              ) : (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{flexShrink:0}}>
+                    <path d="M12 2v14m0 0l-4-4m4 4l4-4M3 18h18" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  ইবুক পান — সম্পূর্ণ ফ্রি
+                </>
+              )}
+            </button>
+
+            <p className="eb-fine">🔒 আমরা স্প্যাম করি না। আপনার তথ্য সুরক্ষিত।</p>
+          </>
+        )}
+
+        {/* ── THANKS MODAL ── */}
+        {modal === 'thanks' && (
+          <div className="eb-thanks" aria-live="polite">
+            <div className="eb-thanks-burst" aria-hidden="true">🎉</div>
+            <h3 className="eb-thanks-title">
+              {submittedName ? `ধন্যবাদ, ${submittedName.split(' ')[0]}!` : 'ধন্যবাদ!'}
+            </h3>
+            <p className="eb-thanks-sub">আপনার ইবুক প্রস্তুত। নিচের বাটনে ক্লিক করুন।</p>
+
+            <div className="eb-thanks-highlights">
+              {['১৬০ পেজের বাংলা গাইড', 'রিয়েল ক্যাম্পেইন টেমপ্লেট', 'বাজেট বরাদ্দ কৌশল'].map(item => (
+                <div className="eb-highlight-pill" key={item}>
+                  <span className="eb-highlight-tick">✓</span> {item}
+                </div>
+              ))}
+            </div>
+
+            <button className="eb-download-btn" onClick={triggerDownload}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{flexShrink:0}}>
+                <path d="M12 2v14m0 0l-4-4m4 4l4-4M3 18h18" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              PDF ডাউনলোড শুরু করুন
+            </button>
+
+            <p className="eb-fine" style={{marginTop: 12}}>
+              ডাউনলোড না হলে ব্রাউজার পপ-আপ ব্লকার বন্ধ করুন।
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   EBOOK SECTION — Book cover card + CTA button
+═══════════════════════════════════════════════════════════════ */
+function EbookSection() {
+  const [unlocked, setUnlocked]       = useState(() => ssGet(TOKEN_KEY) === '1')
+  const [modal, setModal]             = useState(null)   // null | 'form' | 'thanks'
+  const [submittedName, setSubmitted] = useState('')
+
+  // Stable reference → EbookModal's Escape listener won't re-subscribe on every render
+  const handleClose = useCallback(() => setModal(null), [])
+
+  const openModal = () => {
+    if (unlocked) {
+      setModal('thanks')
+    } else {
+      pixel('Lead', { content_name: 'Ebook Download Intent' })
+      setModal('form')
+    }
+  }
+
+  const handleSuccess = (name) => {
+    setSubmitted(name)
+    setUnlocked(true)
+    setModal('thanks')
+  }
+
+  return (
+    <>
+      <div className="res-ebook-wrap">
+        <div className="res-book">
+          <div className="res-book-deco res-book-deco--1" aria-hidden="true" />
+          <div className="res-book-deco res-book-deco--2" aria-hidden="true" />
+
+          <div className="res-book-inner">
+            <div className="res-book-layout">
+              {/* Real book cover image — shown on screens ≥ 480px via CSS */}
+              <div className="res-cover" aria-hidden="true">
+                <img
+                  src="/ebook/cover.jpg"
+                  alt=""
+                  width={80}
+                  height={110}
+                  loading="eager"
+                  style={{
+                    display: 'block',
+                    width: '80px',
+                    height: '110px',
+                    objectFit: 'cover',
+                    borderRadius: '3px 6px 6px 3px',
+                    filter: 'drop-shadow(4px 6px 16px rgba(0,0,0,0.35))',
+                  }}
+                />
+              </div>
+
+              {/* Content */}
+              <div className="res-book-content">
+                <span className="res-badge">ফ্রি ইবুক</span>
+                <h3 className="res-title">মেটা অ্যাডস প্লেবুক ২০২৫</h3>
+                <p className="res-sub">১৬০ পেজের বাংলা গাইড — শূন্য থেকে স্কেল পর্যন্ত সব কিছু।</p>
+
+                <ul className="res-features">
+                  {[
+                    'টেস্ট থেকে স্কেল — স্টেপ-বাই-স্টেপ',
+                    'রিয়েল ক্যাম্পেইন টেমপ্লেট',
+                    'বাজেট বরাদ্দ কৌশল',
+                  ].map(f => (
+                    <li key={f}><span className="feat-tick" aria-hidden="true">✓</span>{f}</li>
+                  ))}
+                </ul>
+
+                <button className="btn-get-ebook" onClick={openModal}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{flexShrink:0}}>
+                    <path d="M12 2v14m0 0l-4-4m4 4l4-4M3 18h18" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {unlocked ? 'আবার ডাউনলোড করুন' : 'ফ্রি ইবুক পান'}
+                </button>
+
+                <p className="res-fine">🔒 সম্পূর্ণ বিনামূল্যে। কোনো ক্রেডিট কার্ড নেই।</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <EbookModal
+        modal={modal}
+        onClose={handleClose}
+        onSuccess={handleSuccess}
+        submittedName={submittedName}
+      />
+    </>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════
    WEEKLY NEWSLETTER SECTION
-   Flow: idle → loading (silent GForm POST) → done
-   User types email once, clicks once, data goes to Google Form,
-   thank-you card shown. No visible iframe or redirect.
 ═══════════════════════════════════════════════════════════════ */
 function WeeklyTipsSection() {
-  const [email,   setEmail]   = useState('')
-  const [error,   setError]   = useState('')
-  const [loading, setLoading] = useState(false)
-  const [done,    setDone]    = useState(false)
+  const [email,      setEmail]      = useState('')
+  const [error,      setError]      = useState('')
+  const [loading,    setLoading]    = useState(false)
+  // done  → true if already subscribed this session
+  // savedEmail → the address stored in sessionStorage (survives re-renders)
+  const [done,       setDone]       = useState(() => !!ssGet(NL_KEY))
+  const [savedEmail, setSavedEmail] = useState(() => ssGet(NL_KEY) || '')
   const inputRef = useRef(null)
 
   const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
@@ -294,14 +404,13 @@ function WeeklyTipsSection() {
     setError('')
     setLoading(true)
     pixel('Lead', { content_name: 'Newsletter Subscribe' })
-
     try {
-      await submitToGoogleForm(EMAIL_FORM_ACTION, {
-        [EMAIL_ENTRY_EMAIL]: email.trim(),
-      })
+      await submitToGoogleForm(EMAIL_FORM_ACTION, { [EMAIL_ENTRY_EMAIL]: email.trim() })
     } catch (_) {}
-
     pixel('CompleteRegistration', { content_name: 'Newsletter Subscribed' })
+    // Persist the email so the thank-you screen can display it after remounts
+    ssSet(NL_KEY, email.trim())
+    setSavedEmail(email.trim())
     setLoading(false)
     setDone(true)
   }
@@ -311,9 +420,11 @@ function WeeklyTipsSection() {
       <div className="weekly-card weekly-card--done" aria-live="assertive" role="status">
         <div className="weekly-ty-burst" aria-hidden="true">🎉</div>
         <h4 className="weekly-ty-title">সাবস্ক্রাইব সফল হয়েছে!</h4>
-        <p className="weekly-ty-email">
-          <span className="ty-email-addr">{email}</span>
-        </p>
+        {savedEmail && (
+          <p className="weekly-ty-email">
+            <span className="ty-email-addr">{savedEmail}</span>
+          </p>
+        )}
         <p className="weekly-ty-promise">প্রতি সপ্তাহে আপনার ইনবক্সে আসবে:</p>
         <ul className="weekly-ty-list" aria-label="সাপ্তাহিক বিষয়বস্তু">
           <li><span aria-hidden="true">💡</span>মেটা অ্যাডস টিপস ও কৌশল</li>
@@ -322,8 +433,7 @@ function WeeklyTipsSection() {
           <li><span aria-hidden="true">🎁</span>এক্সক্লুসিভ রিসোর্স ও টেমপ্লেট</li>
         </ul>
         <div className="weekly-ty-footer">
-          <span aria-hidden="true">🔒</span>&nbsp;
-          আমরা স্প্যাম করি না। যেকোনো সময় আনসাবস্ক্রাইব করুন।
+          <span aria-hidden="true">🔒</span>&nbsp;আমরা স্প্যাম করি না। যেকোনো সময় আনসাবস্ক্রাইব করুন।
         </div>
       </div>
     )
@@ -333,11 +443,8 @@ function WeeklyTipsSection() {
     <div className="weekly-card">
       <div className="weekly-header">
         <h3 className="weekly-title">📬 সাপ্তাহিক মার্কেটিং টিপস পান</h3>
-        <p className="weekly-sub">
-          প্রতি সপ্তাহে মেটা অ্যাডস ইনসাইট ও কেস স্টাডি — সরাসরি আপনার ইনবক্সে।
-        </p>
+        <p className="weekly-sub">প্রতি সপ্তাহে মেটা অ্যাডস ইনসাইট ও কেস স্টাডি — সরাসরি আপনার ইনবক্সে।</p>
       </div>
-
       <div className="weekly-form" role="form" aria-label="নিউজলেটার সাবস্ক্রাইব">
         <div className="email-row">
           <div className="email-field-wrap">
@@ -351,7 +458,6 @@ function WeeklyTipsSection() {
               onChange={e => { setEmail(e.target.value); setError('') }}
               onKeyDown={e => e.key === 'Enter' && !loading && handleSubscribe()}
               aria-label="ইমেইল ঠিকানা"
-              aria-describedby={error ? 'nl-err' : undefined}
               aria-invalid={!!error}
               autoComplete="email"
               disabled={loading}
@@ -362,25 +468,15 @@ function WeeklyTipsSection() {
             onClick={handleSubscribe}
             disabled={loading}
             aria-busy={loading}
-            aria-label="সাবস্ক্রাইব করুন"
           >
             {loading ? (
-              <span className="nl-spinner" aria-label="সাবমিট হচ্ছে">
-                <span /><span /><span />
-              </span>
-            ) : (
-              <>যোগ দিন <span aria-hidden="true">→</span></>
-            )}
+              <span className="nl-spinner" aria-label="সাবমিট হচ্ছে"><span /><span /><span /></span>
+            ) : <>যোগ দিন <span aria-hidden="true">→</span></>}
           </button>
         </div>
-
-        {error && (
-          <p id="nl-err" className="nl-error" role="alert">{error}</p>
-        )}
-
+        {error && <p className="nl-error" role="alert">{error}</p>}
         <p className="nl-fine">
-          <span aria-hidden="true">🔒</span>&nbsp;
-          স্প্যাম নেই। এক ক্লিকে আনসাবস্ক্রাইব।&nbsp;•&nbsp;প্রতি সোমবার সকালে ইমেইল আসবে।
+          <span aria-hidden="true">🔒</span>&nbsp;স্প্যাম নেই। এক ক্লিকে আনসাবস্ক্রাইব।&nbsp;•&nbsp;প্রতি সোমবার সকালে ইমেইল আসবে।
         </p>
       </div>
     </div>
