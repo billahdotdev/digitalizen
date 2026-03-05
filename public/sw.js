@@ -1,4 +1,4 @@
-const CACHE_NAME = "digitalizen-v3"; // প্রতিবার নতুন build হলে version পরিবর্তন করুন
+const CACHE_NAME = "digitalizen-v1"; // প্রতিবার নতুন build হলে version পরিবর্তন করুন
 const urlsToCache = ["/"]; // চাইলে এখানে static asset যোগ করতে পারেন
 
 // Install event

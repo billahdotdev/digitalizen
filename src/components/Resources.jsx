@@ -19,14 +19,14 @@ const EBOOK_FILENAME       = 'onlineMonline.pdf'
 const EBOOK_PATH           = '/ebook/' + EBOOK_FILENAME
 const EBOOK_COVER          = '/ebook/cover.png'
 const EBOOK_FORM_ACTION    = 'https://docs.google.com/forms/d/e/1FAIpQLSc4az9GfiP2YaonvtjY_ACnkNes7XxnMuPih2520KbT4JC87A/formResponse'
-const EBOOK_ENTRY_NAME     = 'entry.32477795'
-const EBOOK_ENTRY_WHATSAPP = 'entry.70l7771'
+const EBOOK_ENTRY_NAME     = 'entry.1987000516'
+const EBOOK_ENTRY_WHATSAPP = 'entry.1290851570'
 
 /* ─────────────────────────────────────────────────────────────
    NEWSLETTER CONFIG
    ─────────────────────────────────────────────────────────────*/
 const EMAIL_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLScJH2QNcyqI1Lw1NFM5NqCNPWj4hGi9KMsOU1gnJ4X_ijvieA/formResponse'
-const EMAIL_ENTRY_EMAIL = 'entry.1911259922'
+const EMAIL_ENTRY_EMAIL = 'entry.105565819'
 
 /* ─────────────────────────────────────────────────────────────
    SESSION STORAGE HELPERS
@@ -49,39 +49,17 @@ function ssGet(key) {
    SILENT GOOGLE FORM SUBMISSION
    ─────────────────────────────────────────────────────────────*/
 function submitToGoogleForm(action, fields) {
-  return new Promise((resolve) => {
-    const frameName = '_gf_' + Date.now()
-    const iframe = document.createElement('iframe')
-    iframe.name = frameName
-    iframe.setAttribute('aria-hidden', 'true')
-    iframe.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:none;left:-9999px;top:-9999px;'
-    document.body.appendChild(iframe)
-
-    const form = document.createElement('form')
-    form.method = 'POST'
-    form.action = action
-    form.target = frameName
-    form.setAttribute('aria-hidden', 'true')
-    form.style.cssText = 'display:none;'
-
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input')
-      input.type  = 'hidden'
-      input.name  = name
-      input.value = value
-      form.appendChild(input)
-    })
-
-    document.body.appendChild(form)
-    form.submit()
-
-    setTimeout(() => {
-      try { document.body.removeChild(iframe) } catch (_) {}
-      try { document.body.removeChild(form)   } catch (_) {}
-      resolve()
-    }, 1400)
+  const formData = new FormData()
+  Object.entries(fields).forEach(([name, value]) => {
+    formData.append(name, value)
+  })
+  return fetch(action, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: formData,
   })
 }
+
 
 /* ─────────────────────────────────────────────────────────────
    TRIGGER DOWNLOAD

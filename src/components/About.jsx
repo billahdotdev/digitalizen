@@ -131,7 +131,7 @@ export default function About() {
                   </svg>
                   billah.dev
                 </a>
-
+                {/*
                 <a
                   href="https://linkedin.com/in/billahdotdev"
                   target="_blank"
@@ -159,6 +159,7 @@ export default function About() {
                   </svg>
                   Dev.to
                 </a>
+                */}
               </div>
             </div>
           </div>
