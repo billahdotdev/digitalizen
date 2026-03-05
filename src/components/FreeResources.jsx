@@ -429,7 +429,7 @@ function WeeklyTipsSection() {
         </div>
         {error && <p className="nl-error" role="alert">{error}</p>}
         <p className="nl-fine">
-          <span aria-hidden="true">🔒</span>&nbsp;স্প্যাম নেই। এক ক্লিকে আনসাবস্ক্রাইব।&nbsp;•&nbsp;প্রতি সোমবার সকালে ইমেইল আসবে।
+          <span aria-hidden="true">🔒</span>&nbsp;স্প্যাম নেই। এক ক্লিকে আনসাবস্ক্রাইব।&nbsp;•&nbsp;শুধু মার্কেটিং টিপস অ্যান্ড ট্রিকস।
         </p>
       </div>
     </div>

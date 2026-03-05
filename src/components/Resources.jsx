@@ -179,7 +179,7 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
                 id="eb-name"
                 type="text"
                 className={'eb-input' + (errors.name ? ' eb-input--err' : '')}
-                placeholder="যেমন: রাহেলা বেগম"
+                placeholder="যেমন: মাসুম বিল্লাহ"
                 value={name}
                 onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })) }}
                 autoComplete="name"
@@ -221,7 +221,7 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{flexShrink:0}}>
                     <path d="M12 2v14m0 0l-4-4m4 4l4-4M3 18h18" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  ইবুক পান — সম্পূর্ণ ফ্রি
+                  ফ্রি ইবুক: অনলাইন বিজনেস ব্লুপ্রিন্ট
                 </>
               )}
             </button>
@@ -341,7 +341,7 @@ function EbookSection() {
                   {unlocked ? 'আবার ডাউনলোড করুন' : 'ফ্রি ইবুক পান'}
                 </button>
 
-                <p className="res-fine">🔒 সম্পূর্ণ বিনামূল্যে। কোনো ক্রেডিট কার্ড নেই।</p>
+                <p className="res-fine">🔒 সম্পূর্ণ বিনামূল্যে। কোনো শর্ত নেই।</p>
               </div>
             </div>
           </div>
@@ -403,7 +403,7 @@ function WeeklyTipsSection() {
             <span className="ty-email-addr">{savedEmail}</span>
           </p>
         )}
-        <p className="weekly-ty-promise">প্রতি সপ্তাহে আপনার ইনবক্সে আসবে:</p>
+        <p className="weekly-ty-promise">আপনার ইনবক্সে যা আসছে:</p>
         <ul className="weekly-ty-list" aria-label="সাপ্তাহিক বিষয়বস্তু">
           <li><span aria-hidden="true">💡</span>মেটা অ্যাডস টিপস ও কৌশল</li>
           <li><span aria-hidden="true">📊</span>সাপ্তাহিক পারফরম্যান্স ইনসাইট</li>
@@ -411,7 +411,7 @@ function WeeklyTipsSection() {
           <li><span aria-hidden="true">🎁</span>এক্সক্লুসিভ রিসোর্স ও টেমপ্লেট</li>
         </ul>
         <div className="weekly-ty-footer">
-          <span aria-hidden="true">🔒</span>&nbsp;আমরা স্প্যাম করি না। যেকোনো সময় আনসাবস্ক্রাইব করুন।
+          <span aria-hidden="true">🔒</span>&nbsp;আমরা স্প্যাম করি না। ভালো না লাগলে যেকোনো সময় আনসাবস্ক্রাইব করতে পারেন।
         </div>
       </div>
     )
@@ -420,8 +420,8 @@ function WeeklyTipsSection() {
   return (
     <div className="weekly-card">
       <div className="weekly-header">
-        <h3 className="weekly-title">📬 সাপ্তাহিক মার্কেটিং টিপস পান</h3>
-        <p className="weekly-sub">প্রতি সপ্তাহে মেটা অ্যাডস ইনসাইট ও কেস স্টাডি — সরাসরি আপনার ইনবক্সে।</p>
+        <h3 className="weekly-title">📬মার্কেটিং ল্যাব</h3>
+        <p className="weekly-sub">আপনার বিজনেসের গ্রোথ নিশ্চিত করতে সোশ্যাল মিডিয়া অ্যাড ইনসাইট ও কেস স্টাডি সরাসরি আপনার ইনবক্সে।</p>
       </div>
       <div className="weekly-form" role="form" aria-label="নিউজলেটার সাবস্ক্রাইব">
         <div className="email-row">
@@ -454,7 +454,7 @@ function WeeklyTipsSection() {
         </div>
         {error && <p className="nl-error" role="alert">{error}</p>}
         <p className="nl-fine">
-          <span aria-hidden="true">🔒</span>&nbsp;স্প্যাম নেই। এক ক্লিকে আনসাবস্ক্রাইব।&nbsp;•&nbsp;প্রতি সোমবার সকালে ইমেইল আসবে।
+          <span aria-hidden="true">🔒</span>&nbsp;স্প্যাম নেই। এক ক্লিকে আনসাবস্ক্রাইব।&nbsp;•&nbsp;শুধু মার্কেটিং টিপস অ্যান্ড ট্রিকস।
         </p>
       </div>
     </div>
