@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import './Nav.css'
 
 const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
@@ -81,6 +82,17 @@ export default function Nav() {
               {l.label}
             </button>
           ))}
+
+          {/* Free Resources page link */}
+          <Link
+            to="/free-resources"
+            className="nav__drawer-link"
+            onClick={() => setOpen(false)}
+            role="menuitem"
+          >
+            ফ্রি রিসোর্স
+          </Link>
+
           <div className="nav__drawer-cta">
             <button
               className="btn-primary"

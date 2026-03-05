@@ -18,6 +18,12 @@
       <image:caption>Expert SEO/AEO/GEO, Google Ads, Facebook Ads, and Social Media Strategy for startups.</image:caption>
     </image:image>
   </url>
+  
+  <url>
+  <loc>https://digitalizen.billah.dev/#/free-resources</loc>
+  <changefreq>monthly</changefreq>
+  <priority>0.7</priority>
+</url>
 
   <!-- Add pages below as your site grows:
   <url>

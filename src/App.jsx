@@ -1,4 +1,5 @@
 import './App.css'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Finder from './components/Finder'
@@ -12,8 +13,9 @@ import Faq from './components/Faq'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import InstallButton from './components/InstallButton'
+import FreeResources from './components/FreeResources'
 
-export default function App() {
+function MainLayout() {
   return (
     <>
       <InstallButton />
@@ -32,5 +34,16 @@ export default function App() {
       </main>
       <Footer />
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<MainLayout />} />
+        <Route path="/free-resources" element={<FreeResources />} />
+      </Routes>
+    </HashRouter>
   )
 }
