@@ -180,7 +180,7 @@ export default function Contact() {
                 onClick={handleSend}
                 type="button"
               >
-                {sent ? '✓ WhatsApp খুলছে...' : 'WhatsApp-এ পাঠান'}
+                {sent ? '✓ WhatsApp খুলছে...' : 'WhatsApp'}
               </button>
             </div>
           </div>

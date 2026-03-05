@@ -470,7 +470,7 @@ export default function Resources() {
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৭</span>
-          <span className="section-title-right">ফ্রি রিসোর্স</span>
+          <span className="section-title-right">সম্পূর্ণ বিনামূল্যে। কোনো শর্ত নেই।</span>
         </div>
         <EbookSection />
         <WeeklyTipsSection />
