@@ -62,7 +62,7 @@ function submitToGoogleForm(action, fields) {
    ─────────────────────────────────────────────────────────────*/
 function triggerDownload() {
   if (ssGet(TOKEN_KEY) !== '1') return
-  pixel('Purchase', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
+  pixel('ViewContent', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
 
   const a = document.createElement('a')
   if (typeof a.download !== 'undefined') {

@@ -15,6 +15,8 @@ import Footer from './components/Footer'
 import InstallButton from './components/InstallButton'
 import FreeResources from './components/FreeResources'
 
+import GrowthHub from './components/GrowthHub'
+
 function MainLayout() {
   return (
     <>
@@ -22,6 +24,8 @@ function MainLayout() {
       <Nav />
       <main>
         <Hero />
+        <GrowthHub />
+        
         <Finder />
         <Process />
         <Packages />
