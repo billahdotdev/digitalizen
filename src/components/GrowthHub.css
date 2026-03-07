@@ -328,15 +328,12 @@
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center;
 }
-/* Single span holds the whole "72%" — no separate float/flex tricks needed */
 .score-ring__value {
-  font-size:1.45rem; font-weight:900; letter-spacing:-0.04em;
-  line-height:1; display:inline-block;
+  font-size:1.42rem; font-weight:900; letter-spacing:-0.05em; line-height:1;
 }
 .score-ring__pct {
   font-size:0.58rem; font-weight:700; color:var(--muted);
-  /* sits naturally after the number, vertically centred on the cap height */
-  vertical-align:top; margin-top:0.18em; margin-left:1px;
+  vertical-align:super; margin-left:1px;
 }
 
 /* ══════════════════════════════════════════════════════════

@@ -73,448 +73,295 @@ function ScoreRing({ pct, size = 92, stroke = 8, color, animated = true }) {
           style={{ transition: 'stroke-dashoffset 0.04s linear' }} />
       </svg>
       <div className="score-ring__inner">
-        {/* Wrap together so % sits naturally on baseline next to the number */}
-        <span className="score-ring__value" style={{ color }}>
-          {disp}<span className="score-ring__pct">%</span>
-        </span>
+        <span className="score-ring__num" style={{ color }}>{disp}</span>
+        <span className="score-ring__pct">%</span>
       </div>
     </div>
   )
 }
 
 /* ══════════════════════════════════════════════════════════
-   BENGALI FONT LOADER
+   BENGALI TEXT → CANVAS → PDF  (full ligature support)
    ──────────────────────────────────────────────────────────
-   WHY PREVIOUS ATTEMPTS FAILED:
-   jsPDF's font parser ONLY handles raw TTF/OTF binary.
-   woff2 is a Brotli-compressed format — jsPDF has no decoder
-   for it, so every character renders as a broken glyph box.
+   jsPDF has NO shaping engine — Bengali ligatures (যুক্তাক্ষর)
+   require HarfBuzz GSUB/GPOS processing that jsPDF cannot do.
+   Loading any TTF only renders isolated codepoints = broken glyphs.
 
-   THE FIX:
-   1. Call Google Fonts CSS API with an IE8 User-Agent string.
-      Modern UA → woff2. Old UA → raw TTF URLs in the CSS.
-   2. Parse out the first TTF URL from that CSS response.
-   3. Fetch that URL and encode as base64 for jsPDF.
-   4. Register with .ttf extension so jsPDF parses correctly.
-   Multiple CDN fallbacks ensure it works if Google is blocked.
+   THE FIX: browser Canvas 2D uses the OS shaping pipeline
+   (HarfBuzz via Pango/CoreText/DirectWrite). We render every
+   Bengali string to an offscreen canvas → PNG → doc.addImage().
+   English stays as real PDF vectors (searchable, sharp).
+   Font: Noto Sans Bengali — loaded via @font-face in the browser.
 ══════════════════════════════════════════════════════════ */
-let _bnFontB64 = null   // null = not tried | false = failed | string = ready
 
-async function loadBengaliFont() {
-  if (_bnFontB64 !== null) return _bnFontB64
-
-  // Convert ArrayBuffer → base64 without stack overflow
-  const bufToB64 = (buf) => {
-    const bytes = new Uint8Array(buf)
-    let s = ''
-    for (let i = 0; i < bytes.length; i += 8192)
-      s += String.fromCharCode(...bytes.subarray(i, Math.min(i + 8192, bytes.length)))
-    return btoa(s)
-  }
-
-  // ── Strategy 1: Google Fonts CSS API with legacy UA → TTF ──
-  try {
-    const cssResp = await fetch(
-      'https://fonts.googleapis.com/css?family=Hind+Siliguri:400&subset=bengali',
-      { headers: { 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)' } }
-    )
-    if (cssResp.ok) {
-      const css = await cssResp.text()
-      // Extract all src URLs — old-format response gives .ttf directly
-      const matches = [...css.matchAll(/url\(([^)'"]+\.(?:ttf|otf))\)/gi)]
-      for (const m of matches) {
-        try {
-          const fr = await fetch(m[1])
-          if (fr.ok) {
-            _bnFontB64 = bufToB64(await fr.arrayBuffer())
-            return _bnFontB64
-          }
-        } catch (_) {}
-      }
+/* ── 1. Load Noto Sans Bengali in the browser ────────────── */
+let _bnReady = null
+function ensureNotoSansBengali() {
+  if (_bnReady) return _bnReady
+  _bnReady = (async () => {
+    if (!document.getElementById('__gh-noto-bn')) {
+      const s = document.createElement('style')
+      s.id = '__gh-noto-bn'
+      s.textContent = `
+        @font-face {
+          font-family:'Noto Sans Bengali';
+          font-weight:400;
+          src:url('https://fonts.gstatic.com/s/notosansbengali/v20/Cn-SJsCGWQxOjaGwMQ6fIiMywrNJIky6nvd8BjzVMvJx2mcSPVFpVEqE-6KmsolLudU.woff2') format('woff2');
+        }
+        @font-face {
+          font-family:'Noto Sans Bengali';
+          font-weight:700;
+          src:url('https://fonts.gstatic.com/s/notosansbengali/v20/Cn-SJsCGWQxOjaGwMQ6fIiMywrNJIky6nvd8BjzVMvJx2mcSPVFpVEqE-6KmsolJudU.woff2') format('woff2');
+        }
+      `
+      document.head.appendChild(s)
     }
-  } catch (_) {}
-
-  // ── Strategy 2: Raw TTF from CDN mirrors ──
-  const RAW_TTF = [
-    'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/hindsiliguri/HindSiliguri-Regular.ttf',
-    'https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf',
-    'https://raw.githubusercontent.com/google/fonts/main/ofl/hindsiliguri/HindSiliguri-Regular.ttf',
-  ]
-  for (const url of RAW_TTF) {
     try {
-      const r = await fetch(url)
-      if (r.ok) {
-        _bnFontB64 = bufToB64(await r.arrayBuffer())
-        return _bnFontB64
-      }
+      await Promise.all([
+        document.fonts.load('400 20px "Noto Sans Bengali"'),
+        document.fonts.load('700 20px "Noto Sans Bengali"'),
+      ])
     } catch (_) {}
-  }
+    await new Promise(r => setTimeout(r, 400))
+  })()
+  return _bnReady
+}
 
-  _bnFontB64 = false
-  return false
+/* ── 2. Render Bengali string → canvas PNG ───────────────── */
+const _MM2PX = 96 / 25.4   // px/mm @ 96dpi
+const _PT2PX = 96 / 72     // px/pt
+const _SC    = 3            // 3× retina scale
+
+function bnRender(text, sizePt, maxWMm, colorHex = '#0B1220', weight = '400') {
+  const t = String(text ?? '').trim()
+  if (!t) return { dataUrl: null, wMm: 0, hMm: 0 }
+  const canvas  = document.createElement('canvas')
+  const ctx     = canvas.getContext('2d')
+  const pxSize  = sizePt * _PT2PX * _SC
+  const maxPxW  = maxWMm * _MM2PX * _SC
+  const lineH   = pxSize * 1.65
+  const font    = `${weight} ${pxSize}px "Noto Sans Bengali", serif`
+  ctx.font = font
+  const words = t.split(/\s+/)
+  const lines = []; let cur = ''
+  for (const w of words) {
+    const trial = cur ? cur + ' ' + w : w
+    if (ctx.measureText(trial).width > maxPxW && cur) { lines.push(cur); cur = w }
+    else cur = trial
+  }
+  if (cur) lines.push(cur)
+  const measW = Math.max(...lines.map(l => ctx.measureText(l).width))
+  const padX = Math.ceil(pxSize * 0.06), padY = Math.ceil(pxSize * 0.22)
+  canvas.width  = Math.ceil(Math.min(measW, maxPxW) + padX * 2)
+  canvas.height = Math.ceil(lines.length * lineH + padY * 2)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.font = font; ctx.fillStyle = colorHex; ctx.textBaseline = 'top'
+  lines.forEach((line, i) => ctx.fillText(line, padX, padY + i * lineH))
+  return {
+    dataUrl: canvas.toDataURL('image/png'),
+    wMm: canvas.width  / (_SC * _MM2PX),
+    hMm: canvas.height / (_SC * _MM2PX),
+  }
+}
+
+/* ── 3. Embed Bengali PNG in PDF, return mm height used ──── */
+function pdfBn(doc, text, xMm, yMm, sizePt, maxWMm, colorHex = '#0B1220', weight = '400') {
+  const { dataUrl, wMm, hMm } = bnRender(text, sizePt, maxWMm, colorHex, weight)
+  if (!dataUrl || hMm === 0) return 0
+  doc.addImage(dataUrl, 'PNG', xMm, yMm, Math.min(wMm, maxWMm), hMm)
+  return hMm
 }
 
 /* ══════════════════════════════════════════════════════════
-   PDF GENERATOR — Digitalizen Brand System v3
-   ──────────────────────────────────────────────────────────
-   Brand colours (from official brand guide):
-     Primary Blue  #1F4BFF   Background    #F5F7FF
-     Text          #0B1220   Muted/Sub     #5A667A
-     Border        #E6EAF5   Dark Panel    #12172B
-   Square bullets (not ✓) per brand guide.
+   PDF GENERATOR  —  Digitalizen Brand System
+   Brand: Primary #1F4BFF · Text #0B1220 · Muted #5A667A
+          Border #E6EAF5  · Dark panel #12172B · Bg #F5F7FF
+   Bengali → canvas PNG  ·  English → real PDF vectors
    URL: digitalizen.billah.dev
 ══════════════════════════════════════════════════════════ */
 async function generatePDF(domainScores, overall, domainInsights, pkg, topActions) {
 
-  /* ── 1. Load jsPDF ── */
+  await ensureNotoSansBengali()
+
   if (!window.jspdf) {
     await new Promise((res, rej) => {
       const s = document.createElement('script')
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
       s.onload = res
-      s.onerror = () => rej(new Error('jsPDF CDN load failed — check your network'))
+      s.onerror = () => rej(new Error('jsPDF CDN load failed'))
       document.head.appendChild(s)
     })
   }
 
-  /* ── 2. Load Bengali font ── */
-  const bnB64 = await loadBengaliFont()
-
-  /* ── 3. Create document ── */
   const { jsPDF } = window.jspdf
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
-  /* ── 4. Register Bengali TTF ── */
-  let bnOK = false
-  if (bnB64) {
-    try {
-      // MUST use .ttf extension — jsPDF identifies format by file extension
-      doc.addFileToVFS('HindSiliguri.ttf', bnB64)
-      doc.addFont('HindSiliguri.ttf', 'HindSiliguri', 'normal')
-      // Sanity-check: switching to the font should not throw
-      doc.setFont('HindSiliguri', 'normal')
-      doc.setFont('helvetica', 'normal') // reset to safe default
-      bnOK = true
-    } catch (e) {
-      console.warn('[PDF] Bengali font registration failed:', e.message)
-    }
-  }
-
-  /* ── 5. Layout constants — brand spacing ── */
   const W = 210, mg = 14, cW = W - mg * 2
+  const SITE = 'digitalizen.billah.dev'
+  const band = getBand(overall)
+  const date = new Date().toLocaleDateString('en-GB', { year:'numeric', month:'long', day:'numeric' })
   let y = 0
 
-  /* ── 6. Primitive helpers ── */
-  const h2r = (hex) => [
-    parseInt(hex.slice(1,3),16),
-    parseInt(hex.slice(3,5),16),
-    parseInt(hex.slice(5,7),16),
-  ]
-  const rgb   = (hex) => { const [r,g,b] = h2r(hex); return {r,g,b} }
-  const setFill = (hex) => { const {r,g,b} = rgb(hex); doc.setFillColor(r,g,b) }
-  const setTxt  = (hex) => { const {r,g,b} = rgb(hex); doc.setTextColor(r,g,b) }
-  const setDrw  = (hex, lw=0.25) => { const {r,g,b} = rgb(hex); doc.setDrawColor(r,g,b); doc.setLineWidth(lw) }
-
-  // Filled rectangle
-  const box = (x,fy,w,h,hex) => { setFill(hex); doc.rect(x,fy,w,h,'F') }
-
-  // Thin horizontal rule
-  const rule = (fy, hex='#E6EAF5') => { setDrw(hex); doc.line(mg, fy, W-mg, fy) }
-
-  // Page overflow guard — returns adjusted y
-  const guard = (fy, need) => {
-    if (fy + need > 275) {
-      doc.addPage()
-      // Restore top accent stripe on new page
-      box(0, 0, W, 2.5, '#1F4BFF')
-      return 12
-    }
-    return fy
-  }
-
-  // Font helpers — en() for latin, bn() for Bengali
-  const en = (sz, style='normal') => { doc.setFontSize(sz); doc.setFont('helvetica', style) }
-  const bn = (sz) => { doc.setFontSize(sz); doc.setFont(bnOK ? 'HindSiliguri' : 'helvetica', 'normal') }
-
-  // Wrapping Bengali text block — returns number of lines rendered
-  const bnBlock = (text, x, fy, maxW, sz=7) => {
-    bn(sz)
-    const lines = doc.splitTextToSize(String(text), maxW)
-    doc.text(lines, x, fy)
-    return lines.length
-  }
-
-  /* Shared data */
-  const band = getBand(overall)
-  const date = new Date().toLocaleDateString('en-GB', {year:'numeric',month:'long',day:'numeric'})
-  const SITE = 'digitalizen.billah.dev'
+  /* Primitives */
+  const h2r = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]
+  const box  = (x,fy,w,h,hex) => { doc.setFillColor(...h2r(hex)); doc.rect(x,fy,w,h,'F') }
+  const tc   = hex => doc.setTextColor(...h2r(hex))
+  const en   = (sz, style='normal') => { doc.setFontSize(sz); doc.setFont('helvetica', style) }
+  const bn   = (text, x, fy, sz, maxW, color='#0B1220', wt='400') =>
+    pdfBn(doc, text, x, fy, sz, maxW, color, wt)
+  const rule = fy => { doc.setDrawColor(...h2r('#E6EAF5')); doc.setLineWidth(0.25); doc.line(mg,fy,W-mg,fy) }
+  const pc   = (fy, need) => { if (fy+need > 276) { doc.addPage(); box(0,0,W,2.5,'#1F4BFF'); return 12 } return fy }
 
   const domCfg = [
-    { key:'marketing',  labelEn:'Marketing',  labelBn:'মার্কেটিং',  col:'#1F4BFF', score: domainScores.marketing  },
-    { key:'operations', labelEn:'Operations', labelBn:'অপারেশনস', col:'#7C3AED', score: domainScores.operations },
-    { key:'finance',    labelEn:'Finance',    labelBn:'ফাইন্যান্স',  col:'#059669', score: domainScores.finance    },
+    { key:'marketing',  enLabel:'Marketing',  bnLabel:'\u09AE\u09BE\u09B0\u09CD\u0995\u09C7\u099F\u09BF\u0982',  col:'#1F4BFF', score: domainScores.marketing  },
+    { key:'operations', enLabel:'Operations', bnLabel:'\u0985\u09AA\u09BE\u09B0\u09C7\u09B6\u09A8\u09B8', col:'#7C3AED', score: domainScores.operations },
+    { key:'finance',    enLabel:'Finance',    bnLabel:'\u09AB\u09BE\u0987\u09A8\u09CD\u09AF\u09BE\u09A8\u09CD\u09B8',  col:'#059669', score: domainScores.finance    },
   ]
 
-  /* ════════════════════════════════════════════════════
-     ① COVER HEADER  —  dark panel #12172B
-  ════════════════════════════════════════════════════ */
-  box(0, 0, W, 68, '#12172B')   // dark panel
-  box(0, 0, W,  3, '#1F4BFF')   // primary blue top stripe
+  /* ① HEADER */
+  box(0,0,W,68,'#12172B'); box(0,0,W,3,'#1F4BFF')
+  en(22,'bold'); tc('#FFFFFF'); doc.text('DIGITALIZEN', mg, 21)
+  en(6.5); tc('#5A667A'); doc.text('Growth Intelligence Platform', mg, 29)
+  en(7,'bold'); tc('#1F4BFF'); doc.text('BUSINESS HEALTH REPORT', W-mg, 19, {align:'right'})
+  en(6.5); tc('#5A667A')
+  doc.text(date, W-mg, 27, {align:'right'})
+  doc.text('Confidential \u00B7 Internal Use Only', W-mg, 34, {align:'right'})
 
-  // Brand wordmark
-  en(21,'bold'); setTxt('#FFFFFF')
-  doc.text('DIGITALIZEN', mg, 21)
-  en(6.5,'normal'); setTxt('#5A667A')
-  doc.text('Growth Intelligence Platform', mg, 29)
-
-  // Report label (right)
-  en(7,'bold'); setTxt('#1F4BFF')
-  doc.text('BUSINESS HEALTH REPORT', W-mg, 18, {align:'right'})
-  en(6.5,'normal'); setTxt('#5A667A')
-  doc.text(date, W-mg, 26, {align:'right'})
-  doc.text('Confidential \u00B7 Internal Use Only', W-mg, 33, {align:'right'})
-
-  // Big score
-  const bandRGB = rgb(band.color)
-  en(40,'bold'); doc.setTextColor(bandRGB.r, bandRGB.g, bandRGB.b)
-  doc.text(`${overall}%`, mg, 60)
-
-  // Score labels to the right of the number
+  const [br,bg2,bb2] = h2r(band.color)
+  en(40,'bold'); doc.setTextColor(br,bg2,bb2); doc.text(`${overall}%`, mg, 60)
   const numW = doc.getTextWidth(`${overall}%`)
-  en(8,'bold'); setTxt('#FFFFFF')
-  doc.text('Overall Business Health Score', mg + numW + 6, 53)
-  en(9,'bold'); doc.setTextColor(bandRGB.r, bandRGB.g, bandRGB.b)
-  doc.text(band.labelEn.toUpperCase(), mg + numW + 6, 63)
-  bn(9); setTxt('#FFFFFF')
-  // Bengali band label — render right of the English label
-  const enLabelW = doc.getStringUnitWidth(band.labelEn.toUpperCase()) * 9 / doc.internal.scaleFactor
-  doc.text(band.label, mg + numW + 6 + enLabelW + 4, 63)
-
+  en(8,'bold'); tc('#FFFFFF'); doc.text('Overall Business Health Score', mg+numW+5, 52)
+  en(9,'bold'); doc.setTextColor(br,bg2,bb2); doc.text(band.labelEn.toUpperCase(), mg+numW+5, 62)
+  bn(band.label, mg+numW+5+doc.getTextWidth(band.labelEn.toUpperCase())+3, 56.5, 8, 35, '#FFFFFF')
   y = 76
 
-  /* ════════════════════════════════════════════════════
-     ② DOMAIN PERFORMANCE BARS
-  ════════════════════════════════════════════════════ */
-  en(6.5,'bold'); setTxt('#5A667A')
-  doc.text('DOMAIN PERFORMANCE', mg, y); y += 2
-  rule(y); y += 5
-
-  domCfg.forEach(d => {
-    const dRGB = rgb(d.col)
-
-    // Labels
-    en(7.5,'bold'); setTxt('#0B1220')
-    doc.text(d.labelEn, mg, y + 3)
-    bn(7); doc.setTextColor(dRGB.r, dRGB.g, dRGB.b)
-    doc.text(d.labelBn, mg + doc.getTextWidth(d.labelEn) + 3, y + 3)
-
-    // Score badge (right)
-    en(8,'bold'); doc.setTextColor(dRGB.r, dRGB.g, dRGB.b)
-    doc.text(`${d.score}%`, W-mg, y+3, {align:'right'})
-    en(6,'normal'); setTxt('#5A667A')
-    doc.text(getBand(d.score).labelEn, W-mg-14, y+3, {align:'right'})
-
-    // Bar track + fill
+  /* ② DOMAIN PERFORMANCE */
+  en(6.5,'bold'); tc('#5A667A'); doc.text('DOMAIN PERFORMANCE', mg, y); y += 2; rule(y); y += 5
+  for (const d of domCfg) {
+    en(7.5,'bold'); tc('#0B1220'); doc.text(d.enLabel, mg, y+3)
+    bn(d.bnLabel, mg+doc.getTextWidth(d.enLabel)+2, y+0.5, 7.5, 40, d.col)
+    en(8,'bold'); doc.setTextColor(...h2r(d.col)); doc.text(`${d.score}%`, W-mg, y+3, {align:'right'})
+    en(6); tc('#5A667A'); doc.text(getBand(d.score).labelEn, W-mg-14, y+3, {align:'right'})
     box(mg, y+5, cW, 3.5, '#E6EAF5')
     if (d.score > 0) box(mg, y+5, Math.max((d.score/100)*cW, 1.5), 3.5, d.col)
-
-    y += 14
-  })
-
+    y += 15
+  }
   y += 4; rule(y); y += 8
 
-  /* ════════════════════════════════════════════════════
-     ③ TOP PRIORITY ACTIONS
-  ════════════════════════════════════════════════════ */
-  en(6.5,'bold'); setTxt('#5A667A')
-  doc.text('TOP PRIORITY ACTIONS', mg, y); y += 2
-  rule(y); y += 5
-
+  /* ③ TOP PRIORITY ACTIONS */
+  en(6.5,'bold'); tc('#5A667A'); doc.text('TOP PRIORITY ACTIONS', mg, y); y += 2; rule(y); y += 5
   const urgColors = ['#DC2626','#D97706','#2563EB']
   const urgBgs    = ['#FEF2F2','#FFF7ED','#EFF6FF']
   const urgLabels = ['CRITICAL','HIGH PRIORITY','REVIEW']
-
-  topActions.slice(0,3).forEach((a,i) => {
-    // Pre-calculate height so we can draw box first
-    bn(7)
-    const qLines = doc.splitTextToSize(String(a.q), cW - 14)
-    const boxH   = Math.max(22, 13 + qLines.length * 4.5)
-    y = guard(y, boxH + 3)
-
-    box(mg, y, cW, boxH, urgBgs[i])
-    // Left accent bar (brand style: thin coloured strip)
-    box(mg, y, 3.5, boxH, urgColors[i])
-
-    const uRGB = rgb(urgColors[i])
-    en(5.5,'bold'); doc.setTextColor(uRGB.r, uRGB.g, uRGB.b)
-    doc.text(urgLabels[i], mg+7, y+6)
-
-    setTxt('#0B1220'); bn(7)
-    doc.text(qLines, mg+7, y+12)
+  for (let i = 0; i < Math.min(topActions.length, 3); i++) {
+    const a = topActions[i]
+    y = pc(y, 28)
+    const qR  = bnRender(String(a.q), 7.5, cW-14, '#0B1220', '400')
+    const boxH = Math.max(22, 11 + qR.hMm + 2)
+    box(mg, y, cW, boxH, urgBgs[i]); box(mg, y, 3.5, boxH, urgColors[i])
+    en(5.5,'bold'); doc.setTextColor(...h2r(urgColors[i])); doc.text(urgLabels[i], mg+7, y+6)
+    bn(String(a.q), mg+7, y+8.5, 7.5, cW-14, '#0B1220', '400')
     y += boxH + 3
-  })
-
+  }
   y += 2; rule(y); y += 8
 
-  /* ════════════════════════════════════════════════════
-     ④ DOMAIN INSIGHTS & RECOMMENDATIONS
-  ════════════════════════════════════════════════════ */
-  en(6.5,'bold'); setTxt('#5A667A')
-  doc.text('DOMAIN INSIGHTS & RECOMMENDATIONS', mg, y); y += 2
-  rule(y); y += 6
-
-  domainInsights.forEach(ins => {
-    const d = domCfg.find(d => d.key === ins.domain)
-    if (!d) return
-    const dRGB = rgb(d.col)
-
-    y = guard(y, 42)
-
-    // Domain header strip — solid colour
+  /* ④ DOMAIN INSIGHTS */
+  en(6.5,'bold'); tc('#5A667A'); doc.text('DOMAIN INSIGHTS & RECOMMENDATIONS', mg, y); y += 2; rule(y); y += 6
+  for (const ins of domainInsights) {
+    const d = domCfg.find(d => d.key === ins.domain); if (!d) continue
+    y = pc(y, 44)
     box(mg, y, cW, 9, d.col)
-    en(7.5,'bold'); setTxt('#FFFFFF')
-    doc.text(d.labelEn.toUpperCase(), mg+5, y+6.2)
-    bn(7); setTxt('#FFFFFF')
-    // Bengali label right of English
-    doc.text(d.labelBn, mg+5+doc.getTextWidth(d.labelEn.toUpperCase())+3, y+6.2)
-    en(7,'normal'); setTxt('#FFFFFF')
-    doc.text(`${d.score}% \u00B7 ${ins.band.labelEn}`, W-mg-4, y+6.2, {align:'right'})
-    y += 13
-
-    // Insight title (Bengali) — domain colour
-    bn(8); doc.setTextColor(dRGB.r, dRGB.g, dRGB.b)
-    const titleLines = doc.splitTextToSize(String(ins.title), cW-6)
-    doc.text(titleLines, mg+3, y)
-    y += titleLines.length * 5 + 2
-
-    // Detail text (Bengali) — muted
-    bn(6.5); setTxt('#5A667A')
-    const detLines = doc.splitTextToSize(String(ins.detail), cW-6)
-    doc.text(detLines, mg+3, y)
-    y += detLines.length * 4 + 4
-
-    // Action items — square bullet (brand guide: square not checkmark)
-    ins.actions.forEach((act, ai) => {
-      y = guard(y, 10)
-      // Square bullet in domain colour
-      doc.setFillColor(dRGB.r, dRGB.g, dRGB.b)
-      doc.rect(mg+3, y-2.2, 1.8, 1.8, 'F')
-      // Number label
-      en(6.5,'bold'); doc.setTextColor(dRGB.r, dRGB.g, dRGB.b)
-      doc.text(`${ai+1}`, mg+2, y)
-      // Action text (Bengali)
-      bn(6.5); setTxt('#0B1220')
-      const actLines = doc.splitTextToSize(String(act), cW-14)
-      doc.text(actLines, mg+9, y)
-      y += actLines.length * 4 + 2
-    })
+    en(7.5,'bold'); tc('#FFFFFF'); doc.text(d.enLabel.toUpperCase(), mg+5, y+6.2)
+    bn(d.bnLabel, mg+5+doc.getTextWidth(d.enLabel.toUpperCase())+2, y+1.5, 7, 30, '#FFFFFF')
+    en(6.5); tc('#FFFFFF'); doc.text(`${d.score}% \u00B7 ${ins.band.labelEn}`, W-mg-4, y+6.2, {align:'right'})
+    y += 12
+    const titleH = bn(String(ins.title), mg+3, y, 9.5, cW-6, d.col, '700'); y += titleH + 1
+    const detH   = bn(String(ins.detail), mg+3, y, 7, cW-6, '#5A667A', '400'); y += detH + 3
+    for (let ai = 0; ai < ins.actions.length; ai++) {
+      y = pc(y, 12)
+      doc.setFillColor(...h2r(d.col)); doc.rect(mg+3, y-1.8, 2, 2, 'F')
+      en(6.5,'bold'); doc.setTextColor(...h2r(d.col)); doc.text(`${ai+1}`, mg+2.3, y)
+      const actH = bn(String(ins.actions[ai]), mg+9, y-3, 7, cW-13, '#0B1220', '400')
+      y += Math.max(actH + 1, 5.5)
+    }
     y += 7
-  })
+  }
 
-  /* ════════════════════════════════════════════════════
-     ⑤ RECOMMENDED PACKAGE
-  ════════════════════════════════════════════════════ */
-  y = guard(y, 54)
+  /* ⑤ RECOMMENDED PACKAGE
+     pkg.name / pkg.tagline / pkg.features are ALL Bengali text.
+     Every field goes through pdfBn() → canvas → PNG.
+     Nothing Bengali goes through doc.text() here.           */
+  y = pc(y, 68)
   rule(y); y += 5
-  en(6.5,'bold'); setTxt('#5A667A')
-  doc.text('RECOMMENDED PACKAGE', mg, y); y += 2
-  rule(y); y += 5
+  en(6.5,'bold'); tc('#5A667A'); doc.text('RECOMMENDED PACKAGE', mg, y); y += 2; rule(y); y += 5
 
-  // Card with left blue accent bar — brand background #F5F7FF
-  const pkgCardH = 46
-  box(mg, y, cW, pkgCardH, '#F5F7FF')
-  box(mg, y,  4, pkgCardH, '#1F4BFF')
+  const pkgH = 64
+  box(mg, y, cW, pkgH, '#F5F7FF')
+  box(mg, y,  4, pkgH, '#1F4BFF')
 
-  en(10,'bold'); setTxt('#0B1220')
-  doc.text(pkg.name, mg+8, y+9)
-  en(11,'bold'); setTxt('#1F4BFF')
-  doc.text(pkg.price, W-mg-4, y+9, {align:'right'})
+  /* Highlight badge — Bengali via canvas (e.g. 'সবচেয়ে জনপ্রিয়') */
+  if (pkg.highlight) {
+    box(W-mg-36, y+3, 34, 8, '#1F4BFF')
+    bn(pkg.highlight, W-mg-35, y+3.5, 6.5, 32, '#FFFFFF', '700')
+  }
 
-  en(6.5,'normal'); setTxt('#5A667A')
-  const tagLines = doc.splitTextToSize(pkg.tagline, cW/2)
-  doc.text(tagLines, mg+8, y+16)
+  /* Package name — Bengali, bold, dark */
+  const pkgNameH = bn(pkg.name, mg+8, y+4, 13, cW/2, '#0B1220', '700')
 
-  // Features in 2-column grid with square bullets
+  /* Price — Bengali numerals + ৳ symbol, via canvas */
+  const priceH = bn(pkg.price, W-mg-45, y+6, 13, 40, '#1F4BFF', '700')
+  /* Price note — Bengali (e.g. 'প্রতি সপ্তাহ'), via canvas */
+  bn(`/ ${pkg.priceNote}`, W-mg-45, y+6+priceH, 6.5, 40, '#5A667A', '400')
+
+  /* Tagline — Bengali */
+  const tagY    = y + 4 + pkgNameH + 3
+  const pkgTagH = bn(pkg.tagline, mg+8, tagY, 8, cW-60, '#5A667A', '400')
+
+  /* Features — Bengali, 2-column grid, square bullets */
+  const featY   = tagY + pkgTagH + 5
+  const colWHalf = (cW - 12) / 2
   pkg.features.forEach((f, fi) => {
-    const col = fi%2===0 ? mg+8 : mg+8+(cW/2)+4
-    const row = y + 26 + Math.floor(fi/2)*7
-    setFill('#1F4BFF'); doc.rect(col-0.5, row-2, 1.8, 1.8, 'F')
-    en(6.5,'normal'); setTxt('#0B1220')
-    doc.text(f, col+3, row)
+    const col  = fi % 2 === 0 ? mg+8 : mg+8+colWHalf+6
+    const rowY = featY + Math.floor(fi/2) * 11
+    doc.setFillColor(...h2r('#1F4BFF')); doc.rect(col-0.5, rowY-1.8, 2, 2, 'F')
+    bn(f, col+4, rowY-3, 7.5, colWHalf-8, '#0B1220', '400')
   })
-  y += pkgCardH + 7
 
-  /* ════════════════════════════════════════════════════
-     ⑥ GROW WITH DIGITALIZEN — CTA DARK PANEL
-  ════════════════════════════════════════════════════ */
-  y = guard(y, 62)
+  y += pkgH + 8
 
-  const ctaH = 62
-  box(mg, y, cW, ctaH, '#12172B')
-  box(mg, y, cW,   3,  '#1F4BFF')
-
-  // Headline (Bengali) — white
-  bn(10); setTxt('#FFFFFF')
-  const ctaHdLines = doc.splitTextToSize(
-    'আপনার বিজনেসকে পরবর্তী স্তরে নিয়ে যান', cW-12
-  )
-  doc.text(ctaHdLines, mg+6, y+12)
-
-  // Subheadline (Bengali) — primary blue
-  bn(7.5); setTxt('#93C5FD')
-  const ctaSubLines = doc.splitTextToSize(
-    'Digitalizen আপনার ব্যবসার টেকনিক্যাল ও ক্রিয়েটিভ উভয় দিক থেকেই সহায়তা করে।',
-    cW-12
-  )
-  doc.text(ctaSubLines, mg+6, y+20)
-
-  // 4 benefit items — 2×2 grid
-  const benefits = [
-    { en:'Data-Driven Ads',   bn:'ডেটা-চালিত বিজ্ঞাপন' },
-    { en:'Creative Content',  bn:'প্রফেশনাল ক্রিয়েটিভ' },
-    { en:'Tech & Automation', bn:'টেক ও অটোমেশন' },
-    { en:'Growth Strategy',   bn:'কাস্টম গ্রোথ প্ল্যান' },
+  /* ⑥ DIGITALIZEN CTA */
+  y = pc(y, 70)
+  const ctaH = 70
+  box(mg, y, cW, ctaH, '#12172B'); box(mg, y, cW, 3, '#1F4BFF')
+  const hdH  = bn('\u0986\u09AA\u09A8\u09BE\u09B0 \u09AC\u09BF\u099C\u09A8\u09C7\u09B8\u0995\u09C7 \u09AA\u09B0\u09AC\u09B0\u09CD\u09A4\u09C0 \u09B8\u09CD\u09A4\u09B0\u09C7 \u09A8\u09BF\u09AF\u09BC\u09C7 \u09AF\u09BE\u09A8', mg+6, y+8, 12, cW-14, '#FFFFFF', '700')
+  const subH = bn('Digitalizen \u0986\u09AA\u09A8\u09BE\u09B0 \u09AC\u09CD\u09AF\u09AC\u09B8\u09BE\u09B0 \u099F\u09C7\u0995\u09A8\u09BF\u0995\u09CD\u09AF\u09BE\u09B2 \u0993 \u0995\u09CD\u09B0\u09BF\u09AF\u09BC\u09C7\u099F\u09BF\u09AD \u0989\u09AD\u09AF\u09BC \u09A6\u09BF\u0995 \u09A5\u09C7\u0995\u09C7\u0987 \u09B8\u09B9\u09BE\u09AF\u09BC\u09A4\u09BE \u0995\u09B0\u09C7\u0964', mg+6, y+8+hdH+1, 7.5, cW-14, '#93C5FD')
+  const benY = y+8+hdH+subH+4
+  const bens = [
+    {en:'Data-Driven Ads',   bn:'\u09A1\u09C7\u099F\u09BE-\u099A\u09BE\u09B2\u09BF\u09A4 \u09AC\u09BF\u099C\u09CD\u099E\u09BE\u09AA\u09A8'},
+    {en:'Creative Content',  bn:'\u09AA\u09CD\u09B0\u09AB\u09C7\u09B6\u09A8\u09BE\u09B2 \u0995\u09CD\u09B0\u09BF\u09AF\u09BC\u09C7\u099F\u09BF\u09AD'},
+    {en:'Tech & Automation', bn:'\u099F\u09C7\u0995 \u0993 \u0985\u099F\u09CB\u09AE\u09C7\u09B6\u09A8'},
+    {en:'Growth Strategy',   bn:'\u0995\u09BE\u09B8\u09CD\u099F\u09AE \u0997\u09CD\u09B0\u09CB\u09A5 \u09AA\u09CD\u09B2\u09CD\u09AF\u09BE\u09A8'},
   ]
-  const halfW = cW/2
-  benefits.forEach((b, bi) => {
-    const col = bi%2===0 ? mg+6 : mg+6+halfW
-    const row = y + 33 + Math.floor(bi/2)*10
-    // Square bullet — primary blue (brand style)
-    setFill('#1F4BFF'); doc.rect(col, row-2.2, 2, 2, 'F')
-    en(6.5,'bold'); setTxt('#FFFFFF')
-    doc.text(b.en, col+4, row)
-    bn(6); setTxt('#5A667A')
-    doc.text(b.bn, col+4, row+5)
+  bens.forEach((b, bi) => {
+    const col = bi%2===0 ? mg+6 : mg+6+cW/2
+    const row = benY + Math.floor(bi/2)*11
+    doc.setFillColor(...h2r('#1F4BFF')); doc.circle(col+1.5, row-1, 1.5, 'F')
+    en(6.5,'bold'); tc('#FFFFFF'); doc.text(b.en, col+5, row)
+    bn(b.bn, col+5, row+1.5, 6.5, cW/2-10, '#5A667A')
   })
+  const btnY = y+ctaH-14
+  box(mg+6, btnY, 74, 9, '#128C7E'); en(6.5,'bold'); tc('#FFFFFF')
+  doc.text('+880 1711-992558  (WhatsApp)', mg+9, btnY+6)
+  box(mg+84, btnY, 56, 9, '#1F4BFF'); doc.text(SITE, mg+87, btnY+6)
 
-  // CTA buttons row
-  const btnY = y + ctaH - 13
-  // WhatsApp — green
-  box(mg+6, btnY, 74, 8, '#128C7E')
-  en(6.5,'bold'); setTxt('#FFFFFF')
-  doc.text('+880 1711-992558  (WhatsApp)', mg+9, btnY+5.5)
-  // Web — primary blue
-  box(mg+84, btnY, 56, 8, '#1F4BFF')
-  en(6.5,'bold'); setTxt('#FFFFFF')
-  doc.text(SITE, mg+87, btnY+5.5)
-
-  y += ctaH + 8
-
-  /* ════════════════════════════════════════════════════
-     ⑦ FOOTER — repeated on every page
-  ════════════════════════════════════════════════════ */
-  const totalPages = doc.getNumberOfPages()
-  for (let p = 1; p <= totalPages; p++) {
+  /* ⑦ FOOTER — every page */
+  const total = doc.getNumberOfPages()
+  for (let p = 1; p <= total; p++) {
     doc.setPage(p)
-    box(0, 286, W, 11, '#12172B')
-    box(0, 294, W,  3, '#1F4BFF')
-    en(6,'normal'); setTxt('#5A667A')
-    doc.text(
-      `${BRAND} \u00B7 GrowthHub Business Audit \u00B7 ${date} \u00B7 Page ${p} / ${totalPages}`,
-      mg, 292
-    )
-    en(6,'bold'); setTxt('#1F4BFF')
-    doc.text(SITE, W-mg, 292, {align:'right'})
+    box(0,286,W,11,'#12172B'); box(0,294,W,3,'#1F4BFF')
+    en(6); tc('#5A667A')
+    doc.text(`${BRAND} \u00B7 GrowthHub Business Audit \u00B7 ${date} \u00B7 Page ${p} / ${total}`, mg, 293)
+    en(6,'bold'); tc('#1F4BFF'); doc.text(SITE, W-mg, 293, {align:'right'})
   }
 
   doc.save(`Digitalizen_Business_Health_Report_${new Date().getFullYear()}.pdf`)
