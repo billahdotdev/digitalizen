@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Access.css'
 
-const FB_PROFILE_URL = 'https://www.facebook.com/digitalizen.agency'
-const WA_URL         = 'https://wa.me/8801XXXXXXXXX'
-const AGENCY_FB_NAME = 'Digitalizen | ডিজিটালাইজেন'
+const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me'
+const WA_URL         = 'https://wa.me/8801711992558'
+const AGENCY_FB_NAME = 'Masum Billah'
 
 /* ─────────────────────────────────────────────────
    STEPS — logical UX order:
@@ -20,8 +20,8 @@ const STEPS = [
         <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: 'আমাদের নাম কপি করুন',
-    desc: 'Page-এ আমাদের খুঁজে পেতে এই নামটি কপি করে রাখুন — পরে কাজে লাগবে।',
+    title: 'নাম কপি করুন',
+    desc: 'অ্যাক্সেস দেওয়ার সময় সহজে খুঁজে পেতে নামটি কপি করে রাখুন, পরে কাজে লাগবে।',
     copyName: true,
   },
   {
@@ -34,7 +34,7 @@ const STEPS = [
       </svg>
     ),
     title: 'ফ্রেন্ড রিকোয়েস্ট পাঠান',
-    desc: 'নিচের বাটনে ক্লিক করে আমাদের Facebook প্রোফাইলে যান এবং Friend Request পাঠান।',
+    desc: 'নিচের বাটনে ক্লিক করে আমাদের ফেসবুক প্রোফাইলে যান এবং ফ্রেন্ড রিকোয়েস্ট দেন। তাহলে অ্যাক্সেস দেওয়ার সময় প্রোফাইলটি খুঁজে পেতে সুবিধা হবে।',
     fbCta: true,
   },
   {
@@ -45,8 +45,8 @@ const STEPS = [
         <path d="M8 21h8M12 17v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: 'Page Settings খুলুন',
-    desc: 'আপনার Facebook Page-এ যান → Settings → Page roles (অথবা New Pages Experience হলে → Page Access)।',
+    title: 'অ্যাক্সেস দেওয়ার প্রক্রিয়া শুরু করুন',
+    desc: 'ফেসবুক প্রোফাইল থাকলে পেজ এ সুইচ করুন → উপরে ডানদিকের প্রোফাইল আইকনে ক্লিক করুন → Settings & Privacy → Settings → একটু নিচে স্ক্রল করে Page Access খুঁজুন (অথবা New Pages Experience) অপশনে ক্লিক করুন।',
   },
   {
     num: '০৪',
@@ -56,8 +56,8 @@ const STEPS = [
         <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: 'Advertiser Role দিন',
-    desc: 'কপি করা নামটি সার্চ করুন এবং "Advertiser" অথবা "Admin" role assign করুন।',
+    title: 'অ্যাক্সেস (Role) সেটআপ করুন',
+    desc: 'কপি করা নামটি সার্চ বক্সে পেস্ট করে আমাদের প্রোফাইলটি খুঁজে বের করুন। এরপর "Advertiser" (Ads, Content & Insights) অথবা "Admin" হিসেবে অ্যাক্সেস অ্যাসাইন করুন।',
   },
   {
     num: '০৫',
@@ -66,8 +66,8 @@ const STEPS = [
         <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.1 1.18 2 2 0 012.1 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: 'আমাদের জানান',
-    desc: 'Access দেওয়া হলে WhatsApp বা Messenger-এ একটি মেসেজ পাঠান — আমরা কাজ শুরু করব।',
+    title: 'আমাদেরকে জানান',
+    desc: 'অ্যাক্সেস দেওয়া হয়ে গেলে অথবা কোনো সমস্যা হল WhatsApp-এ একটি মেসেজ দিন। আমরা দ্রুত ব্যবস্থা নেব।',
     waCta: true,
   },
 ]
@@ -91,7 +91,7 @@ export default function Access() {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
             <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          digitalizen
+          DIGITALIZEN: আপনার ডিজিটাল গ্রোথ পার্টনার
         </Link>
         <span className="ac-topbar-chip">
           <span className="ac-chip-dot" />
@@ -116,20 +116,20 @@ export default function Access() {
           </div>
 
           <h1 className="ac-hero-title">
-            বিজ্ঞাপন পরিচালনার জন্য<br />
-            আমাদের বেছে নেওয়ায় ধন্যবাদ!
+            আপনার বিজ্ঞাপন ব্যবস্থাপনায়<br />
+            যুক্ত হতে পেরে আনন্দিত। ধন্যবাদ!
           </h1>
           <p className="ac-hero-sub">
-            ভালো কনটেন্ট এবং সঠিক বাজেট থাকলে,{' '}
-            <strong>DIGITALIZEN | ডিজিটালাইজেন</strong>{' '}
-            আপনার বিজ্ঞাপনের সেরা ফলাফল নিশ্চিত করে।
+            ভালো কনটেন্ট এবং সঠিক বাজেট থাকলে, <br />
+            <strong>DIGITALIZEN</strong>{' '}
+  সেরা রেজাল্ট নিশ্চিত করে।
           </p>
 
           {/* trust pills */}
           <div className="ac-hero-pills" aria-hidden="true">
-            <span>🔒 পাসওয়ার্ড লাগবে না</span>
-            <span>⚡ ২৪ ঘণ্টায় শুরু</span>
-            <span>🎯 রেজাল্ট-গ্যারান্টি</span>
+            <span>🛡️ পেজ নিরাপদ</span>
+            <span>🔒 নো পাসওয়ার্ড</span>
+            <span>⚡ দ্রুত শুরু</span>
           </div>
         </div>
       </section>
@@ -137,7 +137,7 @@ export default function Access() {
       {/* ════ FLOW ════ */}
       <main className="ac-main">
         <div className="ac-flow-header">
-          <span className="ac-flow-label">ধাপে ধাপে গাইড</span>
+          <span className="ac-flow-label">স্টেপ বাই স্টেপ</span>
           <h2 className="ac-flow-title">কীভাবে Page Access দেবেন?</h2>
         </div>
 
@@ -250,7 +250,7 @@ export default function Access() {
       <footer className="ac-footer">
         <div className="ac-footer-inner">
           <div className="ac-footer-row">
-            <span className="ac-footer-brand">digitalizen</span>
+            <span className="ac-footer-brand">DIGITALIZEN: আপনার ডিজিটাল গ্রোথ পার্টনার</span>
             <div className="ac-footer-links">
               <a href={FB_PROFILE_URL} target="_blank" rel="noopener noreferrer">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
