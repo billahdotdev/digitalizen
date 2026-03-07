@@ -266,7 +266,10 @@ export default function Access() {
               </a>
             </div>
           </div>
-          <p className="ac-footer-meta">Meta Ads Expert · Social Media and Digital Marketing Agency · Mirpur,Dhaka, Bangladesh</p>
+          <p className="ac-footer-meta">
+            Meta Ads Expert · Dhaka, Bangladesh <br />
+            Social Media and Digital Marketing Agency
+          </p>
           <p className="ac-footer-copy">© 2026 Digitalizen. All rights reserved.</p>
         </div>
       </footer>
