@@ -250,7 +250,7 @@ export default function Access() {
       <footer className="ac-footer">
         <div className="ac-footer-inner">
           <div className="ac-footer-row">
-            <span className="ac-footer-brand">DIGITALIZEN</span>
+            <span className="ac-footer-brand">DIGITALIZEN | ডিজিটালাইজেন </span>
             <div className="ac-footer-links">
               <a href={FB_PROFILE_URL} target="_blank" rel="noopener noreferrer">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -266,7 +266,7 @@ export default function Access() {
               </a>
             </div>
           </div>
-          <p className="ac-footer-meta">Meta Ads Expert · Social Media Marketing · Dhaka, Bangladesh</p>
+          <p className="ac-footer-meta">Meta Ads Expert · Social Media and Digital Marketing Agency · Mirpur,Dhaka, Bangladesh</p>
           <p className="ac-footer-copy">© 2026 Digitalizen. All rights reserved.</p>
         </div>
       </footer>
