@@ -73,196 +73,424 @@ function ScoreRing({ pct, size = 92, stroke = 8, color, animated = true }) {
           style={{ transition: 'stroke-dashoffset 0.04s linear' }} />
       </svg>
       <div className="score-ring__inner">
-        <span className="score-ring__num" style={{ color }}>{disp}</span>
-        <span className="score-ring__pct">%</span>
+        {/* Number and % in one element so sizing and baseline are natural */}
+        <span className="score-ring__label" style={{ color }}>
+          <span className="score-ring__num">{disp}</span><span className="score-ring__pct">%</span>
+        </span>
       </div>
     </div>
   )
 }
 
-/* ── Bengali font: cached chunked base64 loader ─────────── */
-let _bnFont = undefined   // undefined = not tried; false = unavailable; string = b64
+/* ══════════════════════════════════════════════════════════
+   BENGALI FONT LOADER
+   ──────────────────────────────────────────────────────────
+   jsPDF only supports TTF/OTF — woff/woff2 do NOT work.
+   We fetch Noto Sans Bengali TTF (fully supports Bengali Unicode)
+   from a CDN that has CORS headers, convert to base64, and
+   register with jsPDF. Cache in module-level variable.
+══════════════════════════════════════════════════════════ */
+let _bnFontB64 = null   // null = not loaded yet, false = failed, string = ready
+
 async function loadBengaliFont() {
-  if (_bnFont !== undefined) return _bnFont
+  if (_bnFontB64 !== null) return _bnFontB64
+
+  // Noto Sans Bengali — complete Unicode Bengali TTF, CORS-enabled CDN
+  // jsDelivr mirrors the @fontsource package which bundles the actual TTF binary
+  // jsPDF ONLY parses TTF/OTF binary — woff2 silently fails.
+  // We fetch the Google Fonts CSS with a legacy UA to get TTF URLs,
+  // then fetch the actual TTF binary.
+  // Primary strategy: ask Google Fonts API for TTF via old UA, parse the URL, fetch it.
   try {
-    const res = await fetch('https://fonts.gstatic.com/s/hindsiliguri/v12/ujUY5XKZBr-oNSRSBZ_e40iRgOuW8Dbcrg.woff2')
-    if (!res.ok) throw new Error('fetch failed')
-    const bytes = new Uint8Array(await res.arrayBuffer())
-    let b64 = '', C = 8192
-    for (let i = 0; i < bytes.length; i += C)
-      b64 += String.fromCharCode(...bytes.subarray(i, Math.min(i + C, bytes.length)))
-    _bnFont = btoa(b64)
-  } catch (_) { _bnFont = false }
-  return _bnFont
+    // Using a non-modern UA forces Google Fonts to return TTF format
+    const cssResp = await fetch(
+      'https://fonts.googleapis.com/css?family=Hind+Siliguri:400&subset=bengali',
+      { headers: { 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0)' } }
+    )
+    if (cssResp.ok) {
+      const css = await cssResp.text()
+      // Extract the TTF/OTF URL from the CSS
+      const match = css.match(/url\(([^)]+\.(ttf|otf))\)/)
+      if (match) {
+        const ttfResp = await fetch(match[1])
+        if (ttfResp.ok) {
+          const buf   = await ttfResp.arrayBuffer()
+          const bytes = new Uint8Array(buf)
+          let b64 = ''
+          for (let i = 0; i < bytes.length; i += 8192)
+            b64 += String.fromCharCode(...bytes.subarray(i, Math.min(i + 8192, bytes.length)))
+          _bnFontB64 = btoa(b64)
+          return _bnFontB64
+        }
+      }
+    }
+  } catch (_) { /* fall through to direct CDN */ }
+
+  // Fallback: direct TTF from a known public CDN
+  // This is a raw .ttf file (not woff2) from GitHub/jsDelivr raw file hosting
+  const FALLBACK_TTF_URLS = [
+    'https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts@main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf',
+    'https://rawcdn.githack.com/google/fonts/main/ofl/hindsiliguri/HindSiliguri-Regular.ttf',
+  ]
+
+  for (const url of FALLBACK_TTF_URLS) {
+    try {
+      const resp = await fetch(url)
+      if (!resp.ok) continue
+      const buf   = await resp.arrayBuffer()
+      const bytes = new Uint8Array(buf)
+      // Chunked btoa — avoids stack overflow on large buffers
+      let b64 = ''
+      for (let i = 0; i < bytes.length; i += 8192)
+        b64 += String.fromCharCode(...bytes.subarray(i, Math.min(i + 8192, bytes.length)))
+      _bnFontB64 = btoa(b64)
+      return _bnFontB64
+    } catch (_) { /* try next */ }
+  }
+
+  _bnFontB64 = false
+  return false
 }
 
-/* ── Branded PDF generator ───────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   BRANDED PDF GENERATOR
+   All Bengali text is rendered through the registered font.
+   English headings use Helvetica for sharpness.
+══════════════════════════════════════════════════════════ */
 async function generatePDF(domainScores, overall, domainInsights, pkg, topActions) {
-  /* Load jsPDF */
+
+  /* 1. Load jsPDF from CDN if not already present */
   if (!window.jspdf) {
-    await new Promise((res, rej) => {
+    await new Promise((resolve, reject) => {
       const s = document.createElement('script')
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
-      s.onload = res; s.onerror = rej; document.head.appendChild(s)
+      s.onload = resolve
+      s.onerror = () => reject(new Error('jsPDF CDN load failed'))
+      document.head.appendChild(s)
     })
   }
 
-  const bnFont  = await loadBengaliFont()
+  /* 2. Load Bengali font */
+  const bnFontB64 = await loadBengaliFont()
+
+  /* 3. Create document */
   const { jsPDF } = window.jspdf
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
-  if (bnFont) {
-    doc.addFileToVFS('HindSiliguri.woff2', bnFont)
-    doc.addFont('HindSiliguri.woff2', 'HindSiliguri', 'normal')
-    doc.addFont('HindSiliguri.woff2', 'HindSiliguri', 'bold')
+  /* 4. Register Bengali font — MUST use .ttf extension for jsPDF to parse correctly */
+  let bnRegistered = false
+  if (bnFontB64) {
+    try {
+      doc.addFileToVFS('NotoSansBengali.ttf', bnFontB64)
+      doc.addFont('NotoSansBengali.ttf', 'NotoSansBengali', 'normal')
+      // Quick sanity-check: switching to it should not throw
+      doc.setFont('NotoSansBengali', 'normal')
+      doc.setFont('helvetica', 'normal') // switch back
+      bnRegistered = true
+    } catch (e) {
+      console.warn('Bengali font registration failed, using transliteration fallback:', e.message)
+      bnRegistered = false
+    }
   }
 
-  const W = 210, mg = 16, cW = W - mg * 2
+  /* ── Layout constants ── */
+  const W = 210, mg = 14, cW = W - mg * 2
   let y = 0
 
-  /* Font helpers */
-  const setBn = (sz) => { doc.setFontSize(sz); doc.setFont(bnFont ? 'HindSiliguri' : 'helvetica', 'normal') }
-  const setEn = (sz, style = 'normal') => { doc.setFontSize(sz); doc.setFont('helvetica', style) }
+  /* ── Helpers ── */
+  const h2r = hex => [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)]
+  const fill = (x, fy, w, h, hex) => { const [r,g,b]=h2r(hex); doc.setFillColor(r,g,b); doc.rect(x,fy,w,h,'F') }
+  const txt  = hex => { const [r,g,b]=h2r(hex); doc.setTextColor(r,g,b) }
+  const hln  = (fy, hex='#E2E8F0') => { const [r,g,b]=h2r(hex); doc.setDrawColor(r,g,b); doc.setLineWidth(0.25); doc.line(mg, fy, W-mg, fy) }
+  const pc   = (fy, needed) => {
+    if (fy + needed > 272) {
+      doc.addPage()
+      fill(0, 0, W, 3, '#1F4BFF')
+      return 14
+    }
+    return fy
+  }
+
+  // Bengali font — falls back to helvetica if not registered
+  const setBn = (sz) => {
+    doc.setFontSize(sz)
+    doc.setFont(bnRegistered ? 'NotoSansBengali' : 'helvetica', 'normal')
+  }
+  const setEn = (sz, style = 'normal') => {
+    doc.setFontSize(sz)
+    doc.setFont('helvetica', style)
+  }
+
+  // Safe text render: handles line wrapping for Bengali
+  const bnText = (text, x, fy, maxW) => {
+    setBn(7)
+    const lines = doc.splitTextToSize(String(text), maxW || cW)
+    doc.text(lines, x, fy)
+    return lines.length
+  }
 
   const band = getBand(overall)
-  const date = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
-  const h2r  = hex => [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)]
-  const fill = (x,fy,w,h,hex) => { const [r,g,b]=h2r(hex); doc.setFillColor(r,g,b); doc.rect(x,fy,w,h,'F') }
-  const txt  = hex => { const [r,g,b]=h2r(hex); doc.setTextColor(r,g,b) }
-  const hln  = (fy,hex='#E2E8F0') => { const [r,g,b]=h2r(hex); doc.setDrawColor(r,g,b); doc.setLineWidth(0.2); doc.line(mg,fy,W-mg,fy) }
-  const pc   = (fy,needed) => { if (fy + needed > 272) { doc.addPage(); fill(0,0,W,3,'#1F4BFF'); return 15 } return fy }
+  const date = new Date().toLocaleDateString('en-GB', { year:'numeric', month:'long', day:'numeric' })
 
-  /* ── Header block ── */
-  fill(0,0,W,58,'#0A1628')
-  fill(0,0,W,3,'#1F4BFF')
+  /* ═══════════════════════════════════════════════
+     PAGE 1 HEADER
+  ═══════════════════════════════════════════════ */
+  fill(0, 0, W, 62, '#0A1628')
+  fill(0, 0, W, 3,  '#1F4BFF')
 
-  doc.setFontSize(22); doc.setFont('helvetica','bold'); txt('#FFFFFF')
+  // Brand name
+  setEn(22, 'bold'); txt('#FFFFFF')
   doc.text('DIGITALIZEN', mg, 22)
-  doc.setFontSize(7.5); doc.setFont('helvetica','normal'); txt('#64748B')
+  setEn(7.5); txt('#4B7BFF')
   doc.text('Growth Intelligence Platform', mg, 29)
 
-  doc.setFontSize(7.5); doc.setFont('helvetica','bold'); txt('#4B7BFF')
+  // Report type
+  setEn(7.5, 'bold'); txt('#4B7BFF')
   doc.text('BUSINESS HEALTH REPORT', W-mg, 18, { align:'right' })
-  doc.setFontSize(7); doc.setFont('helvetica','normal'); txt('#64748B')
+  setEn(7); txt('#64748B')
   doc.text(date, W-mg, 25, { align:'right' })
-  doc.text('Confidential  ·  Internal Use Only', W-mg, 31, { align:'right' })
+  doc.text('Confidential  \u00b7  Internal Use Only', W-mg, 31, { align:'right' })
 
+  // Big score number
   const [br,bg_,bb] = h2r(band.color)
-  doc.setFontSize(46); doc.setFont('helvetica','bold'); doc.setTextColor(br,bg_,bb)
-  doc.text(`${overall}`, mg, 52)
-  doc.setFontSize(14); doc.text('%', mg + 26, 52)
-  doc.setFontSize(9); doc.setFont('helvetica','bold'); txt('#FFFFFF')
-  doc.text('Overall Health Score', mg + 32, 45)
-  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(br,bg_,bb)
-  doc.text(`${band.labelEn.toUpperCase()}  ·  ${band.label}`, mg + 32, 52)
-  y = 68
+  setEn(48, 'bold'); doc.setTextColor(br, bg_, bb)
+  doc.text(`${overall}%`, mg, 54)
 
-  /* ── Domain performance ── */
-  doc.setFontSize(8); doc.setFont('helvetica','bold'); txt('#1E293B')
-  doc.text('DOMAIN PERFORMANCE', mg, y); y += 4; hln(y); y += 6
+  // Band label + description (right side)
+  setEn(9, 'bold'); txt('#FFFFFF')
+  doc.text('Overall Business Health Score', mg + 40, 44)
+  setEn(9, 'bold'); doc.setTextColor(br, bg_, bb)
+  doc.text(`${band.labelEn.toUpperCase()}`, mg + 40, 52)
+  setBn(8); doc.setTextColor(br, bg_, bb)
+  doc.text(band.label, mg + 40 + doc.getTextWidth(`${band.labelEn.toUpperCase()}`) + 4, 52)
+
+  y = 72
+
+  /* ═══════════════════════════════════════════════
+     DOMAIN PERFORMANCE
+  ═══════════════════════════════════════════════ */
+  setEn(7.5, 'bold'); txt('#94A3B8')
+  doc.text('DOMAIN PERFORMANCE', mg, y); y += 3; hln(y); y += 5
 
   const domCfg = [
-    { key:'marketing',  label:'Marketing',  color:'#1F4BFF', score: domainScores.marketing  },
-    { key:'operations', label:'Operations', color:'#7C3AED', score: domainScores.operations },
-    { key:'finance',    label:'Finance',    color:'#059669', score: domainScores.finance    },
+    { key:'marketing',  labelEn:'Marketing',  labelBn:'মার্কেটিং',  color:'#1F4BFF', score: domainScores.marketing  },
+    { key:'operations', labelEn:'Operations', labelBn:'অপারেশনস', color:'#7C3AED', score: domainScores.operations },
+    { key:'finance',    labelEn:'Finance',    labelBn:'ফাইন্যান্স',  color:'#059669', score: domainScores.finance    },
   ]
+
   domCfg.forEach(d => {
     const [cr,cg,cb] = h2r(d.color)
-    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); txt('#1E293B')
-    doc.text(d.label, mg, y+4)
-    doc.setTextColor(cr,cg,cb)
-    doc.setFontSize(8); doc.text(`${d.score}%`, W-mg, y+4, { align:'right' })
-    fill(mg, y+6, cW, 3.5, '#EEF2FF')
-    fill(mg, y+6, (d.score/100)*cW, 3.5, d.color)
-    txt('#94A3B8'); doc.setFontSize(6); doc.setFont('helvetica','normal')
-    doc.text(getBand(d.score).labelEn, mg, y+14)
-    y += 18
+    // Label
+    setEn(7.5, 'bold'); txt('#1E293B')
+    doc.text(d.labelEn, mg, y + 3.5)
+    // Bengali label
+    setBn(6.5); doc.setTextColor(cr, cg, cb)
+    doc.text(d.labelBn, mg + doc.getTextWidth(d.labelEn) + 3, y + 3.5)
+    // Score
+    setEn(8, 'bold'); doc.setTextColor(cr, cg, cb)
+    doc.text(`${d.score}%`, W - mg, y + 3.5, { align:'right' })
+    // Band label
+    setEn(6); txt('#94A3B8')
+    doc.text(getBand(d.score).labelEn, W - mg - 18, y + 3.5, { align:'right' })
+    // Progress bar
+    fill(mg, y + 5, cW, 4, '#EEF2FF')
+    if (d.score > 0) fill(mg, y + 5, Math.max((d.score / 100) * cW, 1), 4, d.color)
+    y += 14
   })
 
-  y += 5; hln(y); y += 8
+  y += 4; hln(y); y += 8
 
-  /* ── Top priorities ── */
-  doc.setFontSize(8); doc.setFont('helvetica','bold'); txt('#1E293B')
-  doc.text('TOP PRIORITY ACTIONS', mg, y); y += 4; hln(y); y += 6
+  /* ═══════════════════════════════════════════════
+     TOP 3 PRIORITY ACTIONS
+  ═══════════════════════════════════════════════ */
+  setEn(7.5, 'bold'); txt('#94A3B8')
+  doc.text('TOP PRIORITY ACTIONS', mg, y); y += 3; hln(y); y += 5
 
-  const uC = ['#DC2626','#D97706','#2563EB']
-  const uB = ['#FEF2F2','#FFFBEB','#EFF6FF']
-  const uL = ['CRITICAL','HIGH PRIORITY','MONITOR']
+  const urgColors = ['#DC2626', '#D97706', '#2563EB']
+  const urgBgs    = ['#FEF2F2', '#FFFBEB', '#EFF6FF']
+  const urgLabels = ['CRITICAL', 'HIGH PRIORITY', 'REVIEW']
 
-  topActions.slice(0,3).forEach((a,i) => {
-    y = pc(y, 22)
-    fill(mg, y, cW, 20, uB[i])
-    fill(mg, y, 5, 20, uC[i])
-    const [ur,ug,ub] = h2r(uC[i])
-    doc.setFontSize(5.5); doc.setFont('helvetica','bold'); doc.setTextColor(ur,ug,ub)
-    doc.text(uL[i], mg+8, y+5)
-    txt('#1E293B'); setBn(7)
-    const lines = doc.splitTextToSize(a.q, cW-16)
-    doc.text(lines, mg+8, y+11)
-    y += 23
+  topActions.slice(0, 3).forEach((a, i) => {
+    y = pc(y, 24)
+    const boxH = 22
+    fill(mg, y, cW, boxH, urgBgs[i])
+    fill(mg, y, 4, boxH, urgColors[i])
+    const [ur,ug,ub] = h2r(urgColors[i])
+    setEn(5.5, 'bold'); doc.setTextColor(ur, ug, ub)
+    doc.text(urgLabels[i], mg + 7, y + 5)
+    // Question text in Bengali
+    setBn(7); txt('#1E293B')
+    const lines = doc.splitTextToSize(String(a.q), cW - 14)
+    doc.text(lines, mg + 7, y + 11)
+    y += boxH + 3
   })
 
-  y += 3; hln(y); y += 8
+  y += 2; hln(y); y += 8
 
-  /* ── Domain insights ── */
-  doc.setFontSize(8); doc.setFont('helvetica','bold'); txt('#1E293B')
-  doc.text('DOMAIN INSIGHTS & RECOMMENDATIONS', mg, y); y += 4; hln(y); y += 7
+  /* ═══════════════════════════════════════════════
+     DOMAIN INSIGHTS & RECOMMENDATIONS
+  ═══════════════════════════════════════════════ */
+  setEn(7.5, 'bold'); txt('#94A3B8')
+  doc.text('DOMAIN INSIGHTS & RECOMMENDATIONS', mg, y); y += 3; hln(y); y += 6
 
   domainInsights.forEach(ins => {
     const d = domCfg.find(d => d.key === ins.domain)
     if (!d) return
     const [cr,cg,cb] = h2r(d.color)
-    y = pc(y, 36)
-    fill(mg, y, cW, 8, d.color)
-    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); txt('#FFFFFF')
-    doc.text(d.label.toUpperCase(), mg+4, y+5.5)
-    doc.setFontSize(7); doc.setFont('helvetica','normal')
-    doc.text(`Score: ${d.score}% · ${ins.band.labelEn}`, W-mg-4, y+5.5, { align:'right' })
-    y += 11
-    doc.setTextColor(cr,cg,cb); setBn(7.5, 'normal')
-    const tl = doc.splitTextToSize(ins.title, cW-4)
-    doc.text(tl, mg+2, y+4); y += tl.length*5+3
-    txt('#64748B'); setBn(6.5)
-    const dl = doc.splitTextToSize(ins.detail, cW-4)
-    doc.text(dl, mg+2, y); y += dl.length*4+4
+
+    y = pc(y, 38)
+
+    // Domain header bar
+    fill(mg, y, cW, 9, d.color)
+    setEn(7.5, 'bold'); txt('#FFFFFF')
+    doc.text(d.labelEn.toUpperCase(), mg + 4, y + 6)
+    setBn(7); txt('#FFFFFF')
+    doc.text(d.labelBn, mg + 4 + doc.getTextWidth(d.labelEn.toUpperCase()) + 3, y + 6)
+    setEn(7); txt('#FFFFFF')
+    doc.text(`${d.score}%  \u00b7  ${ins.band.labelEn}`, W - mg - 4, y + 6, { align:'right' })
+    y += 13
+
+    // Insight title (Bengali)
+    doc.setTextColor(cr, cg, cb)
+    setBn(8)
+    const titleLines = doc.splitTextToSize(String(ins.title), cW - 4)
+    doc.text(titleLines, mg + 2, y)
+    y += titleLines.length * 5 + 2
+
+    // Detail text (Bengali)
+    txt('#475569'); setBn(6.5)
+    const detailLines = doc.splitTextToSize(String(ins.detail), cW - 4)
+    doc.text(detailLines, mg + 2, y)
+    y += detailLines.length * 4 + 3
+
+    // Action items
     ins.actions.forEach((act, ai) => {
-      y = pc(y, 8)
-      doc.setTextColor(cr,cg,cb); setEn(6.5, 'bold')
-      doc.text(`${ai+1}.`, mg+4, y)
+      y = pc(y, 10)
+      // Bullet
+      doc.setTextColor(cr, cg, cb)
+      setEn(7, 'bold')
+      doc.text(`${ai + 1}.`, mg + 5, y)
+      // Action text (Bengali)
       txt('#1E293B'); setBn(6.5)
-      const al = doc.splitTextToSize(act, cW-14)
-      doc.text(al, mg+9, y); y += al.length*4+1
+      const actLines = doc.splitTextToSize(String(act), cW - 16)
+      doc.text(actLines, mg + 10, y)
+      y += actLines.length * 4 + 2
     })
-    y += 7
+
+    y += 6
   })
 
-  /* ── Recommended package ── */
-  y = pc(y, 45)
-  hln(y); y += 7
+  /* ═══════════════════════════════════════════════
+     RECOMMENDED PACKAGE
+  ═══════════════════════════════════════════════ */
+  y = pc(y, 50)
+  hln(y); y += 6
+
+  setEn(7.5, 'bold'); txt('#94A3B8')
+  doc.text('RECOMMENDED PACKAGE', mg, y); y += 3; hln(y); y += 5
+
+  // Package card
+  fill(mg, y, cW, 46, '#EEF2FF')
   fill(mg, y, cW, 8, '#1F4BFF')
-  doc.setFontSize(8); doc.setFont('helvetica','bold'); txt('#FFFFFF')
-  doc.text('RECOMMENDED PACKAGE', mg+4, y+5.5); y += 11
-  fill(mg, y, cW, 40, '#EEF2FF')
-  txt('#1E293B'); doc.setFontSize(10); doc.setFont('helvetica','bold')
-  doc.text(pkg.name, mg+4, y+8)
-  txt('#1F4BFF'); doc.setFontSize(11)
-  doc.text(pkg.price, W-mg-4, y+8, { align:'right' })
-  txt('#64748B'); doc.setFontSize(7); doc.setFont('helvetica','normal')
-  doc.text(pkg.tagline, mg+4, y+15)
-  y += 19
-  pkg.features.forEach(f => {
-    txt('#059669'); doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.text('✓', mg+4, y)
-    txt('#1E293B'); doc.setFont('helvetica','normal'); doc.text(f, mg+10, y); y += 5
+
+  setEn(8, 'bold'); txt('#FFFFFF')
+  doc.text('BEST FIT FOR YOUR SCORE', mg + 4, y + 5.5)
+  setEn(8); txt('#FFFFFF')
+  doc.text(pkg.price, W - mg - 4, y + 5.5, { align:'right' })
+  y += 11
+
+  setEn(11, 'bold'); txt('#1E293B')
+  doc.text(pkg.name, mg + 4, y + 5)
+  setEn(7); txt('#64748B')
+  doc.text(pkg.tagline, mg + 4, y + 12)
+  y += 17
+
+  const half = cW / 2
+  pkg.features.forEach((f, fi) => {
+    const col = fi % 2 === 0 ? mg + 4 : mg + half + 4
+    const row = y + Math.floor(fi / 2) * 7
+    setEn(6.5, 'bold'); txt('#059669')
+    doc.text('+', col, row)
+    setEn(6.5); txt('#1E293B')
+    doc.text(f, col + 5, row)
+  })
+  y += Math.ceil(pkg.features.length / 2) * 7 + 4
+
+  /* ═══════════════════════════════════════════════
+     GROW WITH DIGITALIZEN CTA SECTION
+  ═══════════════════════════════════════════════ */
+  y = pc(y, 55)
+  y += 6; hln(y); y += 6
+
+  // CTA background
+  fill(mg, y, cW, 52, '#0A1628')
+  fill(mg, y, cW, 3,  '#1F4BFF')
+
+  // Headline
+  setEn(11, 'bold'); txt('#FFFFFF')
+  doc.text('Ready to grow your business?', mg + 6, y + 12)
+
+  // Sub-headline in Bengali
+  setBn(8); txt('#93C5FD')
+  const ctaSubLines = doc.splitTextToSize(
+    'আপনার বিজনেসকে পরবর্তী স্তরে নিয়ে যেতে Digitalizen-এর বিশেষজ্ঞ দল সর্বদা প্রস্তুত।',
+    cW - 12
+  )
+  doc.text(ctaSubLines, mg + 6, y + 20)
+
+  // Two benefit columns
+  const benefits = [
+    { en: 'Data-Driven Ads',    bn: 'ডেটা-চালিত বিজ্ঞাপন কৌশল' },
+    { en: 'Creative Content',   bn: 'প্রফেশনাল ক্রিয়েটিভ কনটেন্ট' },
+    { en: 'Tech & Automation',  bn: 'টেক ও অটোমেশন সেটআপ' },
+    { en: 'Growth Strategy',    bn: 'কাস্টম গ্রোথ রোডম্যাপ' },
+  ]
+  const bY = y + 28
+  benefits.forEach((b, bi) => {
+    const col = bi % 2 === 0 ? mg + 6 : mg + half + 4
+    const row = bY + Math.floor(bi / 2) * 9
+    // Dot
+    const [dr,dg,db] = h2r('#1F4BFF')
+    doc.setFillColor(dr,dg,db)
+    doc.circle(col + 1.5, row - 1.5, 1.5, 'F')
+    // English label
+    setEn(7, 'bold'); txt('#FFFFFF')
+    doc.text(b.en, col + 5, row)
+    // Bengali sub-label
+    setBn(6); txt('#94A3B8')
+    doc.text(b.bn, col + 5, row + 5)
   })
 
-  /* ── Footer ── */
-  const fY = 283
-  fill(0, fY-4, W, 18, '#0A1628'); fill(0, 294, W, 3, '#1F4BFF')
-  txt('#64748B'); doc.setFontSize(6.5); doc.setFont('helvetica','normal')
-  doc.text(`Generated by ${BRAND} · GrowthHub Audit · ${date}`, mg, fY+4)
-  txt('#4B7BFF'); doc.setFont('helvetica','bold')
-  doc.text('digitalizen.com', W-mg, fY+4, { align:'right' })
+  // WhatsApp CTA button (drawn as filled rect)
+  const btnY = y + 47
+  fill(mg + 6, btnY, 56, 8, '#25D366')
+  fill(mg + 6 + 59, btnY, 62, 8, '#1F4BFF')
 
+  setEn(7, 'bold'); txt('#FFFFFF')
+  doc.text('WhatsApp: +880 1711-992558', mg + 9, btnY + 5.5)
+  doc.text('digitalizen.com/contact', mg + 68, btnY + 5.5)
+
+  y += 55
+
+  /* ═══════════════════════════════════════════════
+     FOOTER (last page)
+  ═══════════════════════════════════════════════ */
+  const totalPages = doc.getNumberOfPages()
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p)
+    const fY = 286
+    fill(0, fY - 2, W, 14, '#0A1628')
+    fill(0, 295, W, 2, '#1F4BFF')
+    setEn(6.5); txt('#475569')
+    doc.text(
+      `Generated by ${BRAND} \u00b7 GrowthHub Business Audit \u00b7 ${date} \u00b7 Page ${p}/${totalPages}`,
+      mg, fY + 5
+    )
+    setEn(6.5, 'bold'); txt('#4B7BFF')
+    doc.text('digitalizen.com', W - mg, fY + 5, { align:'right' })
+  }
+
+  /* ── Save ── */
   doc.save(`Digitalizen_Business_Health_Report_${new Date().getFullYear()}.pdf`)
 }
 
