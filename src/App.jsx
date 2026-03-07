@@ -14,6 +14,7 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import InstallButton from './components/InstallButton'
 import FreeResources from './components/FreeResources'
+import Access from './components/Access'   // ← new
 
 import GrowthHub from './components/GrowthHub'
 
@@ -25,7 +26,6 @@ function MainLayout() {
       <main>
         <Hero />
         <GrowthHub />
-        
         <Finder />
         <Process />
         <Packages />
@@ -45,8 +45,9 @@ export default function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />} />
+        <Route path="/"               element={<MainLayout />} />
         <Route path="/free-resources" element={<FreeResources />} />
+        <Route path="/access"         element={<Access />} />   {/* ← new */}
       </Routes>
     </HashRouter>
   )

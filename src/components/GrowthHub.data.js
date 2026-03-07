@@ -31,11 +31,86 @@ export const PIXEL = {
   pdfDownload:   (overall)              => pixel('Lead',              { content_name: 'GrowthHub PDF Download', content_category: 'PDF Export', value: overall, currency: 'BDT' }),
 }
 
+/* ─── Journey mode (set by entry screen) ──────────────── */
+export const JOURNEY_MODES = {
+  existing: {
+    key: 'existing',
+    badge: '🏪 বিজনেস চলছে',
+    cta: 'আমার ফ্রি অডিট শুরু করুন',
+    subtext: 'মার্কেটিং, অপারেশনস ও ফাইন্যান্স — তিনটি বিভাগে গভীর বিশ্লেষণ পান।',
+  },
+  new: {
+    key: 'new',
+    badge: '🚀 নতুন শুরু',
+    cta: 'আমার রোডম্যাপ তৈরি করুন',
+    subtext: 'ব্যবসা শুরু করতে কী লাগে — ধাপে ধাপে আপনার জন্য প্ল্যান তৈরি হবে।',
+  },
+}
+
 /* ─── Domains ─────────────────────────────────────────── */
 export const AUDIT_DOMAINS = [
   { key: 'marketing',  label: 'মার্কেটিং',  labelEn: 'Marketing',  color: '#1F4BFF', colorLight: '#EEF2FF', colorMid: '#6385FF', desc: 'অ্যাডস, কনটেন্ট, ব্র্যান্ড ভিজিবিলিটি' },
   { key: 'operations', label: 'অপারেশনস', labelEn: 'Operations', color: '#7C3AED', colorLight: '#F3EFFE', colorMid: '#A78BFA', desc: 'প্রোডাক্ট, ডেলিভারি, টিম' },
   { key: 'finance',    label: 'ফাইন্যান্স',  labelEn: 'Finance',    color: '#059669', colorLight: '#ECFDF5', colorMid: '#34D399', desc: 'ক্যাশফ্লো, প্রফিট, ইনভেস্টমেন্ট' },
+]
+
+/* ─── New-entrepreneur questions (5 questions for 'new' journey) ── */
+export const NEW_BIZ_QUESTIONS = [
+  {
+    id: 'new_1', domain: 'marketing', iconKey: 'target',
+    q: 'আপনি কি ধরনের বিজনেস শুরু করতে চান?',
+    hint: 'সঠিক ক্যাটাগরি জানলে আপনার জন্য সবচেয়ে কার্যকর রোডম্যাপ তৈরি করা সম্ভব।',
+    options: [
+      { value:3, label:'ই-কমার্স / প্রোডাক্ট বিক্রি', sub:'পণ্য কিনে বা তৈরি করে বিক্রি করব' },
+      { value:3, label:'সার্ভিস বিজনেস', sub:'দক্ষতা বা সময় বিক্রি করব (ফ্রিল্যান্স, কনসালটিং)' },
+      { value:2, label:'রেস্টুরেন্ট / ফুড', sub:'খাবার বা পানীয় বিক্রি করব' },
+      { value:2, label:'অন্য কিছু / এখনো নিশ্চিত নই', sub:'আইডিয়া আছে কিন্তু ক্যাটাগরি ঠিক হয়নি' },
+    ],
+  },
+  {
+    id: 'new_2', domain: 'marketing', iconKey: 'users',
+    q: 'আপনার টার্গেট কাস্টমার কারা হবে বলে মনে করেন?',
+    hint: 'যত নির্দিষ্ট টার্গেট, তত কম খরচে বেশি বিক্রি।',
+    options: [
+      { value:1, label:'এখনো ভাবিনি', sub:'কাস্টমার কে হবে সেটা পরিষ্কার না' },
+      { value:2, label:'একটা ধারণা আছে', sub:'বয়স বা এলাকা জানি, বিস্তারিত না' },
+      { value:3, label:'মোটামুটি পরিষ্কার', sub:'তাদের সমস্যা ও চাহিদা বুঝি' },
+      { value:4, label:'খুব পরিষ্কার', sub:'বিস্তারিত কাস্টমার প্রোফাইল আছে' },
+    ],
+  },
+  {
+    id: 'new_3', domain: 'operations', iconKey: 'package',
+    q: 'প্রোডাক্ট বা সার্ভিস কোথা থেকে বা কীভাবে পাবেন?',
+    hint: 'সাপ্লাই চেইন শুরু থেকেই ঠিক না থাকলে পরে বড় সমস্যা হয়।',
+    options: [
+      { value:1, label:'এখনো জানি না', sub:'সোর্স খুঁজছি, নিশ্চিত হইনি' },
+      { value:2, label:'একটা আইডিয়া আছে', sub:'কোথা থেকে পাব ধারণা আছে, চুক্তি নেই' },
+      { value:3, label:'সাপ্লায়ার খুঁজে পেয়েছি', sub:'কথা হয়েছে, কাজ শুরু করতে পারব' },
+      { value:4, label:'সম্পূর্ণ প্রস্তুত', sub:'সাপ্লায়ার/প্রোডাকশন রেডি' },
+    ],
+  },
+  {
+    id: 'new_4', domain: 'finance', iconKey: 'trendingUp',
+    q: 'শুরু করতে কত টাকা বিনিয়োগ করতে পারবেন?',
+    hint: 'বাজেট জানলে সবচেয়ে স্মার্ট স্টার্টিং পয়েন্ট বের করা সম্ভব।',
+    options: [
+      { value:1, label:'৫,০০০ টাকার কম', sub:'খুব সীমিত বাজেট, জিরো থেকে শুরু' },
+      { value:2, label:'৫,০০০ – ৩০,০০০', sub:'ছোট বাজেটে শুরু করতে চাই' },
+      { value:3, label:'৩০,০০০ – ১,০০,০০০', sub:'মাঝারি বিনিয়োগ করতে পারব' },
+      { value:4, label:'১ লাখের বেশি', sub:'ভালো ইনভেস্টমেন্ট করতে প্রস্তুত' },
+    ],
+  },
+  {
+    id: 'new_5', domain: 'finance', iconKey: 'calendarClock',
+    q: 'কতদিনের মধ্যে প্রথম বিক্রি করতে চান?',
+    hint: 'একটা ডেডলাইন থাকলে পরিকল্পনা অনেক বেশি কার্যকর হয়।',
+    options: [
+      { value:1, label:'১ বছর বা তার বেশি সময় আছে', sub:'ধীরে ধীরে গুছিয়ে শুরু করব' },
+      { value:2, label:'৩ – ৬ মাসের মধ্যে', sub:'পরিকল্পনা করছি, শীঘ্রই শুরু করব' },
+      { value:3, label:'১ – ৩ মাসের মধ্যে', sub:'দ্রুত শুরু করতে চাই' },
+      { value:4, label:'এখনই শুরু করতে চাই', sub:'আর দেরি করতে চাই না' },
+    ],
+  },
 ]
 
 /* ─── Questions ───────────────────────────────────────── */
@@ -235,15 +310,27 @@ export function getBandKey(pct) {
 }
 
 /* ─── Scoring engine ─────────────────────────────────── */
-export function calculateScores(answers) {
+export function calculateScores(answers, questions) {
+  /* questions defaults to AUDIT_QUESTIONS; pass NEW_BIZ_QUESTIONS for 'new' journey */
+  const qs = questions || AUDIT_QUESTIONS
   const domains = ['marketing', 'operations', 'finance']
   const domainScores = {}
   domains.forEach(d => {
-    const qs = AUDIT_QUESTIONS.filter(q => q.domain === d)
-    const earned = qs.reduce((acc, q) => acc + (answers[q.id] ?? 0), 0)
-    domainScores[d] = Math.round((earned / (qs.length * 4)) * 100)
+    const dqs = qs.filter(q => q.domain === d)
+    if (dqs.length === 0) {
+      domainScores[d] = 0
+    } else {
+      const earned = dqs.reduce((acc, q) => acc + (answers[q.id] ?? 0), 0)
+      domainScores[d] = Math.round((earned / (dqs.length * 4)) * 100)
+    }
   })
-  const overall = Math.round((domainScores.marketing + domainScores.operations + domainScores.finance) / 3)
+  const scored = domains.filter(d => {
+    const dqs = qs.filter(q => q.domain === d)
+    return dqs.length > 0
+  })
+  const overall = scored.length
+    ? Math.round(scored.reduce((acc, d) => acc + domainScores[d], 0) / scored.length)
+    : 0
   return { domainScores, overall }
 }
 
@@ -280,8 +367,9 @@ export function getDomainInsights(domainScores) {
   })
 }
 
-export function getTopPriorityActions(answers) {
-  return [...AUDIT_QUESTIONS]
+export function getTopPriorityActions(answers, questions) {
+  const qs = questions || AUDIT_QUESTIONS
+  return [...qs]
     .map(q => ({ ...q, score: answers[q.id] ?? 0, gap: 4 - (answers[q.id] ?? 0) }))
     .sort((a, b) => b.gap - a.gap).slice(0, 3)
 }
@@ -342,4 +430,4 @@ export function buildWaMessage(domainScores, overall, pkg, domainInsights) {
   ].join('\n')
 }
 
-export const INIT_STATE = { phase: 'entry', currentQ: 0, answers: {} }
+export const INIT_STATE = { phase: 'entry', currentQ: 0, answers: {}, journeyMode: null }
