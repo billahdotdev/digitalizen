@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import './Access.css'
 
 const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me'
+const DIGITALIZEN_FB_PROFILE_URL = 'https://www.facebook.com/digitalizen'
 const WA_URL         = 'https://wa.me/8801711992558'
 const AGENCY_FB_NAME = 'Masum Billah'
 
@@ -21,7 +22,7 @@ const STEPS = [
       </svg>
     ),
     title: 'নাম কপি করুন',
-    desc: 'অ্যাক্সেস দেওয়ার সময় সহজে খুঁজে পেতে নামটি কপি করে রাখুন, পরে কাজে লাগবে।',
+    desc: 'অ্যাক্সেস দেওয়ার সময় সহজে খুঁজে পেতে নামটি কপি করে রাখুন, পরে কাজে লাগবে।',
     copyName: true,
   },
   {
@@ -34,7 +35,7 @@ const STEPS = [
       </svg>
     ),
     title: 'ফ্রেন্ড রিকোয়েস্ট পাঠান',
-    desc: 'নিচের বাটনে ক্লিক করে আমাদের ফেসবুক প্রোফাইলে যান এবং ফ্রেন্ড রিকোয়েস্ট দেন। তাহলে অ্যাক্সেস দেওয়ার সময় প্রোফাইলটি খুঁজে পেতে সুবিধা হবে।',
+    desc: 'নিচের বাটনে ক্লিক করে আমাদের প্রোফাইলে ফ্রেন্ড রিকোয়েস্ট দিন। এতে অ্যাক্সেস দেওয়ার সময় প্রোফাইলটি সহজে খুঁজে পাবেন।',
     fbCta: true,
   },
   {
@@ -45,8 +46,12 @@ const STEPS = [
         <path d="M8 21h8M12 17v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: 'অ্যাক্সেস দেওয়ার প্রক্রিয়া শুরু করুন',
-    desc: 'ফেসবুক প্রোফাইল থাকলে পেজ এ সুইচ করুন → উপরে ডানদিকের প্রোফাইল আইকনে ক্লিক করুন → Settings & Privacy → Settings → একটু নিচে স্ক্রল করে Page Access খুঁজুন (অথবা New Pages Experience) অপশনে ক্লিক করুন।',
+    title: 'পেজ অ্যাক্সেস অপশনে যান',
+    bullets: [
+      'প্রোফাইলে থাকলে পেজে সুইচ করুন।',
+      'পেজের Settings (না পেলে Settings & Privacy) এ গিয়ে উপরে সার্চ বারে Page Access লিখে সার্চ করুন এবং',
+      'Page Access (চাবি) অপশনটিতে ক্লিক করুন।',
+    ],
   },
   {
     num: '০৪',
@@ -56,8 +61,15 @@ const STEPS = [
         <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
-    title: 'অ্যাক্সেস (Role) সেটআপ করুন',
-    desc: 'কপি করা নামটি সার্চ বক্সে পেস্ট করে আমাদের প্রোফাইলটি খুঁজে বের করুন। এরপর "Advertiser" (Ads, Content & Insights) অথবা "Admin" হিসেবে অ্যাক্সেস অ্যাসাইন করুন।',
+    title: 'অ্যাক্সেস কনফার্ম করুন',
+    bullets: [
+      'প্রথম Add New',
+      'Next',
+      'সার্চ বক্সে প্রথমেই কপি করা নামটি পেস্ট করুন। আমাদের প্রোফাইলটি সিলেক্ট করে',
+      'Full Control অন করুন এবং',
+      'Give Access বাটনে ক্লিক করে ইনভাইটেশনটি পাঠিয়ে দিন।',
+    ],
+    note: 'পেজ এর সেটিং, পোস্ট এডিটিং বা আলাদা হেল্প না লাগলে ফুল কন্ট্রোল দিতে হবে না।',
   },
   {
     num: '০৫',
@@ -67,7 +79,7 @@ const STEPS = [
       </svg>
     ),
     title: 'আমাদেরকে জানান',
-    desc: 'অ্যাক্সেস দেওয়া হয়ে গেলে অথবা কোনো সমস্যা হল WhatsApp-এ একটি মেসেজ দিন। আমরা দ্রুত ব্যবস্থা নেব।',
+    desc: 'অ্যাক্সেস দেওয়া হয়ে গেলে বা কোনো সমস্যা হলে সরাসরি আমাদের WhatsApp এ একটি মেসেজ দিন।',
     waCta: true,
   },
 ]
@@ -91,7 +103,7 @@ export default function Access() {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
             <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          DIGITALIZEN (মেইন সাইট)
+          digitalizen
         </Link>
         <span className="ac-topbar-chip">
           <span className="ac-chip-dot" />
@@ -120,16 +132,16 @@ export default function Access() {
             যুক্ত হতে পেরে আনন্দিত। ধন্যবাদ!
           </h1>
           <p className="ac-hero-sub">
-            ভালো কনটেন্ট এবং সঠিক বাজেট থাকলে, <br />
+            ভালো কনটেন্ট এবং সঠিক বাজেট থাকলে,{' '}
             <strong>DIGITALIZEN</strong>{' '}
-  সেরা রেজাল্ট নিশ্চিত করে।
+            সেরা রেজাল্ট নিশ্চিত করে।
           </p>
 
           {/* trust pills */}
           <div className="ac-hero-pills" aria-hidden="true">
             <span>🛡️ পেজ নিরাপদ</span>
             <span>🔒 নো পাসওয়ার্ড</span>
-            <span>⚡ দ্রুত শুরু</span>
+            <span>⚡ দ্রুত কাজ শুরু</span>
           </div>
         </div>
       </section>
@@ -142,7 +154,7 @@ export default function Access() {
         </div>
 
         <ol className="ac-steps" aria-label="Access দেওয়ার ধাপসমূহ">
-          {STEPS.map(({ num, icon, title, desc, copyName, fbCta, waCta }, i) => (
+          {STEPS.map(({ num, icon, title, desc, bullets, note, copyName, fbCta, waCta }, i) => (
             <li key={num} className="ac-step">
 
               {/* Spine */}
@@ -156,7 +168,24 @@ export default function Access() {
                 <div className="ac-card-icon">{icon}</div>
                 <div className="ac-card-body">
                   <h3 className="ac-card-title">{title}</h3>
-                  <p className="ac-card-desc">{desc}</p>
+
+                  {/* plain description */}
+                  {desc && <p className="ac-card-desc">{desc}</p>}
+
+                  {/* bullet list (steps 03, 04) */}
+                  {bullets && (
+                    <ul className="ac-card-bullets">
+                      {bullets.map((b, bi) => (
+                        <li key={bi}>
+                          <span className="ac-bullet-dot" aria-hidden="true" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* asterisk note (step 04) */}
+                  {note && <p className="ac-card-note">*{note}</p>}
 
                   {/* Step 01 — copy name widget */}
                   {copyName && (
@@ -250,9 +279,9 @@ export default function Access() {
       <footer className="ac-footer">
         <div className="ac-footer-inner">
           <div className="ac-footer-row">
-            <span className="ac-footer-brand">DIGITALIZEN | ডিজিটালাইজেন </span>
+            <span className="ac-footer-brand">digitalizen</span>
             <div className="ac-footer-links">
-              <a href={FB_PROFILE_URL} target="_blank" rel="noopener noreferrer">
+              <a href={DIGITALIZEN_FB_PROFILE_URL} target="_blank" rel="noopener noreferrer">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
                 </svg>
@@ -266,10 +295,7 @@ export default function Access() {
               </a>
             </div>
           </div>
-          <p className="ac-footer-meta">
-            Meta Ads Expert · Dhaka, Bangladesh <br />
-            Social Media and Digital Marketing Agency
-          </p>
+          <p className="ac-footer-meta">Meta Ads Expert · Social Media and Digital Marketing Agency</p>
           <p className="ac-footer-copy">© 2026 Digitalizen. All rights reserved.</p>
         </div>
       </footer>

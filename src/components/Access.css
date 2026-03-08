@@ -302,7 +302,46 @@
   line-height: 1.65;
 }
 
-/* ── Copy block (step 01) ── */
+/* ── Bullet list (steps 03, 04) ── */
+.ac-card-bullets {
+  list-style: none;
+  margin-top: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ac-card-bullets li {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: .84rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.ac-bullet-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--p);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* ── Asterisk note (step 04) ── */
+.ac-card-note {
+  margin-top: 10px;
+  font-size: .78rem;
+  color: #9aa3b0;
+  line-height: 1.6;
+  padding-left: 2px;
+  border-left: 2px solid var(--border);
+  padding-left: 8px;
+}
+
+
 .ac-copy-block {
   margin-top: 12px;
   display: flex;
