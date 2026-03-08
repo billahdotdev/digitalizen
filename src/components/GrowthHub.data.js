@@ -55,60 +55,61 @@ export const AUDIT_DOMAINS = [
 ]
 
 /* ─── New-entrepreneur questions (5 questions for 'new' journey) ── */
+/* Based on the New Business Roadmap: branding → sourcing → pricing → marketing → expert */
 export const NEW_BIZ_QUESTIONS = [
   {
     id: 'new_1', domain: 'marketing', iconKey: 'target',
-    q: 'আপনি কি ধরনের বিজনেস শুরু করতে চান?',
-    hint: 'সঠিক ক্যাটাগরি জানলে আপনার জন্য সবচেয়ে কার্যকর রোডম্যাপ তৈরি করা সম্ভব।',
+    q: 'আপনার বিজনেসের নাম ও লোগো কি ফাইনাল করেছেন?',
+    hint: 'প্রফেশনাল ব্র্যান্ড আইডেন্টিটি না থাকলে কাস্টমার বিশ্বাস করবে না — বিক্রি কমবে।',
     options: [
-      { value:3, label:'ই-কমার্স / প্রোডাক্ট বিক্রি', sub:'পণ্য কিনে বা তৈরি করে বিক্রি করব' },
-      { value:3, label:'সার্ভিস বিজনেস', sub:'দক্ষতা বা সময় বিক্রি করব (ফ্রিল্যান্স, কনসালটিং)' },
-      { value:2, label:'রেস্টুরেন্ট / ফুড', sub:'খাবার বা পানীয় বিক্রি করব' },
-      { value:2, label:'অন্য কিছু / এখনো নিশ্চিত নই', sub:'আইডিয়া আছে কিন্তু ক্যাটাগরি ঠিক হয়নি' },
+      { value:1, label:'নাম ভেবেছি কিন্তু লোগো নেই', sub:'শুধু আইডিয়া আছে, ব্র্যান্ড তৈরি হয়নি' },
+      { value:2, label:'ক্যানভা দিয়ে একটা বানিয়েছি', sub:'লোগো আছে কিন্তু প্রফেশনাল না' },
+      { value:1, label:'এখনো কিছুই করিনি', sub:'ব্র্যান্ডিং নিয়ে ভাবিনি' },
+      { value:4, label:'প্রফেশনাল ব্র্যান্ড গাইড রেডি', sub:'লোগো, কালার, ফন্ট সব গুছানো' },
     ],
   },
   {
-    id: 'new_2', domain: 'marketing', iconKey: 'users',
-    q: 'আপনার টার্গেট কাস্টমার কারা হবে বলে মনে করেন?',
-    hint: 'যত নির্দিষ্ট টার্গেট, তত কম খরচে বেশি বিক্রি।',
+    id: 'new_2', domain: 'operations', iconKey: 'package',
+    q: 'আপনার প্রোডাক্ট বা সার্ভিস কোথা থেকে আসবে তা কি নিশ্চিত?',
+    hint: 'সোর্সিং ও সাপ্লাই চেইন শুরু থেকেই না ঠিক করলে পরে বড় সমস্যা হয়।',
     options: [
-      { value:1, label:'এখনো ভাবিনি', sub:'কাস্টমার কে হবে সেটা পরিষ্কার না' },
-      { value:2, label:'একটা ধারণা আছে', sub:'বয়স বা এলাকা জানি, বিস্তারিত না' },
-      { value:3, label:'মোটামুটি পরিষ্কার', sub:'তাদের সমস্যা ও চাহিদা বুঝি' },
-      { value:4, label:'খুব পরিষ্কার', sub:'বিস্তারিত কাস্টমার প্রোফাইল আছে' },
+      { value:1, label:'এখনো সোর্স খুঁজছি', sub:'কোথা থেকে পাব এখনো জানি না' },
+      { value:2, label:'অনলাইনে কিছু সোর্স দেখেছি', sub:'ধারণা আছে কিন্তু নিশ্চিত না' },
+      { value:3, label:'সাপ্লায়ারের সাথে কথা হয়েছে', sub:'যোগাযোগ হয়েছে, চুক্তি হয়নি' },
+      { value:4, label:'সোর্সিং ও সাপ্লাই চেইন রেডি', sub:'সম্পূর্ণ প্রস্তুত, কাজ শুরু করতে পারব' },
     ],
   },
   {
-    id: 'new_3', domain: 'operations', iconKey: 'package',
-    q: 'প্রোডাক্ট বা সার্ভিস কোথা থেকে বা কীভাবে পাবেন?',
-    hint: 'সাপ্লাই চেইন শুরু থেকেই ঠিক না থাকলে পরে বড় সমস্যা হয়।',
+    id: 'new_3', domain: 'finance', iconKey: 'circlePercent',
+    q: 'আপনি প্রোডাক্টের দাম কীভাবে নির্ধারণ করেছেন?',
+    hint: 'ভুল প্রাইসিং মানেই লোকসান — শিপিং, অ্যাড কস্ট ও লস হিসাব না করলে বিপদ।',
     options: [
-      { value:1, label:'এখনো জানি না', sub:'সোর্স খুঁজছি, নিশ্চিত হইনি' },
-      { value:2, label:'একটা আইডিয়া আছে', sub:'কোথা থেকে পাব ধারণা আছে, চুক্তি নেই' },
-      { value:3, label:'সাপ্লায়ার খুঁজে পেয়েছি', sub:'কথা হয়েছে, কাজ শুরু করতে পারব' },
-      { value:4, label:'সম্পূর্ণ প্রস্তুত', sub:'সাপ্লায়ার/প্রোডাকশন রেডি' },
+      { value:1, label:'আন্দাজে বা কম্পিটিটর দেখে', sub:'হিসাব নেই, অনুমানে দাম ঠিক করেছি' },
+      { value:2, label:'কেনা দামের সাথে লাভ যোগ করে', sub:'সব কস্ট হিসাব করিনি' },
+      { value:3, label:'শিপিং ও অ্যাড কস্ট হিসাব করে', sub:'মোটামুটি সব হিসাব করেছি' },
+      { value:4, label:'সম্পূর্ণ ইউনিট ইকোনমিক্স করে', sub:'প্রতিটি খরচ ও মার্জিন ক্যালকুলেট করা' },
     ],
   },
   {
-    id: 'new_4', domain: 'finance', iconKey: 'trendingUp',
-    q: 'শুরু করতে কত টাকা বিনিয়োগ করতে পারবেন?',
-    hint: 'বাজেট জানলে সবচেয়ে স্মার্ট স্টার্টিং পয়েন্ট বের করা সম্ভব।',
+    id: 'new_4', domain: 'marketing', iconKey: 'smartphone',
+    q: 'ফেসবুক পেজ বা সোশ্যাল মিডিয়া সেটআপ কি প্রফেশনাল?',
+    hint: 'প্রথম দেখায় কাস্টমার যদি বিশ্বাস না পায়, অ্যাড দিলেও কেউ কিনবে না।',
     options: [
-      { value:1, label:'৫,০০০ টাকার কম', sub:'খুব সীমিত বাজেট, জিরো থেকে শুরু' },
-      { value:2, label:'৫,০০০ – ৩০,০০০', sub:'ছোট বাজেটে শুরু করতে চাই' },
-      { value:3, label:'৩০,০০০ – ১,০০,০০০', sub:'মাঝারি বিনিয়োগ করতে পারব' },
-      { value:4, label:'১ লাখের বেশি', sub:'ভালো ইনভেস্টমেন্ট করতে প্রস্তুত' },
+      { value:1, label:'এখনো পেজ খুলিনি', sub:'সোশ্যাল মিডিয়া উপস্থিতি নেই' },
+      { value:2, label:'পেজ আছে কিন্তু অসম্পূর্ণ', sub:'প্রোফাইল ও পোস্ট পূর্ণ নয়' },
+      { value:3, label:'পেজ রেডি কিন্তু অ্যাড জানি না', sub:'পেজ আছে, পেইড মার্কেটিং শুরু হয়নি' },
+      { value:4, label:'অপ্টিমাইজড সোশ্যাল প্রেজেন্স', sub:'সম্পূর্ণ প্রোফেশনাল, অ্যাড চলছে' },
     ],
   },
   {
-    id: 'new_5', domain: 'finance', iconKey: 'calendarClock',
-    q: 'কতদিনের মধ্যে প্রথম বিক্রি করতে চান?',
-    hint: 'একটা ডেডলাইন থাকলে পরিকল্পনা অনেক বেশি কার্যকর হয়।',
+    id: 'new_5', domain: 'marketing', iconKey: 'users',
+    q: 'আপনার সাথে কি কোনো ডিজিটাল মার্কেটিং এক্সপার্ট বা এজেন্সি আছে?',
+    hint: 'একা শুরু করলে বাজেটের ৮০% নষ্ট হওয়ার ঝুঁকি থাকে — প্রফেশনাল গাইডেন্স ছাড়া।',
     options: [
-      { value:1, label:'১ বছর বা তার বেশি সময় আছে', sub:'ধীরে ধীরে গুছিয়ে শুরু করব' },
-      { value:2, label:'৩ – ৬ মাসের মধ্যে', sub:'পরিকল্পনা করছি, শীঘ্রই শুরু করব' },
-      { value:3, label:'১ – ৩ মাসের মধ্যে', sub:'দ্রুত শুরু করতে চাই' },
-      { value:4, label:'এখনই শুরু করতে চাই', sub:'আর দেরি করতে চাই না' },
+      { value:1, label:'সব একা করার চিন্তা করছি', sub:'এক্সপার্ট সাহায্য নেওয়ার পরিকল্পনা নেই' },
+      { value:2, label:'ইউটিউব দেখে শিখছি', sub:'ফ্রি রিসোর্স থেকে শিখছি' },
+      { value:3, label:'পরিচিত কেউ সাহায্য করছে', sub:'অনভিজ্ঞ কেউ গাইড করছে' },
+      { value:4, label:'প্রফেশনাল টিম/এজেন্সি সাথে আছে', sub:'অভিজ্ঞ পার্টনার রেডি আছে' },
     ],
   },
 ]
@@ -385,7 +386,80 @@ export function recommendPackage(overallScore) {
   return PACKAGES.find(p => overallScore >= p.forScoreRange[0] && overallScore <= p.forScoreRange[1]) || PACKAGES[1]
 }
 
-/* ─── WhatsApp message ───────────────────────────────── */
+/* ─── New Biz Result Messages (from Bengali doc) ─────── */
+export const NEW_BIZ_RESULT_MESSAGES = {
+  danger:   { // 0-40%
+    headline: 'আপনার আইডিয়া চমৎকার, কিন্তু ভিত্তি খুব দুর্বল',
+    body: 'একা শুরু করলে বাজেটের ৮০% নষ্ট হওয়ার সম্ভাবনা আছে। ডিজিটালজেনের "ফাউন্ডার প্যাড" প্যাকেজটি আপনার জন্য মাস্ট।',
+    urgencyColor: '#DC2626',
+    urgencyBg: '#FEF2F2',
+    cta: 'ফ্রি ১:১ কনসালটেশন বুক করুন',
+    risk: 'উচ্চ ঝুঁকি',
+  },
+  developing: { // 41-70%
+    headline: 'আপনি সঠিক পথেই আছেন — টেকনিক্যাল গ্যাপ আছে',
+    body: 'প্রফেশনাল টাচ পেলে আপনি প্রথম মাসেই সেল জেনারেট করতে পারবেন। আপনার জন্য একটি ফ্রি ১:১ কনসালটেশন বুক করুন।',
+    urgencyColor: '#D97706',
+    urgencyBg: '#FFFBEB',
+    cta: 'আমার কাস্টম লঞ্চ প্ল্যান পেতে যোগাযোগ করুন',
+    risk: 'মাঝারি ঝুঁকি',
+  },
+  ready: { // 71-100%
+    headline: 'আপনি লঞ্চের জন্য প্রস্তুত!',
+    body: 'আপনার ফাউন্ডেশন শক্তিশালী। এখন সঠিক এক্সপার্টের সাথে স্কেল করার সময়।',
+    urgencyColor: '#059669',
+    urgencyBg: '#ECFDF5',
+    cta: 'গ্রোথ স্ট্র্যাটেজি নিয়ে আলোচনা করুন',
+    risk: 'কম ঝুঁকি',
+  },
+}
+
+/* ─── Running Business Result Messages ───────────────── */
+export const RUNNING_BIZ_RESULT_MESSAGES = {
+  critical: { // 0-40%
+    headline: 'আপনার বিজনেসে প্রচুর "লিকেজ" আছে',
+    body: 'বিজ্ঞাপনের টাকা অপচয় হচ্ছে। অবিলম্বে প্রফেশনাল অডিট দরকার।',
+    urgencyColor: '#DC2626',
+    urgencyBg: '#FEF2F2',
+    cta: 'আপনার অ্যাডের ফ্রি অডিট রিপোর্ট পান',
+  },
+  average: { // 41-80%
+    headline: 'আপনি ব্যবসা বড় করতে পারছেন না',
+    body: 'কোনো "গ্রোথ ফানেল" নেই। ডিজিটালজেনের মান্থলি ম্যানেজমেন্ট আপনার সেলস ২-৩ গুণ বাড়াতে পারে।',
+    urgencyColor: '#D97706',
+    urgencyBg: '#FFFBEB',
+    cta: 'ফ্রি অডিট রিপোর্ট পেতে কথা বলুন',
+  },
+  strong: { // 81-100%
+    headline: 'আপনার বিজনেস স্কেলের জন্য প্রস্তুত!',
+    body: 'সিস্টেম শক্তিশালী। এখন মাল্টি-চ্যানেল এক্সপ্যানশন ও ব্র্যান্ড বিল্ডিংয়ের সময়।',
+    urgencyColor: '#059669',
+    urgencyBg: '#ECFDF5',
+    cta: 'স্কেলিং স্ট্র্যাটেজি নিয়ে আলোচনা করুন',
+  },
+}
+
+export function getResultMessage(overall, isNew) {
+  if (isNew) {
+    if (overall <= 40) return NEW_BIZ_RESULT_MESSAGES.danger
+    if (overall <= 70) return NEW_BIZ_RESULT_MESSAGES.developing
+    return NEW_BIZ_RESULT_MESSAGES.ready
+  } else {
+    if (overall <= 40) return RUNNING_BIZ_RESULT_MESSAGES.critical
+    if (overall <= 80) return RUNNING_BIZ_RESULT_MESSAGES.average
+    return RUNNING_BIZ_RESULT_MESSAGES.strong
+  }
+}
+
+/* ─── Discount Coupon (PDF Hook) ─────────────────────── */
+export const DISCOUNT_COUPON = {
+  code: 'AUDIT20',
+  discount: '২০% ছাড়',
+  validity: '৭২ ঘণ্টা',
+  description: 'অডিট সম্পন্নকারীদের জন্য বিশেষ অফার',
+}
+
+
 export function buildWaMessage(domainScores, overall, pkg, domainInsights) {
   const band   = getBand(overall)
   const bar    = pct => '█'.repeat(Math.round(pct / 10)) + '░'.repeat(10 - Math.round(pct / 10)) + ` ${pct}%`

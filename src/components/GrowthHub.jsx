@@ -14,6 +14,7 @@ import {
   calculateScores, getBand,
   getDomainInsights, getTopPriorityActions,
   recommendPackage,
+  getResultMessage, DISCOUNT_COUPON,
   INIT_STATE,
 } from './GrowthHub.data.js'
 
@@ -818,9 +819,9 @@ function PhaseEntry({ onStart }) {
       <div className="gh-entry__stats">
         {[
           { n:'৩,৬০০+', l:'ক্লায়েন্ট' },
-          { n:'৯+',     l:'বছর' },
+          { n:'৯+',     l:'বছর অভিজ্ঞতা' },
           { n:'৩৪০%',  l:'গড় ROAS' },
-          { n:'২৩,০০০+', l:'ক্যাম্পেইন' },
+          { n:'৮০%',   l:'বাজেট বাঁচানো' },
         ].map(s => (
           <div key={s.l} className="gh-stat">
             <span className="gh-stat__n">{s.n}</span>
@@ -1101,6 +1102,7 @@ function PhaseResult({ state, onRestart }) {
   const domainInsights = getDomainInsights(domainScores)
   const topActions     = getTopPriorityActions(answers, questions)
   const pkg            = recommendPackage(overall)
+  const resultMsg      = getResultMessage(overall, isNew)
   const pkgMsg = `হ্যালো Digitalizen! আমার বিজনেস অডিট স্কোর ${overall}% (${overallBand.label})। ${pkg.waName} প্যাকেজ নিয়ে কথা বলতে চাই।`
 
   /* ── All state at top ─────────────────────────────────── */
@@ -1219,7 +1221,7 @@ function PhaseResult({ state, onRestart }) {
           <span className="gh-newbiz-banner__icon">🚀</span>
           <div>
             <div className="gh-newbiz-banner__title">আপনার লঞ্চ রেডিনেস স্কোর</div>
-            <div className="gh-newbiz-banner__sub">আপনার প্রস্তুতির ভিত্তিতে একটি কাস্টম শুরুর পরিকল্পনা তৈরি হয়েছে। নিচে দেখুন কোথা থেকে শুরু করবেন।</div>
+            <div className="gh-newbiz-banner__sub">আইডিয়া থাকাই যথেষ্ট নয় — প্রফেশনাল গাইডেন্স ছাড়া বাজেটের ৮০% নষ্ট হওয়ার ঝুঁকি ১০০%। নিচে আপনার রিপোর্ট দেখুন।</div>
           </div>
         </div>
       )}
@@ -1392,11 +1394,16 @@ function PhaseResult({ state, onRestart }) {
               {overallBand.label}
             </div>
             <p className="gh-result-hero__desc">
-              {overall<=30 && 'আপনার বিজনেসে গুরুত্বপূর্ণ পরিবর্তন দরকার।'}
-              {overall>30&&overall<=50 && 'ভালো ফাউন্ডেশন আছে, গ্যাপগুলো বন্ধ করতে হবে।'}
-              {overall>50&&overall<=70 && 'গড় মানের বিজনেস। উন্নতির স্পষ্ট সুযোগ আছে।'}
-              {overall>70&&overall<=85 && 'শক্তিশালী বিজনেস! স্কেল করার সঠিক সময়।'}
-              {overall>85 && 'অসাধারণ! আপনার বিজনেস এলিট লেভেলে আছে।'}
+              {isNew ? (
+                overall<=40 ? 'ভিত্তি দুর্বল। একা শুরু করলে বাজেটের ৮০% নষ্ট হওয়ার ঝুঁকি আছে।' :
+                overall<=70 ? 'সঠিক পথে আছেন। প্রফেশনাল টাচ পেলে প্রথম মাসেই বিক্রি সম্ভব।' :
+                'লঞ্চের জন্য প্রস্তুত! সঠিক এক্সপার্টের সাথে স্কেল করুন।'
+              ) : (
+                overall<=40 ? 'বিজ্ঞাপনে টাকা অপচয় হচ্ছে। অবিলম্বে প্রফেশনাল অডিট দরকার।' :
+                overall<=70 ? 'সারভাইভাল মোডে আছেন। গ্রোথ ফানেল ছাড়া স্কেলিং সম্ভব না।' :
+                overall<=85 ? 'শক্তিশালী বিজনেস! মাল্টি-চ্যানেল এক্সপ্যানশনের সময়।' :
+                'অসাধারণ! মার্কেট লিডার হওয়ার পথে আছেন।'
+              )}
             </p>
           </div>
         </div>
@@ -1439,6 +1446,48 @@ function PhaseResult({ state, onRestart }) {
           <WaIcon size={14} />
           পরামর্শ নিন
         </a>
+      </div>
+
+      {/* ── Expert Verdict (Psychological Trigger) ──────── */}
+      <div className="gh-expert-verdict" style={{ '--vc': resultMsg.urgencyColor, '--vbg': resultMsg.urgencyBg }}>
+        <div className="gh-expert-verdict__icon" aria-hidden="true">
+          {overall <= 40 ? <AlertTriangle size={18} strokeWidth={2} /> : overall <= 70 ? <TrendingUp size={18} strokeWidth={2} /> : <Award size={18} strokeWidth={2} />}
+        </div>
+        <div className="gh-expert-verdict__body">
+          <p className="gh-expert-verdict__label">
+            <span className="gh-expert-verdict__badge">বিশেষজ্ঞ মতামত</span>
+            {resultMsg.risk && <span className="gh-expert-verdict__risk" style={{ color: resultMsg.urgencyColor, background: resultMsg.urgencyBg }}>{resultMsg.risk}</span>}
+          </p>
+          <p className="gh-expert-verdict__headline">{resultMsg.headline}</p>
+          <p className="gh-expert-verdict__text">{resultMsg.body}</p>
+          <a href={`https://wa.me/${WA}?text=${encodeURIComponent(resultMsg.cta + ' — স্কোর: ' + overall + '%')}`}
+            target="_blank" rel="noopener noreferrer"
+            className="gh-expert-verdict__cta"
+            onClick={() => PIXEL.pkgInquiry('Expert CTA', overall)}>
+            <WaIcon size={13} />
+            {resultMsg.cta}
+            <ArrowRight size={12} strokeWidth={2.5} />
+          </a>
+        </div>
+      </div>
+
+      {/* ── Discount Coupon (PDF Hook) ───────────────────── */}
+      <div className="gh-coupon" role="note" aria-label="বিশেষ ছাড়">
+        <div className="gh-coupon__left">
+          <p className="gh-coupon__tag">অডিট সম্পন্নকারীদের জন্য বিশেষ অফার</p>
+          <p className="gh-coupon__discount">{DISCOUNT_COUPON.discount}</p>
+          <p className="gh-coupon__validity">মেয়াদ: {DISCOUNT_COUPON.validity}</p>
+        </div>
+        <div className="gh-coupon__divider" aria-hidden="true">
+          <div className="gh-coupon__notch gh-coupon__notch--top" />
+          <div className="gh-coupon__line" />
+          <div className="gh-coupon__notch gh-coupon__notch--bot" />
+        </div>
+        <div className="gh-coupon__right">
+          <p className="gh-coupon__code-lbl">কুপন কোড</p>
+          <p className="gh-coupon__code">{DISCOUNT_COUPON.code}</p>
+          <p className="gh-coupon__use">WhatsApp-এ কথা বলার সময় ব্যবহার করুন</p>
+        </div>
       </div>
 
       {/* ── Tabs ────────────────────────────────────────── */}
