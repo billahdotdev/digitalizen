@@ -21,6 +21,7 @@ import Wellness from './components/wellness/Wellness'
 import Clothing from './components/clothing/Clothing'
 import Personal from './components/personal/Personal'
 import Personal2 from './components/personal2/Personal2'
+import Beauty2 from './components/beauty2/Beauty2'
 
 
 import GrowthHub from './components/GrowthHub'
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="/access"         element={<Access />} />   {/* ← new */}
         
         <Route path="/beauty" element={<Beauty />} />
+        <Route path="/beauty2" element={<Beauty2 />} />
         <Route path="/wellness" element={<Wellness />} />
         <Route path="/clothing" element={<Clothing />} />
         <Route path="/personal" element={<Personal />} />
