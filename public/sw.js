@@ -1,5 +1,6 @@
-const CACHE_NAME = "digitalizen-v1.02"; // প্রতিবার নতুন build হলে version পরিবর্তন করুন
-const urlsToCache = ["/", "/#/free-resources"];
+const CACHE_NAME = "digitalizen-v1.03"; // প্রতিবার নতুন build হলে version পরিবর্তন করুন
+const urlsToCache = ["/", "/#/free-resources", "/#/access"];
+
 
 // Install event
 self.addEventListener("install", (event) => {
