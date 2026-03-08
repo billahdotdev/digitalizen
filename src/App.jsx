@@ -15,6 +15,9 @@ import Footer from './components/Footer'
 import InstallButton from './components/InstallButton'
 import FreeResources from './components/FreeResources'
 import Access from './components/Access'   // ← new
+import Beauty from './components/beauty/Beauty'
+import Wellness from './components/wellness/Wellness'
+
 
 import GrowthHub from './components/GrowthHub'
 
@@ -48,6 +51,9 @@ export default function App() {
         <Route path="/"               element={<MainLayout />} />
         <Route path="/free-resources" element={<FreeResources />} />
         <Route path="/access"         element={<Access />} />   {/* ← new */}
+        
+        <Route path="/beauty" element={<Beauty />} />
+        <Route path="/wellness" element={<Wellness />} />
       </Routes>
     </HashRouter>
   )
