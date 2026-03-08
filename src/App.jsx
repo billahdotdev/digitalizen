@@ -18,6 +18,8 @@ import Access from './components/Access'   // ← new
 import Beauty from './components/beauty/Beauty'
 import Wellness from './components/wellness/Wellness'
 import Clothing from './components/clothing/Clothing'
+import Personal from './components/personal/personal'
+import Personall from './components/personall/personall'
 
 
 import GrowthHub from './components/GrowthHub'
@@ -56,6 +58,8 @@ export default function App() {
         <Route path="/beauty" element={<Beauty />} />
         <Route path="/wellness" element={<Wellness />} />
         <Route path="/clothing" element={<Clothing />} />
+        <Route path="/personal" element={<Personal />} />
+        <Route path="/personall" element={<Personall />} />
       </Routes>
     </HashRouter>
   )
