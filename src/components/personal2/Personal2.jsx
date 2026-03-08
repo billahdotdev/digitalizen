@@ -17,8 +17,8 @@
  */
 
 import { useState, useEffect, useRef } from "react";
-import "./Personall.css";
-import { PRODUCTS, STORE } from "./Personall.data";
+import "./Personal2.css";
+import { PRODUCTS, STORE } from "./Personal2.data";
 
 /* ══════════════════════════════════════
    SVG ICONS — all inline, zero deps

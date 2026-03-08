@@ -1,3 +1,4 @@
+/* If you are here to try and optimize this code, turn back now. Hours wasted: amount */
 import './App.css'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import Nav from './components/Nav'
@@ -19,7 +20,7 @@ import Beauty from './components/beauty/Beauty'
 import Wellness from './components/wellness/Wellness'
 import Clothing from './components/clothing/Clothing'
 import Personal from './components/personal/personal'
-import Personall from './components/personall/personall'
+import Personal2 from './components/personal2/Personal2'
 
 
 import GrowthHub from './components/GrowthHub'
@@ -59,7 +60,7 @@ export default function App() {
         <Route path="/wellness" element={<Wellness />} />
         <Route path="/clothing" element={<Clothing />} />
         <Route path="/personal" element={<Personal />} />
-        <Route path="/personall" element={<Personall />} />
+        <Route path="/personal2" element={<Personal2 />} />
       </Routes>
     </HashRouter>
   )
