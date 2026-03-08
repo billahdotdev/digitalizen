@@ -19,7 +19,7 @@ import Access from './components/Access'   // ← new
 import Beauty from './components/beauty/Beauty'
 import Wellness from './components/wellness/Wellness'
 import Clothing from './components/clothing/Clothing'
-import Personal from './components/personal/personal'
+import Personal from './components/personal/Personal'
 import Personal2 from './components/personal2/Personal2'
 
 
