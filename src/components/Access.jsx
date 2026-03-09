@@ -65,7 +65,7 @@ const STEPS = [
     bullets: [
       'প্রথম Add New',
       'Next',
-      'সার্চ বক্সে প্রথমেই কপি করা নামটি পেস্ট করুন। আমাদের প্রোফাইলটি সিলেক্ট করে',
+      'সার্চ বক্সে প্রথমেই কপি করা নামটি (Masum Billah) পেস্ট করুন। আমাদের প্রোফাইলটি সিলেক্ট করে',
       'Full Control অন করুন এবং',
       'Give Access বাটনে ক্লিক করে ইনভাইটেশনটি পাঠিয়ে দিন।',
     ],
@@ -190,11 +190,23 @@ export default function Access() {
                   {/* Step 01 — copy name widget */}
                   {copyName && (
                     <div className="ac-copy-block">
-                      <div className="ac-copy-name-display">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,color:'#1F4BFF'}}>
-                          <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="currentColor"/>
-                        </svg>
-                        <span className="ac-copy-nametext">{AGENCY_FB_NAME}</span>
+                      <div className="ac-fb-profile-card">
+                        <div className="ac-fb-profile-avatar-wrap">
+                          <img
+                            src="https://scontent.fdac138-2.fna.fbcdn.net/v/t39.30808-1/615992009_1439135541186957_7638633866097988635_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEMmnNAwEwkZ7VyuaVLbLfe9tRGicXg_xH21EaJxeD_EdAOw_FpFUwyBEq61j9P0_b1CSGvSOy56BX9jIt1WYa9&_nc_ohc=Tdq5GNp8Z5cQ7kNvwF0QEbf&_nc_oc=AdlTghAfuWtjYnfA_yK4HMlTN7tF8EznRKnV7G493DkgbPkLxSq5cDdVidCm5lEdvt8&_nc_zt=24&_nc_ht=scontent.fdac138-2.fna&_nc_gid=W2UyslrM_y9V9-VubFecUg&_nc_ss=8&oh=00_AfwGroOOsD2yK7Zew2HfiHN6bv6zAAbzp4ndhECjEoARng&oe=69B49EAE"
+                            alt={AGENCY_FB_NAME}
+                            className="ac-fb-profile-avatar"
+                          />
+                          <span className="ac-fb-profile-avatar-badge" aria-hidden="true">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+                            </svg>
+                          </span>
+                        </div>
+                        <div className="ac-fb-profile-info">
+                          <span className="ac-fb-profile-name">{AGENCY_FB_NAME}</span>
+                          <span className="ac-fb-profile-sub">Facebook Profile</span>
+                        </div>
                       </div>
                       <button
                         className={'ac-copy-btn' + (copied ? ' ac-copy-btn--done' : '')}

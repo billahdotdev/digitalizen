@@ -349,25 +349,66 @@
   gap: 8px;
 }
 
-.ac-copy-name-display {
+/* ── Facebook-style profile card ── */
+.ac-fb-profile-card {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 9px 13px;
+  border-radius: 12px;
+  padding: 10px 13px;
 }
 
-.ac-copy-nametext {
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--text);
-  flex: 1;
+.ac-fb-profile-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ac-fb-profile-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--border);
+}
+
+.ac-fb-profile-avatar-badge {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 18px;
+  height: 18px;
+  background: #1877F2;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.ac-fb-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   min-width: 0;
+}
+
+.ac-fb-profile-name {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.ac-fb-profile-sub {
+  font-size: .74rem;
+  color: var(--muted);
+  font-weight: 500;
 }
 
 .ac-copy-btn {
