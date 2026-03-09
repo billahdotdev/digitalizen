@@ -21,10 +21,10 @@ export default function About() {
           <div className="about-main">
             <div className="about-badge">
               <span className="about-badge-dot" aria-hidden="true"></span>
-               বাংলাদেশের বিজনেস-ফ্রেন্ডলি ডিজিটাল মার্কেটিং এজেন্সি
+               বাংলাদেশের ফুল-স্ট্যাক মার্কেটিং এজেন্সি
             </div>
             <h2 className="about-heading">
-              আমরা শুধু অ্যাড চালাই না —<br />
+              আমরা শুধু অ্যাড চালাই না!<br />
               <span className="about-blue">আপনার টোটাল ডিজিটাল মার্কেটিং কভার করি</span>
             </h2>
             <p className="about-desc">

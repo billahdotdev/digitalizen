@@ -35,6 +35,7 @@ function MainLayout() {
         <Resources />
         <Faq />
         <Contact />
+        <Access />
       </main>
       <Footer />
     </>

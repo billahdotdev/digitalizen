@@ -28,6 +28,7 @@ export default function Nav() {
     { label: 'প্রুফ', id: 'proof' },
     { label: 'আমাদের সম্পর্কে', id: 'about' },
     { label: 'যোগাযোগ', id: 'contact' },
+    
   ]
 
   return (
@@ -85,12 +86,21 @@ export default function Nav() {
 
           {/* Free Resources page link */}
           <Link
-            to="/free-resources"
+            to="/free"
             className="nav__drawer-link"
             onClick={() => setOpen(false)}
             role="menuitem"
           >
             ফ্রি রিসোর্স
+          </Link>
+
+          <Link
+            to="/access"
+            className="nav__drawer-link"
+            onClick={() => setOpen(false)}
+            role="menuitem"
+          >
+            অ্যাড অ্যাক্সেস
           </Link>
 
           <div className="nav__drawer-cta">
