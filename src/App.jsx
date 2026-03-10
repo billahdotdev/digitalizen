@@ -16,7 +16,8 @@ import Footer from './components/Footer'
 import InstallButton from './components/InstallButton'
 import FreeResources from './components/FreeResources'
 import Access from './components/Access'   // ← new
-import GrowthHub from './components/GrowthHub'
+
+
 
 function MainLayout() {
   return (
@@ -25,15 +26,14 @@ function MainLayout() {
       <Nav />
       <main>
         <Hero />
-        <GrowthHub />
-        <Finder />
-        <Process />
-        <Packages />
         <Proof />
+        <Packages />
+        <Process />
+        <Faq />
+        <Finder />
         <About />
         <BookCall />
-        <Resources />
-        <Faq />
+         <Resources />
         <Contact />
         <Access />
       </main>

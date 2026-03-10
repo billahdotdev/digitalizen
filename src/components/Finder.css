@@ -1,3 +1,8 @@
+/* ══════════════════════════════════════════════════
+   PACKAGE FINDER — Digitalizen v3
+   Aligned with index.css brand system
+══════════════════════════════════════════════════ */
+
 .finder-section {
   padding: 72px 0;
   border-top: 1px solid var(--border);
@@ -8,68 +13,135 @@
   font-weight: 800;
   color: var(--text);
   margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .finder-sub {
   font-size: 0.85rem;
   color: var(--muted);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  line-height: 1.6;
 }
 
+/* ── Card ───────────────────────────────────────── */
 .finder-card {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow);
 }
 
-/* Progress */
+/* ── Progress strip ─────────────────────────────── */
 .finder-progress {
   height: 3px;
-  background: var(--bg);
+  background: var(--bg2);
+  position: relative;
 }
 
-.finder-progress__bar {
+.finder-progress__fill {
   height: 100%;
-  background: var(--blue);
+  background: linear-gradient(90deg, var(--blue) 0%, var(--blue-mid) 100%);
   border-radius: 0 2px 2px 0;
-  transition: width 0.4s ease;
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
+.finder-progress__fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 6px rgba(31, 75, 255, 0.5);
+  transition: opacity 0.3s;
+}
+
+/* ── Quiz wrap ──────────────────────────────────── */
 .finder-quiz {
-  padding: 24px 20px;
+  padding: 22px 22px 26px;
 }
 
-.finder-step-info {
-  margin-bottom: 12px;
+/* Step pips */
+.finder-pips {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
-.finder-step-badge {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--blue);
-  background: var(--blue-light);
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.04em;
+.finder-pip {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: var(--border2);
+  transition: background 0.35s ease;
 }
 
-.finder-q {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text);
+.finder-pip--done {
+  background: var(--blue);
+}
+
+.finder-pip--current {
+  background: linear-gradient(90deg, var(--blue) 60%, var(--border2) 100%);
+}
+
+/* Step meta row */
+.finder-step-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 18px;
-  line-height: 1.45;
 }
 
+.finder-step-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.finder-step-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--blue);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.finder-step-counter {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted2);
+}
+
+/* Question */
+.finder-q {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0 0 16px;
+  letter-spacing: -0.01em;
+}
+
+/* ── Options ────────────────────────────────────── */
 .finder-opts {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .finder-opt {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -77,24 +149,28 @@
   border: 1.5px solid var(--border);
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.92rem;
-  font-weight: 500;
-  padding: 14px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 13px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   text-align: left;
-  transition: all 0.15s ease;
-  position: relative;
+  width: 100%;
+  transition: border-color 0.15s ease, background 0.15s ease,
+              transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
   overflow: hidden;
 }
 
-.finder-opt::after {
+/* Left bar accent */
+.finder-opt::before {
   content: '';
   position: absolute;
-  inset: 0;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
   background: var(--blue);
-  opacity: 0;
-  transition: opacity 0.15s;
+  border-radius: 0 2px 2px 0;
+  transform: scaleY(0);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .finder-opt:hover {
@@ -102,89 +178,421 @@
   background: var(--blue-light);
   color: var(--blue);
   transform: translateX(3px);
+  box-shadow: var(--shadow-sm);
+}
+
+.finder-opt:hover::before,
+.finder-opt--selected::before {
+  transform: scaleY(1);
 }
 
 .finder-opt--selected {
   border-color: var(--blue);
   background: var(--blue-light);
   color: var(--blue);
+  transform: translateX(3px);
+  box-shadow: var(--shadow-sm);
 }
 
-.opt-num {
-  font-size: 1rem;
-  flex-shrink: 0;
-  opacity: 0.5;
+.finder-opt:disabled {
+  cursor: default;
 }
 
-.finder-back {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-family: var(--font);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 16px;
-  padding: 0;
-  transition: color 0.15s;
+/* Index badge */
+.finder-opt__key {
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: var(--border2);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--muted);
+  flex-shrink: 0;
+  letter-spacing: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.finder-opt:hover .finder-opt__key,
+.finder-opt--selected .finder-opt__key {
+  background: rgba(31, 75, 255, 0.15);
+  color: var(--blue);
+}
+
+.finder-opt__text {
+  flex: 1;
+  line-height: 1.45;
+}
+
+.finder-opt__arrow {
+  font-size: 0.78rem;
+  color: var(--muted2);
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.finder-opt:hover .finder-opt__arrow,
+.finder-opt--selected .finder-opt__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Back button ────────────────────────────────── */
+.finder-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  margin-top: 18px;
+  transition: color 0.15s;
 }
 
 .finder-back:hover { color: var(--blue); }
 
-/* Result */
-.finder-result {
-  padding: 32px 20px;
-  text-align: center;
-  animation: fadeUp 0.3s ease;
+/* ── Loading ────────────────────────────────────── */
+.finder-loading {
+  padding: 36px 22px 40px;
 }
 
-.result-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--blue);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin: 0 auto 14px;
-  animation: pop 0.3s ease;
+.finder-loading__bar-track {
+  height: 3px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 24px;
 }
 
-.result-tag {
-  display: inline-block;
-  background: var(--blue-light);
-  color: var(--blue);
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-bottom: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.finder-loading__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--blue-mid));
+  border-radius: 2px;
+  animation: loadSweep 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.result-name {
-  font-size: 1.45rem;
+@keyframes loadSweep {
+  0%   { width: 0%; }
+  50%  { width: 65%; }
+  100% { width: 100%; }
+}
+
+.finder-loading__title {
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--text);
-  margin-bottom: 6px;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
 }
 
-.result-price {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--blue);
-  margin-bottom: 28px;
+.finder-loading__sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 22px;
+  line-height: 1.55;
 }
 
-.result-actions {
+.finder-loading__steps {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.finder-loading__step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--border2);
+  opacity: 0;
+  animation: stepReveal 0.4s ease forwards;
+}
+
+.finder-loading__step--1 { animation-delay: 0.2s; }
+.finder-loading__step--2 { animation-delay: 0.85s; }
+.finder-loading__step--3 { animation-delay: 1.6s; }
+
+@keyframes stepReveal {
+  to { opacity: 1; color: var(--muted); }
+}
+
+.finder-loading__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+.finder-loading__step--1 .finder-loading__dot { animation: dotLight 0.3s 0.2s  ease forwards; }
+.finder-loading__step--2 .finder-loading__dot { animation: dotLight 0.3s 0.85s ease forwards; }
+.finder-loading__step--3 .finder-loading__dot { animation: dotLight 0.3s 1.6s  ease forwards; }
+
+@keyframes dotLight {
+  to { background: var(--blue); box-shadow: 0 0 6px rgba(31,75,255,0.35); }
+}
+
+/* ── Result ─────────────────────────────────────── */
+.finder-result {
+  animation: fadeUp 0.4s ease;
+}
+
+/* Hero */
+.finder-result__hero {
+  padding: 24px 22px 22px;
+  background: linear-gradient(135deg, var(--dark2) 0%, var(--dark3) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.finder-result__hero::before {
+  content: '';
+  position: absolute;
+  top: -70px; right: -70px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(31,75,255,0.28) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.finder-result__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+
+.finder-result__live-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 1.5s ease infinite;
+  flex-shrink: 0;
+}
+
+.finder-result__name {
+  font-size: clamp(1.25rem, 4vw, 1.55rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  position: relative;
+}
+
+.finder-result__price {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+  font-weight: 500;
+}
+
+.finder-result__price strong {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+/* Insight list */
+.finder-insights {
+  padding: 0 22px;
+}
+
+.finder-insights__label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  padding: 16px 0 0;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.finder-insight {
+  display: flex;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid var(--border);
+}
+
+.finder-insight__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.finder-insight__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text2);
+  margin-bottom: 3px;
+  letter-spacing: 0.01em;
+}
+
+.finder-insight__text {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Advice callout */
+.finder-advice {
+  margin: 16px 22px;
+  background: var(--blue-light);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--blue);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.finder-advice__label {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.finder-advice__text {
+  font-size: 0.84rem;
+  color: var(--text2);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* CTAs */
+.finder-ctas {
+  padding: 0 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finder-cta-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.97rem;
+  font-weight: 800;
+  padding: 15px 22px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+}
+
+.finder-cta-primary:hover {
+  background: #1aab52;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+}
+
+.finder-cta-ghost {
+  background: var(--white);
+  color: var(--muted);
+  border: 1.5px solid var(--border);
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 13px 22px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.finder-cta-ghost:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: var(--blue-light);
+}
+
+.finder-fine {
+  font-size: 0.74rem;
+  color: var(--muted2);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── Score chip (result hero) ─────────────────── */
+.finder-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px;
+  padding: 7px 12px;
+  margin-top: 14px;
+}
+
+.finder-score__num {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.finder-score__bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.finder-score__bar-track {
+  width: 80px;
+  height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.finder-score__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #facc15, #4ade80);
+  animation: scoreGrow 0.8s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes scoreGrow {
+  from { width: 0%; }
+}
+
+.finder-score__label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.06em;
 }

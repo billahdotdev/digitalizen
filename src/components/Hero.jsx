@@ -40,9 +40,9 @@ export default function Hero() {
           </button>
           <button
             className="btn-ghost"
-            onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            প্যাকেজ দেখুন ↓
+            আরো জানতে চাই ↓
           </button>
         </div>
 
