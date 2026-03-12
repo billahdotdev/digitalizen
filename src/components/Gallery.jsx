@@ -1,126 +1,197 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import './Gallery.css'
 
 /* ─────────────────────────────────────
-   DATA — replace screenshotUrl with
-   real screenshots from /public/
-   and subdomainUrl with live pages
+   DATA
+   screenshotUrl → real screenshot path
+   subdomainUrl  → live hosted page URL
 ───────────────────────────────────── */
 const landingPages = [
   {
     id: 1,
     title: 'ফ্যাশন বুটিক',
     tag: 'ই-কমার্স',
-    screenshotUrl: '../images/imagee.png',
-    subdomainUrl: 'https://billahdotdev.github.io/Velore/',
+    screenshotUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=100&fit=crop',
+    subdomainUrl: 'https://digitalizen.agency',
   },
   {
     id: 2,
-    title: 'রেস্টুরেন্ট',
-    tag: 'ফুড',
-    screenshotUrl: 'https://placehold.co/600x800/EEF1FC/1438CC?text=Restaurant',
+    title: 'রেস্টুরেন্ট প্রো',
+    tag: 'ফুড & ডাইনিং',
+    screenshotUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=100&fit=crop',
     subdomainUrl: 'https://digitalizen.agency',
   },
   {
     id: 3,
     title: 'কোচিং সেন্টার',
     tag: 'এডটেক',
-    screenshotUrl: 'https://placehold.co/600x800/E8EEFF/1F4BFF?text=Coaching',
+    screenshotUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=100&fit=crop',
     subdomainUrl: 'https://digitalizen.agency',
   },
   {
     id: 4,
     title: 'রিয়েল এস্টেট',
     tag: 'প্রপার্টি',
-    screenshotUrl: 'https://placehold.co/600x800/EEF1FC/1438CC?text=Real+Estate',
+    screenshotUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=100&fit=crop',
     subdomainUrl: 'https://digitalizen.agency',
   },
   {
     id: 5,
     title: 'বিউটি সালোন',
-    tag: 'বিউটি',
-    screenshotUrl: 'https://placehold.co/600x800/E8EEFF/1F4BFF?text=Beauty',
+    tag: 'বিউটি & ওয়েলনেস',
+    screenshotUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200&q=100&fit=crop',
     subdomainUrl: 'https://digitalizen.agency',
   },
   {
     id: 6,
     title: 'ফিটনেস ক্লাব',
-    tag: 'হেলথ',
-    screenshotUrl: 'https://placehold.co/600x800/EEF1FC/1438CC?text=Fitness',
+    tag: 'হেলথ & ফিটনেস',
+    screenshotUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=100&fit=crop',
     subdomainUrl: 'https://digitalizen.agency',
   },
 ]
 
-function SiteCard({ page }) {
-  const [imgLoaded, setImgLoaded] = useState(false)
+/* ─────────────────────────────────────
+   SINGLE CARD
+───────────────────────────────────── */
+function SiteCard({ page, index, isActive }) {
+  const [loaded, setLoaded] = useState(false)
 
   return (
     <a
-      className="gallery-card"
+      className={`gallery-card ${loaded ? 'gallery-card--loaded' : ''}`}
       href={page.subdomainUrl}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${page.title} — নতুন ট্যাবে খুলুন`}
+      data-index={index}
     >
       {/* Skeleton */}
-      <div className={`gallery-card__skeleton ${imgLoaded ? 'gallery-card__skeleton--gone' : ''}`} />
+      <div className="gallery-card__skeleton" aria-hidden="true" />
 
-      {/* Screenshot */}
+      {/* Full-bleed image */}
       <img
         className="gallery-card__img"
         src={page.screenshotUrl}
         alt={page.title}
-        loading="lazy"
-        onLoad={() => setImgLoaded(true)}
+        loading={index <= 1 ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={index === 0 ? 'high' : 'auto'}
+        onLoad={() => setLoaded(true)}
       />
 
-      {/* Shine sweep */}
-      <div className="gallery-card__shine" aria-hidden="true" />
+      {/* Gradient */}
+      <div className="gallery-card__grad" aria-hidden="true" />
 
-      {/* Tag (hides on hover / always hidden on touch) */}
-      <span className="gallery-card__tag">{page.tag}</span>
+      {/* Info */}
+      <div className="gallery-card__info">
+        <div className="gallery-card__text">
+          <p className="gallery-card__tag">{page.tag}</p>
+          <h2 className="gallery-card__title">{page.title}</h2>
+        </div>
 
-      {/* Footer label */}
-      <div className="gallery-card__foot" aria-hidden="true">
-        <span className="gallery-card__foot-name">{page.title}</span>
-        <span className="gallery-card__foot-icon">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
+        <div className="gallery-card__btn" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 17L17 7" />
+            <path d="M7 7h10v10" />
           </svg>
-        </span>
+        </div>
       </div>
     </a>
   )
 }
 
+/* ─────────────────────────────────────
+   GALLERY PAGE
+───────────────────────────────────── */
 export default function Gallery() {
+  const wrapRef = useRef(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
+
+  /* Track which card is in view via IntersectionObserver */
+  useEffect(() => {
+    const cards = wrapRef.current?.querySelectorAll('.gallery-card')
+    if (!cards?.length) return
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = Number(entry.target.dataset.index)
+            setActiveIndex(idx)
+            if (idx > 0) setScrolled(true)
+          }
+        })
+      },
+      { root: wrapRef.current, threshold: 0.6 }
+    )
+
+    cards.forEach(c => observer.observe(c))
+    return () => observer.disconnect()
+  }, [])
+
+  /* Dot click → scroll to card */
+  const goTo = useCallback(idx => {
+    const card = wrapRef.current?.querySelectorAll('.gallery-card')[idx]
+    card?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
   return (
-    <div className="gallery-page">
-      {/* Hero */}
-      <div className="gallery-hero">
-        <div className="container">
-          <span className="section-label" style={{ justifyContent: 'center' }}>
-            আমাদের কাজ
-          </span>
-          <h1 className="gallery-hero__title">
-            Digitalizen <span>গ্যালারি</span>
-          </h1>
-          <p className="gallery-hero__sub">
-            যেকোনো কার্ডে ট্যাপ করুন — লাইভ সাইট খুলবে।
-          </p>
-        </div>
+    <>
+      {/* Scroll container */}
+      <div
+        ref={wrapRef}
+        className="gallery-wrap"
+        style={{ marginTop: 'var(--nav-h)', height: 'calc(100dvh - var(--nav-h))' }}
+      >
+        {landingPages.map((page, i) => (
+          <SiteCard
+            key={page.id}
+            page={page}
+            index={i}
+            isActive={activeIndex === i}
+          />
+        ))}
       </div>
 
-      {/* Grid */}
-      <div className="container">
-        <div className="gallery-grid">
-          {landingPages.map(page => (
-            <SiteCard key={page.id} page={page} />
-          ))}
-        </div>
+      {/* Progress dots */}
+      <nav className="gallery-dots" aria-label="গ্যালারি নেভিগেশন">
+        {landingPages.map((_, i) => (
+          <button
+            key={i}
+            className={`gallery-dot ${activeIndex === i ? 'gallery-dot--active' : ''}`}
+            onClick={() => goTo(i)}
+            aria-label={`কার্ড ${i + 1}`}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              width: 20,
+              height: 20,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'auto',
+            }}
+          >
+            <span className={`gallery-dot ${activeIndex === i ? 'gallery-dot--active' : ''}`} />
+          </button>
+        ))}
+      </nav>
+
+      {/* Counter */}
+      <div className="gallery-counter" aria-live="polite">
+        <span className="gallery-counter__current">{String(activeIndex + 1).padStart(2, '0')}</span>
+        <span> / {String(landingPages.length).padStart(2, '0')}</span>
       </div>
-    </div>
+
+      {/* Scroll hint — hides after first scroll */}
+      <div className={`gallery-scroll-hint ${scrolled ? 'gallery-scroll-hint--hidden' : ''}`} aria-hidden="true">
+        <div className="gallery-scroll-hint__line" />
+        <div className="gallery-scroll-hint__dot" />
+      </div>
+    </>
   )
 }

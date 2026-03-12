@@ -1,4 +1,4 @@
-const CACHE_NAME = "digitalizen-v1.032"; // প্রতিবার নতুন build হলে version পরিবর্তন করুন
+const CACHE_NAME = "digitalizen-v1.033"; // প্রতিবার নতুন build হলে version পরিবর্তন করুন
 const urlsToCache = ["/", "/#/free", "/#/access" ];
 
 
