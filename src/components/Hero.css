@@ -191,3 +191,10 @@
     flex: 1;
   }
 }
+
+/* ── Focus rings ─────────────────────────────────── */
+.hero__btn-main:focus-visible,
+.btn-ghost:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}

@@ -2,23 +2,38 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import './FreeResources.css'
 
-/* ─────────────────────────────────────────────────────────────
-   META PIXEL HELPER
-   ─────────────────────────────────────────────────────────────*/
-const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
+/* ══════════════════════════════════════════════════
+   TRACKING
+   ① Meta Pixel — browser-side (client event)
+   ② dataLayer  — GTM → GA4 + server-side CAPI tag
+      event_id shared between fbq() & dataLayer for
+      CAPI deduplication on your GTM server container.
+══════════════════════════════════════════════════ */
+let _seq = 0
+const genEventId = () => `fr_${Date.now()}_${++_seq}`
+
+const track = (ev, params = {}) => {
+  const event_id = genEventId()
+  window.fbq?.(
+    'track', ev,
+    { ...params, event_source_url: window.location.href },
+    { eventID: event_id }
+  )
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({
+    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
+    meta_event_name:       ev,
+    meta_event_id:         event_id,
+    meta_event_source_url: window.location.href,
+    ...params,
+  })
+}
 
 /* ─────────────────────────────────────────────────────────────
    EBOOK CONFIG
-   ─────────────────────────────────────────────────────────────
-   1. PDF   → /public/ebook/onlineMonline.pdf
-   2. Cover → /public/ebook/cover.png
-   3. EBOOK_FORM_ACTION    → your Google Form's /formResponse URL
-   4. EBOOK_ENTRY_NAME     → entry.XXXXXXXXX  (Name field)
-   5. EBOOK_ENTRY_WHATSAPP → entry.XXXXXXXXX  (WhatsApp field)
    ─────────────────────────────────────────────────────────────*/
 const EBOOK_FILENAME       = 'onlineMonline.pdf'
 const EBOOK_PATH           = '/ebook/' + EBOOK_FILENAME
-const EBOOK_COVER          = '/ebook/cover.png'
 const EBOOK_FORM_ACTION    = 'https://docs.google.com/forms/d/e/1FAIpQLSc4az9GfiP2YaonvtjY_ACnkNes7XxnMuPih2520KbT4JC87A/formResponse'
 const EBOOK_ENTRY_NAME     = 'entry.1987000516'
 const EBOOK_ENTRY_WHATSAPP = 'entry.1290851570'
@@ -62,12 +77,20 @@ function submitToGoogleForm(action, fields) {
    ─────────────────────────────────────────────────────────────*/
 function triggerDownload() {
   if (ssGet(TOKEN_KEY) !== '1') return
-  pixel('ViewContent', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
+
+  // Fire ViewContent for the actual file download action
+  track('ViewContent', {
+    content_name:     'Ebook Downloaded',
+    content_category: 'Download',
+    content_ids:      ['ebook_meta_ads_playbook_2025'],
+    value:            0,
+    currency:         'BDT',
+  })
 
   const a = document.createElement('a')
   if (typeof a.download !== 'undefined') {
-    a.href     = EBOOK_PATH
-    a.download = EBOOK_FILENAME
+    a.href          = EBOOK_PATH
+    a.download      = EBOOK_FILENAME
     a.style.cssText = 'display:none;'
     document.body.appendChild(a)
     a.click()
@@ -81,17 +104,29 @@ function triggerDownload() {
    EBOOK MODAL
 ═══════════════════════════════════════════════════════════════ */
 function EbookModal({ modal, onClose, onSuccess, submittedName }) {
-  const [name, setName]       = useState('')
-  const [phone, setPhone]     = useState('')
-  const [errors, setErrors]   = useState({})
+  const [name,    setName]    = useState('')
+  const [phone,   setPhone]   = useState('')
+  const [errors,  setErrors]  = useState({})
   const [loading, setLoading] = useState(false)
   const nameRef    = useRef(null)
   const overlayRef = useRef(null)
 
+  // Track time-on-form for CAPI quality signal
+  const formOpenTimeRef = useRef(null)
+
   useEffect(() => {
-    if (modal) {
+    if (modal === 'form') {
+      formOpenTimeRef.current = Date.now()
       document.body.style.overflow = 'hidden'
-      if (modal === 'form') setTimeout(() => nameRef.current?.focus(), 60)
+      setTimeout(() => nameRef.current?.focus(), 60)
+      // ViewContent when form modal opens — user saw the lead form
+      track('ViewContent', {
+        content_name:     'Ebook Lead Form Opened',
+        content_category: 'Modal',
+        content_ids:      ['ebook_lead_form'],
+      })
+    } else if (modal) {
+      document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
     }
@@ -118,7 +153,21 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
     if (Object.keys(e).length) { setErrors(e); return }
     setErrors({})
     setLoading(true)
-    pixel('CompleteRegistration', { content_name: 'Ebook Lead Form Submitted' })
+
+    const timeOnForm = formOpenTimeRef.current
+      ? Math.round((Date.now() - formOpenTimeRef.current) / 1000)
+      : 0
+
+    // CompleteRegistration — primary CAPI lead event for ebook
+    track('CompleteRegistration', {
+      content_name:         'Ebook Lead Form Submitted',
+      content_category:     'Lead',
+      content_ids:          ['ebook_meta_ads_playbook_2025'],
+      currency:             'BDT',
+      value:                0,
+      time_on_form_seconds: timeOnForm,
+    })
+
     try {
       await submitToGoogleForm(EBOOK_FORM_ACTION, {
         [EBOOK_ENTRY_NAME]:      name.trim(),
@@ -249,30 +298,85 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
    EBOOK SECTION
 ═══════════════════════════════════════════════════════════════ */
 function EbookSection() {
-  const [unlocked, setUnlocked]       = useState(() => ssGet(TOKEN_KEY) === '1')
-  const [modal, setModal]             = useState(null)
-  const [submittedName, setSubmitted] = useState('')
+  const [unlocked,      setUnlocked]   = useState(() => ssGet(TOKEN_KEY) === '1')
+  const [modal,         setModal]      = useState(null)
+  const [submittedName, setSubmitted]  = useState('')
+
+  const sectionRef   = useRef(null)
+  const firedRef     = useRef(false)
+  const enterTimeRef = useRef(null)
+
+  // Section ViewContent + time-on-section
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !firedRef.current) {
+          firedRef.current   = true
+          enterTimeRef.current = Date.now()
+          track('ViewContent', {
+            content_name:     'Ebook Section',
+            content_category: 'Section',
+            content_ids:      ['ebook_meta_ads_playbook_2025'],
+          })
+          io.unobserve(el)
+        }
+      },
+      { threshold: 0.2 }
+    )
+    io.observe(el)
+
+    const pushEngagement = () => {
+      if (!enterTimeRef.current) return
+      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
+      window.dataLayer = window.dataLayer || []
+      window.dataLayer.push({
+        event:                   'section_engagement',
+        section:                 'ebook',
+        time_on_section_seconds: secs,
+        already_unlocked:        ssGet(TOKEN_KEY) === '1',
+      })
+      enterTimeRef.current = null
+    }
+
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', pushEngagement)
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('beforeunload', pushEngagement)
+    }
+  }, [])
 
   const handleClose = useCallback(() => setModal(null), [])
 
-  const openModal = () => {
+  const openModal = useCallback(() => {
     if (unlocked) {
       setModal('thanks')
     } else {
-      pixel('Lead', { content_name: 'Ebook Download Intent' })
+      // Lead — user clicked the CTA with intent to get the ebook
+      track('Lead', {
+        content_name:     'Ebook Download Intent',
+        content_category: 'CTA',
+        content_ids:      ['ebook_meta_ads_playbook_2025'],
+        currency:         'BDT',
+        value:            0,
+      })
       setModal('form')
     }
-  }
+  }, [unlocked])
 
-  const handleSuccess = (name) => {
+  const handleSuccess = useCallback((name) => {
     setSubmitted(name)
     setUnlocked(true)
     setModal('thanks')
-  }
+  }, [])
 
   return (
     <>
-      <div className="res-ebook-wrap">
+      <div className="res-ebook-wrap" ref={sectionRef}>
         <div className="res-book">
           <div className="res-book-deco res-book-deco--1" aria-hidden="true" />
           <div className="res-book-deco res-book-deco--2" aria-hidden="true" />
@@ -347,7 +451,74 @@ function WeeklyTipsSection() {
   const [savedEmail, setSavedEmail] = useState(() => ssGet(NL_KEY) || '')
   const inputRef = useRef(null)
 
+  const sectionRef      = useRef(null)
+  const firedRef        = useRef(false)
+  const enterTimeRef    = useRef(null)
+  const formStartFired  = useRef(false)
+  const formOpenTime    = useRef(null)
+
+  // Section ViewContent + time-on-section
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !firedRef.current) {
+          firedRef.current   = true
+          enterTimeRef.current = Date.now()
+          track('ViewContent', {
+            content_name:     'Newsletter Section',
+            content_category: 'Section',
+            content_ids:      ['newsletter_marketing_lab'],
+          })
+          io.unobserve(el)
+        }
+      },
+      { threshold: 0.2 }
+    )
+    io.observe(el)
+
+    const pushEngagement = () => {
+      if (!enterTimeRef.current) return
+      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
+      window.dataLayer = window.dataLayer || []
+      window.dataLayer.push({
+        event:                   'section_engagement',
+        section:                 'newsletter',
+        time_on_section_seconds: secs,
+        already_subscribed:      !!ssGet(NL_KEY),
+      })
+      enterTimeRef.current = null
+    }
+
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', pushEngagement)
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('beforeunload', pushEngagement)
+    }
+  }, [])
+
   const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+
+  // Fire InitiateCheckout on first keystroke in the email field
+  const handleEmailChange = useCallback((e) => {
+    setEmail(e.target.value)
+    setError('')
+    if (!formStartFired.current && e.target.value) {
+      formStartFired.current = true
+      formOpenTime.current   = Date.now()
+      track('InitiateCheckout', {
+        content_name:     'Newsletter Form Start',
+        content_category: 'Form',
+        content_ids:      ['newsletter_marketing_lab'],
+        currency:         'BDT',
+        value:            0,
+      })
+    }
+  }, [])
 
   const handleSubscribe = async () => {
     if (!isEmail(email)) {
@@ -357,11 +528,34 @@ function WeeklyTipsSection() {
     }
     setError('')
     setLoading(true)
-    pixel('Lead', { content_name: 'Newsletter Subscribe' })
+
+    const timeOnForm = formOpenTime.current
+      ? Math.round((Date.now() - formOpenTime.current) / 1000)
+      : 0
+
+    // Lead — user clicked subscribe
+    track('Lead', {
+      content_name:         'Newsletter Subscribe Intent',
+      content_category:     'Lead',
+      content_ids:          ['newsletter_marketing_lab'],
+      currency:             'BDT',
+      value:                0,
+      time_on_form_seconds: timeOnForm,
+    })
+
     try {
       await submitToGoogleForm(EMAIL_FORM_ACTION, { [EMAIL_ENTRY_EMAIL]: email.trim() })
     } catch (_) {}
-    pixel('CompleteRegistration', { content_name: 'Newsletter Subscribed' })
+
+    // CompleteRegistration — confirmed subscription
+    track('CompleteRegistration', {
+      content_name:     'Newsletter Subscribed',
+      content_category: 'Lead Complete',
+      content_ids:      ['newsletter_marketing_lab'],
+      currency:         'BDT',
+      value:            0,
+    })
+
     ssSet(NL_KEY, email.trim())
     setSavedEmail(email.trim())
     setLoading(false)
@@ -370,7 +564,7 @@ function WeeklyTipsSection() {
 
   if (done) {
     return (
-      <div className="weekly-card weekly-card--done" aria-live="assertive" role="status">
+      <div className="weekly-card weekly-card--done" aria-live="assertive" role="status" ref={sectionRef}>
         <div className="weekly-ty-burst" aria-hidden="true">🎉</div>
         <h4 className="weekly-ty-title">সাবস্ক্রাইব সফল হয়েছে!</h4>
         {savedEmail && (
@@ -386,14 +580,14 @@ function WeeklyTipsSection() {
           <li><span aria-hidden="true">🎁</span>এক্সক্লুসিভ রিসোর্স ও টেমপ্লেট</li>
         </ul>
         <div className="weekly-ty-footer">
-          <span aria-hidden="true">🔒</span>&nbsp;আমরা স্প্যাম করি না। ভালো না লাগলে যেকোনো সময় আনসাবস্ক্রাইব করতে পারেন।
+          <span aria-hidden="true">🔒</span>&nbsp;আমরা স্প্যাম করি না। ভালো না লাগলে যেকোনো সময় আনসাবস্ক্রাইব করতে পারেন।
         </div>
       </div>
     )
   }
 
   return (
-    <div className="weekly-card">
+    <div className="weekly-card" ref={sectionRef}>
       <div className="weekly-header">
         <h3 className="weekly-title">📬মার্কেটিং ল্যাব</h3>
         <p className="weekly-sub">আপনার বিজনেসের গ্রোথ নিশ্চিত করতে সোশ্যাল মিডিয়া অ্যাড ইনসাইট ও কেস স্টাডি সরাসরি আপনার ইনবক্সে।</p>
@@ -408,7 +602,7 @@ function WeeklyTipsSection() {
               className={'nl-input' + (error ? ' nl-input--err' : '')}
               placeholder="আপনার ইমেইল লিখুন"
               value={email}
-              onChange={e => { setEmail(e.target.value); setError('') }}
+              onChange={handleEmailChange}
               onKeyDown={e => e.key === 'Enter' && !loading && handleSubscribe()}
               aria-label="ইমেইল ঠিকানা"
               aria-invalid={!!error}
@@ -437,12 +631,28 @@ function WeeklyTipsSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   PAGE VIEW TRACKER — fires once on mount
+═══════════════════════════════════════════════════════════════ */
+function PageViewTracker() {
+  useEffect(() => {
+    track('ViewContent', {
+      content_name:     'Free Resources Page',
+      content_category: 'Page',
+      content_ids:      ['free_resources_page'],
+    })
+  }, [])
+  return null
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MAIN EXPORT — Standalone Landing Page
-   (আগে শুধু section ছিল, এখন full page হয়েছে)
 ═══════════════════════════════════════════════════════════════ */
 export default function FreeResources() {
   return (
     <>
+      {/* Page-level ViewContent — fires once on mount */}
+      <PageViewTracker />
+
       {/* ── Minimal top bar with back link ── */}
       <header className="fr-topbar">
         <div className="container">

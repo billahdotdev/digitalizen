@@ -16,6 +16,9 @@ import Footer from './components/Footer'
 import InstallButton from './components/InstallButton'
 import FreeResources from './components/FreeResources'
 import Access from './components/Access'   // ← new
+import Gallery from './components/Gallery'
+
+
 
 
 
@@ -26,15 +29,18 @@ function MainLayout() {
       <Nav />
       <main>
         <Hero />
-        <Proof />
+
+        <Finder />
+        
         <Packages />
         <Process />
         <Faq />
-        <Finder />
+        
         <About />
         <BookCall />
          <Resources />
         <Contact />
+        <Gallery />
         <Access />
       </main>
       <Footer />
@@ -49,6 +55,7 @@ export default function App() {
         <Route path="/"               element={<MainLayout />} />
         <Route path="/free" element={<FreeResources />} />
         <Route path="/access"         element={<Access />} />   {/* ← new */}
+        <Route path="/gallery" element={<Gallery />} />
       </Routes>
     </HashRouter>
   )

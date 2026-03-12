@@ -1,9 +1,42 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import './Faq.css'
 
-const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
+/* ══════════════════════════════════════════════════
+   TRACKING
+   ① Meta Pixel — browser-side (client event)
+   ② dataLayer  — GTM → GA4 + server-side CAPI tag
+      event_id is shared between fbq() and dataLayer
+      so your CAPI endpoint can deduplicate with Meta.
+══════════════════════════════════════════════════ */
+let _seq = 0
+const genEventId = () => `faq_${Date.now()}_${++_seq}`
+
+const track = (ev, params = {}) => {
+  const event_id = genEventId()
+
+  // ① Meta Pixel
+  window.fbq?.(
+    'track', ev,
+    { ...params, event_source_url: window.location.href },
+    { eventID: event_id }
+  )
+
+  // ② dataLayer → GTM server container → CAPI + GA4
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({
+    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
+    meta_event_name:       ev,
+    meta_event_id:         event_id,
+    meta_event_source_url: window.location.href,
+    ...params,
+  })
+}
+
 const WA_NUMBER = '8801XXXXXXXXX'
 
+/* ══════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════ */
 const faqs = [
   {
     q: 'শুরু করতে কত টাকা লাগবে?',
@@ -25,7 +58,7 @@ const faqs = [
   },
   {
     q: 'মেটা অ্যাডস বাদে অন্য প্ল্যাটফর্মে কাজ করেন?',
-    a: 'অবশ্যই! আমরা Facebook ও Instagram-এর পাশাপাশি Google, TikTok এবং YouTube-এ ফুল-স্কেল অ্যাড ক্যাম্পেইন পরিচালনা করি। আপনার ব্র্যান্ডের পূর্ণাঙ্গ গ্রোথ এবং প্রতিটি প্ল্যাটফর্মে পটেনশিয়াল কাস্টমারের কাছে পৌঁছাতে আমরা প্রফেশনাল সার্ভিস নিশ্চিত করি',
+    a: 'অবশ্যই! আমরা Facebook ও Instagram-এর পাশাপাশি Google, TikTok এবং YouTube-এ ফুল-স্কেল অ্যাড ক্যাম্পেইন পরিচালনা করি। আপনার ব্র্যান্ডের পূর্ণাঙ্গ গ্রোথ এবং প্রতিটি প্ল্যাটফর্মে পটেনশিয়াল কাস্টমারের কাছে পৌঁছাতে আমরা প্রফেশনাল সার্ভিস নিশ্চিত করি',
     cat: 'সার্ভিস',
     catColor: { bg: '#e0f2fe', fg: '#075985' },
   },
@@ -55,17 +88,106 @@ const faqs = [
   },
 ]
 
-export default function Faq() {
-  const [open, setOpen] = useState(null)
+/* ── WhatsApp icon ── */
+const WaIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+)
 
-  const toggle = (i) => {
-    setOpen(open === i ? null : i)
-    if (open !== i) pixel('ViewContent', { content_name: 'FAQ: ' + faqs[i].q })
-  }
+/* ══════════════════════════════════════════════════
+   COMPONENT
+══════════════════════════════════════════════════ */
+export default function Faq() {
+  const [open, setOpen]       = useState(null)
+  const [entered, setEntered] = useState(false)
+  const sectionRef            = useRef(null)
+  const bodyRefs              = useRef({})
+  const enterTimeRef          = useRef(null)
+  const sectionFiredRef       = useRef(false)
+  const openedCountRef        = useRef(0)
+
+  /* ── Section view + stagger entrance ── */
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !sectionFiredRef.current) {
+          sectionFiredRef.current = true
+          enterTimeRef.current    = Date.now()
+          setEntered(true)
+          track('ViewContent', {
+            content_name:     'FAQ Section',
+            content_category: 'Section',
+          })
+          io.unobserve(el)
+        }
+      },
+      { threshold: 0.15 }
+    )
+    io.observe(el)
+
+    /* time-on-section engagement */
+    const pushEngagement = () => {
+      if (!enterTimeRef.current) return
+      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
+      window.dataLayer = window.dataLayer || []
+      window.dataLayer.push({
+        event:                   'section_engagement',
+        section:                 'faq',
+        time_on_section_seconds: secs,
+        faqs_opened:             openedCountRef.current,
+      })
+      enterTimeRef.current = null
+    }
+
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', pushEngagement)
+
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('beforeunload', pushEngagement)
+    }
+  }, [])
+
+  /* ── Toggle ── */
+  const toggle = useCallback((i) => {
+    setOpen(prev => {
+      const opening = prev !== i
+      if (opening) {
+        openedCountRef.current += 1
+        track('ViewContent', {
+          content_name:     'FAQ: ' + faqs[i].q,
+          content_category: 'FAQ Item',
+          content_ids:      [`faq_${i + 1}`],
+          faq_index:        i + 1,
+          faq_category:     faqs[i].cat,
+        })
+      }
+      return opening ? i : null
+    })
+  }, [])
+
+  /* ── WhatsApp CTA ── */
+  const handleWa = useCallback(() => {
+    track('Contact', {
+      content_name:     'FAQ WhatsApp CTA',
+      content_category: 'CTA',
+    })
+    window.open(
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমার একটি প্রশ্ন আছে।')}`,
+      '_blank'
+    )
+  }, [])
 
   return (
-    <section id="faq" className="faq-section" aria-label="সাধারণ প্রশ্নোত্তর">
+    <section id="faq" className="faq-section" aria-label="সাধারণ প্রশ্নোত্তর" ref={sectionRef}>
       <div className="container">
+
         <div className="row-header">
           <span className="section-num">০০৮</span>
           <span className="section-title-right">FAQ</span>
@@ -78,13 +200,21 @@ export default function Faq() {
           {faqs.map((item, i) => {
             const isOpen = open === i
             return (
-              <div key={i} className={`faq-item${isOpen ? ' faq-item--open' : ''}`}>
+              <div
+                key={i}
+                className={[
+                  'faq-item',
+                  isOpen  ? 'faq-item--open'   : '',
+                  entered ? 'faq-item--visible' : '',
+                ].filter(Boolean).join(' ')}
+                style={{ '--stagger': `${i * 55}ms` }}
+              >
                 <button
                   className="faq-trigger"
                   onClick={() => toggle(i)}
                   aria-expanded={isOpen}
-                  aria-controls={'faq-body-' + i}
-                  id={'faq-btn-' + i}
+                  aria-controls={`faq-body-${i}`}
+                  id={`faq-btn-${i}`}
                 >
                   <div className="faq-trigger-left">
                     <span
@@ -95,23 +225,32 @@ export default function Faq() {
                     </span>
                     <span className="faq-q">{item.q}</span>
                   </div>
-                  <span className={'faq-chevron' + (isOpen ? ' faq-chevron--open' : '')} aria-hidden="true">
+                  <span
+                    className={`faq-chevron${isOpen ? ' faq-chevron--open' : ''}`}
+                    aria-hidden="true"
+                  >
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.8"
+                        strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </span>
                 </button>
 
-                {isOpen && (
-                  <div
-                    id={'faq-body-' + i}
-                    role="region"
-                    aria-labelledby={'faq-btn-' + i}
-                    className="faq-body"
-                  >
-                    <p className="faq-answer">{item.a}</p>
-                  </div>
-                )}
+                {/* Always in DOM — CSS max-height drives smooth open/close */}
+                <div
+                  id={`faq-body-${i}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${i}`}
+                  className="faq-body"
+                  ref={el => { bodyRefs.current[i] = el }}
+                  style={{
+                    maxHeight: isOpen
+                      ? (bodyRefs.current[i]?.scrollHeight ?? 400) + 'px'
+                      : '0px',
+                  }}
+                >
+                  <p className="faq-answer">{item.a}</p>
+                </div>
               </div>
             )
           })}
@@ -119,22 +258,12 @@ export default function Faq() {
 
         <div className="faq-cta">
           <p className="faq-cta-text">আপনার প্রশ্নের উত্তর এখানে পাননি?</p>
-          <button
-            className="faq-cta-btn"
-            onClick={() => {
-              pixel('Contact', { content_name: 'FAQ WhatsApp CTA' })
-              window.open(
-                'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent('হ্যালো, আমার একটি প্রশ্ন আছে।'),
-                '_blank'
-              )
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
+          <button className="faq-cta-btn" onClick={handleWa}>
+            <WaIcon />
             WhatsApp-এ জিজ্ঞেস করুন
           </button>
         </div>
+
       </div>
     </section>
   )

@@ -36,7 +36,21 @@
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+
+  /* stagger entrance — starts invisible */
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Triggered by JS when section enters viewport */
+.faq-item--visible {
+  animation: faqEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger, 0ms) both;
+}
+
+@keyframes faqEntrance {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .faq-item:hover {
@@ -99,6 +113,7 @@
   font-weight: 700;
   color: var(--text);
   line-height: 1.45;
+  transition: color 0.15s;
 }
 
 .faq-item--open .faq-q {
@@ -129,15 +144,12 @@
   transform: rotate(180deg);
 }
 
-/* ── Answer body ── */
+/* ── Answer body — CSS smooth accordion ── */
 .faq-body {
-  padding: 0 16px 16px;
-  animation: faqIn 0.22s ease;
-}
-
-@keyframes faqIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  max-height: 0;
+  overflow: hidden;
+  /* cubic-bezier gives a physical feel on open AND close */
+  transition: max-height 0.36s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .faq-answer {
@@ -145,7 +157,14 @@
   color: var(--muted);
   line-height: 1.75;
   border-top: 1px solid var(--border);
-  padding-top: 12px;
+  padding: 12px 16px 16px;
+  /* subtle fade-in once body has opened */
+  animation: faqAnswerFade 0.25s ease 0.1s both;
+}
+
+@keyframes faqAnswerFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ── Bottom CTA ── */
@@ -188,12 +207,17 @@
   cursor: pointer;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .faq-cta-btn:hover {
   background: #1aab52;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+}
+
+.faq-cta-btn:active {
+  transform: translateY(0);
 }
 
 @media (min-width: 480px) {

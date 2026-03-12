@@ -41,3 +41,7 @@
     font-size: 13px;
   }
 }
+.pwa-install-button:focus-visible {
+  outline: 3px solid #4f8ef7;
+  outline-offset: 3px;
+}

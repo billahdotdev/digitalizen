@@ -1,8 +1,34 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import './Finder.css'
 
 const WA_NUMBER = '8801711992558'
-const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
+
+/* ══════════════════════════════════════════════════
+   TRACKING
+   ① Meta Pixel — browser-side (client event)
+   ② dataLayer  — GTM → GA4 + server-side CAPI tag
+      event_id shared between fbq() & dataLayer for
+      CAPI deduplication on your GTM server container.
+══════════════════════════════════════════════════ */
+let _seq = 0
+const genEventId = () => `finder_${Date.now()}_${++_seq}`
+
+const track = (ev, params = {}) => {
+  const event_id = genEventId()
+  window.fbq?.(
+    'track', ev,
+    { ...params, event_source_url: window.location.href },
+    { eventID: event_id }
+  )
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({
+    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
+    meta_event_name:       ev,
+    meta_event_id:         event_id,
+    meta_event_source_url: window.location.href,
+    ...params,
+  })
+}
 
 /* ── SVG Icons ──────────────────────────────────── */
 const Icon = {
@@ -12,22 +38,16 @@ const Icon = {
       <path d="M8 6.5v2.5M8 10.5v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
-  check: (
+  info: (
     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
       <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M5.5 8l2 2 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8 7.5V11M8 5.5v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
   trend: (
     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
       <path d="M2 11.5l4-4.5 3 3L14 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M10.5 4H14v3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  info: (
-    <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-      <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M8 7.5V11M8 5.5v.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
   wa: (
@@ -42,413 +62,453 @@ const Icon = {
   ),
 }
 
-/* ── Full flow tree ──────────────────────────────── */
-const flow = {
-  start: {
-    q: 'আপনার ব্যবসার বর্তমান অবস্থা কী?',
-    field: 'bizStatus',
-    opts: [
-      { label: 'নতুন ব্যবসা — শুরু করতে চাই',          val: 'new',     next: 'new_biz'      },
-      { label: 'রানিং ব্যবসা — সেলস আরও বাড়াতে চাই',  val: 'running', next: 'running_biz'   },
-    ]
-  },
-  new_biz: {
-    q: 'প্রোডাক্ট সোর্সিং এবং ইনভেন্টরি কি প্রস্তুত?',
-    field: 'sourcing',
-    opts: [
-      { label: 'হ্যাঁ — স্টক রেডি আছে',               val: 'yes', next: 'brand_check'      },
-      { label: 'না — সোর্সিং প্রক্রিয়াধীন',           val: 'no',  next: 'brand_check'      },
-    ]
-  },
-  running_biz: {
-    q: 'বর্তমান সেলস চ্যানেল কীভাবে চলছে?',
-    field: 'salesChannel',
-    opts: [
-      { label: 'শুধু Facebook পেজে বিক্রি করছি',       val: 'fb_only',      next: 'pain_point' },
-      { label: 'ওয়েবসাইট বা ল্যান্ডিং পেজ আছে',       val: 'has_lp',       next: 'pain_point' },
-      { label: 'মাল্টি-চ্যানেল — FB, Insta, ওয়েব',    val: 'multichannel', next: 'pain_point' },
-    ]
-  },
-  pain_point: {
-    q: 'গ্রোথের পথে আপনার সবচেয়ে বড় বাধা কোনটি?',
-    field: 'barrier',
-    opts: [
-      { label: 'অ্যাডে খরচ হচ্ছে কিন্তু সেল আসছে না (Low ROAS)', val: 'low_roas',       next: 'tech_check' },
-      { label: 'মেসেজ আসে অনেক কিন্তু কাস্টমার কেনে না',         val: 'conversion_drop', next: 'tech_check' },
-      { label: 'ROI বা নিট লাভ ট্র্যাক করা যাচ্ছে না',          val: 'roi_tracking',    next: 'tech_check' },
-      { label: 'মার্কেট অনেক কম্পিটিটিভ হয়ে গেছে',             val: 'competition',     next: 'tech_check' },
-    ]
-  },
-  tech_check: {
-    q: 'আপনার কি Pixel বা Conversion API (CAPI) সেটআপ আছে?',
-    field: 'techStatus',
-    opts: [
-      { label: 'হ্যাঁ — ডাটা ট্র্যাকিং সেটআপ করা আছে', val: 'yes', next: 'roas_check' },
-      { label: 'না বা জানি না (এটি কী?)',               val: 'no',  next: 'roas_check' },
-    ]
-  },
-  roas_check: {
-    q: 'আপনার বর্তমান গড় ROAS (Return on Ad Spend) কত?',
-    field: 'currentRoas',
-    opts: [
-      { label: '২× এর কম — ব্রেক-ইভেন হচ্ছে না',         val: 'low',     next: 'creative_refresh' },
-      { label: '২× – ৪× — মোটামুটি রেজাল্ট আসছে',         val: 'mid',     next: 'creative_refresh' },
-      { label: '৫× এর বেশি — এখনই স্কেল করার সময়',       val: 'high',    next: 'creative_refresh' },
-      { label: 'সঠিকভাবে জানা নেই',                       val: 'unknown', next: 'creative_refresh' },
-    ]
-  },
-  creative_refresh: {
-    q: 'বিজ্ঞাপনের ভিডিও বা ইমেজ কতদিন পর পর পরিবর্তন করেন?',
-    field: 'creativeCycle',
-    opts: [
-      { label: 'একই কনটেন্ট অনেকদিন ধরে চলে',          val: 'stale',     next: 'brand_check' },
-      { label: 'প্রতি মাসে নতুন কনটেন্ট ট্রাই করি',    val: 'monthly',   next: 'brand_check' },
-      { label: 'সাপ্তাহিক নতুন ক্রিয়েটিভ টেস্ট করি',  val: 'weekly',    next: 'brand_check' },
-      { label: 'রেগুলার পরিবর্তন করা হয় না',            val: 'irregular', next: 'brand_check' },
-    ]
-  },
-  brand_check: {
-    q: 'ব্র্যান্ডিং ও ভিজ্যুয়াল কনটেন্ট কি প্রফেশনালি তৈরি?',
-    field: 'branding',
-    opts: [
-      { label: 'হ্যাঁ — লোগো ও ভিজ্যুয়াল আইডেন্টিটি রেডি', val: 'yes', next: 'customer_check' },
-      { label: 'না — এখনো বেসিক লেভেলে আছি',               val: 'no',  next: 'customer_check' },
-    ]
-  },
-  customer_check: {
-    q: 'কাস্টমার ডাটাবেস আছে? (Email / WhatsApp লিস্ট)',
-    field: 'hasDB',
-    opts: [
-      { label: 'হ্যাঁ — লিস্ট তৈরি আছে',              val: 'yes', next: 'marketing_status' },
-      { label: 'না — এখনো তৈরি হয়নি',                 val: 'no',  next: 'marketing_status' },
-    ]
-  },
-  marketing_status: {
-    q: 'বিজ্ঞাপন এখন কিভাবে পরিচালনা করছেন?',
-    field: 'marketing',
-    opts: [
-      { label: 'নিজে বুস্ট করছি',                      val: 'self',   next: 'budget_check' },
-      { label: 'এজেন্সি বা ফ্রিল্যান্সার দিয়ে',        val: 'agency', next: 'budget_check' },
-      { label: 'এখনো শুরু করিনি',                      val: 'none',   next: 'budget_check' },
-    ]
-  },
-  budget_check: {
-    q: 'মাসিক বিজ্ঞাপন বাজেট কতটুকু?',
-    field: 'budget',
-    opts: [
-      { label: 'এখনো শুরু করিনি / ছোট বাজেটে টেস্ট করতে চাই', val: 'micro',  pkg: 'micro'  },
-      { label: '১০,০০০ – ৩০,০০০ টাকা',                val: 'growth', pkg: 'growth' },
-      { label: '৩০,০০০ টাকার বেশি — স্কেল করতে চাই',           val: 'brand',  pkg: 'brand'  },
-    ]
-  },
-}
-
-/* ── Package map ─────────────────────────────────── */
-const pkgMap = {
-  micro: {
-    name: 'ছোট শুরু',
-    price: 'ফ্রি থেকে শুরু',
-    priceNote: 'শুধু অ্যাড খরচ দিন',
-    tag: 'ঝুঁকিমুক্ত শুরু',
-    key: 'micro',
-  },
-  growth: {
-    name: 'মান্থলি কেয়ার',
-    price: 'মাসিক',
-    priceNote: 'ডেডিকেটেড গ্রোথ টিম',
-    tag: 'সবচেয়ে জনপ্রিয়',
-    key: 'growth',
-  },
-  brand: {
-    name: 'ব্র্যান্ড কেয়ার',
-    price: 'কাস্টম',
-    priceNote: 'আপনার লক্ষ্য অনুযায়ী কৌশল',
-    tag: 'ব্র্যান্ড বিল্ডিং',
-    key: 'brand',
-  },
-}
-
-/* ── Health score engine ─────────────────────────── */
-const calcScore = (ans) => {
-  let score = 40 // baseline
-  if (ans.techStatus === 'yes')                                      score += 15
-  if (ans.currentRoas === 'high')                                    score += 20
-  else if (ans.currentRoas === 'mid')                                score += 10
-  if (ans.creativeCycle === 'weekly')                                score += 10
-  else if (ans.creativeCycle === 'monthly')                          score += 5
-  if (ans.branding === 'yes')                                        score += 8
-  if (ans.hasDB === 'yes')                                           score += 7
-  if (ans.marketing === 'agency')                                    score += 5
-  if (ans.salesChannel === 'multichannel')                           score += 10
-  else if (ans.salesChannel === 'has_lp')                            score += 5
-  return Math.min(score, 100)
-}
-
-const scoreLabel = (s) => {
-  if (s >= 75) return 'শক্তিশালী অবস্থান'
-  if (s >= 50) return 'গ্রোথের সুযোগ আছে'
-  return 'অপ্টিমাইজেশন দরকার'
-}
-
-/* ── Advice per package ─────────────────────────── */
-const getAdvice = (pkg, ans) => {
-  if (pkg === 'micro') {
-    if (ans.techStatus === 'no')
-      return 'প্রথম কাজ হবে Pixel এবং CAPI সেটআপ। ট্র্যাকিং ছাড়া অ্যাড অপ্টিমাইজ করা অসম্ভব। কোনো চুক্তি নেই — ছোট বাজেটে শুরু করুন, ফলাফল দেখুন, তারপর সিদ্ধান্ত নিন।'
-    return 'ঝুঁকিমুক্তভাবে শুরু করুন। ফ্রি অডিট দিয়ে বুঝুন কোথায় সুযোগ আছে, তারপর আপনার গতিতে এগিয়ে যান — কোনো চাপ নেই।'
-  }
-  if (pkg === 'growth') {
-    if (ans.barrier === 'conversion_drop')
-      return 'মেসেজ আসলেও কেনার হার কম — এটি ফানেলের মাঝের সমস্যা। মান্থলি কেয়ারে আনলিমিটেড ল্যান্ডিং পেজ + ক্রমাগত অপ্টিমাইজেশন দিয়ে এই লিক বন্ধ করা হবে।'
-    return 'আনলিমিটেড ক্যাম্পেইন, ক্রিয়েটিভ এবং কনটেন্ট সাপোর্ট — প্রতি মাসে আপনার পাশে একটি ডেডিকেটেড টিম। ধারাবাহিক গ্রোথের জন্য এটিই সবচেয়ে কার্যকর পথ।'
-  }
-  if (pkg === 'brand') {
-    if (ans.currentRoas === 'high')
-      return 'আপনার পারফরম্যান্স ভালো — এখন ব্র্যান্ড পজিশনিং শক্তিশালী করার সময়। ব্র্যান্ড কেয়ারে আমরা আপনার ইউনিক অ্যাঙ্গেল খুঁজে বের করে বাজারে আলাদা পরিচিতি তৈরি করব।'
-    return 'শুধু অ্যাড নয়, পুরো ব্র্যান্ড অভিজ্ঞতা তৈরি করুন। অডিট থেকে স্ট্র্যাটেজি, UX থেকে ক্রিয়েটিভ ক্যাম্পেইন — সবকিছু আপনার লক্ষ্য অনুযায়ী কাস্টম।'
-  }
-  return 'আপনার ব্যবসার নির্দিষ্ট লক্ষ্য ও বাজেট অনুযায়ী সম্পূর্ণ কাস্টম মার্কেটিং স্ট্র্যাটেজি তৈরি করা হবে।'
-}
-
-/* ── Insight engine ──────────────────────────────── */
-const getInsights = (ans) => {
-  const list = []
-
-  // Creative fatigue
-  if (ans.creativeCycle === 'stale' || ans.creativeCycle === 'irregular')
-    list.push({
-      label: 'ক্রিয়েটিভ ক্লান্তি (Ad Fatigue)',
-      text: 'একই অ্যাড বারবার দেখলে CTR দ্রুত পড়ে যায়। প্রতি ১৫–৩০ দিনে নতুন হুক ও ভিডিও এঙ্গেল টেস্ট করলে কনভার্সন রেট ৩০% পর্যন্ত বাড়ানো সম্ভব।',
-      icon: 'trend', bg: '#fef2f2', color: '#dc2626'
-    })
-
-  // ROAS & profitability
-  if (ans.currentRoas === 'low' || ans.barrier === 'roi_tracking')
-    list.push({
-      label: 'প্রফিট মার্জিন অডিট দরকার',
-      text: 'শুধু সেল নয়, ROI নিশ্চিত করতে আপনার প্রফিট মার্জিন অনুযায়ী Break-even ROAS ক্যালকুলেট করা জরুরি। আমরা আপনাকে সঠিক ড্যাশবোর্ড সেটআপে সাহায্য করতে পারি।',
-      icon: 'check', bg: '#ecfdf5', color: '#10b981'
-    })
-
-  // Pixel/CAPI missing
-  if (ans.techStatus === 'no')
-    list.push({
-      label: 'ট্র্যাকিং গ্যাপ — CAPI নেই',
-      text: 'Pixel ও CAPI ছাড়া Facebook-এর AI বুঝতে পারছে না কোন কাস্টমার কেনে। এই সেটআপ করলে লার্নিং ফেজ দ্রুত শেষ হবে এবং CPA উল্লেখযোগ্যভাবে কমবে।',
-      icon: 'info', bg: '#eff6ff', color: '#3b82f6'
-    })
-
-  // Conversion drop pain point
-  if (ans.barrier === 'conversion_drop')
-    list.push({
-      label: 'ফানেল মিড-স্টেজ লিক',
-      text: 'মেসেজ আসলেও কেনার হার কম — এটি Landing Page এর দুর্বলতা বা ফলো-আপ গ্যাপ। CRO অডিট এবং WhatsApp অটোমেশন দিয়ে এই লিক বন্ধ করা যায়।',
-      icon: 'warning', bg: 'var(--amber-bg)', color: 'var(--amber)'
-    })
-
-  // Channel risk
-  if (ans.salesChannel === 'fb_only')
-    list.push({
-      label: 'সিঙ্গেল চ্যানেল রিস্ক',
-      text: 'শুধু Facebook-নির্ভর ব্যবসায় কনভার্সন রেট ৬০–৭০% কম থাকে। একটি ডেডিকেটেড ল্যান্ডিং পেজ যোগ করলে প্রতিটি লিড আরও মূল্যবান হয়।',
-      icon: 'warning', bg: 'var(--amber-bg)', color: 'var(--amber)'
-    })
-
-  // Multichannel positive
-  if (ans.salesChannel === 'multichannel')
-    list.push({
-      label: 'মাল্টি-চ্যানেল শক্তি',
-      text: 'আপনার মাল্টি-চ্যানেল উপস্থিতি শক্তিশালী। Unified Pixel + Attribution সেটআপ করলে প্রতিটি চ্যানেলের ROI আলাদাভাবে ট্র্যাক করা যাবে।',
-      icon: 'check', bg: 'var(--green-bg)', color: 'var(--green)'
-    })
-
-  // No customer DB
-  if (ans.hasDB === 'no')
-    list.push({
-      label: 'রিটার্গেটিং অ্যাসেট নেই',
-      text: 'কাস্টমার লিস্ট না থাকলে সবচেয়ে সস্তা অ্যাড (রিটার্গেটিং) চালানো সম্ভব না। এখনই WhatsApp বা Email লিড ক্যাপচার শুরু করুন।',
-      icon: 'info', bg: '#eff6ff', color: '#3b82f6'
-    })
-
-  // Self-boost budget waste
-  if (ans.marketing === 'self')
-    list.push({
-      label: 'বুস্ট = বাজেট অপচয়',
-      text: 'Facebook Boost-এ ২০–৪০% বাজেট ভুল অডিয়েন্সে যায়। Ads Manager-এ প্রফেশনাল ক্যাম্পেইন সেটআপে ROI গড়ে ৩× বাড়ে।',
-      icon: 'warning', bg: 'var(--amber-bg)', color: 'var(--amber)'
-    })
-
-  // High ROAS — scale signal
-  if (ans.currentRoas === 'high')
-    list.push({
-      label: 'স্কেলিং সিগনাল',
-      text: 'আপনার ROAS ইতোমধ্যে ৫×+ — এটি স্কেলিং করার সঠিক সময়। কিন্তু সতর্কতার সাথে না বাড়ালে ROAS দ্রুত পড়ে যাবে। Horizontal scaling strategy দরকার।',
-      icon: 'trend', bg: 'var(--blue-light)', color: 'var(--blue)'
-    })
-
-  // Competition barrier
-  if (ans.barrier === 'competition')
-    list.push({
-      label: 'কম্পিটিটিভ পজিশনিং',
-      text: 'একই প্রোডাক্টে অনেক অ্যাড থাকলে Unique Angle দিয়ে দাঁড়াতে হবে। আপনার USP কে ক্রিয়েটিভে এবং অডিয়েন্স সেগমেন্টেশনে কাজে লাগানো এখন সবচেয়ে জরুরি।',
-      icon: 'trend', bg: 'var(--blue-light)', color: 'var(--blue)'
-    })
-
-  return list.slice(0, 3)
-}
-
-/* ── Step counter ────────────────────────────────── */
-const CORE = [
-  'start', 'pain_point', 'tech_check', 'roas_check',
-  'creative_refresh', 'brand_check', 'customer_check',
-  'marketing_status', 'budget_check'
+/* ══════════════════════════════════════════════════
+   13-QUESTION WEIGHTED BUSINESS AUDIT
+══════════════════════════════════════════════════ */
+const questions = [
+  /* Q1 – Business stage: strong signal for all 3 dims */
+  { id: 1, q: 'আপনার ব্যবসা এখন কোন অবস্থায় আছে?', hint: 'বর্তমান পরিস্থিতির সাথে যেটা সবচেয়ে মিলে সেটি বেছে নিন', opts: [
+    { label: 'একদম নতুন শুরু করছি',                        scores: { foundation: 3 } },
+    { label: 'চলছে কিন্তু এখনো ঠিকমতো জমেনি',              scores: { foundation: 2, growth: 1 } },
+    { label: 'ব্যবসা চলছে কিন্তু সেল বাড়ছে না',            scores: { growth: 3 } },
+    { label: 'মোটামুটি চলছে, এখন বড় করা দরকার',           scores: { growth: 2, authority: 1 } },
+    { label: 'পরিচিত ব্র্যান্ড, এখন বড় স্কেলে যেতে চাই',  scores: { authority: 3 } },
+  ] },
+  /* Q2 – Business type: light signal, context only */
+  { id: 2, q: 'আপনি কী ধরণের ব্যবসা করছেন?', hint: 'এটি জানলে আপনার জন্য সঠিক প্ল্যান দেওয়া সহজ হবে', opts: [
+    { label: 'লোকাল সার্ভিস (এলাকা ভিত্তিক)', scores: { foundation: 1 } },
+    { label: 'অনলাইন শপ / ই-কমার্স',          scores: { growth: 1 } },
+    { label: 'প্রোডাক্ট ব্র্যান্ড',             scores: { growth: 1, authority: 1 } },
+    { label: 'পার্সোনাল ব্র্যান্ড (নিজের নামে)', scores: { authority: 1 } },
+    { label: 'অন্যান্য',                        scores: { foundation: 1 } },
+  ] },
+  /* Q3 – Online presence: strong foundation/growth signal */
+  { id: 3, q: 'অনলাইনে আপনার ব্যবসার অবস্থা কী?', hint: 'সঠিক উত্তর দিন, তাহলেই আমরা সেরা সমাধান দিতে পারব', opts: [
+    { label: 'অনলাইনে এখনো নামিনি',                              scores: { foundation: 3 } },
+    { label: 'শুধু একটা ফেসবুক পেজ আছে',                        scores: { foundation: 2 } },
+    { label: 'মাঝে মাঝে পোস্ট করি',                             scores: { growth: 1 } },
+    { label: 'নিয়মিত পোস্ট করি',                                scores: { growth: 3 } },
+    { label: 'অ্যাড দিই কিন্তু রেজাল্ট ভালো না',                scores: { growth: 2, authority: 1 } },
+  ] },
+  /* Q4 – Landing page quality: triggers landingPageWarning */
+  { id: 4, q: 'আপনার কি কাস্টম ও হাই-স্পিড ল্যান্ডিং পেজ আছে?', hint: 'কমন ওয়ার্ডপ্রেস সাইট স্লো হয়, যা আপনার সেল অনেক কমিয়ে দেয়', opts: [
+    { label: 'হ্যাঁ, কাস্টম কোড করা সুপার-ফাস্ট পেজ আছে',    scores: { authority: 2 } },
+    { label: 'সাধারণ ওয়ার্ডপ্রেস বা টেম্পলেটে বানানো',        scores: { growth: 1 },     landingPageWarning: 'weak' },
+    { label: 'না, শুধু ফেসবুক পেজ দিয়েই কাজ চালাই',           scores: { growth: 1 },     landingPageWarning: 'none' },
+    { label: 'না, তবে প্রফেশনাল ল্যান্ডিং পেজ দরকার',         scores: { foundation: 2 }, landingPageWarning: 'none' },
+  ] },
+  /* Q5 – Marketer can design/code: triggers techGap */
+  { id: 5, q: 'আপনার বর্তমান মার্কেটার কি ল্যান্ডিং পেজ এডিট বা ডিজাইন করতে পারেন?', hint: 'নতুন প্রোডাক্ট বা উৎসবের অফার দিতে দ্রুত পেজ ডিজাইন পরিবর্তন করা জরুরি', opts: [
+    { label: 'না, এডিট করার জন্য আলাদা ডেভেলপার খুঁজতে হয়',   scores: { growth: 1 },     techGap: true },
+    { label: 'হ্যাঁ, তিনি নিজেই ডিজাইন ও কোডিং সামলাতে পারেন', scores: { authority: 2 } },
+    { label: 'মাঝে মাঝে পারেন, তবে অনেক সময় লেগে যায়',        scores: { growth: 1 },     techGap: true },
+    { label: 'আমি আসলে কোনো টেকনিক্যাল সাপোর্ট পাই না',       scores: { foundation: 1 }, techGap: true },
+  ] },
+  /* Q6 – Seasonal campaign redesign: also techGap */
+  { id: 6, q: 'উৎসব বা ক্যাম্পেইনের সময় আপনার ল্যান্ডিং পেজ কি আপডেট করা হয়?', hint: 'ঈদ বা পূজার মতো উৎসবে কাস্টম ডিজাইন আপনার ব্র্যান্ড ভ্যালু বাড়ায়', opts: [
+    { label: 'না, সবসময় একই ডিজাইন থাকে',                          scores: { growth: 1 }, techGap: true },
+    { label: 'হ্যাঁ, অফার অনুযায়ী ডিজাইন পরিবর্তন করি',            scores: { authority: 2 } },
+    { label: 'ইচ্ছে থাকলেও টেকনিক্যাল সাপোর্টের অভাবে পারি না',   scores: { growth: 2 }, techGap: true },
+  ] },
+  /* Q7 – Pixel/CAPI: trackingWarning or kpiWarning */
+  { id: 7, q: 'পেজে কি অ্যাডভান্সড ট্র্যাকিং (Pixel, CAPI) সেটআপ করা আছে?', hint: 'ডেভেলপমেন্ট নলেজ ছাড়া সঠিক সার্ভার-সাইড ট্র্যাকিং সেটআপ করা সম্ভব নয়', opts: [
+    { label: 'হ্যাঁ, ব্রাউজার পিক্সেল এবং সার্ভার API (CAPI) দুটোই আছে', scores: { authority: 2 }, trackingOk: true },
+    { label: 'শুধু পিক্সেল আছে, কিন্তু সব ডাটা ঠিকমতো ট্র্যাক হয় না', scores: { growth: 1 },     kpiWarning: true },
+    { label: 'না, ট্র্যাকিং এর টেকনিক্যাল বিষয়গুলো করা নেই',        scores: { growth: 1 },     trackingWarning: true },
+    { label: 'ঠিক জানি না আমার পেজ ডাটা ট্র্যাক করছে কি না',         scores: { foundation: 1 }, trackingWarning: true },
+  ] },
+  /* Q8 – KPI measurement: kpiWarning if not tracking ROAS */
+  { id: 8, q: 'মার্কেটিংয়ের সাফল্য বা KPI কীভাবে মাপেন?', hint: 'সঠিক ROAS হিসাব না রাখলে বিজ্ঞাপনের বাজেট অপচয় হয়', opts: [
+    { label: 'আমি ROAS এবং প্রফিট নিয়মিত ট্র্যাক করি',                  scores: { authority: 2 } },
+    { label: 'শুধু ফেসবুক অ্যাড ম্যানেজারের রিপোর্ট দেখি',              scores: { growth: 1 },     kpiWarning: true },
+    { label: 'লাইক, কমেন্ট আর মেসেজ সংখ্যা দেখে বুঝি',                 scores: { foundation: 1 }, kpiWarning: true },
+    { label: 'হিসাব ওভাবে দেখা হয় না',                                   scores: { foundation: 1 }, kpiWarning: true },
+  ] },
+  /* Q9 – Who manages marketing */
+  { id: 9, q: 'মার্কেটিং এখন কীভাবে সামলাচ্ছেন?', hint: 'এটি জানলে বুঝতে পারব কোথায় উন্নতি করা দরকার', opts: [
+    { label: 'নিজেই বুস্ট করি বা পরিচিত কেউ করে দেয়',  scores: { foundation: 2 } },
+    { label: 'নিজেই অ্যাড ম্যানেজার চালাই',              scores: { growth: 1 } },
+    { label: 'ফ্রিল্যান্সার বা এজেন্সি দিয়ে করাচ্ছি',   scores: { growth: 2 } },
+    { label: 'প্রফেশনাল টিমের সাপোর্ট দরকার',            scores: { authority: 2 } },
+  ] },
+  /* Q10 – Biggest problem right now */
+  { id: 10, q: 'এই মুহূর্তে সবচেয়ে বড় সমস্যা কী?', hint: 'সমস্যা জানলেই সমাধানের পথ পাওয়া যাবে', opts: [
+    { label: 'কাস্টমার পাচ্ছি না',              scores: { growth: 3 } },
+    { label: 'পোস্ট করি কিন্তু সেল আসে না',    scores: { growth: 3 } },
+    { label: 'অ্যাড চালাই কিন্তু লাভ হচ্ছে না', scores: { growth: 2 } },
+    { label: 'ব্র্যান্ড হিসেবে পরিচিতি নেই',    scores: { authority: 2 } },
+  ] },
+  /* Q11 – Content creation */
+  { id: 11, q: 'আপনার কন্টেন্ট (ভিডিও/ছবি) কে তৈরি করে?', hint: 'ভালো কন্টেন্ট ছাড়া এখন সেল আসা কঠিন', opts: [
+    { label: 'নিজেই করি',               scores: { foundation: 1 } },
+    { label: 'আমার ছোট টিম আছে',        scores: { growth: 1 } },
+    { label: 'প্রফেশনাল সাপোর্ট দরকার', scores: { growth: 2 } },
+  ] },
+  /* Q12 – 6-month goal: sets budgetSignal context */
+  { id: 12, q: 'আগামী ৬ মাসের মধ্যে আপনার লক্ষ্য কী?', hint: 'লক্ষ্য পরিষ্কার থাকলে সাফল্য দ্রুত আসবে', opts: [
+    { label: 'কোনোমতে ব্যবসা টিকিয়ে রাখা',       scores: { foundation: 2 }, budgetSignal: 'care_plus' },
+    { label: 'বাজারে শক্ত অবস্থান তৈরি করা',      scores: { growth: 2 },     budgetSignal: 'monthly_care' },
+    { label: 'মার্কেট লিডার বা বড় ব্র্যান্ড হওয়া', scores: { authority: 3 }, budgetSignal: 'brand_care' },
+  ] },
+  /* Q13 – Direct service request: STRONGEST budgetSignal, overrides Q12 */
+  { id: 13, q: 'আপনি আমাদের থেকে কী ধরণের সাহায্য চান?', hint: 'আমরা আপনার পাশে থাকতে চাই', opts: [
+    { label: 'বেসিক গাইডলাইন ও অডিট',            scores: { foundation: 1 }, budgetSignal: 'care_plus' },
+    { label: 'নিয়মিত গ্রোথ ও অ্যাড ম্যানেজমেন্ট', scores: { growth: 3 },     budgetSignal: 'monthly_care' },
+    { label: 'ফুল ব্র্যান্ডিং ও কাস্টম টেক সাপোর্ট', scores: { authority: 3 }, budgetSignal: 'brand_care' },
+  ] },
 ]
-const TOTAL = CORE.length
 
-const coreIdx = (id) => {
-  const i = CORE.indexOf(id)
-  return i >= 0 ? i : 0
+const TOTAL = questions.length
+
+const PACKAGES = {
+  care_plus:    { variant: 'basic',   name: 'Care+',        price: '০ টাকা সার্ভিস চার্জ', priceNote: 'শুধু অ্যাড বাজেট', tag: 'আর্লি স্টেজ',    waLabel: 'CarePlus' },
+  monthly_care: { variant: 'popular', name: 'Monthly Care', price: '১০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'গ্রোথ স্টেজ',    waLabel: 'MonthlyCare' },
+  brand_care:   { variant: 'premium', name: 'Brand Care',   price: '৩০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'অথরিটি স্টেজ',   waLabel: 'BrandCare' },
 }
 
-/* ── Component ───────────────────────────────────── */
+const MAX_POSSIBLE = { foundation: 18, growth: 25, authority: 25 }
+
+const normalizeScore = (f, g, a) => {
+  const total = f + g + a
+  if (total === 0) return 0
+  const max = MAX_POSSIBLE.foundation + MAX_POSSIBLE.growth + MAX_POSSIBLE.authority
+  return Math.round((total / max) * 100)
+}
+
+/* decidePackage — Q13 is the direct service request and always sets lastBudgetSignal.
+   If any budgetSignal was given we honour it exactly. Score dominance only fires when
+   neither Q12 nor Q13 carried a budgetSignal (edge-case: user somehow skipped both). */
+const decidePackage = (f, g, a, lastBudgetSignal) => {
+  if (lastBudgetSignal) return lastBudgetSignal
+  // Fallback: pure score dominance
+  const dom = f >= g && f >= a ? 'foundation' : g >= a ? 'growth' : 'authority'
+  return dom === 'foundation' ? 'care_plus' : dom === 'growth' ? 'monthly_care' : 'brand_care'
+}
+
+/* scoreLabel — derived from pkgKey so the bar label always matches the recommendation.
+   The numeric score is a business-health %, not a stage classifier on its own. */
+const scoreLabel = (pkgKey) =>
+  pkgKey === 'care_plus' ? 'আর্লি স্টেজ' : pkgKey === 'monthly_care' ? 'গ্রোথ স্টেজ' : 'অথরিটি লেভেল'
+
+const getDiagnosis = (pkgKey) => ({
+  care_plus: {
+    stage: 'আপনার ব্যবসা এখন একদম শুরুর দিকে আছে।',
+    insight: 'শুরুতেই টেকনিক্যাল সাপোর্ট না থাকলে আপনি অহেতুক বাজে ডিজাইন বা স্লো পেজের পেছনে টাকা নষ্ট করবেন।',
+    advice: 'আমাদের Care+ এ আমরা আপনার বেসিক টেকনিক্যাল চেকআপ করে দেব। আপনার প্রথম ল্যান্ডিং পেজটি যাতে হাই-কনভার্টিং হয়, সেই পরামর্শ আমরাই দেব।',
+  },
+  monthly_care: {
+    stage: 'আপনার ব্যবসা এখন বড় হওয়ার (Growth) পথে।',
+    insight: 'আপনার এমন একটি টিম দরকার যারা শুধু অ্যাড চালাবে না, বরং সিজনাল অফার বা নতুন প্রোডাক্টের জন্য মুহূর্তেই ল্যান্ডিং পেজ ডিজাইন করে দিতে পারবে।',
+    advice: 'Monthly Care প্যাকেজে Digitalizen আপনার পার্সোনাল টেক-টিম হিসেবে কাজ করবে। নতুন প্রোডাক্ট লঞ্চ বা উৎসবের অফার—আমরাই আপনার ল্যান্ডিং পেজ রি-ডিজাইন এবং পিক্সেল সেটআপ করে দেব। আপনাকে আর আলাদা করে ডেভেলপার খুঁজতে হবে না।',
+  },
+  brand_care: {
+    stage: 'আপনার ব্যবসা এখন মার্কেট লিডার হওয়ার জন্য তৈরি।',
+    insight: 'এই পর্যায়ে আপনার কাস্টম ব্র্যান্ড আইডেন্টিটি এবং ডাইনামিক সেলস ফানেল থাকা বাধ্যতামূলক। সাধারণ ওয়ার্ডপ্রেস সাইট আপনার স্কেলিং আটকে দিচ্ছে।',
+    advice: 'Brand Care-এ আমরা আপনার জন্য আনলিমিটেড ল্যান্ডিং পেজ সাপোর্ট রাখব। উৎসবের ধরণ বা প্রোডাক্টের বৈশিষ্ট্য অনুযায়ী আমরা নিয়মিত পেজ রি-ডিজাইন করব। প্রোগ্রামিং এবং মার্কেটিং-এর এই কম্বিনেশন আপনার ব্র্যান্ডকে সবার থেকে এগিয়ে রাখবে।',
+  },
+}[pkgKey])
+
+/* ══════════════════════════════════════════════════
+   COMPONENT
+══════════════════════════════════════════════════ */
 export default function Finder() {
-  const [currentId, setCurrentId] = useState('start')
-  const [history,   setHistory]   = useState([])
-  const [answers,   setAnswers]   = useState({})
-  const [selLabel,  setSelLabel]  = useState(null)
-  const [phase,     setPhase]     = useState('quiz') // quiz | loading | result
-  const [pkg,       setPkg]       = useState(null)
-  const [visible,   setVisible]   = useState(true)
-  const resultRef = useRef(null)
+  const [currentQ, setCurrentQ] = useState(0)
+  const [answers,  setAnswers]  = useState([])
+  const [selIdx,   setSelIdx]   = useState(null)
+  const [phase,    setPhase]    = useState('quiz')
+  const [visible,  setVisible]  = useState(true)
+  const [result,   setResult]   = useState(null)
 
-  const step    = flow[currentId]
-  const idx     = coreIdx(currentId)
-  const pct     = phase === 'result' ? 100 : Math.round((idx / (TOTAL - 1)) * 100)
-  const stepNum = idx + 1
+  const resultRef      = useRef(null)
+  const sectionRef     = useRef(null)
+  const enterTimeRef   = useRef(null)
+  const sectionFiredRef = useRef(false)
+  const quizStartTime  = useRef(null)   // when user answered Q1
+  const dropOffQRef    = useRef(null)   // last question reached before abandon
 
-  const pick = (opt) => {
-    if (selLabel) return
-    setSelLabel(opt.label)
-    const newAns = { ...answers, [step.field]: opt.val }
-    setAnswers(newAns)
+  const q   = questions[currentQ]
+  const pct = phase === 'result' ? 100 : Math.round((currentQ / TOTAL) * 100)
+
+  /* ── Section ViewContent + time-on-section + drop-off tracking ── */
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !sectionFiredRef.current) {
+          sectionFiredRef.current = true
+          enterTimeRef.current    = Date.now()
+          track('ViewContent', {
+            content_name:     'Finder Section',
+            content_category: 'Section',
+          })
+          io.unobserve(el)
+        }
+      },
+      { threshold: 0.15 }
+    )
+    io.observe(el)
+
+    const pushEngagement = () => {
+      if (!enterTimeRef.current) return
+      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
+      window.dataLayer = window.dataLayer || []
+      window.dataLayer.push({
+        event:                   'section_engagement',
+        section:                 'finder',
+        time_on_section_seconds: secs,
+        quiz_drop_off_question:  dropOffQRef.current,
+      })
+      enterTimeRef.current = null
+    }
+
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', pushEngagement)
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('beforeunload', pushEngagement)
+    }
+  }, [])
+
+  /* ── Keyboard: press A–E to select option ── */
+  useEffect(() => {
+    if (phase !== 'quiz') return
+    const onKey = (e) => {
+      if (selIdx !== null) return
+      const idx = e.key.toUpperCase().charCodeAt(0) - 65  // A=0, B=1 …
+      if (idx >= 0 && idx < q.opts.length) pick(idx)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [phase, selIdx, currentQ, q]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const reset = useCallback(() => {
+    setCurrentQ(0); setAnswers([]); setSelIdx(null)
+    setPhase('quiz'); setVisible(true); setResult(null)
+    quizStartTime.current  = null
+    dropOffQRef.current    = null
+    track('ViewContent', {
+      content_name:     'Finder Quiz Restart',
+      content_category: 'Quiz',
+    })
+  }, [])
+
+  const pick = useCallback((optIdx) => {
+    if (selIdx !== null) return
+    setSelIdx(optIdx)
+
+    const opt         = q.opts[optIdx]
+    const newAnswers  = [...answers, opt]
+    dropOffQRef.current = currentQ + 1   // update last-reached question
+
+    // Fire quiz start on Q1
+    if (currentQ === 0 && !quizStartTime.current) {
+      quizStartTime.current = Date.now()
+      track('InitiateCheckout', {
+        content_name:     'Finder Quiz Start',
+        content_category: 'Quiz',
+        currency:         'BDT',
+        value:            0,
+      })
+    }
+
+    // Per-question tracking — gives funnel drop-off visibility
+    track('ViewContent', {
+      content_name:      `Finder Q${q.id}: ${opt.label}`,
+      content_category:  'Quiz Answer',
+      content_ids:       [`finder_q${q.id}`],
+      quiz_question:     q.id,
+      quiz_answer_index: optIdx + 1,
+      quiz_progress_pct: Math.round(((currentQ + 1) / TOTAL) * 100),
+    })
 
     setTimeout(() => {
-      if (opt.pkg) {
-        setPkg(pkgMap[opt.pkg])
-        setPhase('loading')
-        pixel('ViewContent', { content_name: pkgMap[opt.pkg].name })
-        setTimeout(() => {
-          setPhase('result')
-          setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80)
-        }, 2500)
-      } else {
-        setVisible(false)
-        setTimeout(() => {
-          setHistory(h => [...h, currentId])
-          setCurrentId(opt.next)
-          setSelLabel(null)
-          setVisible(true)
-        }, 180)
-      }
-    }, 260)
+      setVisible(false)
+      setTimeout(() => {
+        if (currentQ < TOTAL - 1) {
+          setAnswers(newAnswers); setCurrentQ(currentQ + 1)
+          setSelIdx(null); setVisible(true)
+        } else {
+          setAnswers(newAnswers); setPhase('loading'); setVisible(true)
+          setTimeout(() => {
+            const res = computeResult(newAnswers)
+            setResult(res)
+            setPhase('result')
+            // Fire Lead on quiz completion — this is a high-intent signal
+            const timeSpent = quizStartTime.current
+              ? Math.round((Date.now() - quizStartTime.current) / 1000)
+              : 0
+            track('Lead', {
+              content_name:         `Finder Result: ${res.pkg.name}`,
+              content_category:     'Quiz Complete',
+              content_ids:          [`finder_pkg_${res.pkgKey}`],
+              currency:             'BDT',
+              value:                0,
+              quiz_score:           res.score,
+              quiz_package:         res.pkg.waLabel,
+              quiz_time_seconds:    timeSpent,
+              tracking_warning:     res.trackingWarning,
+              kpi_warning:          res.kpiWarning,
+              tech_gap:             res.techGap,
+            })
+            setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+          }, 3000)
+        }
+      }, 170)
+    }, 400)
+  }, [selIdx, currentQ, answers, q])
+
+  const goBack = useCallback(() => {
+    if (currentQ === 0) return
+    setVisible(false)
+    setTimeout(() => {
+      setAnswers(answers.slice(0, -1)); setCurrentQ(currentQ - 1)
+      setSelIdx(null); setVisible(true)
+    }, 170)
+  }, [currentQ, answers])
+
+  const computeResult = (all) => {
+    let f = 0, g = 0, a = 0
+    let trackingWarning = false, kpiWarning = false, landingPageWarning = null, techGap = false
+    let lastBudgetSignal = null
+    all.forEach((opt) => {
+      f += opt.scores?.foundation || 0
+      g += opt.scores?.growth     || 0
+      a += opt.scores?.authority  || 0
+      if (opt.trackingWarning)    trackingWarning    = true
+      if (opt.kpiWarning)         kpiWarning         = true
+      if (opt.landingPageWarning) landingPageWarning = opt.landingPageWarning
+      if (opt.techGap)            techGap            = true
+      if (opt.budgetSignal)       lastBudgetSignal   = opt.budgetSignal
+    })
+    const score  = normalizeScore(f, g, a)
+    const pkgKey = decidePackage(f, g, a, lastBudgetSignal)
+    return { score, pkgKey, pkg: PACKAGES[pkgKey], diag: getDiagnosis(pkgKey), trackingWarning, kpiWarning, landingPageWarning, techGap }
   }
 
-  const goBack = () => {
-    if (!history.length) return
-    const prev = history[history.length - 1]
-    setHistory(h => h.slice(0, -1))
-    setCurrentId(prev)
-    setSelLabel(null)
-    setPhase('quiz')
-    setVisible(true)
+  const buildWaMsg = () => {
+    if (!result) return ''
+    const stage = scoreLabel(result.pkgKey).replace(/\s/g, '')
+    const bs    = answers.find(a => a.budgetSignal)?.budgetSignal || 'unknown'
+    const bMap  = { care_plus: 'Under10k', monthly_care: '10kTo30k', brand_care: 'Over30k', unknown: 'Unknown' }
+    return `HelloDigitalizenAuditReportScore${result.score}Stage${stage}Budget${bMap[bs]}Package${result.pkg.waLabel}`
   }
 
-  const reset = () => {
-    setCurrentId('start')
-    setHistory([])
-    setAnswers({})
-    setSelLabel(null)
-    setPhase('quiz')
-    setPkg(null)
-    setVisible(true)
-  }
+  const handleCtaPrimary = useCallback(() => {
+    track('InitiateCheckout', {
+      content_name:     `Finder CTA: ${result.pkg.name}`,
+      content_category: 'CTA',
+      content_ids:      [`finder_pkg_${result.pkgKey}`],
+      currency:         'BDT',
+      value:            0,
+      quiz_score:       result.score,
+      quiz_package:     result.pkg.waLabel,
+    })
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaMsg())}`, '_blank')
+  }, [result])
 
-  const insights = phase === 'result' ? getInsights(answers) : []
-  const score    = phase === 'result' ? calcScore(answers) : 0
-  const advice   = phase === 'result' && pkg ? getAdvice(pkg.key, answers) : ''
+  const handleUpsell = useCallback(() => {
+    track('AddToCart', {
+      content_name:     'Monthly Care Upsell',
+      content_category: 'Upsell',
+      content_ids:      ['finder_pkg_monthly_care'],
+      currency:         'BDT',
+      value:            0,
+    })
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen! আমি Monthly Care প্ল্যান সম্পর্কে জানতে চাই।')}`, '_blank')
+  }, [])
 
+  const warnings = result ? [
+    /* W1 – No pixel/CAPI at all: red, critical */
+    result.trackingWarning && {
+      color: 'red', icon: 'warning',
+      title: 'পিক্সেল ও CAPI ট্র্যাকিং মিসিং!',
+      text:  'সঠিক ট্র্যাকিং ছাড়া ফেসবুকের অ্যালগরিদম বুঝতে পারে না আপনার আসল কাস্টমার কারা। এতে বিজ্ঞাপনের টাকা নষ্ট হয়।',
+    },
+    /* W2 – Pixel only / no ROAS tracking: amber, data gap */
+    result.kpiWarning && {
+      color: 'amber', icon: 'info',
+      title: 'সঠিক ডাটা ট্র্যাকিং নেই',
+      text:  'ROAS এবং প্রফিট ট্র্যাক না করলে আপনি বুঝতে পারবেন না মার্কেটিং থেকে আসলে কত লাভ হচ্ছে।',
+    },
+    /* W3 – No dev/design support: amber, Digitalizen USP hook */
+    result.techGap && {
+      color: 'amber', icon: 'warning',
+      title: 'আপনার কি সিজনাল ডিজাইন সাপোর্ট আছে?',
+      text:  'মার্কেটিং টিম যদি ল্যান্ডিং পেজ এডিট করতে না পারে, তবে ক্যাম্পেইনের গতি কমে যায়। Digitalizen-এর বিশেষত্ব: আমরা যেহেতু নিজেই প্রোগ্রামিং বুঝি, তাই যেকোনো উৎসব বা অফারে আপনার পেজ আমরাই ইনস্ট্যান্ট আপডেট করে দেই।',
+    },
+    /* W4 – Landing page issue: title & text differ by 'none' vs 'weak' */
+    result.landingPageWarning && {
+      color: 'amber', icon: 'warning',
+      title: result.landingPageWarning === 'none'
+        ? 'ল্যান্ডিং পেজ নেই!'
+        : 'ল্যান্ডিং পেজ স্লো ও দুর্বল',
+      text: result.landingPageWarning === 'none'
+        ? 'ল্যান্ডিং পেজ ছাড়া অ্যাডের ট্রাফিক কোথাও যাচ্ছে না। শুধু ফেসবুক ইনবক্সে পাঠানো কনভার্সন অনেক কমিয়ে দেয়। একটি কাস্টম হাই-স্পিড পেজ আপনার সেল ২–৩ গুণ বাড়াতে পারে।'
+        : 'WordPress বা টেম্পলেট পেজ লোড হতে দেরি হয় — গবেষণা বলছে ১ সেকেন্ড দেরিতে ৭% কনভার্সন কমে। কাস্টম কোড করা পেজ আপনার অ্যাড বাজেটের সর্বোচ্চ ব্যবহার নিশ্চিত করে।',
+    },
+  ].filter(Boolean) : []
+
+  /* ─── RENDER ─── */
   return (
-    <section id="finder" className="finder-section">
+    <section id="finder" className="finder-section" ref={sectionRef}>
       <div className="container">
 
         <div className="row-header">
-          <span className="section-num">০০২</span>
+          <span className="section-num">০০১</span>
           <span className="section-title-right">প্যাকেজ ফাইন্ডার</span>
         </div>
 
-        <h2 className="finder-heading">আপনার জন্য কোন প্যাকেজ সঠিক?</h2>
+        <h2 className="finder-heading">আপনার ব্যবসার জন্য সঠিক প্ল্যান কোনটি?</h2>
         <p className="finder-sub">
-          কয়েকটি প্রশ্নের উত্তর দিন — পাবেন একটি কাস্টম বিজনেস অডিট রিপোর্ট।
+          ১৩টি প্রশ্নে আপনার বিজনেসের বর্তমান অবস্থা এবং টেকনিক্যাল গ্যাপ জেনে নিন।
         </p>
 
         <div className="finder-card">
 
-          {/* Progress */}
-          <div className="finder-progress">
-            <div className="finder-progress__fill" style={{ width: `${pct}%` }} />
-          </div>
-
           {/* ── QUIZ ── */}
           {phase === 'quiz' && (
-            <div
-              className="finder-quiz"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'none' : 'translateX(10px)',
-                transition: 'opacity 0.17s ease, transform 0.17s ease'
-              }}
-            >
+            <div className="finder-quiz" style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateX(12px)', transition: 'opacity 0.17s ease, transform 0.17s ease' }}>
               <div className="finder-pips">
-                {Array.from({ length: TOTAL }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`finder-pip${
-                      i < stepNum - 1 ? ' finder-pip--done'
-                      : i === stepNum - 1 ? ' finder-pip--current'
-                      : ''
-                    }`}
-                  />
+                {questions.map((_, i) => (
+                  <div key={i} className={`finder-pip${i < currentQ ? ' finder-pip--done' : i === currentQ ? ' finder-pip--current' : ''}`} />
                 ))}
               </div>
 
               <div className="finder-step-meta">
-                <span className="finder-step-label">বিজনেস অডিট</span>
-                <span className="finder-step-counter">{stepNum} / {TOTAL}</span>
+                <span className="finder-step-label">বিজনেস ও টেক অডিট</span>
+                <span className="finder-step-counter">প্রশ্ন {bn(currentQ + 1)} / {bn(TOTAL)}</span>
               </div>
 
-              <p className="finder-q">{step.q}</p>
+              <p className="finder-q">{q.q}</p>
+              {q.hint && <p className="finder-hint">{q.hint}</p>}
+
+              {/* Keyboard hint — only on desktop */}
+              <p className="finder-keyboard-hint" aria-hidden="true">
+                কীবোর্ড শর্টকাট: A, B, C… চাপুন
+              </p>
 
               <div className="finder-opts">
-                {step.opts.map((o, i) => (
+                {q.opts.map((o, i) => (
                   <button
                     key={i}
-                    className={`finder-opt${selLabel === o.label ? ' finder-opt--selected' : ''}`}
-                    onClick={() => pick(o)}
-                    disabled={!!selLabel}
+                    className={`finder-opt${selIdx === i ? ' finder-opt--selected' : ''}`}
+                    onClick={() => pick(i)}
+                    disabled={selIdx !== null}
+                    aria-label={`বিকল্প ${String.fromCharCode(0x41 + i)}: ${o.label}`}
                   >
-                    <span className="finder-opt__key">
-                      {String.fromCharCode(0x41 + i)}
-                    </span>
+                    <span className="finder-opt__key">{String.fromCharCode(0x41 + i)}</span>
                     <span className="finder-opt__text">{o.label}</span>
                     <span className="finder-opt__arrow">→</span>
                   </button>
                 ))}
               </div>
 
-              {history.length > 0 && (
-                <button className="finder-back" onClick={goBack}>
-                  {Icon.back} আগের প্রশ্নে ফিরুন
-                </button>
+              {currentQ > 0 && (
+                <button className="finder-back" onClick={goBack}>{Icon.back} আগের প্রশ্নে ফিরুন</button>
               )}
             </div>
           )}
@@ -456,109 +516,132 @@ export default function Finder() {
           {/* ── LOADING ── */}
           {phase === 'loading' && (
             <div className="finder-loading">
+              <div className="finder-loading__congrats">
+                <div className="finder-loading__badge">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                    <circle cx="14" cy="14" r="14" fill="rgba(31,75,255,0.1)"/>
+                    <path d="M8 14l4 4 8-8" stroke="#1F4BFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="finder-loading__check-path"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="finder-loading__title">আপনার ডাটা ও ট্র্যাকিং অডিট করা হচ্ছে...</h3>
+                  <p className="finder-loading__sub">আমরা আপনার তথ্যগুলো যাচাই করছি, একটু অপেক্ষা করুন।</p>
+                </div>
+              </div>
+
               <div className="finder-loading__bar-track">
                 <div className="finder-loading__bar" />
               </div>
-              <h3 className="finder-loading__title">অডিট তৈরি হচ্ছে…</h3>
-              <p className="finder-loading__sub">
-                আপনার উত্তরের ভিত্তিতে বিজনেস হেলথ স্কোর ও কাস্টম রিপোর্ট প্রস্তুত হচ্ছে।
-              </p>
+
               <div className="finder-loading__steps">
                 {[
-                  'বিজনেস প্রোফাইল বিশ্লেষণ',
-                  'মার্কেট গ্যাপ ও ইনসাইট ক্যালকুলেট',
-                  'সেরা প্যাকেজ নির্ধারণ সম্পন্ন',
-                ].map((txt, i) => (
+                  { txt: 'আপনার পেজের ডিজাইন ও ইউজার এক্সপেরিয়েন্স অডিট করা হচ্ছে...', delay: 1 },
+                  { txt: 'অফার অনুযায়ী পেজ রি-ডিজাইন করার সুবিধা যাচাই করা হচ্ছে...', delay: 2 },
+                  { txt: 'আপনার বিজনেসের জন্য একটি ফুল-স্ট্যাক গ্রোথ প্ল্যান তৈরি হচ্ছে...', delay: 3 },
+                ].map((s, i) => (
                   <div key={i} className={`finder-loading__step finder-loading__step--${i + 1}`}>
-                    <span className="finder-loading__dot" />
-                    {txt}
+                    <span className="finder-loading__step-icon" aria-hidden="true">
+                      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                        <path d="M2.5 7l3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                    {s.txt}
                   </div>
                 ))}
+              </div>
+
+              <div className="finder-loading__footer">
+                <span className="finder-loading__footer-dot" /><span className="finder-loading__footer-dot" /><span className="finder-loading__footer-dot" />
               </div>
             </div>
           )}
 
           {/* ── RESULT ── */}
-          {phase === 'result' && pkg && (
+          {phase === 'result' && result && (
             <div className="finder-result" ref={resultRef}>
 
-              {/* Hero */}
-              <div className="finder-result__hero">
+              <div className={`finder-result__hero finder-result__hero--${result.pkg.variant}`}>
+                {result.pkg.variant === 'premium' && <div className="finder-result__gold-strip" aria-hidden="true" />}
                 <div className="finder-result__live">
-                  <span className="finder-result__live-dot" />
-                  {pkg.tag}
+                  <span className={`finder-result__live-dot finder-result__live-dot--${result.pkg.variant}`} />
+                  {result.pkg.tag}
                 </div>
-                <h3 className="finder-result__name">{pkg.name}</h3>
+                <h3 className="finder-result__name">{result.pkg.name}</h3>
                 <p className="finder-result__price">
-                  <strong>{pkg.price}</strong>
-                  {pkg.priceNote && <span> {pkg.priceNote}</span>}
+                  <strong>{result.pkg.price}</strong>
+                  {result.pkg.priceNote && <span> · {result.pkg.priceNote}</span>}
                 </p>
-
-                {/* Health score */}
-                <div className="finder-score">
-                  <span className="finder-score__num">{score}</span>
+                <div className={`finder-score finder-score--${result.pkg.variant}`}>
+                  <span className="finder-score__num">{result.score}</span>
                   <div className="finder-score__bar-wrap">
                     <div className="finder-score__bar-track">
-                      <div className="finder-score__bar-fill" style={{ width: `${score}%` }} />
+                      <div className={`finder-score__bar-fill finder-score__bar-fill--${result.pkg.variant}`} style={{ width: `${result.score}%` }} />
                     </div>
-                    <span className="finder-score__label">{scoreLabel(score)}</span>
+                    <span className="finder-score__label">{scoreLabel(result.pkgKey)}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Insights */}
-              {insights.length > 0 && (
-                <div className="finder-insights">
-                  <span className="finder-insights__label">আপনার বিজনেস ইনসাইট</span>
-                  {insights.map((ins, i) => (
-                    <div key={i} className="finder-insight">
-                      <div
-                        className="finder-insight__icon"
-                        style={{ background: ins.bg, color: ins.color }}
-                        aria-hidden="true"
-                      >
-                        {Icon[ins.icon]}
-                      </div>
+              {warnings.length > 0 && (
+                <div className="finder-warnings">
+                  {warnings.map((w, i) => (
+                    <div key={i} className={`finder-warning finder-warning--${w.color}`}>
+                      <div className={`finder-warning__icon finder-warning__icon--${w.color}`}>{Icon[w.icon]}</div>
                       <div>
-                        <div className="finder-insight__label">{ins.label}</div>
-                        <p className="finder-insight__text">{ins.text}</p>
+                        <div className="finder-warning__title">{w.title}</div>
+                        <p className="finder-warning__text">{w.text}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Advice */}
-              <div className="finder-advice">
-                <div className="finder-advice__label">আমাদের রেকমেন্ডেশন</div>
-                <p className="finder-advice__text">{advice}</p>
+              <div className="finder-insights">
+                <span className="finder-insights__label">আপনার ব্যবসার ইনসাইট</span>
+                <div className="finder-insight">
+                  <div className="finder-insight__icon" style={{ background: '#EEF1FC', color: '#1F4BFF' }}>{Icon.trend}</div>
+                  <div>
+                    <div className="finder-insight__label">ব্যবসার অবস্থান</div>
+                    <p className="finder-insight__text">{result.diag.stage}</p>
+                  </div>
+                </div>
+                <div className="finder-insight">
+                  <div className="finder-insight__icon" style={{ background: '#FEF3C7', color: '#D97706' }}>{Icon.info}</div>
+                  <div>
+                    <div className="finder-insight__label">ডিজিটাল স্ট্রাটেজি ও ডিজাইন অডিট রিপোর্ট</div>
+                    <p className="finder-insight__text">{result.diag.insight}</p>
+                  </div>
+                </div>
               </div>
 
-              {/* CTAs */}
+              <div className={`finder-advice finder-advice--${result.pkg.variant}`}>
+                <div className="finder-advice__label">আমাদের পরামর্শ</div>
+                <p className="finder-advice__text">{result.diag.advice}</p>
+              </div>
+
+              {result.pkgKey === 'care_plus' && (
+                <div className="finder-upsell">
+                  <div className="finder-upsell__label">Monthly Care এ গেলে যা পাবেন</div>
+                  <p className="finder-upsell__text">আনলিমিটেড ক্যাম্পেইন, কনটেন্ট স্ট্রাটেজি, Meta Pixel সেটআপ এবং ডেডিকেটেড গ্রোথ টিমের সাথে আপনার ব্যবসা অনেক দ্রুত এগিয়ে যাবে।</p>
+                  <button className="finder-upsell__btn" onClick={handleUpsell}>
+                    Monthly Care সম্পর্কে জানুন
+                  </button>
+                </div>
+              )}
+
               <div className="finder-ctas">
-                <button
-                  className="finder-cta-primary"
-                  onClick={() => {
-                    pixel('InitiateCheckout', { content_name: pkg.name })
-                    const scoreStr = `বিজনেস হেলথ স্কোর: ${score}/100 (${scoreLabel(score)})`
-                    const insightStr = insights.map(ins => `• ${ins.label}`).join('\n')
-                    const msg = `হ্যালো Digitalizen!\n\nআমি বিজনেস অডিট রিপোর্ট পেয়েছি।\n${scoreStr}\nসাজেস্টেড প্যাকেজ: ${pkg.name} (${pkg.price})\n\nমূল ইনসাইট:\n${insightStr}\n\nবিস্তারিত আলোচনা করতে চাই।`
-                    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
-                  }}
-                >
-                  {Icon.wa} WhatsApp-এ আলোচনা শুরু করুন
+                <button className={`finder-cta-primary finder-cta-primary--${result.pkg.variant}`} onClick={handleCtaPrimary}>
+                  {Icon.wa} WhatsApp-এ আলাপ শুরু করি
                 </button>
-                <button className="finder-cta-ghost" onClick={reset}>
-                  আবার চেষ্টা করুন
-                </button>
-                <p className="finder-fine">কোনো বাধ্যবাধকতা নেই · পরামর্শ সম্পূর্ণ ফ্রি</p>
+                <button className="finder-cta-ghost" onClick={reset}>আবার চেকআপ করুন</button>
+                <p className="finder-fine">কোনো বাধ্যবাধকতা নেই, পরামর্শ একদম ফ্রি</p>
               </div>
-
             </div>
           )}
-
         </div>
       </div>
     </section>
   )
 }
+
+const bn = (n) => String(n).split('').map(d => '০১২৩৪৫৬৭৮৯'[+d] ?? d).join('')

@@ -1,154 +1,779 @@
+/* ══════════════════════════════════════════════════
+   PROCESS — Digitalizen
+   Philosophy: Less is more. White. Clean. Alive.
+   Neumorphic cards · Surgical animation · No emoji
+══════════════════════════════════════════════════ */
+
+/* ── Section ──────────────────────────────────── */
 .process-section {
-  padding: 72px 0;
+  padding: 80px 0 88px;
   border-top: 1px solid var(--border);
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faint radial wash — barely visible, adds depth */
+.process-section::before {
+  content: '';
+  position: absolute;
+  top: -160px;
+  right: -180px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(31,75,255,0.055) 0%, transparent 68%);
+  pointer-events: none;
 }
 
 .process-heading {
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--text);
-  margin-bottom: 28px;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
 }
 
-.process-steps {
+.process-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 36px;
+}
+
+/* ── Cards ─────────────────────────────────────── */
+.process-cards {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 10px;
   margin-bottom: 28px;
+  position: relative;
 }
 
-.process-step {
+/* Dashed vertical thread */
+.process-cards::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 44px;
+  bottom: 44px;
+  width: 1px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--blue) 0px, var(--blue) 4px,
+    transparent 4px, transparent 10px
+  );
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* ── Single card ─────────────────────────────── */
+.prc-card {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: flex-start;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+  font-family: var(--font);
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: prcIn 0.5s ease forwards;
+}
+.prc-card:nth-child(1) { animation-delay: 0.06s; }
+.prc-card:nth-child(2) { animation-delay: 0.16s; }
+.prc-card:nth-child(3) { animation-delay: 0.26s; }
+
+@keyframes prcIn {
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.step-left {
+/* ── Step orb (neumorphic) ───────────────────── */
+.prc-orb-col {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
-  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
-.step-num-wrap {
+.prc-orb {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
   position: relative;
-  width: 48px;
-  height: 48px;
-  background: var(--blue);
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(31,75,255,0.25);
+
+  /* Neumorphic light surface */
+  background: var(--bg);
+  box-shadow:
+    4px 4px 10px rgba(163,177,198,0.35),
+   -3px -3px 8px rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.6);
+
+  transition:
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.step-emoji {
-  font-size: 1.3rem;
+/* Step number inside orb */
+.prc-orb-num {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: var(--muted2);
+  letter-spacing: 0;
+  transition: color 0.25s;
+  line-height: 1;
+  user-select: none;
 }
 
-.step-num {
-  display: none;
+/* Orb active ring — hidden by default */
+.prc-orb::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid var(--blue);
+  opacity: 0;
+  transform: scale(0.88);
+  transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.step-connector {
-  width: 2px;
-  height: 28px;
-  background: linear-gradient(to bottom, var(--blue), var(--border));
-  margin: 4px 0;
-  flex-shrink: 0;
-}
-
-.step-body {
+.prc-card:hover .prc-orb {
   background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 16px;
+  box-shadow:
+    6px 6px 16px rgba(163,177,198,0.45),
+   -4px -4px 12px rgba(255,255,255,1),
+    0 0 0 0 rgba(31,75,255,0);
+  transform: scale(1.08);
+}
+.prc-card:hover .prc-orb::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.prc-card:hover .prc-orb-num { color: var(--blue); }
+
+/* Thread connector */
+.prc-thread {
+  width: 1px;
+  height: 18px;
+  background: linear-gradient(to bottom, rgba(31,75,255,0.14), transparent);
+  margin: 3px 0;
+}
+
+/* ── Card body (neumorphic white card) ────────── */
+.prc-body {
   flex: 1;
-  margin-bottom: 8px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: var(--shadow-sm);
+  background: var(--white);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2px;
+  cursor: pointer;
+
+  /* Neumorphic elevated card */
+  box-shadow:
+    5px 5px 14px rgba(163,177,198,0.28),
+   -3px -3px 8px rgba(255,255,255,0.9),
+    inset 0 0 0 1px rgba(255,255,255,0.5);
+  border: 1px solid var(--border);
+
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.25s,
+    transform 0.32s cubic-bezier(0.34,1.5,0.64,1);
 }
 
-.step-body:hover {
-  border-color: var(--blue);
-  box-shadow: var(--shadow-blue);
+/* Blue accent bar — left edge, hidden until hover */
+.prc-body::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--blue);
+  opacity: 0;
+  transform: scaleY(0.4);
+  transform-origin: center;
+  transition: opacity 0.25s, transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.step-header-row {
+/* Ghost step number — far right watermark */
+.prc-body::after {
+  content: attr(data-n);
+  position: absolute;
+  right: 12px;
+  bottom: -2px;
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--border);
+  line-height: 1;
+  letter-spacing: -0.06em;
+  pointer-events: none;
+  user-select: none;
+  transition: color 0.25s, opacity 0.25s;
+}
+
+.prc-card:hover .prc-body {
+  border-color: rgba(31,75,255,0.18);
+  box-shadow:
+    8px 8px 22px rgba(163,177,198,0.38),
+   -4px -4px 12px rgba(255,255,255,1),
+    inset 0 0 0 1px rgba(31,75,255,0.05),
+    0 0 0 3px rgba(31,75,255,0.04);
+  transform: translateX(4px) translateY(-2px);
+}
+
+/* Shine sweep across card on hover */
+.prc-body > *     { position: relative; z-index: 1; }
+.prc-body-shine   {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255,255,255,0.35) 50%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  background-position: -100% center;
+  border-radius: 16px;
+  pointer-events: none;
+  transition: background-position 0.55s ease;
+}
+.prc-card:hover .prc-body-shine {
+  background-position: 180% center;
+}
+.prc-card:hover .prc-body::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+.prc-card:hover .prc-body::after {
+  color: var(--border2);
+}
+
+/* ── Card content ─────────────────────────────── */
+.prc-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 8px;
 }
 
-.step-title {
+.prc-title {
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--text);
+  line-height: 1.2;
+  transition: color 0.2s;
 }
+.prc-card:hover .prc-title { color: var(--blue); }
 
-.step-metric-chip {
+/* Metric chip */
+.prc-metric {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  flex-shrink: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, background 0.2s;
+
+  /* Inset neomorphism on chip */
+  box-shadow:
+    inset 1px 1px 3px rgba(163,177,198,0.3),
+    inset -1px -1px 3px rgba(255,255,255,0.8);
+}
+.prc-card:hover .prc-metric {
+  transform: scale(1.08);
+  border-color: rgba(31,75,255,0.22);
+  background: var(--blue-light);
 }
 
-.step-metric-num {
-  font-size: 0.95rem;
-  font-weight: 800;
+.prc-metric-num {
+  font-size: 0.9rem;
+  font-weight: 900;
   color: var(--blue);
-  line-height: 1.1;
+  line-height: 1.15;
+}
+.prc-metric-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--muted2);
+  white-space: nowrap;
 }
 
-.step-metric-label {
-  font-size: 0.65rem;
-  font-weight: 500;
+.prc-desc {
+  font-size: 0.84rem;
   color: var(--muted);
+  line-height: 1.7;
 }
 
-.step-desc {
-  font-size: 0.88rem;
-  color: var(--muted);
-  line-height: 1.65;
+/* "See more" cue */
+.prc-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 0.71rem;
+  font-weight: 700;
+  color: var(--blue);
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.22s, transform 0.22s;
 }
+.prc-card:hover .prc-cue { opacity: 1; transform: translateY(0); }
 
-/* Formula */
-.process-formula {
-  background: var(--dark);
-  color: #fff;
-  border-radius: var(--radius);
-  padding: 20px 24px;
+.prc-cue-arr {
+  display: inline-block;
+  transition: transform 0.18s;
+}
+.prc-card:hover .prc-cue-arr { transform: translateX(4px); }
+
+
+/* ── Progress track (replaces dark bar) ──────── */
+.process-track {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0;
-  font-size: 0.95rem;
+  padding: 20px 0 0;
+}
+
+.track-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: var(--font);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Node circle */
+.track-node {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    3px 3px 8px rgba(163,177,198,0.3),
+   -2px -2px 6px rgba(255,255,255,0.9);
+
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s,
+    transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+
+/* Inner pulse ring — shows on hover */
+.track-node::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--blue);
+  opacity: 0;
+  transform: scale(0.82);
+  transition: opacity 0.22s, transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.track-step:hover .track-node {
+  background: var(--blue-light);
+  border-color: rgba(31,75,255,0.3);
+  transform: translateY(-2px);
+  box-shadow:
+    4px 4px 12px rgba(163,177,198,0.38),
+   -2px -2px 8px rgba(255,255,255,1),
+    0 4px 14px rgba(31,75,255,0.1);
+}
+.track-step:hover .track-node::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.track-node-num {
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: var(--muted2);
+  transition: color 0.22s;
+  user-select: none;
+}
+.track-step:hover .track-node-num { color: var(--blue); }
+
+.track-label {
+  font-size: 0.72rem;
   font-weight: 700;
-  flex-wrap: wrap;
-  gap: 8px;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  transition: color 0.22s;
+  white-space: nowrap;
+}
+.track-step:hover .track-label { color: var(--blue); }
+
+/* Connecting line between steps */
+.track-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border2);
+  margin: 0 6px;
+  margin-bottom: 22px; /* aligns with node centre */
+  position: relative;
+  overflow: hidden;
+  max-width: 48px;
 }
 
-.formula-row {
+/* Animated fill on the line */
+.track-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--blue);
+  transform: translateX(-100%);
+  animation: lineFill 2.4s ease-in-out infinite;
+  opacity: 0.35;
+}
+.track-line:nth-of-type(2)::after { animation-delay: 0.6s; }
+@keyframes lineFill {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+
+/* ══════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════ */
+
+.prc-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: transparent;
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+.prc-overlay--open {
+  background: rgba(11,18,32,0.52);
+  pointer-events: all;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.prc-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 91svh;
+  overflow-y: auto;
+  border-radius: 24px 24px 0 0;
+  background: var(--white);
+  padding-bottom: 40px;
+  position: relative;
+  transform: translateY(104%);
+  transition: transform 0.44s cubic-bezier(0.32,1.18,0.58,1);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  /* Modal neumorphic shadow */
+  box-shadow:
+    0 -12px 48px rgba(15,23,42,0.12),
+    0 -2px 8px rgba(15,23,42,0.05);
+}
+.prc-overlay--open .prc-modal {
+  transform: translateY(0);
+}
+
+/* Drag handle */
+.prc-modal-handle {
+  width: 36px;
+  height: 3px;
+  background: var(--border2);
+  border-radius: 100px;
+  margin: 12px auto 0;
+}
+
+/* Close */
+.prc-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--muted);
+  z-index: 3;
+
+  box-shadow:
+    2px 2px 6px rgba(163,177,198,0.3),
+   -1px -1px 4px rgba(255,255,255,0.9);
+
+  transition:
+    box-shadow 0.2s,
+    transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+    color 0.15s;
+}
+.prc-modal-close:hover {
+  color: var(--text);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow:
+    3px 3px 9px rgba(163,177,198,0.4),
+   -2px -2px 6px rgba(255,255,255,1);
 }
 
-.formula-item {
-  display: flex;
+/* ── Modal header area ──────────────────────── */
+.prc-modal-header {
+  padding: 20px 20px 0;
+}
+
+/* Step label pill */
+.prc-modal-step-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-
-.formula-emoji {
-  font-size: 1.1rem;
-}
-
-.formula-arrow {
+  gap: 7px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--blue);
-  font-size: 1.2rem;
+  background: var(--blue-light);
+  border: 1px solid rgba(31,75,255,0.14);
+  border-radius: 100px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
+
+/* Animated dot */
+.prc-modal-step-pill-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: pulse 1.8s ease infinite;
+  flex-shrink: 0;
+}
+
+.prc-modal-title {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+
+.prc-modal-tagline {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Stat row ───────────────────────────────── */
+.prc-modal-stat-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.prc-modal-stat {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  box-shadow:
+    3px 3px 8px rgba(163,177,198,0.22),
+   -2px -2px 6px rgba(255,255,255,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.4);
+}
+
+.prc-modal-stat-num {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--blue);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.prc-modal-stat-lbl {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--muted2);
+  line-height: 1.3;
+}
+
+/* ── Modal content ──────────────────────────── */
+.prc-modal-content {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Story text */
+.prc-modal-story {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.8;
+  padding-left: 14px;
+  border-left: 2px solid var(--blue);
+}
+
+/* Checklist */
+.prc-checks {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--white);
+
+  box-shadow:
+    3px 3px 9px rgba(163,177,198,0.18),
+   -2px -2px 6px rgba(255,255,255,0.85);
+}
+
+.prc-checks-lbl {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  padding: 11px 14px 9px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.prc-check {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text2);
+  transition: background 0.14s;
+}
+.prc-check:last-child { border-bottom: none; }
+.prc-check:hover { background: var(--bg); }
+
+.prc-check-tick {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue-light);
+  border: 1px solid rgba(31,75,255,0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--blue);
+}
+
+/* Insight */
+.prc-modal-insight {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  box-shadow:
+    inset 2px 2px 5px rgba(163,177,198,0.2),
+    inset -1px -1px 4px rgba(255,255,255,0.7);
+}
+.prc-modal-insight-bar {
+  width: 2px;
+  border-radius: 2px;
+  background: var(--blue);
+  flex-shrink: 0;
+  align-self: stretch;
+  opacity: 0.5;
+}
+.prc-modal-insight-body {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.prc-modal-insight-body strong {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* CTA */
+.prc-modal-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 15px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #fff;
+  background: var(--blue);
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 18px rgba(31,75,255,0.28);
+  transition:
+    background 0.18s,
+    box-shadow 0.22s,
+    transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+.prc-modal-cta:hover {
+  background: var(--blue-dark);
+  box-shadow: 0 8px 28px rgba(31,75,255,0.4);
+  transform: translateY(-2px);
+}
+
+.prc-modal-fine {
+  text-align: center;
+  font-size: 0.71rem;
+  color: var(--muted2);
+  margin-top: -8px;
 }
