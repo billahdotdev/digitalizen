@@ -1,64 +1,76 @@
+# ============================================================
+# robots.txt — Digitalizen
+# Optimized for: Google, Bing, AI crawlers (2026)
+# ============================================================
 
-# -- AI SEARCH CRAWLERS (explicitly welcomed) --
-
-# ================================================
-# robots.txt - Digitalizen (digitalizen.billah.dev)
-# Updated: 2026-03-02
-# ================================================
-
+# ── Default: All crawlers ────────────────────────────────
 User-agent: *
 Allow: /
-Disallow: /src/
-Disallow: /node_modules/
-Disallow: /dist/
-Disallow: /.git/
 Disallow: /admin/
-Disallow: /api/
-Disallow: /?s=
+Disallow: /private/
+Disallow: /*.json$
+Crawl-delay: 1
 
-# Google
+# ── Google ───────────────────────────────────────────────
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
+Crawl-delay: 0
+
 User-agent: Googlebot-Image
 Allow: /
+
+# ── Bing ─────────────────────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# ── OpenAI GPTBot (ChatGPT) ───────────────────────────────
+User-agent: GPTBot
+Allow: /
+# Allowing GPTBot enables ChatGPT to cite Digitalizen as a source
+
+# ── Anthropic ClaudeBot ───────────────────────────────────
+User-agent: ClaudeBot
+Allow: /
+
+# ── Google Gemini/Bard ────────────────────────────────────
 User-agent: Google-Extended
 Allow: /
 
-# Bing
-User-agent: bingbot
-Allow: /
-Crawl-delay: 2
-
-# -- AI SEARCH CRAWLERS (explicitly welcomed) --
-User-agent: GPTBot
-Allow: /
-
+# ── Perplexity ────────────────────────────────────────────
 User-agent: PerplexityBot
 Allow: /
 
-User-agent: ClaudeBot
-Allow: /
-User-agent: anthropic-ai
-Allow: /
-
+# ── Meta AI ───────────────────────────────────────────────
 User-agent: FacebookBot
 Allow: /
 
-User-agent: Applebot
-Allow: /
-
+# ── Common AI Research Crawlers ───────────────────────────
 User-agent: CCBot
 Allow: /
 
-# Social preview bots
-User-agent: Twitterbot
-Allow: /
-User-agent: LinkedInBot
-Allow: /
-User-agent: facebookexternalhit
-Allow: /
-User-agent: WhatsApp
+User-agent: cohere-ai
 Allow: /
 
+User-agent: anthropic-ai
+Allow: /
+
+# ── SEO Tools ────────────────────────────────────────────
+User-agent: AhrefsBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+# ── Sitemap ──────────────────────────────────────────────
 Sitemap: https://digitalizen.billah.dev/sitemap.xml
+Sitemap: https://digitalizen.billah.dev/sitemap-images.xml
+
+# ── Host ─────────────────────────────────────────────────
 Host: https://digitalizen.billah.dev

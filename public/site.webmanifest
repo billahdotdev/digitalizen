@@ -1,29 +1,67 @@
 {
-  "name": "Digitalizen | Performance Marketing Agency",
+  "name": "Digitalizen — Performance Marketing Agency",
   "short_name": "Digitalizen",
-  "description": "Expert SEO/AEO/GEO, Google Ads, and Facebook Ads agency in Dhaka.",
+  "description": "Bangladesh's top digital marketing agency. SEO, Google Ads, Meta Ads. Dhaka-based, globally served.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0f1e",
   "theme_color": "#0f172a",
+  "categories": ["business", "marketing", "productivity"],
+  "lang": "en-BD",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
-      "src": "/android-chrome-512x512.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
-]
+  ],
+  "screenshots": [
+    {
+      "src": "/marketing-og.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Digitalizen — Performance Marketing Agency Dhaka Bangladesh"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book Strategy Call",
+      "short_name": "Book Call",
+      "description": "Book a free 5-minute strategy call",
+      "url": "/#book-call",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32" }]
+    },
+    {
+      "name": "Free Resources",
+      "short_name": "Free Resources",
+      "description": "Download free marketing resources",
+      "url": "/free",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

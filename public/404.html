@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Digitalizen — Redirecting...</title>
+  <meta name="robots" content="noindex" />
+  <!--
+    ═══════════════════════════════════════════════════════
+    GitHub Pages BrowserRouter SPA Redirect
+    
+    GitHub Pages serves 404.html for any unmatched path.
+    This script captures the URL and stores it in
+    sessionStorage, then redirects to index.html which
+    reads it and replaces the URL (no 404 flash).
+    
+    Source: rafgraph.dev/blog/how-to-create-a-github-pages-spa
+    ═══════════════════════════════════════════════════════
+  -->
+  <script>
+    var l = window.location;
+    sessionStorage.setItem(
+      'spa_redirect',
+      l.pathname.slice(1) + (l.search ? '&q=' + l.search.slice(1) : '') + l.hash
+    );
+    l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/');
+  </script>
+</head>
+<body>
+  <p>Redirecting to Digitalizen...</p>
+</body>
+</html>

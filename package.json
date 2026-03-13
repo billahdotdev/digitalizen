@@ -1,14 +1,14 @@
 {
-  "homepage": "https://billhdotdev.github.io/digitalizen/",
+  "homepage": "https://digitalizen.billah.dev",
   "name": "digitalizen",
   "private": true,
-  "version": "0.1.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "framer-motion": "^10.16.4",

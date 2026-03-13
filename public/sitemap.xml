@@ -1,37 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-  xsi:schemaLocation="
-    http://www.sitemaps.org/schemas/sitemap/0.9
-    http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+>
 
+  <!-- ── Home ── -->
   <url>
     <loc>https://digitalizen.billah.dev/</loc>
-    <lastmod>2026-03-02</lastmod>
+    <lastmod>2026-03-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://digitalizen.billah.dev/" />
     <image:image>
       <image:loc>https://digitalizen.billah.dev/marketing-og.jpg</image:loc>
-      <image:title>Digitalizen – Performance Marketing Agency in Dhaka, Bangladesh</image:title>
-      <image:caption>Expert SEO/AEO/GEO, Google Ads, Facebook Ads, and Social Media Strategy for startups.</image:caption>
+      <image:title>Digitalizen — Performance Marketing Agency Dhaka Bangladesh</image:title>
+      <image:caption>Bangladesh's top digital marketing agency specializing in SEO, Google Ads, and Meta Ads</image:caption>
     </image:image>
   </url>
-  
-  <url>
-  <loc>https://digitalizen.billah.dev/#/free-resources</loc>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-</url>
 
-  <!-- Add pages below as your site grows:
+  <!-- ── Free Resources ── -->
   <url>
-    <loc>https://digitalizen.billah.dev/services/seo/</loc>
-    <lastmod>2026-03-02</lastmod>
+    <loc>https://digitalizen.billah.dev/free</loc>
+    <lastmod>2026-03-13</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
-  -->
+
+  <!-- ── Gallery ── -->
+  <url>
+    <loc>https://digitalizen.billah.dev/gallery</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ── Access ── -->
+  <url>
+    <loc>https://digitalizen.billah.dev/access</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 
 </urlset>

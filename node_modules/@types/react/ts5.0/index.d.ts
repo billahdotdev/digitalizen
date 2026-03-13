@@ -12,6 +12,7 @@ type NativeClipboardEvent = ClipboardEvent;
 type NativeCompositionEvent = CompositionEvent;
 type NativeDragEvent = DragEvent;
 type NativeFocusEvent = FocusEvent;
+type NativeInputEvent = InputEvent;
 type NativeKeyboardEvent = KeyboardEvent;
 type NativeMouseEvent = MouseEvent;
 type NativeTouchEvent = TouchEvent;
@@ -2149,7 +2150,7 @@ declare namespace React {
      *
      * @param callback A synchronous, void callback that will execute as a single, complete React commit.
      *
-     * @see https://reactjs.org/blog/2019/02/06/react-v16.8.0.html#testing-hooks
+     * @see {@link https://reactjs.org/blog/2019/02/06/react-v16.8.0.html#testing-hooks}
      */
     // While act does always return Thenable, if a void function is passed, we pretend the return value is also void to not trigger dangling Promise lint rules.
     export function act(callback: () => VoidOrUndefinedOnly): void;
@@ -2248,6 +2249,10 @@ declare namespace React {
 
     interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
         target: EventTarget & T;
+    }
+
+    interface InputEvent<T = Element> extends SyntheticEvent<T, NativeInputEvent> {
+        data: string;
     }
 
     export type ModifierKey =
@@ -2365,6 +2370,7 @@ declare namespace React {
     type FocusEventHandler<T = Element> = EventHandler<FocusEvent<T>>;
     type FormEventHandler<T = Element> = EventHandler<FormEvent<T>>;
     type ChangeEventHandler<T = Element> = EventHandler<ChangeEvent<T>>;
+    type InputEventHandler<T = Element> = EventHandler<InputEvent<T>>;
     type KeyboardEventHandler<T = Element> = EventHandler<KeyboardEvent<T>>;
     type MouseEventHandler<T = Element> = EventHandler<MouseEvent<T>>;
     type TouchEventHandler<T = Element> = EventHandler<TouchEvent<T>>;
@@ -2422,7 +2428,7 @@ declare namespace React {
         // Form Events
         onChange?: FormEventHandler<T> | undefined;
         onChangeCapture?: FormEventHandler<T> | undefined;
-        onBeforeInput?: FormEventHandler<T> | undefined;
+        onBeforeInput?: InputEventHandler<T> | undefined;
         onBeforeInputCapture?: FormEventHandler<T> | undefined;
         onInput?: FormEventHandler<T> | undefined;
         onInputCapture?: FormEventHandler<T> | undefined;
@@ -2480,8 +2486,6 @@ declare namespace React {
         onProgressCapture?: ReactEventHandler<T> | undefined;
         onRateChange?: ReactEventHandler<T> | undefined;
         onRateChangeCapture?: ReactEventHandler<T> | undefined;
-        onResize?: ReactEventHandler<T> | undefined;
-        onResizeCapture?: ReactEventHandler<T> | undefined;
         onSeeked?: ReactEventHandler<T> | undefined;
         onSeekedCapture?: ReactEventHandler<T> | undefined;
         onSeeking?: ReactEventHandler<T> | undefined;
@@ -3202,6 +3206,7 @@ declare namespace React {
     }
 
     interface DialogHTMLAttributes<T> extends HTMLAttributes<T> {
+        closedby?: "any" | "closerequest" | "none" | undefined;
         onCancel?: ReactEventHandler<T> | undefined;
         onClose?: ReactEventHandler<T> | undefined;
         open?: boolean | undefined;
@@ -3430,6 +3435,7 @@ declare namespace React {
 
     interface LinkHTMLAttributes<T> extends HTMLAttributes<T> {
         as?: string | undefined;
+        blocking?: "render" | (string & {}) | undefined;
         crossOrigin?: CrossOrigin;
         fetchPriority?: "high" | "low" | "auto";
         href?: string | undefined;
@@ -3539,6 +3545,7 @@ declare namespace React {
 
     interface ScriptHTMLAttributes<T> extends HTMLAttributes<T> {
         async?: boolean | undefined;
+        blocking?: "render" | (string & {}) | undefined;
         /** @deprecated */
         charSet?: string | undefined;
         crossOrigin?: CrossOrigin;
@@ -3573,6 +3580,7 @@ declare namespace React {
     }
 
     interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
+        blocking?: "render" | (string & {}) | undefined;
         media?: string | undefined;
         scoped?: boolean | undefined;
         type?: string | undefined;
@@ -3649,6 +3657,9 @@ declare namespace React {
         width?: number | string | undefined;
         disablePictureInPicture?: boolean | undefined;
         disableRemotePlayback?: boolean | undefined;
+
+        onResize?: ReactEventHandler<T> | undefined;
+        onResizeCapture?: ReactEventHandler<T> | undefined;
     }
 
     // this list is "complete" in that it contains every SVG attribute
@@ -3742,7 +3753,21 @@ declare namespace React {
         direction?: number | string | undefined;
         display?: number | string | undefined;
         divisor?: number | string | undefined;
-        dominantBaseline?: number | string | undefined;
+        dominantBaseline?:
+            | "auto"
+            | "use-script"
+            | "no-change"
+            | "reset-size"
+            | "ideographic"
+            | "alphabetic"
+            | "hanging"
+            | "mathematical"
+            | "central"
+            | "middle"
+            | "text-after-edge"
+            | "text-before-edge"
+            | "inherit"
+            | undefined;
         dur?: number | string | undefined;
         dx?: number | string | undefined;
         dy?: number | string | undefined;
@@ -3889,7 +3914,7 @@ declare namespace React {
         tableValues?: number | string | undefined;
         targetX?: number | string | undefined;
         targetY?: number | string | undefined;
-        textAnchor?: string | undefined;
+        textAnchor?: "start" | "middle" | "end" | "inherit" | undefined;
         textDecoration?: number | string | undefined;
         textLength?: number | string | undefined;
         textRendering?: number | string | undefined;

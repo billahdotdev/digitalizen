@@ -1,0 +1,49 @@
+/*
+  # ============================================================
+  # public/_headers — Security & Performance Headers
+  # Works with: Cloudflare Pages, Netlify
+  # For GitHub Pages: configure via Cloudflare proxy (recommended)
+  #
+  # To use with GitHub Pages + Cloudflare:
+  #   1. Proxy digitalizen.billah.dev through Cloudflare (orange cloud)
+  #   2. Add these as Cloudflare Transform Rules or Workers headers
+  # ============================================================
+
+  # ── Security headers ──
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(self), payment=()
+
+  # ── Content Security Policy ──
+  # Allows: GTM, GA4, Meta Pixel, TikTok Pixel, Calendly, Google Fonts
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://analytics.tiktok.com https://assets.calendly.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://graph.facebook.com https://business-api.tiktok.com https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev https://calendly.com; frame-src https://calendly.com https://www.googletagmanager.com; media-src 'self'; object-src 'none'; base-uri 'self';
+
+  # ── HSTS (force HTTPS) ──
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # ── Cache control ──
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ── Long cache for hashed assets ──
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# ── Service worker — no cache (must always be fresh) ──
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /
+
+# ── Manifest ──
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+
+# ── Sitemap + robots ──
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml
+
+/robots.txt
+  Cache-Control: public, max-age=86400
