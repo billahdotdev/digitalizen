@@ -8,7 +8,7 @@
 // Place this file in: /public/sw.js
 // ============================================================
 
-const CACHE_NAME = 'digitalizen-v2026.04';
+const CACHE_NAME = 'digitalizen-v2026.05';
 const STATIC_CACHE = 'digitalizen-static-v2026.03';
 const DYNAMIC_CACHE = 'digitalizen-dynamic-v2026.03';
 

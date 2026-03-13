@@ -83,10 +83,7 @@ function MainLayout() {
     <>
       <SEO page="home" />
 
-      {/* PWA install banner — non-blocking */}
-      <Suspense fallback={null}>
-        <InstallButton />
-      </Suspense>
+     
 
       {/* Eagerly loaded — above the fold */}
       <Nav />
