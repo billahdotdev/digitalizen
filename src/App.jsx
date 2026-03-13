@@ -28,7 +28,7 @@ import Footer from './components/Footer'
 const Finder         = lazy(() => import('./components/Finder'))
 const Packages       = lazy(() => import('./components/Packages'))
 const Process        = lazy(() => import('./components/Process'))
-const Proof          = lazy(() => import('./components/Proof'))
+
 const About          = lazy(() => import('./components/About'))
 const BookCall       = lazy(() => import('./components/BookCall'))
 const Resources      = lazy(() => import('./components/Resources'))
@@ -95,7 +95,7 @@ function MainLayout() {
           <Finder />
           <Packages />
           <Process />
-          <Proof />
+          
           <Faq />
           <About />
           <BookCall />

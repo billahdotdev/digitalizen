@@ -25,7 +25,7 @@ export default function Nav() {
     { label: 'প্যাকেজ ফাইন্ডার', id: 'finder' },
     { label: 'প্রক্রিয়া', id: 'process' },
     { label: 'প্যাকেজ', id: 'packages' },
-    { label: 'প্রুফ', id: 'proof' },
+    
     { label: 'আমাদের সম্পর্কে', id: 'about' },
     { label: 'যোগাযোগ', id: 'contact' },
     
