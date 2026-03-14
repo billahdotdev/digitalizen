@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './Finder.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
-const WA_NUMBER = '8801711992558'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -10,25 +10,6 @@ const WA_NUMBER = '8801711992558'
       event_id shared between fbq() & dataLayer for
       CAPI deduplication on your GTM server container.
 ══════════════════════════════════════════════════ */
-let _seq = 0
-const genEventId = () => `finder_${Date.now()}_${++_seq}`
-
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-  window.fbq?.(
-    'track', ev,
-    { ...params, event_source_url: window.location.href },
-    { eventID: event_id }
-  )
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name:       ev,
-    meta_event_id:         event_id,
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
 
 /* ── SVG Icons ──────────────────────────────────── */
 const Icon = {
@@ -250,22 +231,11 @@ export default function Finder() {
     )
     io.observe(el)
 
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'finder',
-        time_on_section_seconds: secs,
-        quiz_drop_off_question:  dropOffQRef.current,
-      })
-      enterTimeRef.current = null
-    }
+    const pushEng = () => pushEngagement('finder', enterTimeRef, { quiz_drop_off_question: dropOffQRef.current })
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
     document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
+    window.addEventListener('beforeunload', pushEng)
     return () => {
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)

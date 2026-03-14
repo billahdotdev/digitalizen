@@ -1,14 +1,49 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { track, WA_NUMBER } from '../analytics.js'
 import './Nav.css'
 
-const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
+/* ── Scroll-spy hook ─────────────────────────────────
+   Returns the id of the section currently in viewport.
+   Uses IntersectionObserver with a generous rootMargin
+   so the active item updates smoothly as you scroll.
+── */
+function useActiveSection(ids) {
+  const [active, setActive] = useState(null)
 
-const WA_NUMBER = '8801711992558'
+  useEffect(() => {
+    const map = new Map()
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(e => map.set(e.target.id, e.intersectionRatio))
+        // Pick whichever observed section has the highest visible ratio
+        let best = null, bestRatio = 0
+        map.forEach((ratio, id) => {
+          if (ratio > bestRatio) { bestRatio = ratio; best = id }
+        })
+        if (best) setActive(best)
+      },
+      { rootMargin: '-10% 0px -60% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
+    )
+
+    ids.forEach(id => {
+      const el = document.getElementById(id)
+      if (el) { io.observe(el); map.set(id, 0) }
+    })
+
+    return () => io.disconnect()
+  }, [ids.join(',')])  // eslint-disable-line react-hooks/exhaustive-deps
+
+  return active
+}
+
+const NAV_SECTION_IDS = ['home', 'finder', 'packages', 'process', 'proof', 'about', 'contact']
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen]         = useState(false)
+  const activeSection           = useActiveSection(NAV_SECTION_IDS)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20)
@@ -16,22 +51,62 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  const go = (id) => {
+  // Close drawer on outside click
+  const drawerRef = useRef(null)
+  useEffect(() => {
+    if (!open) return
+    const onClickOutside = (e) => {
+      if (drawerRef.current && !drawerRef.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [open])
+
+  // Close drawer on Escape
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open])
+
+  const go = useCallback((id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
     setOpen(false)
-  }
+  }, [])
 
   const navLinks = [
-    { label: 'আমাদের সম্পর্কে', id: 'about' },
-    { label: 'প্যাকেজ ফাইন্ডার', id: 'finder' },
-    { label: 'প্যাকেজ', id: 'packages' },
-    { label: 'প্রক্রিয়া', id: 'process' },
-    { label: 'যোগাযোগ', id: 'contact' },
-    
+    { label: 'প্যাকেজ ফাইন্ডার', id: 'finder'   },
+    { label: 'প্রক্রিয়া',         id: 'process'  },
+    { label: 'প্যাকেজ',           id: 'packages' },
+    { label: 'প্রুফ',             id: 'proof'    },
+    { label: 'আমাদের সম্পর্কে',   id: 'about'    },
+    { label: 'যোগাযোগ',           id: 'contact'  },
   ]
 
+  const handleWa = useCallback(() => {
+    track('Contact', { content_name: 'Nav WhatsApp', content_category: 'CTA' }, 'nav')
+    window.open(
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি Digitalizen সম্পর্কে জানতে চাই')}`,
+      '_blank'
+    )
+  }, [])
+
+  const handleDrawerCta = useCallback(() => {
+    track('InitiateCheckout', { content_name: 'Nav Drawer CTA', content_category: 'CTA', currency: 'BDT', value: 0 }, 'nav')
+    window.open(
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি ৫ মিনিটের ফ্রি কল বুক করতে চাই')}`,
+      '_blank'
+    )
+    setOpen(false)
+  }, [])
+
   return (
-    <nav className={`nav ${scrolled ? 'nav--solid' : ''}`} role="navigation" aria-label="প্রধান নেভিগেশন">
+    <nav
+      className={`nav${scrolled ? ' nav--solid' : ''}`}
+      role="navigation"
+      aria-label="প্রধান নেভিগেশন"
+    >
       <div className="nav__inner container">
         <button
           className="nav__logo"
@@ -45,10 +120,7 @@ export default function Nav() {
         <div className="nav__right">
           <button
             className="nav__wa-btn"
-            onClick={() => {
-              pixel('Contact', { content_name: 'Nav WhatsApp' })
-              window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি Digitalizen সম্পর্কে জানতে চাই')}`, '_blank')
-            }}
+            onClick={handleWa}
             aria-label="WhatsApp-এ যোগাযোগ করুন"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -58,32 +130,36 @@ export default function Nav() {
           </button>
 
           <button
-            className={`nav__burger ${open ? 'nav__burger--open' : ''}`}
+            className={`nav__burger${open ? ' nav__burger--open' : ''}`}
             onClick={() => setOpen(o => !o)}
-            aria-label="মেনু খুলুন"
+            aria-label={open ? 'মেনু বন্ধ করুন' : 'মেনু খুলুন'}
             aria-expanded={open}
+            aria-controls="nav-drawer"
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
           </button>
         </div>
       </div>
 
       {open && (
-        <div className="nav__drawer" role="menu">
+        <div
+          id="nav-drawer"
+          className="nav__drawer"
+          role="menu"
+          ref={drawerRef}
+        >
           {navLinks.map(l => (
             <button
               key={l.id}
-              className="nav__drawer-link"
+              className={`nav__drawer-link${activeSection === l.id ? ' nav__drawer-link--active' : ''}`}
               onClick={() => go(l.id)}
               role="menuitem"
+              aria-current={activeSection === l.id ? 'true' : undefined}
             >
               {l.label}
             </button>
           ))}
 
-          {/* Free Resources page link */}
           <Link
             to="/free"
             className="nav__drawer-link"
@@ -106,11 +182,7 @@ export default function Nav() {
             <button
               className="btn-primary"
               style={{ width: '100%' }}
-              onClick={() => {
-                pixel('InitiateCheckout', { content_name: 'Nav Drawer CTA' })
-                window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি ৫ মিনিটের ফ্রি কল বুক করতে চাই')}`, '_blank')
-                setOpen(false)
-              }}
+              onClick={handleDrawerCta}
             >
               ফ্রি কনসালটেশন কল বুক করুন
             </button>

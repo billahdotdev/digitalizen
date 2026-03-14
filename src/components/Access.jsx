@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Access.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me'
 const DIGITALIZEN_FB_PROFILE_URL = 'https://www.facebook.com/digitalizen'
@@ -85,6 +86,15 @@ const STEPS = [
 ]
 
 export default function Access() {
+  useEffect(() => {
+    track('ViewContent', { content_name: 'Access Page', content_category: 'Page' }, 'ac')
+    window.ttq?.page()
+    return () => {
+      window.dataLayer = window.dataLayer || []
+      window.dataLayer.push({ event: 'access_page_exit', page: 'access' })
+    }
+  }, [])
+
   const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {

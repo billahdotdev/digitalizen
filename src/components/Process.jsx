@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './Process.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 /* ── Tracking helpers ───────────────────────────────
    Meta Pixel (client-side) + CAPI-ready dataLayer push
@@ -7,25 +8,7 @@ import './Process.css'
    event_id is shared between fbq() and dataLayer so
    your CAPI endpoint can deduplicate with Meta.
 ─────────────────────────────────────────────────── */
-let _eventSeq = 0
-const genEventId = () => `prc_${Date.now()}_${++_eventSeq}`
 
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-  // Meta Pixel — client-side
-  window.fbq?.('track', ev, { ...params, event_source_url: window.location.href }, { eventID: event_id })
-  // DataLayer — feeds GTM → GA4 + your CAPI server-side tag
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event: 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name: ev,
-    meta_event_id: event_id,       // deduplicate with CAPI
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
-
-const WA_NUMBER = '8801711992558'
 
 /* ── WhatsApp icon ──────────────────────────────── */
 const WaIcon = () => (

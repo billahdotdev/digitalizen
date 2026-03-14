@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import './FreeResources.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -9,25 +10,6 @@ import './FreeResources.css'
       event_id shared between fbq() & dataLayer for
       CAPI deduplication on your GTM server container.
 ══════════════════════════════════════════════════ */
-let _seq = 0
-const genEventId = () => `fr_${Date.now()}_${++_seq}`
-
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-  window.fbq?.(
-    'track', ev,
-    { ...params, event_source_url: window.location.href },
-    { eventID: event_id }
-  )
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name:       ev,
-    meta_event_id:         event_id,
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
 
 /* ─────────────────────────────────────────────────────────────
    EBOOK CONFIG
@@ -327,22 +309,11 @@ function EbookSection() {
     )
     io.observe(el)
 
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'ebook',
-        time_on_section_seconds: secs,
-        already_unlocked:        ssGet(TOKEN_KEY) === '1',
-      })
-      enterTimeRef.current = null
-    }
+    const pushEng = () => pushEngagement('ebook', enterTimeRef)
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
     document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
+    window.addEventListener('beforeunload', pushEng)
     return () => {
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)
@@ -478,22 +449,11 @@ function WeeklyTipsSection() {
     )
     io.observe(el)
 
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'newsletter',
-        time_on_section_seconds: secs,
-        already_subscribed:      !!ssGet(NL_KEY),
-      })
-      enterTimeRef.current = null
-    }
+    const pushEng = () => pushEngagement('newsletter', enterTimeRef)
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
     document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
+    window.addEventListener('beforeunload', pushEng)
     return () => {
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)

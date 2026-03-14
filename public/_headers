@@ -1,49 +1,44 @@
-/*
-  # ============================================================
-  # public/_headers — Security & Performance Headers
-  # Works with: Cloudflare Pages, Netlify
-  # For GitHub Pages: configure via Cloudflare proxy (recommended)
-  #
-  # To use with GitHub Pages + Cloudflare:
-  #   1. Proxy digitalizen.billah.dev through Cloudflare (orange cloud)
-  #   2. Add these as Cloudflare Transform Rules or Workers headers
-  # ============================================================
+# Digitalizen — HTTP Security & Caching Headers
+# Applied by Netlify and Cloudflare Pages automatically on deploy.
 
-  # ── Security headers ──
-  X-Frame-Options: DENY
+# ── HTML — short cache, must revalidate ──────────────────
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
   X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=(self), payment=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://graph.facebook.com https://analytics.tiktok.com https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev; frame-src https://calendly.com;
 
-  # ── Content Security Policy ──
-  # Allows: GTM, GA4, Meta Pixel, TikTok Pixel, Calendly, Google Fonts
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://analytics.tiktok.com https://assets.calendly.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://graph.facebook.com https://business-api.tiktok.com https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev https://calendly.com; frame-src https://calendly.com https://www.googletagmanager.com; media-src 'self'; object-src 'none'; base-uri 'self';
-
-  # ── HSTS (force HTTPS) ──
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-
-  # ── Cache control ──
-  Cache-Control: public, max-age=0, must-revalidate
-
-# ── Long cache for hashed assets ──
+# ── JS / CSS assets — immutable long cache (content-hashed) ──
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# ── Service worker — no cache (must always be fresh) ──
-/sw.js
-  Cache-Control: no-cache, no-store, must-revalidate
-  Service-Worker-Allowed: /
+# ── Fonts — long cache ───────────────────────────────────
+*.woff2
+  Cache-Control: public, max-age=31536000, immutable
 
-# ── Manifest ──
+# ── Images ───────────────────────────────────────────────
+*.png
+  Cache-Control: public, max-age=2592000
+*.jpg
+  Cache-Control: public, max-age=2592000
+*.webp
+  Cache-Control: public, max-age=2592000
+*.avif
+  Cache-Control: public, max-age=2592000
+*.svg
+  Cache-Control: public, max-age=2592000
+
+# ── PWA files — short cache so updates propagate fast ────
 /site.webmanifest
   Cache-Control: public, max-age=86400
-  Content-Type: application/manifest+json
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
 
-# ── Sitemap + robots ──
+# ── Sitemap / robots ─────────────────────────────────────
 /sitemap.xml
   Cache-Control: public, max-age=86400
-  Content-Type: application/xml
-
 /robots.txt
   Cache-Control: public, max-age=86400

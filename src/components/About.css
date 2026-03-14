@@ -565,6 +565,65 @@
   margin-bottom: 16px;
 }
 
+/* ── Credential chips ────────────────────────── */
+.founder-credentials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.founder-cred {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.founder-cred svg { flex-shrink: 0; vertical-align: middle; margin-right: 3px; }
+
+.founder-cred-sub {
+  display: block;
+  font-size: 0.67rem;
+  font-weight: 500;
+  opacity: 0.75;
+  margin-top: 1px;
+}
+
+/* Blue — AI */
+.founder-cred--ai {
+  color: var(--blue);
+  background: var(--blue-light);
+  border-color: rgba(31,75,255,0.18);
+}
+
+/* Teal — Dev */
+.founder-cred--dev {
+  color: #0e7490;
+  background: #ecfeff;
+  border-color: rgba(14,116,144,0.18);
+}
+
+/* Amber — Marketing */
+.founder-cred--mktg {
+  color: #92400e;
+  background: #fffbeb;
+  border-color: rgba(180,83,9,0.18);
+}
+
+/* Purple — Web Mastery */
+.founder-cred--web {
+  color: #6b21a8;
+  background: #faf5ff;
+  border-color: rgba(107,33,168,0.18);
+}
+
 .founder-links {
   display: flex;
   flex-wrap: wrap;
@@ -652,5 +711,52 @@
     25%  { transform: translateX(-6px); }
     75%  { transform: translateX(6px); }
     100% { transform: translateX(0); }
+  }
+}
+
+/* ══ Mobile — founder card & chips ══════════════ */
+@media (max-width: 480px) {
+  .founder-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 14px;
+  }
+
+  .founder-img {
+    width: 88px;
+    height: 88px;
+  }
+
+  .founder-info {
+    width: 100%;
+  }
+
+  .founder-badge {
+    display: block;
+    text-align: center;
+  }
+
+  .founder-bio {
+    font-size: 0.82rem;
+  }
+
+  .founder-credentials {
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .founder-cred {
+    font-size: 0.74rem;
+    padding: 6px 10px;
+  }
+
+  .founder-cred-sub {
+    font-size: 0.64rem;
+  }
+
+  .founder-links {
+    justify-content: center;
   }
 }

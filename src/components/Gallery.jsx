@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Gallery.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 /* ─────────────────────────────────────────────
    DATA — swap img + url for real content
@@ -209,11 +210,34 @@ function GalleryOverlay({ onClose }) {
    SECTION (place in MainLayout after Resources)
 ───────────────────────────────────────────── */
 export default function Gallery() {
+  const sectionRef   = useRef(null)
+  const enterTimeRef = useRef(null)
+  const firedRef     = useRef(false)
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !firedRef.current) {
+        firedRef.current     = true
+        enterTimeRef.current = Date.now()
+        track('ViewContent', { content_name: 'Gallery Section', content_category: 'Section' }, 'gal')
+        io.unobserve(el)
+      }
+    }, { threshold: 0.15 })
+    io.observe(el)
+    const push = () => pushEngagement('gallery', enterTimeRef)
+    const onVis = () => { if (document.visibilityState === 'hidden') push() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', push)
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('beforeunload', push) }
+  }, [])
+
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <section className="gallery-section" id="gallery">
+      <section className="gallery-section" id="gallery" ref={sectionRef}>
         <div className="container">
 
           {/* ── Header — matches site-wide pattern ── */}

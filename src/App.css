@@ -1,1 +1,68 @@
-/* App shell */
+/* ══════════════════════════════════════════════════
+   App.css — App Shell & Route-level layout
+   Component-specific styles live in their own .css files.
+   Global design tokens & resets are in index.css.
+   ====================================================== */
+
+/* ── Route page wrapper ── */
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ── Standalone route layout (no Nav/Footer) ── */
+.page--standalone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: var(--nav-h);
+}
+
+/* ── Error boundary fallback ── */
+.error-boundary {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font);
+  background: var(--bg);
+}
+
+.error-boundary__title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.error-boundary__sub {
+  color: var(--muted);
+  margin-bottom: 28px;
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+.error-boundary__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blue);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-family: var(--font);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.error-boundary__btn:hover {
+  background: var(--blue-dark);
+}

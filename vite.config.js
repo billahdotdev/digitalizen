@@ -1,132 +1,82 @@
-// ============================================================
-// vite.config.js — Digitalizen 2026 Production Build
-// Optimized for: SSG shell, WebP/AVIF compression, code splitting
-// GitHub Pages CI/CD compatible
-// ============================================================
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+/* ═══════════════════════════════════════════════════════
+   Digitalizen — Vite 6 Production Config
+   ─────────────────────────────────────────────────────
+   Key strategies:
+   • Manual chunk splitting — vendor libs in separate chunks
+     (framer-motion, lucide-react, react-router) so the
+     app JS chunk stays tiny and re-uses cached vendor JS.
+   • Asset fingerprinting for long-lived cache headers.
+   • esbuild minification (default) with target ES2022
+     for modern Bangladeshi mid-range Android devices.
+   • Source maps off in production (smaller deploy).
+   • base: '/' for custom domain hosting.
+═══════════════════════════════════════════════════════ */
 export default defineConfig({
-  plugins: [
-    react(),
-  ],
+  plugins: [react()],
 
-  // ─── Base URL for GitHub Pages ───────────────────────────
+  /* Root-level index.html stays at project root */
+  root: '.',
+
+  /* All source files live in src/ */
+  resolve: {
+    alias: { '@': '/src' },
+  },
+
   base: '/',
 
-  // ─── Path Aliases ────────────────────────────────────────
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
-      '@components': resolve(__dirname, 'src/components'),
-      '@utils': resolve(__dirname, 'src/utils'),
+  build: {
+    target:    'es2022',
+    outDir:    'dist',
+    sourcemap: false,
+    minify:    'esbuild',
+
+    rollupOptions: {
+      output: {
+        /* ── Asset file naming — content-hashed for immutable caching ── */
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+
+        /* ── Manual chunk splitting ── */
+        manualChunks(id) {
+          /* Core React + Router — tiny, rarely changes */
+          if (id.includes('node_modules/react') ||
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react-router')) {
+            return 'vendor-react'
+          }
+          /* Animation library — large, cache separately */
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-framer'
+          }
+          /* Icons — medium, cache separately */
+          if (id.includes('node_modules/lucide-react')) {
+            return 'vendor-icons'
+          }
+          /* Calendly widget — load separately */
+          if (id.includes('node_modules/react-calendly')) {
+            return 'vendor-calendly'
+          }
+        },
+      },
     },
+
+    /* Warn on chunks > 500 KB */
+    chunkSizeWarningLimit: 500,
   },
 
-  // ─── Dev Server ──────────────────────────────────────────
+  /* ── Dev server ── */
   server: {
-    port: 3000,
-    open: true,
-    // SPA fallback for BrowserRouter in dev
-    historyApiFallback: true,
+    port:  5173,
+    open:  false,
+    cors:  true,
   },
 
-  // ─── Preview Server ──────────────────────────────────────
+  /* ── Preview (post-build) ── */
   preview: {
     port: 4173,
   },
-
-  // ─── Build Optimizations ─────────────────────────────────
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: false, // Disable in prod to save bytes
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,       // Strip console.log in prod
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.warn'],
-      },
-    },
-
-    // ─── Asset inlining threshold (4KB) ──────────────────
-    assetsInlineLimit: 4096,
-
-    // ─── Rollup Advanced Chunking ────────────────────────
-    rollupOptions: {
-      output: {
-        // Chunk naming strategy for long-term caching
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: (assetInfo) => {
-          const ext = assetInfo.name.split('.').pop();
-          if (/png|jpe?g|svg|gif|webp|avif|ico/.test(ext)) {
-            return 'assets/img/[name]-[hash][extname]';
-          }
-          if (/woff2?|ttf|eot/.test(ext)) {
-            return 'assets/fonts/[name]-[hash][extname]';
-          }
-          if (ext === 'css') {
-            return 'assets/css/[name]-[hash][extname]';
-          }
-          return 'assets/[name]-[hash][extname]';
-        },
-
-        // ── Manual Chunks: vendor splitting for caching ──
-        manualChunks: {
-          // React core — never changes, long-term cache
-          'vendor-react': ['react', 'react-dom'],
-          // Router — separate chunk
-          'vendor-router': ['react-router-dom'],
-          // Animation — heavy, lazy-loadable
-          'vendor-motion': ['framer-motion'],
-          // Icons
-          'vendor-icons': ['lucide-react', 'react-feather'],
-          // Calendly widget — only needed on BookCall
-          'vendor-calendly': ['react-calendly'],
-        },
-      },
-    },
-
-    // ─── Target modern browsers (Dhaka 4G/5G users) ─────
-    // Most users on Chrome Mobile — target ES2020
-    target: ['es2020', 'chrome80', 'firefox78', 'safari14'],
-
-    // ─── CSS Code Splitting ───────────────────────────────
-    cssCodeSplit: true,
-
-    // ─── Chunk size warning limit ─────────────────────────
-    chunkSizeWarningLimit: 600,
-  },
-
-  // ─── CSS Preprocessor Config ─────────────────────────────
-  css: {
-    devSourcemap: true,
-  },
-
-  // ─── Dependency Pre-Bundling ──────────────────────────────
-  optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      'framer-motion',
-      'lucide-react',
-    ],
-    exclude: ['react-calendly'], // Lazy-load only on BookCall page
-  },
-
-  // ─── Define Global Constants ──────────────────────────────
-  define: {
-    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-  },
-});
-
-// ─────────────────────────────────────────────────────────────────
-// POST-BUILD NOTE: After `npm run build`, run this to auto-generate
-// sitemap + compress images (add to package.json scripts):
-//   "postbuild": "node scripts/generate-sitemap.js"
-// ─────────────────────────────────────────────────────────────────
+})

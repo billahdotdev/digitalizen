@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './Resources.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 /* ─────────────────────────────────────────────────────────────
    META PIXEL HELPER
    ─────────────────────────────────────────────────────────────*/
-const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
-
 /* ─────────────────────────────────────────────────────────────
    EBOOK CONFIG
    ─────────────────────────────────────────────────────────────
@@ -71,7 +70,7 @@ function submitToGoogleForm(action, fields) {
    ─────────────────────────────────────────────────────────────*/
 function triggerDownload() {
   if (ssGet(TOKEN_KEY) !== '1') return
-  pixel('Purchase', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
+  track('Purchase', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
 
   const a = document.createElement('a')
   if (typeof a.download !== 'undefined') {
@@ -134,7 +133,7 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
     if (Object.keys(e).length) { setErrors(e); return }
     setErrors({})
     setLoading(true)
-    pixel('CompleteRegistration', { content_name: 'Ebook Lead Form Submitted' })
+    track('CompleteRegistration', { content_name: 'Ebook Lead Form Submitted' })
     try {
       await submitToGoogleForm(EBOOK_FORM_ACTION, {
         [EBOOK_ENTRY_NAME]:      name.trim(),
@@ -279,7 +278,7 @@ function EbookSection() {
     if (unlocked) {
       setModal('thanks')
     } else {
-      pixel('Lead', { content_name: 'Ebook Download Intent' })
+      track('Lead', { content_name: 'Ebook Download Intent' })
       setModal('form')
     }
   }
@@ -381,11 +380,11 @@ function WeeklyTipsSection() {
     }
     setError('')
     setLoading(true)
-    pixel('Lead', { content_name: 'Newsletter Subscribe' })
+    track('Lead', { content_name: 'Newsletter Subscribe' })
     try {
       await submitToGoogleForm(EMAIL_FORM_ACTION, { [EMAIL_ENTRY_EMAIL]: email.trim() })
     } catch (_) {}
-    pixel('CompleteRegistration', { content_name: 'Newsletter Subscribed' })
+    track('CompleteRegistration', { content_name: 'Newsletter Subscribed' })
     // Persist the email so the thank-you screen can display it after remounts
     ssSet(NL_KEY, email.trim())
     setSavedEmail(email.trim())
@@ -465,8 +464,31 @@ function WeeklyTipsSection() {
    MAIN EXPORT
 ═══════════════════════════════════════════════════════════════ */
 export default function Resources() {
+  const sectionRef   = useRef(null)
+  const enterTimeRef = useRef(null)
+  const firedRef     = useRef(false)
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !firedRef.current) {
+        firedRef.current     = true
+        enterTimeRef.current = Date.now()
+        track('ViewContent', { content_name: 'Resources Section', content_category: 'Section' }, 'res')
+        io.unobserve(el)
+      }
+    }, { threshold: 0.2 })
+    io.observe(el)
+    const push = () => pushEngagement('resources', enterTimeRef)
+    const onVis = () => { if (document.visibilityState === 'hidden') push() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', push)
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('beforeunload', push) }
+  }, [])
+
   return (
-    <section id="resources" className="resources-section">
+    <section id="resources" className="resources-section" ref={sectionRef}>
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৭</span>

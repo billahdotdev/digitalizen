@@ -1,0 +1,102 @@
+# ============================================================
+# .github/workflows/deploy-github-pages.yml
+#
+# Digitalizen — GitHub Pages Production Deploy
+# ─────────────────────────────────────────────
+# Pipeline:  lint → build → deploy
+# Trigger:   every push to main  +  manual dispatch
+# Node:      22 LTS  (pinned via .nvmrc)
+# Cache:     npm cache → faster CI runs
+#
+# ONE-TIME SETUP (do this before first push):
+# ─────────────────────────────────────────────
+# 1. GitHub repo → Settings → Pages
+#       Source: "GitHub Actions"   ← must be this, not "Deploy from branch"
+#
+# 2. Custom domain (digitalizen.billah.dev):
+#       Settings → Pages → Custom domain → enter your domain → Save
+#       GitHub will add a CNAME file — the workflow also writes it
+#       to dist/ so it survives every fresh build.
+#
+# 3. DNS at your registrar / Cloudflare DNS:
+#       Type   : CNAME
+#       Name   : digitalizen          (or @ / apex if on root domain)
+#       Value  : <your-username>.github.io
+#       Proxy  : DNS only (grey cloud) — NOT proxied, GitHub handles TLS
+#
+# 4. HTTPS: GitHub auto-provisions a Let's Encrypt cert once DNS
+#       propagates (~10 min). Tick "Enforce HTTPS" in Pages settings.
+#
+# SECRETS REQUIRED: none — uses built-in GITHUB_TOKEN
+# ============================================================
+
+name: Deploy → GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:          # Manual trigger from Actions tab
+
+# Grant minimum permissions needed
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time — cancel any in-flight run when a new push arrives
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  # ── 1. Build ──────────────────────────────────────────────
+  build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm               # Caches ~/.npm between runs
+
+      - name: Install dependencies (clean install)
+        run: npm ci                # Uses package-lock.json exactly — reproducible
+
+      - name: Lint
+        run: npm run lint          # Blocks deploy if any ESLint error
+
+      - name: Build (Vite production)
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      # Write CNAME into dist/ so GitHub Pages keeps the custom domain
+      # after every fresh build (Vite clears dist/ each time)
+      - name: Write CNAME
+        run: echo "digitalizen.billah.dev" > dist/CNAME
+
+      # Package dist/ as a Pages artifact for the deploy job
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  # ── 2. Deploy ─────────────────────────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build               # Only runs if build job succeeded
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}   # Shows live URL in Actions UI
+
+    steps:
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v4

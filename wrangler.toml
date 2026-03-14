@@ -1,0 +1,46 @@
+# ============================================================
+# wrangler.toml — Digitalizen Cloudflare Workers Config
+#
+# Workers deployed:
+#   1. api/capi.js    → Meta Conversions API proxy
+#   2. api/tt-capi.js → TikTok Events API proxy
+#
+# SETUP:
+#   1. Install Wrangler: npm install -g wrangler
+#   2. Login: wrangler login
+#   3. Set secrets (NEVER in this file):
+#        wrangler secret put META_PIXEL_ID
+#        wrangler secret put CAPI_ACCESS_TOKEN
+#        wrangler secret put TT_PIXEL_ID
+#        wrangler secret put TT_ACCESS_TOKEN
+#   4. Deploy: wrangler deploy --config wrangler.toml
+#
+# Docs: https://developers.cloudflare.com/workers/
+# ============================================================
+
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# ── Meta CAPI Worker ─────────────────────────────────────
+[[workers]]
+  name       = "digitalizen-capi"
+  main       = "api/capi.js"
+  routes     = [{ pattern = "capi.digitalizen.billah.dev/*", zone_name = "digitalizen.billah.dev" }]
+
+  [workers.vars]
+  ALLOWED_ORIGIN = "https://digitalizen.billah.dev"
+  # Secrets set via CLI:
+  # META_PIXEL_ID     ← wrangler secret put META_PIXEL_ID
+  # CAPI_ACCESS_TOKEN ← wrangler secret put CAPI_ACCESS_TOKEN
+
+# ── TikTok CAPI Worker ────────────────────────────────────
+[[workers]]
+  name       = "digitalizen-tt-capi"
+  main       = "api/tt-capi.js"
+  routes     = [{ pattern = "tt-capi.digitalizen.billah.dev/*", zone_name = "digitalizen.billah.dev" }]
+
+  [workers.vars]
+  ALLOWED_ORIGIN = "https://digitalizen.billah.dev"
+  # Secrets set via CLI:
+  # TT_PIXEL_ID   ← wrangler secret put TT_PIXEL_ID
+  # TT_ACCESS_TOKEN ← wrangler secret put TT_ACCESS_TOKEN

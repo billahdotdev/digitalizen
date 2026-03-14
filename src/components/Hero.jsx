@@ -1,96 +1,44 @@
 import { useEffect, useRef, useCallback } from 'react'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 import './Hero.css'
-
-/* ══════════════════════════════════════════════════
-   TRACKING
-   ① Meta Pixel — browser-side (client event)
-   ② dataLayer  — GTM → GA4 + server-side CAPI tag
-      event_id shared between fbq() & dataLayer for
-      CAPI deduplication on your GTM server container.
-══════════════════════════════════════════════════ */
-let _seq = 0
-const genEventId = () => `hero_${Date.now()}_${++_seq}`
-
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-  window.fbq?.(
-    'track', ev,
-    { ...params, event_source_url: window.location.href },
-    { eventID: event_id }
-  )
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name:       ev,
-    meta_event_id:         event_id,
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
-
-const WA_NUMBER = '8801711992558'
 
 export default function Hero() {
   const heroRef      = useRef(null)
   const enterTimeRef = useRef(null)
   const firedRef     = useRef(false)
-  const ctaClicksRef = useRef(0)      // counts CTA interactions before leaving
+  const ctaClicksRef = useRef(0)
 
-  /* ── Page/Hero ViewContent + time-on-hero ── */
+  /* ── Section ViewContent + time-on-hero ── */
   useEffect(() => {
     const el = heroRef.current
     if (!el) return
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !firedRef.current) {
-          firedRef.current   = true
-          enterTimeRef.current = Date.now()
-
-          // ViewContent = page view equivalent for CAPI
-          track('ViewContent', {
-            content_name:     'Hero Section',
-            content_category: 'Section',
-            content_ids:      ['hero'],
-          })
-        }
-      },
-      { threshold: 0.3 }
-    )
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !firedRef.current) {
+        firedRef.current     = true
+        enterTimeRef.current = Date.now()
+        track('ViewContent', { content_name: 'Hero Section', content_category: 'Section', content_ids: ['hero'] }, 'hero')
+      }
+    }, { threshold: 0.3 })
     io.observe(el)
 
-    // Time-on-hero + scroll-off signal
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'hero',
-        time_on_section_seconds: secs,
-        cta_clicks:              ctaClicksRef.current,
-      })
-      enterTimeRef.current = null
-    }
+    /* time-on-hero + scroll-off signal */
+    const push = () => pushEngagement('hero', enterTimeRef, { cta_clicks: ctaClicksRef.current })
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
-    document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
-
-    // Also push when user scrolls hero out of view (scrolled past it)
-    const scrollIo = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting && firedRef.current) pushEngagement()
-      },
-      { threshold: 0 }
-    )
+    const scrollIo = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting && firedRef.current) push()
+    }, { threshold: 0 })
     scrollIo.observe(el)
+
+    const onVis = () => { if (document.visibilityState === 'hidden') push() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', push)
 
     return () => {
       io.disconnect()
       scrollIo.disconnect()
       document.removeEventListener('visibilitychange', onVis)
-      window.removeEventListener('beforeunload', pushEngagement)
+      window.removeEventListener('beforeunload', push)
     }
   }, [])
 
@@ -103,7 +51,7 @@ export default function Hero() {
       content_ids:      ['hero_wa_cta'],
       currency:         'BDT',
       value:            0,
-    })
+    }, 'hero')
     window.open(
       `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি ৫ মিনিটের ফ্রি কল বুক করতে চাই। আমার ব্যবসা সম্পর্কে আলোচনা করতে চাই।')}`,
       '_blank'
@@ -114,10 +62,7 @@ export default function Hero() {
   const handleSecondaryCta = useCallback(() => {
     ctaClicksRef.current += 1
     window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({
-      event:         'hero_secondary_cta',
-      scroll_target: 'about',
-    })
+    window.dataLayer.push({ event: 'hero_secondary_cta', scroll_target: 'about' })
     document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
@@ -134,7 +79,7 @@ export default function Hero() {
 
         <h1 className="hero__headline">
           মেটা অ্যাডে<br />
-          <span className="hero__blue">রিয়েল রেজাল্ট</span><br />
+          <span className="hero__blue">রিয়েল রেজাল্ট</span>
         </h1>
 
         <p className="hero__sub">
@@ -143,21 +88,33 @@ export default function Hero() {
         </p>
 
         <div className="hero__actions">
-          <button
-            className="btn-primary hero__btn-main"
-            onClick={handleMainCta}
-          >
+          <button className="btn-primary hero__btn-main" onClick={handleMainCta}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
             ফ্রি কনসালটেশন কল বুক করুন
           </button>
-          <button
-            className="btn-ghost"
-            onClick={handleSecondaryCta}
-          >
+          <button className="btn-ghost" onClick={handleSecondaryCta}>
             আরো জানতে চাই ↓
           </button>
+        </div>
+
+        {/* ── Social proof stats grid ── */}
+        <div className="hero__stats" aria-label="আমাদের সাফল্য">
+          <div className="hero__stat">
+            <span className="hero__stat-num">৯+</span>
+            <span className="hero__stat-label">বছরের অভিজ্ঞতা</span>
+          </div>
+          <div className="hero__stat-divider" aria-hidden="true" />
+          <div className="hero__stat">
+            <span className="hero__stat-num">৫০+</span>
+            <span className="hero__stat-label">সফল ক্লায়েন্ট</span>
+          </div>
+          <div className="hero__stat-divider" aria-hidden="true" />
+          <div className="hero__stat">
+            <span className="hero__stat-num">৩x+</span>
+            <span className="hero__stat-label">গড় ROAS</span>
+          </div>
         </div>
 
         <div className="hero__trust">

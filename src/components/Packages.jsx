@@ -1,7 +1,6 @@
 import './Packages.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
-const pixel = (ev, p = {}) => window.fbq?.('track', ev, p)
-const WA_NUMBER = '8801711992558'
 
 /* ── Icons ──────────────────────────────────────── */
 const WaIcon = () => (
@@ -143,7 +142,7 @@ const trustItems = ['চুক্তি নেই', '৪৮ ঘণ্টায�
 /* ── Component ─────────────────────────────────── */
 export default function Packages() {
   const waOrder = (plan) => {
-    pixel('AddToCart', { content_name: plan.tier, value: 0, currency: 'BDT' })
+    track('AddToCart', { content_name: plan.tier, value: 0, currency: 'BDT' })
     const msg = `হ্যালো Digitalizen!\n\n"${plan.wa}" সম্পর্কে জানতে চাই।\nকীভাবে শুরু করতে পারি?`
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
   }

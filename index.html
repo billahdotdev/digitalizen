@@ -1,827 +1,321 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+<html lang="bn-BD" dir="ltr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#1F4BFF" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Digitalizen" />
 
-  <!-- ═══════════════════════════════════════════════════════
-       GITHUB PAGES BROWSER ROUTER — SPA Redirect Handler
-       Must be FIRST to prevent flash of 404
-  ══════════════════════════════════════════════════════════ -->
-  <script>
-    (function() {
-      var redirect = sessionStorage.getItem('spa_redirect');
-      if (redirect) {
-        sessionStorage.removeItem('spa_redirect');
-        var url = new URL(redirect, location.origin);
-        if (url.pathname !== location.pathname) {
-          window.history.replaceState(null, '', url.pathname + url.search + url.hash);
-        }
-      }
-    })();
-  </script>
-
-  <!-- ═══════════════════════════════════════════════════════
-       PRIMARY SEO — English + Benglish Optimized
-  ══════════════════════════════════════════════════════════ -->
-  <title>Digitalizen | পারফরম্যান্স মার্কেটিং ও ওয়েব সলিউশন এজেন্সি</title>
-
-  <meta name="description" content="Digitalizen — Bangladesh's top-rated performance marketing agency in Dhaka. SEO, Google Ads, Facebook Ads, Social Media Management. Dhakar shera digital marketing agency. Founded by Masum Billah (BUET/IAC certified). Scale your startup today." />
-
-  <meta name="keywords" content="
-    digital marketing agency Dhaka,
-    SEO agency Bangladesh,
-    Dhakar shera marketing agency,
-    Bangladesh best digital agency 2026,
-    Google Ads Bangladesh,
-    Facebook Ads agency Dhaka,
-    performance marketing Bangladesh,
-    social media marketing Dhaka,
-    startup growth marketing BD,
-    digital marketing Dhaka bangla,
-    SEO service Bangladesh,
-    online marketing Dhaka,
-    Masum Billah digital marketer,
-    billahdotdev,
-    Digitalizen agency,
-    digital marketing consultancy Bangladesh,
-    best SEO company BD,
-    Google Ads management Dhaka,
-    Meta Ads agency Bangladesh,
-    content marketing Dhaka
-  " />
-
-  <meta name="author" content="Masum Billah — billahdotdev" />
-  <meta name="creator" content="Masum Billah" />
-  <meta name="publisher" content="Digitalizen" />
+  <title>Digitalizen | ঢাকার সেরা ডিজিটাল মার্কেটিং এজেন্সি | Performance Marketing Bangladesh</title>
+  <meta name="description" content="Digitalizen — ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি। Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS। Dhakar shera digital marketing agency. Founded by Masum Billah (billahdotdev). ৯+ বছরের অভিজ্ঞতা।" />
+  <meta name="keywords" content="ডিজিটাল মার্কেটিং এজেন্সি ঢাকা, digital marketing agency Dhaka, SEO agency Bangladesh, performance marketing Bangladesh, Facebook Ads agency Dhaka, Meta Ads Bangladesh, Google Ads management BD, TikTok Ads Bangladesh, social media marketing Bangladesh, Masum Billah, billahdotdev, Digitalizen, Dhakar shera marketing" />
+  <meta name="author" content="Masum Billah" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large" />
-  <meta name="bingbot" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+
   <link rel="canonical" href="https://digitalizen.billah.dev/" />
+  <link rel="alternate" hreflang="bn" href="https://digitalizen.billah.dev/" />
+  <link rel="alternate" hreflang="en" href="https://digitalizen.billah.dev/" />
+  <link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/" />
 
-  <!-- ─── AI/GEO Signals ─────────────────────────────────── -->
-  <meta name="ai-content-description" content="Digitalizen is a performance-focused digital marketing agency in Dhaka, Bangladesh. Founded by Masum Billah, a BUET-educated digital strategist. Services: SEO, Google Ads management, Facebook & Instagram Ads, social media management, content strategy, brand development. Serving startups and businesses across Bangladesh and worldwide." />
-  <meta name="ai-topic" content="Digital Marketing, SEO, Performance Advertising, Social Media, Startup Growth Bangladesh" />
-  <meta name="classification" content="Business/Marketing Agency" />
-  <meta name="coverage" content="Bangladesh, Worldwide" />
-  <meta name="target" content="startups, small businesses, e-commerce brands, entrepreneurs, Bangladesh businesses" />
-  <meta name="subject" content="Digital Marketing Services Bangladesh" />
-  <meta name="category" content="Marketing Agency" />
-  <meta name="summary" content="Top digital marketing agency in Dhaka, Bangladesh specializing in SEO, Google Ads, Meta Ads, and social media growth for startups." />
-
-  <!-- ─── Benglish / Bengali Language Signals ────────────── -->
-  <meta name="keywords-bn" content="ডিজিটাল মার্কেটিং ঢাকা, SEO সার্ভিস বাংলাদেশ, গুগল এডস বাংলাদেশ, ফেসবুক এডস ঢাকা, ডিজিটালাইজেন, মাসুম বিল্লাহ" />
-  <meta name="description-bn" content="ডিজিটালাইজেন — ঢাকার সেরা ডিজিটাল মার্কেটিং এজেন্সি। SEO, Google Ads, Facebook Ads, সোশ্যাল মিডিয়া ম্যানেজমেন্ট।" />
-
-  <!-- ─── Identity / Profile Links ──────────────────────── -->
-  <link rel="me" href="https://x.com/billahdotdev" />
-  <link rel="me" href="https://linkedin.com/in/billahdotdev" />
-  <link rel="me" href="https://github.com/billahdotdev" />
-  <link rel="me" href="https://billah.dev" />
-
-  <!-- ═══════════════════════════════════════════════════════
-       GEO — Location Signals (Dhaka, Bangladesh)
-  ══════════════════════════════════════════════════════════ -->
-  <meta name="geo.region" content="BD-C" />
-  <meta name="geo.placename" content="Dhaka, Bangladesh" />
-  <meta name="geo.position" content="23.8103;90.4125" />
-  <meta name="ICBM" content="23.8103, 90.4125" />
-  <meta name="language" content="English" />
-  <meta name="revisit-after" content="7 days" />
-
-  <!-- ═══════════════════════════════════════════════════════
-       OPEN GRAPH
-  ══════════════════════════════════════════════════════════ -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:locale:alternate" content="bn_BD" />
+  <meta property="og:locale" content="bn_BD" />
+  <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:site_name" content="Digitalizen" />
-  <meta property="og:title" content="Digitalizen — Dhakar Shera Performance Marketing Agency 2026" />
-  <meta property="og:description" content="Bangladesh's most trusted digital marketing agency. SEO, Google Ads, Meta Ads & social media growth for startups. Dhaka-based, globally served. Masum Billah, Founder." />
+  <meta property="og:title" content="Digitalizen — ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি | Bangladesh" />
+  <meta property="og:description" content="Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS। বাংলাদেশের স্টার্টআপ ও ব্র্যান্ডের জন্য ডেটা-ড্রিভেন মার্কেটিং সলিউশন।" />
   <meta property="og:image" content="https://digitalizen.billah.dev/marketing-og.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Digitalizen – Performance Marketing Agency in Dhaka, Bangladesh" />
-  <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:url" content="https://digitalizen.billah.dev/" />
-  <meta property="og:updated_time" content="2026-03-13T00:00:00+06:00" />
 
-  <!-- ═══════════════════════════════════════════════════════
-       TWITTER / X CARD
-  ══════════════════════════════════════════════════════════ -->
+  <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@billahdotdev" />
   <meta name="twitter:creator" content="@billahdotdev" />
-  <meta name="twitter:title" content="Digitalizen — Data-Driven Marketing Agency, Dhaka, Bangladesh" />
-  <meta name="twitter:description" content="Scale your startup with SEO, Google Ads, Meta Ads & content strategy. Dhaka's top performance marketing agency. Founded by @billahdotdev." />
+  <meta name="twitter:title" content="Digitalizen — Data-Driven Marketing Agency, Dhaka Bangladesh" />
+  <meta name="twitter:description" content="Meta Ads, Google Ads, SEO & TikTok for Bangladeshi startups. Real ROAS, zero fake promises. Founded by Masum Billah (@billahdotdev)." />
   <meta name="twitter:image" content="https://digitalizen.billah.dev/marketing-og.jpg" />
-  <meta name="twitter:image:alt" content="Digitalizen Performance Marketing Agency Dhaka Bangladesh" />
 
-  <!-- ═══════════════════════════════════════════════════════
-       FAVICON & PWA MANIFEST
-  ══════════════════════════════════════════════════════════ -->
+  <!-- AEO / GEO — AI Engine Optimization -->
+  <meta name="ai-content-description" content="Digitalizen is a performance marketing agency in Dhaka, Bangladesh founded by Masum Billah (billahdotdev). Services: Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, social media management, landing page development. Speciality: CAPI server-side tracking, conversion optimization, ROAS scaling for Bangladeshi startups." />
+  <meta name="topic" content="Digital Marketing, Performance Advertising, SEO, Meta Ads, Google Ads, Bangladesh" />
+  <meta name="classification" content="Business/Marketing Agency" />
+  <meta name="coverage" content="Bangladesh, Worldwide" />
+  <meta name="target" content="startups, small businesses, e-commerce, entrepreneurs, Bangladesh" />
+  <meta name="language" content="Bengali, English" />
+
+  <!-- Identity links for AI entity resolution -->
+  <link rel="me" href="https://x.com/billahdotdev" />
+  <link rel="me" href="https://linkedin.com/in/billahdotdev" />
+  <link rel="me" href="https://github.com/billahdotdev" />
+
+  <!-- GEO — Location signals -->
+  <meta name="geo.region" content="BD-C" />
+  <meta name="geo.placename" content="Dhaka, Bangladesh" />
+  <meta name="geo.position" content="23.8103;90.4125" />
+  <meta name="ICBM" content="23.8103, 90.4125" />
+
+  <!-- PWA -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0f172a" />
   <link rel="manifest" href="/site.webmanifest" />
-  <meta name="msapplication-TileColor" content="#0f172a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Digitalizen" />
-  <meta name="application-name" content="Digitalizen" />
 
-  <!-- ═══════════════════════════════════════════════════════
-       PRECONNECT / DNS-PREFETCH — Dhaka 4G Optimization
-  ══════════════════════════════════════════════════════════ -->
+  <!-- Fonts — Noto Sans Bengali covers all Latin glyphs; no need for Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-  <link rel="dns-prefetch" href="https://connect.facebook.net" />
-  <link rel="dns-prefetch" href="https://analytics.tiktok.com" />
-  <link rel="dns-prefetch" href="https://calendly.com" />
-  <link rel="preconnect" href="https://www.googletagmanager.com" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-  <!-- ─── Fonts (optimized subset) ─────────────────────────── -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
+  <!-- ═══════════════════════════════════════════
+       GOOGLE TAG MANAGER — replace GTM-XXXXXXX
+  ═══════════════════════════════════════════ -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 
-  <!-- ─── Preload critical assets ──────────────────────────── -->
-  <link rel="preload" href="/marketing-og.jpg" as="image" type="image/jpeg" />
+  <!-- ═══════════════════════════════════════════
+       META PIXEL INIT — replace XXXXXXXXXXXXXXXXXX
+       Actual event tracking fires from components via fbq('track')
+  ═══════════════════════════════════════════ -->
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init','XXXXXXXXXXXXXXXXXX');
+  fbq('track','PageView');
+  </script>
 
-  <!-- ═══════════════════════════════════════════════════════
-       ENTITY-LINKED JSON-LD — GEO/AEO SUPREMACY
-       Full @graph: Agency + Person + WebSite + WebPage + FAQ
-       + LocalBusiness + Services + EEAT signals
-  ══════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════
+       TIKTOK PIXEL INIT — replace XXXXXXXXXXXXXXXXXX
+  ═══════════════════════════════════════════ -->
+  <script>
+  !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
+  ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
+  ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
+  for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
+  ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};
+  ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};
+  ttq._i[e]=[];ttq._i[e]._u=i;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};
+  var o=document.createElement("script");o.type="text/javascript";o.async=!0;
+  o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];
+  a.parentNode.insertBefore(o,a)};
+  ttq.load('XXXXXXXXXXXXXXXXXX');ttq.page();
+  }(window,document,'ttq');
+  </script>
+
+  <!-- ═══════════════════════════════════════════
+       JSON-LD — AEO / GEO Entity Graph
+  ═══════════════════════════════════════════ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
-
       {
-        "@type": ["MarketingAgency", "LocalBusiness", "ProfessionalService"],
+        "@type": "MarketingAgency",
         "@id": "https://digitalizen.billah.dev/#agency",
         "name": "Digitalizen",
-        "alternateName": [
-          "Digitalizen Agency",
-          "Digitalizen Marketing",
-          "Digitalizen BD",
-          "ডিজিটালাইজেন",
-          "Digitalizen Dhaka"
-        ],
+        "alternateName": ["Digitalizen Agency","Digitalizen Marketing","ডিজিটালাইজেন","Dhakar shera marketing agency","Bangladesh best digital marketing agency"],
         "url": "https://digitalizen.billah.dev/",
-        "logo": {
-          "@type": "ImageObject",
-          "@id": "https://digitalizen.billah.dev/#logo",
-          "url": "https://digitalizen.billah.dev/logo.png",
-          "contentUrl": "https://digitalizen.billah.dev/logo.png",
-          "width": 512,
-          "height": 512,
-          "caption": "Digitalizen — Performance Marketing Agency"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://digitalizen.billah.dev/marketing-og.jpg",
-          "width": 1200,
-          "height": 630
-        },
-        "description": "Digitalizen is a performance-focused digital marketing agency in Dhaka, Bangladesh. We specialize in SEO, Google Ads, Facebook & Instagram Ads, and social media strategy to help startups achieve measurable growth. Dhakar shera digital marketing agency, founded by Masum Billah.",
+        "logo": { "@type": "ImageObject", "url": "https://digitalizen.billah.dev/logo.png", "width": 512, "height": 512 },
+        "image": "https://digitalizen.billah.dev/marketing-og.jpg",
+        "description": "Digitalizen is a performance-focused digital marketing agency in Dhaka, Bangladesh. Expert in Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, and CAPI server-side tracking to help startups achieve measurable ROAS.",
         "slogan": "Scale smarter. Grow faster.",
-        "foundingDate": "2023",
-        "numberOfEmployees": { "@type": "QuantitativeValue", "value": "5" },
-        "priceRange": "৳৳",
-        "currenciesAccepted": "BDT, USD",
-        "paymentAccepted": "bKash, Bank Transfer, PayPal, Wise",
-        "openingHours": "Mo-Fr 09:00-18:00",
-
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Dhaka",
-          "addressRegion": "Dhaka Division",
-          "addressCountry": "BD",
-          "postalCode": "1207"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 23.8103,
-          "longitude": 90.4125
-        },
-        "hasMap": "https://maps.google.com/?q=Dhaka,Bangladesh",
-
+        "foundingDate": "2016",
+        "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressRegion": "Dhaka Division", "addressCountry": "BD" },
         "areaServed": [
           { "@type": "Country", "name": "Bangladesh" },
-          { "@type": "AdministrativeArea", "name": "South Asia" },
+          { "@type": "City", "name": "Dhaka" },
           { "@type": "AdministrativeArea", "name": "Worldwide" }
         ],
-
-        "contactPoint": [
-          {
-            "@type": "ContactPoint",
-            "contactType": "sales",
-            "availableLanguage": ["English", "Bengali"],
-            "url": "https://digitalizen.billah.dev/#contact"
-          },
-          {
-            "@type": "ContactPoint",
-            "contactType": "customer service",
-            "availableLanguage": ["English", "Bengali"],
-            "url": "https://digitalizen.billah.dev/#contact"
-          }
-        ],
-
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+8801711992558",
+          "contactType": "customer service",
+          "availableLanguage": ["Bengali","English"],
+          "hoursAvailable": { "@type": "OpeningHoursSpecification", "opens": "09:00", "closes": "22:00" }
+        },
         "founder": {
           "@type": "Person",
           "@id": "https://billah.dev/#masum",
           "name": "Masum Billah",
-          "alternateName": ["billahdotdev", "Masum Billah BUET"],
-          "jobTitle": "Founder & Chief Digital Strategist",
-          "description": "Masum Billah is a BUET-educated digital strategist and performance marketer based in Dhaka, Bangladesh. IAC certified. Founder of Digitalizen.",
+          "alternateName": "billahdotdev",
+          "jobTitle": "Founder & Performance Marketing Strategist",
           "url": "https://billah.dev",
-          "image": "https://billah.dev/masum-billah.jpg",
-          "knowsAbout": [
-            "SEO",
-            "Search Engine Optimization",
-            "Digital Marketing",
-            "Performance Advertising",
-            "Google Ads",
-            "Meta Ads",
-            "Social Media Strategy",
-            "Brand Development",
-            "Content Marketing",
-            "Conversion Rate Optimization",
-            "Data Analytics",
-            "Startup Growth"
-          ],
-          "alumniOf": [
-            {
-              "@type": "CollegeOrUniversity",
-              "name": "Bangladesh University of Engineering and Technology",
-              "alternateName": "BUET",
-              "url": "https://www.buet.ac.bd"
-            }
-          ],
+          "alumniOf": {
+            "@type": "EducationalOrganization",
+            "@id": "https://www.buet.ac.bd/#buet",
+            "name": "Bangladesh University of Engineering and Technology",
+            "alternateName": "BUET"
+          },
           "hasCredential": [
-            {
-              "@type": "EducationalOccupationalCredential",
-              "credentialCategory": "certification",
-              "name": "IAC Digital Marketing Certification",
-              "recognizedBy": { "@type": "Organization", "name": "IAC" }
-            }
+            { "@type": "EducationalOccupationalCredential", "name": "IAC Certified Digital Marketing Professional" },
+            { "@type": "EducationalOccupationalCredential", "name": "Meta Blueprint Certified" }
           ],
-          "sameAs": [
-            "https://billah.dev",
-            "https://masum.billah.dev",
-            "https://github.com/billahdotdev",
-            "https://x.com/billahdotdev",
-            "https://linkedin.com/in/billahdotdev",
-            "https://dev.to/billahdotdev"
-          ]
+          "knowsAbout": ["Meta Ads","Facebook Advertising","Google Ads","SEO","Performance Marketing","CAPI","Server-Side Tracking","TikTok Ads","Social Media Strategy","Bangladesh Digital Marketing"],
+          "sameAs": ["https://billah.dev","https://masum.billah.dev","https://github.com/billahdotdev","https://x.com/billahdotdev","https://linkedin.com/in/billahdotdev"]
         },
-
-        "employee": [
-          { "@id": "https://billah.dev/#masum" }
-        ],
-
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
           "name": "Digital Marketing Services Bangladesh",
           "itemListElement": [
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://digitalizen.billah.dev/#seo-service",
-                "name": "Search Engine Optimization (SEO)",
-                "description": "Technical SEO, on-page optimization, keyword research, link building, and content strategy for Bangladesh businesses and international clients.",
-                "areaServed": "Bangladesh",
-                "provider": { "@id": "https://digitalizen.billah.dev/#agency" }
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://digitalizen.billah.dev/#google-ads-service",
-                "name": "Google Ads Management",
-                "description": "Search, Display, Shopping, and YouTube campaigns with measurable ROI for Dhaka businesses and startups.",
-                "areaServed": "Bangladesh",
-                "provider": { "@id": "https://digitalizen.billah.dev/#agency" }
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://digitalizen.billah.dev/#meta-ads-service",
-                "name": "Facebook & Instagram Ads (Meta Ads)",
-                "description": "Meta advertising with precision targeting, CAPI integration, and conversion optimization for Bangladesh e-commerce and startups.",
-                "areaServed": "Bangladesh",
-                "provider": { "@id": "https://digitalizen.billah.dev/#agency" }
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://digitalizen.billah.dev/#smm-service",
-                "name": "Social Media Management",
-                "description": "Full-service social media strategy, content creation, community management, and analytics for Bangladesh brands.",
-                "areaServed": "Bangladesh",
-                "provider": { "@id": "https://digitalizen.billah.dev/#agency" }
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://digitalizen.billah.dev/#brand-service",
-                "name": "Content Strategy & Brand Development",
-                "description": "High-converting brand narratives, digital identity, and content marketing for startups in Bangladesh.",
-                "areaServed": "Bangladesh",
-                "provider": { "@id": "https://digitalizen.billah.dev/#agency" }
-              }
-            }
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Meta Ads Management", "description": "Facebook & Instagram advertising with Pixel + CAPI for maximum ROAS." }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Google Ads Management", "description": "Search, Display, Shopping, YouTube campaigns for measurable ROI in Bangladesh." }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "SEO Bangladesh", "description": "Technical SEO, Bengali keyword research, on-page optimization, link building." }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TikTok Ads Management", "description": "TikTok advertising targeting Bangladesh's young audience." }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Social Media Management", "description": "Bengali/English content strategy, creation, and analytics." }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Landing Page Development & CRO", "description": "High-speed custom landing pages with advanced conversion tracking." }}
           ]
         },
-
-        "award": [
-          "Top Digital Marketing Agency Dhaka 2024",
-          "Best Performance Marketing Agency Bangladesh"
-        ],
-        "knowsAbout": [
-          "Digital Marketing Bangladesh",
-          "SEO Dhaka",
-          "Google Ads Bangladesh",
-          "Meta Advertising",
-          "Performance Marketing",
-          "Startup Growth Hacking"
-        ],
-        "sameAs": [
-          "https://x.com/billahdotdev",
-          "https://linkedin.com/in/billahdotdev",
-          "https://github.com/billahdotdev"
-        ]
+        "sameAs": ["https://facebook.com/digitalizen","https://instagram.com/digitalizen","https://linkedin.com/company/digitalizen","https://x.com/billahdotdev"]
       },
-
       {
         "@type": "WebSite",
         "@id": "https://digitalizen.billah.dev/#website",
         "url": "https://digitalizen.billah.dev/",
         "name": "Digitalizen",
-        "alternateName": "Digitalizen Marketing Agency Bangladesh",
-        "inLanguage": ["en-US", "bn-BD"],
-        "publisher": { "@id": "https://digitalizen.billah.dev/#agency" },
-        "copyrightYear": 2026,
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://digitalizen.billah.dev/?s={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
+        "inLanguage": ["bn-BD","en-US"],
+        "publisher": { "@id": "https://digitalizen.billah.dev/#agency" }
       },
-
       {
         "@type": "WebPage",
         "@id": "https://digitalizen.billah.dev/#webpage",
         "url": "https://digitalizen.billah.dev/",
-        "name": "Digitalizen | Performance Marketing & SEO Agency — Dhaka, Bangladesh",
-        "headline": "Dhakar Shera Digital Marketing Agency — Digitalizen",
-        "description": "Bangladesh's top performance marketing agency. SEO, Google Ads, Meta Ads, social media management for startups. Dhaka-based, globally served.",
+        "name": "Digitalizen | ঢাকার সেরা ডিজিটাল মার্কেটিং এজেন্সি",
         "isPartOf": { "@id": "https://digitalizen.billah.dev/#website" },
         "about": { "@id": "https://digitalizen.billah.dev/#agency" },
-        "author": { "@id": "https://billah.dev/#masum" },
-        "inLanguage": "en-US",
-        "datePublished": "2023-01-01T00:00:00+06:00",
-        "dateModified": "2026-03-13T00:00:00+06:00",
-        "breadcrumb": {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://digitalizen.billah.dev/" }
-          ]
-        },
-        "speakable": {
-          "@type": "SpeakableSpecification",
-          "cssSelector": ["h1", "h2", ".hero-headline", ".hero-subtext"]
-        },
-        "significantLink": [
-          "https://digitalizen.billah.dev/#services",
-          "https://digitalizen.billah.dev/#packages",
-          "https://digitalizen.billah.dev/#contact",
-          "https://digitalizen.billah.dev/free"
-        ]
+        "inLanguage": ["bn-BD","en-US"],
+        "datePublished": "2023-01-01",
+        "dateModified": "2026-03-14",
+        "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://digitalizen.billah.dev/" }] },
+        "speakable": { "@type": "SpeakableSpecification", "cssSelector": [".hero__headline",".hero__sub",".about-heading"] }
       },
-
       {
         "@type": "FAQPage",
-        "@id": "https://digitalizen.billah.dev/#faq",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What services does Digitalizen offer?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Digitalizen offers SEO, Google Ads management, Facebook & Instagram Ads (Meta Ads), social media management, content strategy, and brand development for startups and businesses in Bangladesh and worldwide."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Where is Digitalizen located? / Digitalizen ki Dhakay?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, Digitalizen is based in Dhaka, Bangladesh and serves clients worldwide. Dhaka-based agency, globally served."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Who founded Digitalizen?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Digitalizen was founded by Masum Billah (billahdotdev), a BUET-educated digital strategist and IAC-certified performance marketer based in Dhaka."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Bangladesh-er shera digital marketing agency konta?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Digitalizen is widely recognized as one of Bangladesh's leading digital marketing agencies, specializing in performance marketing, SEO, and paid advertising for startups."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does Digitalizen work with international clients?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Digitalizen is headquartered in Dhaka, Bangladesh but serves startups and brands worldwide through remote digital marketing services."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is Digitalizen's pricing for digital marketing services?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Digitalizen offers flexible packages starting from basic social media management to full-scale performance marketing retainers. Contact us for a custom quote based on your startup's needs."
-            }
-          }
-        ]
-      },
-
-      {
-        "@type": "ItemList",
-        "name": "Digitalizen Marketing Services",
-        "description": "Complete list of digital marketing services offered by Digitalizen in Bangladesh",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "item": { "@id": "https://digitalizen.billah.dev/#seo-service" } },
-          { "@type": "ListItem", "position": 2, "item": { "@id": "https://digitalizen.billah.dev/#google-ads-service" } },
-          { "@type": "ListItem", "position": 3, "item": { "@id": "https://digitalizen.billah.dev/#meta-ads-service" } },
-          { "@type": "ListItem", "position": 4, "item": { "@id": "https://digitalizen.billah.dev/#smm-service" } },
-          { "@type": "ListItem", "position": 5, "item": { "@id": "https://digitalizen.billah.dev/#brand-service" } }
+          { "@type": "Question", "name": "বাংলাদেশের সেরা ডিজিটাল মার্কেটিং এজেন্সি কোনটি?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen ঢাকা, বাংলাদেশের একটি পারফরম্যান্স মার্কেটিং এজেন্সি যা Meta Ads, Google Ads, SEO এবং TikTok Ads-এ বিশেষজ্ঞ।" }},
+          { "@type": "Question", "name": "What services does Digitalizen offer?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen offers Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, social media management, landing page development, and brand strategy for startups in Bangladesh and worldwide." }},
+          { "@type": "Question", "name": "Who founded Digitalizen?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen was founded by Masum Billah (billahdotdev), a BUET alumnus with 9+ years of digital marketing experience and IAC & Meta Blueprint certifications." }},
+          { "@type": "Question", "name": "ফেসবুক অ্যাড চালাতে কত টাকা লাগে?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen-এর Care+ প্যাকেজে শূন্য সার্ভিস চার্জে শুরু করা যায়, শুধু অ্যাড বাজেট প্রয়োজন। Monthly Care ১০,০০০ টাকা থেকে।" }},
+          { "@type": "Question", "name": "Does Digitalizen work with international clients?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Digitalizen is headquartered in Dhaka, Bangladesh, but serves startups and brands worldwide remotely." }}
         ]
       }
-
     ]
   }
   </script>
 
-  <!-- ═══════════════════════════════════════════════════════
-       GOOGLE TAG MANAGER — Must be in <head>
-       REPLACE: GTM-XXXXXXX with your GTM Container ID
-  ══════════════════════════════════════════════════════════ -->
-  <!-- GTM HEAD SCRIPT -->
-  <script>
-  (function(w,d,s,l,i){
-    w[l]=w[l]||[];
-    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-    var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),
-        dl=l!='dataLayer'?'&l='+l:'';
-    j.async=true;
-    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-    f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-XXXXXXX');
-  // ↑ REPLACE GTM-XXXXXXX with your actual GTM Container ID
-  </script>
-
-  <!-- ═══════════════════════════════════════════════════════
-       INLINE CRITICAL CSS — Zero-latency above-fold render
-       Hard-coded hero eliminates spinner on Dhaka 4G
-  ══════════════════════════════════════════════════════════ -->
   <style>
-    /* ── CSS Reset & Custom Props ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --color-bg: #0a0f1e;
-      --color-surface: #0f172a;
-      --color-primary: #3b82f6;
-      --color-primary-dark: #1d4ed8;
-      --color-accent: #06b6d4;
-      --color-text: #f1f5f9;
-      --color-text-muted: #94a3b8;
-      --color-border: rgba(59,130,246,0.15);
-      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-      --radius: 12px;
-      --shadow-glow: 0 0 40px rgba(59,130,246,0.2);
+    #initial-loader {
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      min-height: 100vh; background: #F5F7FF;
+      font-family: 'Noto Sans Bengali', sans-serif;
     }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--font-body);
-      background: var(--color-bg);
-      color: var(--color-text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
+    .loader-logo {
+      font-size: 1.5rem; font-weight: 900;
+      color: #1F4BFF; letter-spacing: -0.03em; margin-bottom: 20px;
     }
-
-    /* ── Hard-Coded Hero Shell (visible before JS loads) ── */
-    #static-hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem 1.5rem;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,130,246,0.25) 0%, transparent 60%),
-        var(--color-bg);
-      overflow: hidden;
+    .loader-dot {
+      display: inline-block; width: 7px; height: 7px;
+      background: #16A34A; border-radius: 50%;
+      margin-left: 2px; vertical-align: super;
+      animation: ldp 1.6s ease infinite;
     }
-
-    #static-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
-      pointer-events: none;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(59,130,246,0.1);
-      border: 1px solid rgba(59,130,246,0.3);
-      border-radius: 100px;
-      padding: 0.35rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: var(--color-primary);
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-badge::before {
-      content: '';
-      width: 6px; height: 6px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse-dot 2s infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.85); }
-    }
-
-    .hero-headline {
-      font-size: clamp(2.2rem, 6vw, 4.5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      max-width: 900px;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #f1f5f9 0%, #3b82f6 50%, #06b6d4 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-subtext {
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
-      color: var(--color-text-muted);
-      max-width: 600px;
-      margin-bottom: 2.5rem;
-      line-height: 1.7;
-    }
-
-    .hero-ctas {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 3rem;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-      color: #fff;
-      text-decoration: none;
-      padding: 0.875rem 2rem;
-      border-radius: var(--radius);
-      font-weight: 700;
-      font-size: 0.95rem;
-      box-shadow: var(--shadow-glow);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(59,130,246,0.4); }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      color: var(--color-text);
-      text-decoration: none;
-      padding: 0.875rem 2rem;
-      border-radius: var(--radius);
-      font-weight: 600;
-      font-size: 0.95rem;
-      border: 1px solid var(--color-border);
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .btn-secondary:hover { border-color: var(--color-primary); background: rgba(59,130,246,0.07); }
-
-    .hero-stats {
-      display: flex;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .stat-item { text-align: center; }
-
-    .stat-value {
-      display: block;
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--color-primary);
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-top: 0.25rem;
-    }
-
-    /* ── Nav Shell ── */
-    #static-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: rgba(10,15,30,0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .nav-logo {
-      font-size: 1.25rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-decoration: none;
-    }
-
-    /* ── Hide static hero once React mounts ── */
-    #root:not(:empty) #static-hero-wrapper { display: none; }
+    .loader-bar-track { width: 160px; height: 3px; background: #E2E7F5; border-radius: 99px; overflow: hidden; }
+    .loader-bar { height: 100%; background: #1F4BFF; border-radius: 99px; animation: ldb 1.8s ease infinite; }
+    @keyframes ldp { 0%,100%{opacity:1} 50%{opacity:.3} }
+    @keyframes ldb { 0%{width:0%} 70%{width:88%} 100%{width:100%} }
+    .seo-fallback { display: none; }
   </style>
 </head>
 <body>
+  <!-- GTM noscript — replace GTM-XXXXXXX -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-  <!-- ═══════════════════════════════════════════════════════
-       GOOGLE TAG MANAGER — noscript fallback (immediately
-       after opening <body> tag as required by Google)
-  ══════════════════════════════════════════════════════════ -->
-  <noscript>
-    <iframe
-      src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-      height="0" width="0"
-      style="display:none;visibility:hidden">
-    </iframe>
-  </noscript>
+  <!-- Meta Pixel noscript — must live in <body>, not <head> -->
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=XXXXXXXXXXXXXXXXXX&ev=PageView&noscript=1"/></noscript>
 
-  <!-- ═══════════════════════════════════════════════════════
-       HARD-CODED HERO SHELL
-       ● Visible immediately (zero JS dependency)
-       ● Crawlable by Googlebot, AI bots (GPTBot, ClaudeBot, PerplexityBot)
-       ● Hidden once React hydrates via CSS
-       ● Eliminates spinner on Dhaka 4G connections
-  ══════════════════════════════════════════════════════════ -->
-  <div id="static-hero-wrapper" aria-hidden="true">
+  <!-- Accessibility: skip-to-content -->
+  <a
+    class="skip-link"
+    href="#main-content"
+    style="position:absolute;left:-9999px;top:8px;z-index:9999;background:#1F4BFF;color:#fff;padding:10px 18px;border-radius:8px;font-size:0.875rem;font-weight:700;text-decoration:none;font-family:sans-serif"
+    onfocus="this.style.left='8px'"
+    onblur="this.style.left='-9999px'"
+  >মূল কন্টেন্টে যান / Skip to content</a>
 
-    <nav id="static-nav" role="banner">
-      <a href="/" class="nav-logo" aria-label="Digitalizen Home">Digitalizen</a>
-      <a href="#contact" class="btn-primary" style="padding: 0.6rem 1.25rem; font-size:0.85rem;">
-        Get Started
-      </a>
-    </nav>
+  <div id="root">
+    <div id="initial-loader" aria-label="Digitalizen লোড হচ্ছে" role="status">
+      <div class="loader-logo">digitalizen<span class="loader-dot"></span></div>
+      <div class="loader-bar-track"><div class="loader-bar"></div></div>
 
-    <section id="static-hero" role="main">
-      <div class="hero-badge">🇧🇩 Dhaka's #1 Performance Marketing Agency</div>
-
-      <h1 class="hero-headline">
-        Scale Your Startup.<br />
-        Dominate Bangladesh.
-      </h1>
-
-      <p class="hero-subtext">
-        Digitalizen helps startups grow with data-driven SEO, Google Ads,
-        Meta Ads &amp; social media strategy. Trusted by brands across
-        Dhaka &amp; worldwide. <strong>Dhakar shera digital marketing agency.</strong>
-      </p>
-
-      <div class="hero-ctas">
-        <a href="#book-call" class="btn-primary">📞 Book a Free Strategy Call</a>
-        <a href="#packages" class="btn-secondary">View Packages →</a>
+      <!-- SEO crawlable fallback — hidden from users, indexed by bots -->
+      <div class="seo-fallback">
+        <header>
+          <h1>Digitalizen: ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি | Bangladesh Digital Marketing Agency</h1>
+          <p>Bangladesh's leading performance marketing agency in Dhaka. Meta Ads, Google Ads, SEO, TikTok Ads, CAPI tracking. Founded by <a href="https://billah.dev" rel="author">Masum Billah</a> (BUET alumnus, IAC certified). ৯+ বছরের অভিজ্ঞতা | ৫০+ সফল ক্লায়েন্ট | ৩x+ গড় ROAS।</p>
+        </header>
+        <main id="main-content">
+          <section>
+            <h2>আমাদের সার্ভিস | Services</h2>
+            <ul>
+              <li><strong>Meta Ads (Facebook &amp; Instagram)</strong> — Pixel + CAPI server-side tracking, maximum ROAS in Bangladesh market.</li>
+              <li><strong>Google Ads Management</strong> — Search, Display, Shopping, YouTube campaigns for Bangladeshi businesses.</li>
+              <li><strong>SEO Bangladesh</strong> — Technical SEO, Bengali keyword research, on-page optimization, link building.</li>
+              <li><strong>TikTok Ads</strong> — TikTok advertising for Bangladesh's growing young audience.</li>
+              <li><strong>Social Media Management</strong> — Bengali/English content strategy, creation, and analytics.</li>
+              <li><strong>Landing Page Development</strong> — High-speed custom pages with advanced conversion tracking.</li>
+            </ul>
+          </section>
+          <section>
+            <h2>প্যাকেজ | Packages</h2>
+            <ul>
+              <li><strong>Care+ (শূন্য সার্ভিস চার্জ)</strong> — Business Suite, page SEO audit, branding setup.</li>
+              <li><strong>Monthly Care (৳১০,০০০/মাস)</strong> — Content strategy, Meta Pixel, ad optimization, growth review.</li>
+              <li><strong>Brand Care (৳৩০,০০০/মাস)</strong> — Full brand strategy, motion content, retargeting funnel, dedicated manager.</li>
+            </ul>
+          </section>
+          <section>
+            <h2>About Digitalizen</h2>
+            <p>Performance marketing agency in <strong>Dhaka, Bangladesh</strong>. Founded by <a href="https://billah.dev" rel="author noopener">Masum Billah</a> (<a href="https://x.com/billahdotdev" rel="noopener noreferrer" target="_blank">@billahdotdev</a>) — BUET alumnus, IAC certified, Meta Blueprint certified. 9+ years experience. Serving clients worldwide.</p>
+          </section>
+        </main>
+        <footer>
+          <p>© 2026 Digitalizen. সর্বস্বত্ব সংরক্ষিত। | Dhaka, Bangladesh | WhatsApp: +880 17-1199-2558</p>
+        </footer>
       </div>
-
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-value">50+</span>
-          <span class="stat-label">Startups Scaled</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">3×</span>
-          <span class="stat-label">Avg. ROAS</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">98%</span>
-          <span class="stat-label">Client Retention</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value">2023</span>
-          <span class="stat-label">Est. Dhaka, BD</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── AI Bot Crawlable Content (SEO Fallback) ─────── -->
-    <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
-      <h2>Digital Marketing Services in Bangladesh</h2>
-      <p>Digitalizen offers: SEO Bangladesh, Google Ads Dhaka, Facebook Ads Bangladesh, Instagram Ads, Social Media Management Dhaka, Content Strategy, Brand Development. Dhakar shera digital marketing agency. Founded by Masum Billah (BUET, billahdotdev). Best digital marketing agency Bangladesh 2026.</p>
-      <p>Services: SEO service Dhaka | Google Ads management Bangladesh | Meta Ads agency Dhaka | Social media marketing BD | Content marketing Bangladesh | Brand strategy startup BD</p>
-      <p>Contact Digitalizen: digitalizen.billah.dev | @billahdotdev | Dhaka, Bangladesh</p>
-      <p>Bangladesh digital marketing agency | Dhakar shera marketing | online marketing Dhaka | digital agency BD | startup marketing Bangladesh | best SEO company Dhaka 2026</p>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════
-       REACT APP ROOT
-  ══════════════════════════════════════════════════════════ -->
-  <div id="root"></div>
-
-  <!-- ═══════════════════════════════════════════════════════
-       REACT APP ENTRY
-  ══════════════════════════════════════════════════════════ -->
   <script type="module" src="/src/main.jsx"></script>
-
-  <!-- ═══════════════════════════════════════════════════════
-       SERVICE WORKER REGISTRATION — Stale-While-Revalidate
-  ══════════════════════════════════════════════════════════ -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then(reg => {
-            console.log('[SW] Registered:', reg.scope);
-            // Check for updates every 60s
-            setInterval(() => reg.update(), 60000);
-          })
-          .catch(err => console.warn('[SW] Registration failed:', err));
-      });
+        navigator.serviceWorker.register('/sw.js')
+          .then(r => console.log('[SW] OK', r.scope))
+          .catch(e => console.warn('[SW] failed:', e))
+      })
+    }
+    // Called by main.jsx after React mounts to remove the loader
+    window.__removeLoader = () => {
+      const el = document.getElementById('initial-loader')
+      if (!el) return
+      el.style.transition = 'opacity 0.25s'
+      el.style.opacity = '0'
+      setTimeout(() => el.remove(), 280)
     }
   </script>
-
 </body>
 </html>

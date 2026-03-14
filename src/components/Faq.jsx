@@ -1,38 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 import './Faq.css'
 
-/* ══════════════════════════════════════════════════
-   TRACKING
-   ① Meta Pixel — browser-side (client event)
-   ② dataLayer  — GTM → GA4 + server-side CAPI tag
-      event_id is shared between fbq() and dataLayer
-      so your CAPI endpoint can deduplicate with Meta.
-══════════════════════════════════════════════════ */
-let _seq = 0
-const genEventId = () => `faq_${Date.now()}_${++_seq}`
-
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-
-  // ① Meta Pixel
-  window.fbq?.(
-    'track', ev,
-    { ...params, event_source_url: window.location.href },
-    { eventID: event_id }
-  )
-
-  // ② dataLayer → GTM server container → CAPI + GA4
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name:       ev,
-    meta_event_id:         event_id,
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
-
-const WA_NUMBER = '8801XXXXXXXXX'
 
 /* ══════════════════════════════════════════════════
    DATA
@@ -130,22 +99,11 @@ export default function Faq() {
     io.observe(el)
 
     /* time-on-section engagement */
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'faq',
-        time_on_section_seconds: secs,
-        faqs_opened:             openedCountRef.current,
-      })
-      enterTimeRef.current = null
-    }
+    const pushEng = () => pushEngagement('faq', enterTimeRef, { faqs_opened: openedCountRef.current })
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
     document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
+    window.addEventListener('beforeunload', pushEng)
 
     return () => {
       io.disconnect()

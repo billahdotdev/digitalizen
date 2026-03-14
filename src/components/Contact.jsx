@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Contact.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -8,27 +9,7 @@ import './Contact.css'
       event_id shared between fbq() & dataLayer for
       CAPI deduplication on your GTM server container.
 ══════════════════════════════════════════════════ */
-let _seq = 0
-const genEventId = () => `ct_${Date.now()}_${++_seq}`
 
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-  window.fbq?.(
-    'track', ev,
-    { ...params, event_source_url: window.location.href },
-    { eventID: event_id }
-  )
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name:       ev,
-    meta_event_id:         event_id,
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
-
-const WA_NUMBER = '8801711992558'
 
 /* ── Social channels (data-driven, easier to update) ── */
 const CHANNELS = [
@@ -137,23 +118,11 @@ export default function Contact() {
     )
     io.observe(el)
 
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'contact',
-        time_on_section_seconds: secs,
-        form_fields_filled:      fieldsFilled.current,
-        social_clicks:           socialClicksRef.current,
-      })
-      enterTimeRef.current = null
-    }
+    const pushEng = () => pushEngagement('contact', enterTimeRef, { social_clicks: socialClicksRef.current })
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
     document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
+    window.addEventListener('beforeunload', pushEng)
     return () => {
       io.disconnect()
       document.removeEventListener('visibilitychange', onVis)

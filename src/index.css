@@ -246,3 +246,211 @@ img {
   from { background-position: -200% center; }
   to   { background-position: 200% center; }
 }
+
+/* ══════════════════════════════════════════════════
+   A11Y & MOBILE UX — Production additions
+   ====================================================== */
+
+/* ── Touch interaction: no tap flash on mobile ── */
+button,
+a,
+[role="button"],
+input,
+select,
+textarea,
+label {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Focus ring: keyboard only (not on mouse/touch) ── */
+:focus { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Minimum touch target: 44×44px (WCAG 2.5.5) ── */
+button:not(.finder-pip):not(.sc-thumb):not(.pkg-star):not(.loader-dot),
+[role="button"] {
+  min-height: 44px;
+}
+
+/* ── Disabled button states ── */
+.btn-primary:disabled,
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Scroll margin: prevent fixed nav overlap on anchor jump ── */
+[id] {
+  scroll-margin-top: calc(var(--nav-h) + 20px);
+}
+
+/* ══════════════════════════════════════════════════
+   STICKY CTA BAR
+   Mobile-only, slides up from bottom after fold scroll
+   ====================================================== */
+.sticky-cta-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  padding: 12px 20px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: rgba(245, 247, 255, 0.97);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.10);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sticky-cta-bar--visible {
+  transform: translateY(0);
+}
+
+.sticky-cta-bar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  min-height: 50px;
+}
+
+.sticky-cta-bar__btn:hover {
+  background: var(--blue-dark);
+}
+
+.sticky-cta-bar__btn:active {
+  transform: scale(0.98);
+}
+
+/* Hide on desktop — sticky bar is mobile-only */
+@media (min-width: 520px) {
+  .sticky-cta-bar { display: none; }
+}
+
+/* ══════════════════════════════════════════════════
+   REDUCED MOTION
+   ====================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   ACTIVE NAV DRAWER LINK
+   ====================================================== */
+.nav__drawer-link--active {
+  background: var(--blue-light);
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.nav__drawer-link--active::before {
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   ABOUT — CREDENTIAL BADGES (BUET / IAC / Meta BP)
+   ====================================================== */
+.founder-credentials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.founder-cred {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 100px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.founder-cred--ai    { background: #F3F0FF; color: #6D28D9; border: 1px solid #C4B5FD; }
+.founder-cred--dev   { background: #EEF1FC; color: #1F4BFF; border: 1px solid #C5CFFF; }
+.founder-cred--mktg  { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+
+.founder-cred {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 12px;
+  line-height: 1.3;
+}
+
+.founder-cred-sub {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 500;
+  opacity: 0.75;
+  letter-spacing: 0.01em;
+}
+
+/* ══════════════════════════════════════════════════
+   HERO STATS GRID
+   ====================================================== */
+.hero__stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero__stat-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.hero__stat-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.hero__stat-divider {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 4px 0;
+}

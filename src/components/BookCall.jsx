@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './BookCall.css'
+import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -8,31 +9,7 @@ import './BookCall.css'
       event_id is shared between fbq() & dataLayer so
       your GTM server container can deduplicate with Meta.
 ══════════════════════════════════════════════════ */
-let _seq = 0
-const genEventId = () => `bc_${Date.now()}_${++_seq}`
 
-const track = (ev, params = {}) => {
-  const event_id = genEventId()
-
-  // ① Meta Pixel
-  window.fbq?.(
-    'track', ev,
-    { ...params, event_source_url: window.location.href },
-    { eventID: event_id }
-  )
-
-  // ② dataLayer → GTM server container → CAPI + GA4
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    event:                 'meta_' + ev.toLowerCase().replace(/\s+/g, '_'),
-    meta_event_name:       ev,
-    meta_event_id:         event_id,
-    meta_event_source_url: window.location.href,
-    ...params,
-  })
-}
-
-const WA_NUMBER = '8801711992558'
 
 const TOPICS = [
   'ফেসবুক অ্যাড শুরু করতে চাই',
@@ -77,22 +54,11 @@ export default function BookCall() {
     )
     io.observe(el)
 
-    const pushEngagement = () => {
-      if (!enterTimeRef.current) return
-      const secs = Math.round((Date.now() - enterTimeRef.current) / 1000)
-      window.dataLayer = window.dataLayer || []
-      window.dataLayer.push({
-        event:                   'section_engagement',
-        section:                 'book_call',
-        time_on_section_seconds: secs,
-        form_fields_filled:      fieldsFilled.current,
-      })
-      enterTimeRef.current = null
-    }
+    const pushEng = () => pushEngagement('book_call', enterTimeRef)
 
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEngagement() }
+    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
     document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEngagement)
+    window.addEventListener('beforeunload', pushEng)
 
     return () => {
       io.disconnect()

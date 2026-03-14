@@ -1,0 +1,104 @@
+# ============================================================
+# .github/workflows/deploy-workers.yml
+#
+# Digitalizen — Cloudflare Workers CAPI Auto-Deploy
+# ─────────────────────────────────────────────────
+# Deploys two Workers on every push to main that touches api/:
+#   • api/capi.js    → Meta Conversions API proxy
+#   • api/tt-capi.js → TikTok Events API proxy
+#
+# Workers run at the Cloudflare edge — closest nodes to Dhaka —
+# bypassing ad blockers and iOS 14+ ITP restrictions for maximum
+# event match rate on Meta and TikTok.
+#
+# WORKER SECRETS — set ONCE via CLI, stored encrypted in Cloudflare:
+# ─────────────────────────────────────────────────────────────────
+#   wrangler secret put META_PIXEL_ID       ← your Meta Pixel ID
+#   wrangler secret put CAPI_ACCESS_TOKEN   ← Meta Events Manager → CAPI token
+#   wrangler secret put TT_PIXEL_ID         ← your TikTok Pixel ID
+#   wrangler secret put TT_ACCESS_TOKEN     ← TikTok Events Manager token
+#
+#   Run each command once locally. Secrets live in Cloudflare,
+#   never in this repo or any GitHub Secret.
+#
+# GITHUB SECRETS — add in repo → Settings → Secrets → Actions:
+# ─────────────────────────────────────────────────────────────
+#   CLOUDFLARE_API_TOKEN   → Cloudflare → My Profile → API Tokens
+#                            Create Token → template: "Edit Cloudflare Workers"
+#                            Permissions needed: Workers Scripts:Edit, Account:Read
+#
+#   CLOUDFLARE_ACCOUNT_ID  → Cloudflare dashboard → right sidebar → Account ID
+#
+# IMPORTANT: This workflow does NOT deploy the pixel secrets —
+# those are already stored in Cloudflare from your one-time CLI setup.
+# It only deploys the Worker *code* (api/capi.js, api/tt-capi.js).
+# ============================================================
+
+name: Deploy → Cloudflare Workers (CAPI)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/capi.js'       # Only triggers when these specific files change
+      - 'api/tt-capi.js'
+      - 'wrangler.toml'
+  workflow_dispatch:        # Manual trigger from Actions tab
+
+concurrency:
+  group: workers-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy-workers:
+    name: Deploy Meta & TikTok CAPI Workers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # ── Deploy Meta CAPI Worker ────────────────────────────
+      - name: Deploy Meta CAPI → capi.digitalizen.billah.dev
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >
+            deploy api/capi.js
+            --name digitalizen-capi
+            --compatibility-date 2024-09-23
+            --compatibility-flags nodejs_compat
+
+      # ── Deploy TikTok CAPI Worker ──────────────────────────
+      - name: Deploy TikTok CAPI → tt-capi.digitalizen.billah.dev
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >
+            deploy api/tt-capi.js
+            --name digitalizen-tt-capi
+            --compatibility-date 2024-09-23
+            --compatibility-flags nodejs_compat
+
+      # ── Smoke-test: confirm Workers are reachable ──────────
+      - name: Smoke-test Meta CAPI Worker
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST https://capi.digitalizen.billah.dev \
+            -H "Content-Type: application/json" \
+            -d '{"event_name":"TestEvent","event_id":"ci_test"}')
+          echo "Meta CAPI response: $STATUS"
+          # 200 = success, 500 = missing env secrets (acceptable in CI)
+          # 000 = Worker not reachable (fail)
+          if [ "$STATUS" = "000" ]; then exit 1; fi
+
+      - name: Smoke-test TikTok CAPI Worker
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST https://tt-capi.digitalizen.billah.dev \
+            -H "Content-Type: application/json" \
+            -d '{"event_name":"TestEvent","event_id":"ci_test"}')
+          echo "TikTok CAPI response: $STATUS"
+          if [ "$STATUS" = "000" ]; then exit 1; fi

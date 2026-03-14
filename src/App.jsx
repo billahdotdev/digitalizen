@@ -1,244 +1,193 @@
-// ============================================================
-// src/App.jsx — Digitalizen 2026
-//
-// ● BrowserRouter (replaces HashRouter — clean URLs)
-// ● Lazy-loaded below-fold components (FCP optimised)
-// ● SEO component injected per route
-// ● ScrollToTop + analytics.pageView on every navigation
-// ● 404 catch-all route
-// ============================================================
-
+import { useEffect, useRef, useState, useCallback, Component } from 'react'
 import './App.css'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect, Suspense, lazy } from 'react'
+import { HashRouter, Routes, Route } from 'react-router-dom'
+import Nav            from './components/Nav'
+import Hero           from './components/Hero'
+import Finder         from './components/Finder'
+import Process        from './components/Process'
+import Packages       from './components/Packages'
+import About          from './components/About'
+import BookCall       from './components/BookCall'
+import Resources      from './components/Resources'
+import Faq            from './components/Faq'
+import Contact        from './components/Contact'
+import Footer         from './components/Footer'
+import InstallButton  from './components/InstallButton'
+import FreeResources  from './components/FreeResources'
+import Access         from './components/Access'
+import Gallery        from './components/Gallery'
+import SEO            from './SEO'
 
-// ── Analytics (fire pageView on every route change) ───────
-import analytics from './analytics.js'
+/* ── WhatsApp number (single source of truth) ── */
+const WA_NUMBER = '8801711992558'
 
-// ── SEO (dynamic JSON-LD + meta per route) ────────────────
-import SEO from './SEO.jsx'
+/* ──────────────────────────────────────────────────
+   STICKY CTA BAR — mobile-only, slides up from bottom
+────────────────────────────────────────────────── */
+function StickyCtaBar() {
+  const [visible, setVisible] = useState(false)
+  const ticking = useRef(false)
 
-// ── Critical path — load eagerly (above fold) ─────────────
-import Nav  from './components/Nav'
-import Hero from './components/Hero'
-import Footer from './components/Footer'
+  useEffect(() => {
+    const check = () => {
+      const scrollY    = window.scrollY
+      const docH       = document.documentElement.scrollHeight
+      const winH       = window.innerHeight
+      const nearFooter = scrollY + winH > docH - 160
+      const pastFold   = scrollY > winH * 0.8
+      setVisible(pastFold && !nearFooter)
+      ticking.current = false
+    }
+    const onScroll = () => {
+      if (!ticking.current) { requestAnimationFrame(check); ticking.current = true }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
-// ── Below-fold — lazy load (reduces initial JS bundle) ────
+  const handleClick = useCallback(() => {
+    const event_id = `sticky_${Date.now()}`
+    window.fbq?.('track', 'InitiateCheckout',
+      { content_name: 'Sticky CTA Bar', content_category: 'CTA', currency: 'BDT', value: 0 },
+      { eventID: event_id }
+    )
+    window.ttq?.track('InitiateCheckout', { content_name: 'Sticky CTA Bar', currency: 'BDT', value: 0 })
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'sticky_cta_click', meta_event_name: 'InitiateCheckout', meta_event_id: event_id, cta_location: 'sticky_bar' })
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen! আমি ফ্রি কনসালটেশন কল করতে চাই।')}`, '_blank')
+  }, [])
 
-const Finder         = lazy(() => import('./components/Finder'))
-const Packages       = lazy(() => import('./components/Packages'))
-const Process        = lazy(() => import('./components/Process'))
-
-const About          = lazy(() => import('./components/About'))
-const BookCall       = lazy(() => import('./components/BookCall'))
-const Resources      = lazy(() => import('./components/Resources'))
-const Faq            = lazy(() => import('./components/Faq'))
-const Contact        = lazy(() => import('./components/Contact'))
-const Gallery        = lazy(() => import('./components/Gallery'))
-const Access         = lazy(() => import('./components/Access'))
-const FreeResources  = lazy(() => import('./components/FreeResources'))
-
-// ── Minimal loading skeleton (below-fold only) ─────────────
-function SectionSkeleton({ height = '20vh' }) {
-  return <div style={{ minHeight: height, background: 'transparent' }} aria-hidden="true" />
-}
-
-// ── Full-page loader (standalone pages) ───────────────────
-function PageLoader() {
   return (
-    <div style={{
-      minHeight: '80vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#0a0f1e',
-    }}>
-      <div style={{
-        width: 32, height: 32,
-        border: '3px solid rgba(59,130,246,0.15)',
-        borderTop: '3px solid #3b82f6',
-        borderRadius: '50%',
-        animation: 'spin 0.7s linear infinite',
-      }} />
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    <div className={`sticky-cta-bar${visible ? ' sticky-cta-bar--visible' : ''}`} role="complementary" aria-label="ফ্রি কনসালটেশন কল">
+      <button className="sticky-cta-bar__btn" onClick={handleClick} aria-label="WhatsApp-এ ফ্রি কনসালটেশন কল বুক করুন">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        ফ্রি কনসালটেশন কল
+      </button>
     </div>
   )
 }
 
-// ── ScrollToTop + analytics pageView ──────────────────────
-function ScrollToTop() {
-  const { pathname } = useLocation()
+/* ── Analytics hooks ── */
+function useAppAnalytics() {
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
-    analytics.pageView(pathname)
-  }, [pathname])
-  return null
+    window.ttq?.page()
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'virtualPageView', page_path: window.location.href, page_title: document.title })
+  }, [])
 }
 
-// ═══════════════════════════════════════════════════════════
-// HOME — all sections in a single scroll
-// ═══════════════════════════════════════════════════════════
+function useScrollDepth() {
+  const fired = useRef(new Set())
+  useEffect(() => {
+    const milestones = [25, 50, 75, 100]
+    const check = () => {
+      const pct = Math.round(((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight) * 100)
+      milestones.forEach(m => {
+        if (pct >= m && !fired.current.has(m)) {
+          fired.current.add(m)
+          window.dataLayer = window.dataLayer || []
+          window.dataLayer.push({ event: 'scroll_depth', scroll_depth_pct: m })
+        }
+      })
+    }
+    window.addEventListener('scroll', check, { passive: true })
+    return () => window.removeEventListener('scroll', check)
+  }, [])
+}
+
+/* ── Error Boundary ── */
+class ErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { hasError: false } }
+  static getDerivedStateFromError() { return { hasError: true } }
+  componentDidCatch(error, info) {
+    console.error('[ErrorBoundary]', error, info)
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'react_error', error_message: error?.message })
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="error-boundary">
+          <p className="error-boundary__title">কিছু একটা ভুল হয়েছে</p>
+          <p className="error-boundary__sub">পেজটি রিলোড করুন অথবা WhatsApp-এ আমাদের জানান।</p>
+          <button className="error-boundary__btn" onClick={() => window.location.reload()}>পেজ রিলোড করুন</button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+/* ── Main Layout (home page) ── */
 function MainLayout() {
+  useAppAnalytics()
+  useScrollDepth()
+  useEffect(() => { window.__removeLoader?.() }, [])
+
   return (
     <>
       <SEO page="home" />
-
-     
-
-      {/* Eagerly loaded — above the fold */}
+      <InstallButton />
       <Nav />
-      <main>
+      <main id="main-content">
         <Hero />
-
-        {/* Below-fold sections — lazy loaded in one boundary */}
-        <Suspense fallback={<SectionSkeleton height="40vh" />}>
-          <Finder />
-          <Packages />
-          <Process />
-          
-          <Faq />
-          <About />
-          <BookCall />
-          <Resources />
-          <Contact />
-          <Gallery />
-          <Access />
-        </Suspense>
-      </main>
-      <Footer />
-    </>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════
-// /free — Free Resources page
-// ═══════════════════════════════════════════════════════════
-function FreeResourcesPage() {
-  return (
-    <>
-      <SEO page="free" />
-      <Nav />
-      <Suspense fallback={<PageLoader />}>
-        <FreeResources />
-      </Suspense>
-      <Footer />
-    </>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════
-// /gallery — Portfolio / Gallery page
-// ═══════════════════════════════════════════════════════════
-function GalleryPage() {
-  return (
-    <>
-      <SEO page="gallery" />
-      <Nav />
-      <Suspense fallback={<PageLoader />}>
+        <Finder />
+        <Packages />
+        <Process />
+        <Faq />
+        <About />
+        <BookCall />
+        <Resources />
+        <Contact />
         <Gallery />
-      </Suspense>
-      <Footer />
-    </>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════
-// /access — Client Access page (gated, noindex)
-// ═══════════════════════════════════════════════════════════
-function AccessPage() {
-  return (
-    <>
-      <SEO page="access" noindex />
-      <Nav />
-      <Suspense fallback={<PageLoader />}>
-        <Access />
-      </Suspense>
-      <Footer />
-    </>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════
-// * — 404 Not Found
-// ═══════════════════════════════════════════════════════════
-function NotFoundPage() {
-  return (
-    <>
-      <SEO
-        page="home"
-        title="Page Not Found — Digitalizen Bangladesh"
-        description="The page you're looking for doesn't exist. Return to Digitalizen — Bangladesh's top digital marketing agency."
-        noindex
-      />
-      <Nav />
-      <main style={{
-        minHeight: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: '3rem 1.5rem',
-        background: '#0a0f1e',
-      }}>
-        <p style={{
-          fontSize: '5rem',
-          fontWeight: 900,
-          background: 'linear-gradient(135deg,#3b82f6,#06b6d4)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          lineHeight: 1,
-          marginBottom: '1.5rem',
-        }}>
-          404
-        </p>
-        <h1 style={{ color: '#f1f5f9', fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-          পেজটি পাওয়া যায়নি
-        </h1>
-        <p style={{ color: '#94a3b8', maxWidth: 400, lineHeight: 1.7, marginBottom: '2rem' }}>
-          You might have followed a broken link. Let's get you back to scaling your business.
-        </p>
-        <a
-          href="/"
-          style={{
-            display: 'inline-block',
-            background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
-            color: '#fff',
-            padding: '0.85rem 2rem',
-            borderRadius: '12px',
-            fontWeight: 700,
-            textDecoration: 'none',
-            fontSize: '0.95rem',
-          }}
-        >
-          ← হোমে ফিরে যান
-        </a>
       </main>
       <Footer />
+      <StickyCtaBar />
     </>
   )
 }
 
-// ═══════════════════════════════════════════════════════════
-// APP ROOT
-// BrowserRouter replaces HashRouter for clean URLs:
-//   ✅ digitalizen.billah.dev/free       (not /#/free)
-//   ✅ digitalizen.billah.dev/gallery    (not /#/gallery)
-//   ✅ deeplink-indexable by Google + AI bots
-//
-// GitHub Pages 404.html handles direct URL loads.
-// ═══════════════════════════════════════════════════════════
+/* ── 404 Page ── */
+function NotFound() {
+  useEffect(() => {
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'page_not_found', page_path: window.location.href })
+  }, [])
+
+  return (
+    <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', fontFamily:'var(--font)', background:'var(--bg)', padding:'24px', textAlign:'center' }}>
+      <p style={{ fontSize:'0.75rem', fontWeight:700, letterSpacing:'0.1em', color:'var(--blue)', textTransform:'uppercase', marginBottom:'12px' }}>404</p>
+      <h1 style={{ fontSize:'1.8rem', fontWeight:900, color:'var(--text)', marginBottom:'12px' }}>পেজটি পাওয়া যাচ্ছে না</h1>
+      <p style={{ color:'var(--muted)', marginBottom:'28px', lineHeight:1.6 }}>আপনি যে পেজটি খুঁজছেন সেটি সরানো হয়েছে বা ঠিকানা পরিবর্তন হয়েছে।</p>
+      <a href="/" style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'var(--blue)', color:'#fff', padding:'14px 24px', borderRadius:'var(--radius-sm)', fontWeight:700, fontSize:'0.9rem', textDecoration:'none' }}>← হোমপেজে যান</a>
+    </div>
+  )
+}
+
+/* ──────────────────────────────────────────────────
+   ROUTER
+   ─────────────────────────────────────────────────
+   ► HOW TO ADD A NEW ROUTE — see README.md
+   1. Create src/components/MyPage.jsx + MyPage.css
+   2. import MyPage from './components/MyPage'
+   3. Add: <Route path="/my-page" element={<MyPage />} />
+   4. Add Nav link in Nav.jsx drawer
+   5. Add SEO config in src/SEO.jsx → PAGE_DEFAULTS
+────────────────────────────────────────────────── */
 export default function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/"        element={<MainLayout />} />
-        <Route path="/free"    element={<FreeResourcesPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/access"  element={<AccessPage />} />
-        <Route path="*"        element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <HashRouter>
+        <Routes>
+          <Route path="/"        element={<MainLayout />} />
+          <Route path="/free"    element={<FreeResources />} />
+          <Route path="/access"  element={<Access />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="*"        element={<NotFound />} />
+        </Routes>
+      </HashRouter>
+    </ErrorBoundary>
   )
 }
