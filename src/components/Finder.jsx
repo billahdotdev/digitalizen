@@ -331,7 +331,7 @@ export default function Finder() {
               tech_gap:             res.techGap,
             })
             setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
-          }, 3000)
+          }, 5500)
         }
       }, 170)
     }, 120)
@@ -493,16 +493,28 @@ export default function Finder() {
           {/* ── LOADING ── */}
           {phase === 'loading' && (
             <div className="finder-loading">
-              <div className="finder-loading__congrats">
-                <div className="finder-loading__badge">
-                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                    <circle cx="14" cy="14" r="14" fill="rgba(31,75,255,0.1)"/>
-                    <path d="M8 14l4 4 8-8" stroke="#1F4BFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="finder-loading__check-path"/>
+
+              <div className="finder-loading__hero">
+                <div className="finder-loading__ring" aria-hidden="true">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(31,75,255,0.08)" strokeWidth="5"/>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#1F4BFF" strokeWidth="5"
+                      strokeLinecap="round" strokeDasharray="188" strokeDashoffset="188"
+                      className="finder-loading__ring-fill"
+                      style={{ transformOrigin: '36px 36px', transform: 'rotate(-90deg)' }}
+                    />
                   </svg>
+                  <div className="finder-loading__ring-check" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <path d="M8 14l4 4 8-8" stroke="#1F4BFF" strokeWidth="2.4"
+                        strokeLinecap="round" strokeLinejoin="round"
+                        className="finder-loading__check-path"/>
+                    </svg>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="finder-loading__title">আপনার ডাটা ও ট্র্যাকিং অডিট করা হচ্ছে...</h3>
-                  <p className="finder-loading__sub">আমরা আপনার তথ্যগুলো যাচাই করছি, একটু অপেক্ষা করুন।</p>
+                <div className="finder-loading__hero-text">
+                  <h3 className="finder-loading__title">আপনার বিজনেস অডিট চলছে</h3>
+                  <p className="finder-loading__sub">১৪টি উত্তর বিশ্লেষণ করে আপনার জন্য সেরা প্ল্যান তৈরি হচ্ছে।</p>
                 </div>
               </div>
 
@@ -512,24 +524,27 @@ export default function Finder() {
 
               <div className="finder-loading__steps">
                 {[
-                  { txt: 'আপনার পেজের ডিজাইন ও ইউজার এক্সপেরিয়েন্স অডিট করা হচ্ছে...', delay: 1 },
-                  { txt: 'অফার অনুযায়ী পেজ রি-ডিজাইন করার সুবিধা যাচাই করা হচ্ছে...', delay: 2 },
-                  { txt: 'আপনার বিজনেসের জন্য একটি ফুল-স্ট্যাক গ্রোথ প্ল্যান তৈরি হচ্ছে...', delay: 3 },
+                  { txt: 'ব্যবসার স্তর ও মার্কেটিং গ্যাপ চিহ্নিত করা হচ্ছে', icon: '01' },
+                  { txt: 'ল্যান্ডিং পেজ ও ট্র্যাকিং সেটআপ যাচাই করা হচ্ছে',  icon: '02' },
+                  { txt: 'আপনার বিজনেসের জন্য কাস্টম প্ল্যান রেডি হচ্ছে',     icon: '03' },
                 ].map((s, i) => (
                   <div key={i} className={`finder-loading__step finder-loading__step--${i + 1}`}>
-                    <span className="finder-loading__step-icon" aria-hidden="true">
+                    <span className={`finder-loading__step-icon finder-loading__step-icon--${i + 1}`} aria-hidden="true">
                       <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                         <path d="M2.5 7l3 3 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </span>
-                    {s.txt}
+                    <span className="finder-loading__step-txt">{s.txt}</span>
                   </div>
                 ))}
               </div>
 
               <div className="finder-loading__footer">
-                <span className="finder-loading__footer-dot" /><span className="finder-loading__footer-dot" /><span className="finder-loading__footer-dot" />
+                <span className="finder-loading__footer-dot" />
+                <span className="finder-loading__footer-dot" />
+                <span className="finder-loading__footer-dot" />
               </div>
+
             </div>
           )}
 
