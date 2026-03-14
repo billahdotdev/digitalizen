@@ -44,148 +44,156 @@ const Icon = {
 }
 
 /* ══════════════════════════════════════════════════
-   13-QUESTION WEIGHTED BUSINESS AUDIT
+   14-QUESTION BUSINESS AUDIT — A=1pt, D=4pt scoring
+   <20 = Care+  |  20-34 = Monthly Care  |  35+ = Brand Care
 ══════════════════════════════════════════════════ */
 const questions = [
-  /* Q1 – Business stage: strong signal for all 3 dims */
-  { id: 1, q: 'আপনার ব্যবসা এখন কোন অবস্থায় আছে?', hint: 'বর্তমান পরিস্থিতির সাথে যেটা সবচেয়ে মিলে সেটি বেছে নিন', opts: [
-    { label: 'একদম নতুন শুরু করছি',                        scores: { foundation: 3 } },
-    { label: 'চলছে কিন্তু এখনো ঠিকমতো জমেনি',              scores: { foundation: 2, growth: 1 } },
-    { label: 'ব্যবসা চলছে কিন্তু সেল বাড়ছে না',            scores: { growth: 3 } },
-    { label: 'মোটামুটি চলছে, এখন বড় করা দরকার',           scores: { growth: 2, authority: 1 } },
-    { label: 'পরিচিত ব্র্যান্ড, এখন বড় স্কেলে যেতে চাই',  scores: { authority: 3 } },
+  /* Q1 — বিজনেসের ধরন */
+  { id: 1, q: 'আপনার বিজনেসের ধরন কি?', hint: '', opts: [
+    { label: 'সার্ভিস/ সেবা (শিক্ষা, স্বাস্থ্য, কনসালটেন্সি ইত্যাদি)', scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'লোকাল সার্ভিস (জিম, রেস্টুরেন্ট, সেলুন ইত্যাদি)',        scores: { foundation: 1 }, rawScore: 2 },
+    { label: 'ই-কমার্স (পাইকারি মার্কেট থেকে সংগ্রহ)',                  scores: { growth: 2 },     rawScore: 3 },
+    { label: 'নিজস্ব ম্যানুফ্যাকচারিং (ব্র্যান্ড)/ নিজস্ব ইমপোর্ট',   scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q2 – Business type: light signal, context only */
-  { id: 2, q: 'আপনি কী ধরণের ব্যবসা করছেন?', hint: 'এটি জানলে আপনার জন্য সঠিক প্ল্যান দেওয়া সহজ হবে', opts: [
-    { label: 'লোকাল সার্ভিস (এলাকা ভিত্তিক)', scores: { foundation: 1 } },
-    { label: 'অনলাইন শপ / ই-কমার্স',          scores: { growth: 1 } },
-    { label: 'প্রোডাক্ট ব্র্যান্ড',             scores: { growth: 1, authority: 1 } },
-    { label: 'পার্সোনাল ব্র্যান্ড (নিজের নামে)', scores: { authority: 1 } },
-    { label: 'অন্যান্য',                        scores: { foundation: 1 } },
+  /* Q2 — ব্যবসার বর্তমান অবস্থা */
+  { id: 2, q: 'আপনার ব্যবসার বর্তমান অবস্থা কী?', hint: '', opts: [
+    { label: 'একদম নতুন শুরু করছি।',                                       scores: { foundation: 3 }, rawScore: 1 },
+    { label: 'সেল হচ্ছে, কিন্তু যেমনটা চাচ্ছি তেমন প্রফিট আসছে না।',    scores: { foundation: 2 }, rawScore: 2 },
+    { label: 'ব্যবসা বেশ ভালো, এখন মার্কেট ডমিনেট করতে চাই।',           scores: { growth: 2 },     rawScore: 3 },
+    { label: 'অলরেডি ব্র্যান্ড, এখন আরও প্রিমিয়াম ও ট্রাস্টেড হতে চাই।', scores: { authority: 2 }, rawScore: 4 },
   ] },
-  /* Q3 – Online presence: strong foundation/growth signal */
-  { id: 3, q: 'অনলাইনে আপনার ব্যবসার অবস্থা কী?', hint: 'সঠিক উত্তর দিন, তাহলেই আমরা সেরা সমাধান দিতে পারব', opts: [
-    { label: 'অনলাইনে এখনো নামিনি',                              scores: { foundation: 3 } },
-    { label: 'শুধু একটা ফেসবুক পেজ আছে',                        scores: { foundation: 2 } },
-    { label: 'মাঝে মাঝে পোস্ট করি',                             scores: { growth: 1 } },
-    { label: 'নিয়মিত পোস্ট করি',                                scores: { growth: 3 } },
-    { label: 'অ্যাড দিই কিন্তু রেজাল্ট ভালো না',                scores: { growth: 2, authority: 1 } },
+  /* Q3 — মার্কেটিং পরিচালনা */
+  { id: 3, q: 'মার্কেটিং কিভাবে পরিচালনা করেন?', hint: '', opts: [
+    { label: 'প্রযোজ্য না/ মার্কেটিং করি না।',                scores: { foundation: 1 }, rawScore: 1, techGap: true },
+    { label: 'নিজেই বুষ্টিং করি।',                            scores: { foundation: 1 }, rawScore: 2, techGap: true },
+    { label: 'ফ্রিল্যান্সার দিয়ে বুষ্টিং/ ক্যাম্পেইন করি।', scores: { growth: 1 },     rawScore: 3 },
+    { label: 'এজেন্সিকে দিয়ে প্রফেশনাল ক্যাম্পেইন করি।',    scores: { growth: 2 },     rawScore: 4 },
   ] },
-  /* Q4 – Landing page quality: triggers landingPageWarning */
-  { id: 4, q: 'আপনার কি কাস্টম ও হাই-স্পিড ল্যান্ডিং পেজ আছে?', hint: 'কমন ওয়ার্ডপ্রেস সাইট স্লো হয়, যা আপনার সেল অনেক কমিয়ে দেয়', opts: [
-    { label: 'হ্যাঁ, কাস্টম কোড করা সুপার-ফাস্ট পেজ আছে',    scores: { authority: 2 } },
-    { label: 'সাধারণ ওয়ার্ডপ্রেস বা টেম্পলেটে বানানো',        scores: { growth: 1 },     landingPageWarning: 'weak' },
-    { label: 'না, শুধু ফেসবুক পেজ দিয়েই কাজ চালাই',           scores: { growth: 1 },     landingPageWarning: 'none' },
-    { label: 'না, তবে প্রফেশনাল ল্যান্ডিং পেজ দরকার',         scores: { foundation: 2 }, landingPageWarning: 'none' },
+  /* Q4 — প্রধান সেলস চ্যানেল */
+  { id: 4, q: 'বর্তমানে আপনার প্রধান সেলস চ্যানেল কোনটি?', hint: '', opts: [
+    { label: 'কোনো অ্যাড ছাড়াই অর্গানিক ভাবে/ অফ লাইন',          scores: { foundation: 1 }, rawScore: 1, landingPageWarning: 'none' },
+    { label: 'শুধু ফেসবুক পেইজে মেসেজ ক্যাম্পেইন/ বুস্টিং',       scores: { foundation: 1 }, rawScore: 2, landingPageWarning: 'none' },
+    { label: 'মেসেজ ক্যাম্পেইন এবং ল্যান্ডিং পেজ',                scores: { growth: 1 },     rawScore: 3, landingPageWarning: 'weak' },
+    { label: 'সম্পূর্ণ ল্যান্ডিং পেইজ/ ওয়েবসাইট',                scores: { growth: 2 },     rawScore: 4 },
   ] },
-  /* Q5 – Marketer can design/code: triggers techGap */
-  { id: 5, q: 'আপনার বর্তমান মার্কেটার কি ল্যান্ডিং পেজ এডিট বা ডিজাইন করতে পারেন?', hint: 'নতুন প্রোডাক্ট বা উৎসবের অফার দিতে দ্রুত পেজ ডিজাইন পরিবর্তন করা জরুরি', opts: [
-    { label: 'না, এডিট করার জন্য আলাদা ডেভেলপার খুঁজতে হয়',   scores: { growth: 1 },     techGap: true },
-    { label: 'হ্যাঁ, তিনি নিজেই ডিজাইন ও কোডিং সামলাতে পারেন', scores: { authority: 2 } },
-    { label: 'মাঝে মাঝে পারেন, তবে অনেক সময় লেগে যায়',        scores: { growth: 1 },     techGap: true },
-    { label: 'আমি আসলে কোনো টেকনিক্যাল সাপোর্ট পাই না',       scores: { foundation: 1 }, techGap: true },
+  /* Q5 — ল্যান্ডিং পেজ স্পিড */
+  { id: 5, q: 'আপনার বর্তমান ল্যান্ডিং পেইজ বা ওয়েবসাইটের স্পিড কেমন?', hint: '', opts: [
+    { label: 'ল্যান্ডিং পেইজ/ ওয়েব সাইট নাই।',                               scores: { foundation: 1 }, rawScore: 1, landingPageWarning: 'none' },
+    { label: 'ল্যান্ডিং পেইজ/ ওয়েব সাইট আছে, কিন্তু জানি না।',              scores: { foundation: 1 }, rawScore: 2, landingPageWarning: 'weak' },
+    { label: 'সাধারণ ওয়ার্ডপ্রেস বা থিম দিয়ে বানানো (একটু স্লো)।',          scores: { growth: 1 },     rawScore: 3, landingPageWarning: 'weak' },
+    { label: 'কাস্টম কোড করা সুপার-ফাস্ট (খুব দ্রুত লোড হয়)।',              scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q6 – Seasonal campaign redesign: also techGap */
-  { id: 6, q: 'উৎসব বা ক্যাম্পেইনের সময় আপনার ল্যান্ডিং পেজ কি আপডেট করা হয়?', hint: 'ঈদ বা পূজার মতো উৎসবে কাস্টম ডিজাইন আপনার ব্র্যান্ড ভ্যালু বাড়ায়', opts: [
-    { label: 'না, সবসময় একই ডিজাইন থাকে',                          scores: { growth: 1 }, techGap: true },
-    { label: 'হ্যাঁ, অফার অনুযায়ী ডিজাইন পরিবর্তন করি',            scores: { authority: 2 } },
-    { label: 'ইচ্ছে থাকলেও টেকনিক্যাল সাপোর্টের অভাবে পারি না',   scores: { growth: 2 }, techGap: true },
+  /* Q6 — অফার/ উৎসবে পেজ আপডেট */
+  { id: 6, q: 'অফার বা উৎসবের সময় ল্যান্ডিং পেজ/ ওয়েব সাইট পেইজ আপডেট করা হয়?', hint: '', opts: [
+    { label: 'প্রযোজ্য নয় (আমার কোনো ওয়েবসাইট নেই)।',                                  scores: { foundation: 1 }, rawScore: 1, landingPageWarning: 'none' },
+    { label: 'মার্কেটার ও ডেভেলপার আলাদা, তাই অনেক সময় ও ঝামেলা পোহাতে হয়।',           scores: { growth: 1 },     rawScore: 2, techGap: true },
+    { label: 'টেকনিক্যাল সাপোর্ট এবং বাজেটের অভাবে একই ডিজাইন মাসের পর মাস রেখে দিই।', scores: { growth: 1 },     rawScore: 3, techGap: true },
+    { label: 'যখন দরকার তখনই কাস্টমাইজ করে লাইভ করতে পারি।',                            scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q7 – Pixel/CAPI: trackingWarning or kpiWarning */
-  { id: 7, q: 'পেজে কি অ্যাডভান্সড ট্র্যাকিং (Pixel, CAPI) সেটআপ করা আছে?', hint: 'ডেভেলপমেন্ট নলেজ ছাড়া সঠিক সার্ভার-সাইড ট্র্যাকিং সেটআপ করা সম্ভব নয়', opts: [
-    { label: 'হ্যাঁ, ব্রাউজার পিক্সেল এবং সার্ভার API (CAPI) দুটোই আছে', scores: { authority: 2 }, trackingOk: true },
-    { label: 'শুধু পিক্সেল আছে, কিন্তু সব ডাটা ঠিকমতো ট্র্যাক হয় না', scores: { growth: 1 },     kpiWarning: true },
-    { label: 'না, ট্র্যাকিং এর টেকনিক্যাল বিষয়গুলো করা নেই',        scores: { growth: 1 },     trackingWarning: true },
-    { label: 'ঠিক জানি না আমার পেজ ডাটা ট্র্যাক করছে কি না',         scores: { foundation: 1 }, trackingWarning: true },
+  /* Q7 — Pixel + Server API */
+  { id: 7, q: 'পিক্সেল + সার্ভার সাইড API সেট আপ করা আছে?', hint: '', opts: [
+    { label: 'ডাটা ট্র্যাকিং বা পিক্সেল সম্পর্কে ধারণা নেই।',     scores: { foundation: 1 }, rawScore: 1, trackingWarning: true },
+    { label: 'ট্র্যাকিং ছাড়াই বিজ্ঞাপন চলছে, ডাটা নিয়ে কাজ করি না।', scores: { foundation: 1 }, rawScore: 2, trackingWarning: true },
+    { label: 'শুধু পিক্সেল আছে এবং সব ডেটা ট্র্যাক হয়।',         scores: { growth: 1 },     rawScore: 3, kpiWarning: true },
+    { label: 'হ্যাঁ, পিক্সেল এবং সার্ভার সাইড API দুটোই নিখুঁত।', scores: { authority: 2 },  rawScore: 4, trackingOk: true },
   ] },
-  /* Q8 – KPI measurement: kpiWarning if not tracking ROAS */
-  { id: 8, q: 'মার্কেটিংয়ের সাফল্য বা KPI কীভাবে মাপেন?', hint: 'সঠিক ROAS হিসাব না রাখলে বিজ্ঞাপনের বাজেট অপচয় হয়', opts: [
-    { label: 'আমি ROAS এবং প্রফিট নিয়মিত ট্র্যাক করি',                  scores: { authority: 2 } },
-    { label: 'শুধু ফেসবুক অ্যাড ম্যানেজারের রিপোর্ট দেখি',              scores: { growth: 1 },     kpiWarning: true },
-    { label: 'লাইক, কমেন্ট আর মেসেজ সংখ্যা দেখে বুঝি',                 scores: { foundation: 1 }, kpiWarning: true },
-    { label: 'হিসাব ওভাবে দেখা হয় না',                                   scores: { foundation: 1 }, kpiWarning: true },
+  /* Q8 — ROAS / ROI */
+  { id: 8, q: 'ROAS, ROI এর সঠিক হিসাব রাখেন?', hint: '', opts: [
+    { label: 'এখনো ওভাবে নিখুঁত হিসাব রাখা শুরু করিনি।',                              scores: { foundation: 1 }, rawScore: 1, kpiWarning: true },
+    { label: 'লাইক, কমেন্ট আর মেসেজ সংখ্যা দেখে সাফল্যের ধারণা নিই।',               scores: { foundation: 1 }, rawScore: 2, kpiWarning: true },
+    { label: 'অ্যাড ম্যানেজারের রিপোর্ট দেখি, কিন্তু প্রকৃত লাভ/ লস অস্পষ্ট থাকে।', scores: { growth: 1 },     rawScore: 3, kpiWarning: true },
+    { label: 'হ্যাঁ, অ্যাড কষ্ট, সেল এবং নিট প্রফিটের হিসাব রাখি।',                 scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q9 – Who manages marketing */
-  { id: 9, q: 'মার্কেটিং এখন কীভাবে সামলাচ্ছেন?', hint: 'এটি জানলে বুঝতে পারব কোথায় উন্নতি করা দরকার', opts: [
-    { label: 'নিজেই বুস্ট করি বা পরিচিত কেউ করে দেয়',  scores: { foundation: 2 } },
-    { label: 'নিজেই অ্যাড ম্যানেজার চালাই',              scores: { growth: 1 } },
-    { label: 'ফ্রিল্যান্সার বা এজেন্সি দিয়ে করাচ্ছি',   scores: { growth: 2 } },
-    { label: 'প্রফেশনাল টিমের সাপোর্ট দরকার',            scores: { authority: 2 } },
+  /* Q9 — ব্র্যান্ড আইডেন্টিটি */
+  { id: 9, q: 'আপনার বিজনেসের নিজস্ব গল্প আছে? (কালার, ফন্ট, লোগো, স্লোগান)', hint: '', opts: [
+    { label: 'ক্যানভা বা মোবাইল অ্যাপ দিয়ে নিজেই চালিয়ে নিচ্ছি।',        scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'ডিজাইন বা ব্র্যান্ডিং নিয়ে কখনো ওভাবে কাজ করা হয়নি।',     scores: { foundation: 1 }, rawScore: 2 },
+    { label: 'মোটামুটি ভালো, তবে আরও প্রফেশনাল ও ট্রাস্টেড লুক দরকার।', scores: { growth: 1 },     rawScore: 3 },
+    { label: 'প্রিমিয়াম এবং সবাই আমাদের কপি করে।',                        scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q10 – Biggest problem right now */
-  { id: 10, q: 'এই মুহূর্তে সবচেয়ে বড় সমস্যা কী?', hint: 'সমস্যা জানলেই সমাধানের পথ পাওয়া যাবে', opts: [
-    { label: 'কাস্টমার পাচ্ছি না',              scores: { growth: 3 } },
-    { label: 'পোস্ট করি কিন্তু সেল আসে না',    scores: { growth: 3 } },
-    { label: 'অ্যাড চালাই কিন্তু লাভ হচ্ছে না', scores: { growth: 2 } },
-    { label: 'ব্র্যান্ড হিসেবে পরিচিতি নেই',    scores: { authority: 2 } },
+  /* Q10 — কনটেন্ট/ ক্রিয়েটিভ */
+  { id: 10, q: 'আপনার বিজ্ঞাপনের ক্রিয়েটিভ বা ভিডিও কন্টেন্ট কে তৈরি করে?', hint: '', opts: [
+    { label: 'নিজেই মোবাইল দিয়ে ভিডিও বা ছবি তৈরি করি।',          scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'ভালো কন্টেন্ট তৈরির জন্য প্রফেশনাল সাপোর্ট প্রয়োজন।', scores: { foundation: 1 }, rawScore: 2 },
+    { label: 'ফ্রিল্যান্সার বা এজেন্সি দিয়ে করাই।',               scores: { growth: 1 },     rawScore: 3 },
+    { label: 'নিজস্ব প্রফেশনাল ইন-হাউস টিম আছে।',                 scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q11 – Content creation */
-  { id: 11, q: 'আপনার কন্টেন্ট (ভিডিও/ছবি) কে তৈরি করে?', hint: 'ভালো কন্টেন্ট ছাড়া এখন সেল আসা কঠিন', opts: [
-    { label: 'নিজেই করি',               scores: { foundation: 1 } },
-    { label: 'আমার ছোট টিম আছে',        scores: { growth: 1 } },
-    { label: 'প্রফেশনাল সাপোর্ট দরকার', scores: { growth: 2 } },
+  /* Q11 — কনটেন্ট টেস্ট */
+  { id: 11, q: 'বিজ্ঞাপনের কন্টেন্ট/ ক্রিয়েটিভ কি নিয়মিত টেষ্ট এবং চেন্জ করেন?', hint: '', opts: [
+    { label: 'দরকার নাই/ প্রযোজ্য না।', scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'কখনোই না।',               scores: { foundation: 1 }, rawScore: 2 },
+    { label: 'অনিয়মিত।',               scores: { growth: 1 },     rawScore: 3 },
+    { label: 'নিয়মিত।',                scores: { authority: 2 },  rawScore: 4 },
   ] },
-  /* Q12 – 6-month goal: sets budgetSignal context */
-  { id: 12, q: 'আগামী ৬ মাসের মধ্যে আপনার লক্ষ্য কী?', hint: 'লক্ষ্য পরিষ্কার থাকলে সাফল্য দ্রুত আসবে', opts: [
-    { label: 'কোনোমতে ব্যবসা টিকিয়ে রাখা',       scores: { foundation: 2 }, budgetSignal: 'care_plus' },
-    { label: 'বাজারে শক্ত অবস্থান তৈরি করা',      scores: { growth: 2 },     budgetSignal: 'monthly_care' },
-    { label: 'মার্কেট লিডার বা বড় ব্র্যান্ড হওয়া', scores: { authority: 3 }, budgetSignal: 'brand_care' },
+  /* Q12 — সবচেয়ে বেশি ভাবায় */
+  { id: 12, q: 'ব্যবসার কোন দিকটি আপনাকে এই মুহূর্তে সবচেয়ে বেশি ভাবিয়ে তোলে?', hint: '', opts: [
+    { label: 'প্রোডাক্ট সোর্সিং/ প্রোডাক্ট কোয়ালিটি',                                  scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'বাজারে ব্র্যান্ড হিসেবে এখনো ট্রাস্ট তৈরি করতে পারিনি।',                  scores: { foundation: 1 }, rawScore: 2 },
+    { label: 'স্লো ওয়েবসাইট বা টেকনিক্যাল সমস্যার কারণে কাস্টমার হারিয়ে যাচ্ছে।',    scores: { growth: 1 },     rawScore: 3, techGap: true, landingPageWarning: 'weak' },
+    { label: 'অ্যাড খরচ হচ্ছে কিন্তু সেই তুলনায় সেল নেই',                               scores: { growth: 2 },     rawScore: 4, kpiWarning: true },
   ] },
-  /* Q13 – Direct service request: STRONGEST budgetSignal, overrides Q12 */
-  { id: 13, q: 'আপনি আমাদের থেকে কী ধরণের সাহায্য চান?', hint: 'আমরা আপনার পাশে থাকতে চাই', opts: [
-    { label: 'বেসিক গাইডলাইন ও অডিট',            scores: { foundation: 1 }, budgetSignal: 'care_plus' },
-    { label: 'নিয়মিত গ্রোথ ও অ্যাড ম্যানেজমেন্ট', scores: { growth: 3 },     budgetSignal: 'monthly_care' },
-    { label: 'ফুল ব্র্যান্ডিং ও কাস্টম টেক সাপোর্ট', scores: { authority: 3 }, budgetSignal: 'brand_care' },
+  /* Q13 — ৬ মাসের লক্ষ্য */
+  { id: 13, q: 'আগামী ৬ মাসের জন্য আপনার প্রধান লক্ষ্য কোনটি?', hint: '', opts: [
+    { label: 'ঠিক করতে পারিনি/ বুজতে পারছি না।',                                scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'কোনোমতে বর্তমান অবস্থা বজায় রেখে টিকে থাকা।',                    scores: { foundation: 1 }, rawScore: 2 },
+    { label: 'একটি প্রভাবশালী ব্র্যান্ড হিসেবে নিজেকে প্রতিষ্ঠিত করা।',        scores: { authority: 2 },  rawScore: 3 },
+    { label: 'সেলস বৃদ্ধির একটি স্থায়ী ও অটোমেটেড সিস্টেম তৈরি করা।',        scores: { growth: 3 },     rawScore: 4 },
+  ] },
+  /* Q14 — কোন ধরনের সহযোগিতা দরকার — STRONGEST signal */
+  { id: 14, q: 'কোন ধরণের সহযোগিতা আপনার সবচেয়ে বেশি প্রয়োজন?', hint: '', opts: [
+    { label: 'বাজেটের ওপর নির্ভর করে সিদ্ধান্ত নেব।',                                    scores: { foundation: 1 }, rawScore: 1 },
+    { label: 'অ্যাড ম্যানেজমেন্ট এবং টেকনিক্যাল সমস্যার সাময়িক সমাধান।',              scores: { growth: 2 },     rawScore: 2, budgetSignal: 'monthly_care' },
+    { label: 'হাই-স্পিড কাস্টম ল্যান্ডিং পেইজ এবং সেলস ফানেল তৈরি।',                  scores: { growth: 3 },     rawScore: 3, budgetSignal: 'monthly_care' },
+    { label: 'জিরো থেকে ব্র্যান্ড ডিজাইন এবং ফুল-স্ট্যাক মার্কেটিং পার্টনার।',       scores: { authority: 3 },  rawScore: 4, budgetSignal: 'brand_care' },
   ] },
 ]
 
 const TOTAL = questions.length
 
 const PACKAGES = {
-  care_plus:    { variant: 'basic',   name: 'Care+',        price: '০ টাকা সার্ভিস চার্জ', priceNote: 'শুধু অ্যাড বাজেট', tag: 'আর্লি স্টেজ',    waLabel: 'CarePlus' },
-  monthly_care: { variant: 'popular', name: 'Monthly Care', price: '১০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'গ্রোথ স্টেজ',    waLabel: 'MonthlyCare' },
-  brand_care:   { variant: 'premium', name: 'Brand Care',   price: '৩০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'অথরিটি স্টেজ',   waLabel: 'BrandCare' },
+  care_plus:    { variant: 'basic',   name: 'কেয়ার+',        price: 'অ্যাড বাজেট অনুযায়ী', priceNote: 'সার্ভিস চার্জ ফ্রি', tag: 'ফ্রি স্টার্টার',  waLabel: 'CarePlus' },
+  monthly_care: { variant: 'popular', name: 'মান্থলি কেয়ার', price: '১০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'সবচেয়ে জনপ্রিয়', waLabel: 'MonthlyCare' },
+  brand_care:   { variant: 'premium', name: 'ব্র্যান্ড কেয়ার',   price: '৩০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'ফুল সার্ভিস',     waLabel: 'BrandCare' },
 }
 
-const MAX_POSSIBLE = { foundation: 18, growth: 25, authority: 25 }
+const MAX_POSSIBLE = { foundation: 18, growth: 25, authority: 25 }  /* kept for fallback */
 
-const normalizeScore = (f, g, a) => {
-  const total = f + g + a
-  if (total === 0) return 0
-  const max = MAX_POSSIBLE.foundation + MAX_POSSIBLE.growth + MAX_POSSIBLE.authority
-  return Math.round((total / max) * 100)
+/* rawScore sum → total 14-56 range
+   <20 = Care+  |  20-34 = Monthly Care  |  35+ = Brand Care
+   budgetSignal from Q14 always takes final priority */
+const normalizeScore = (rawTotal) => {
+  /* map 14-56 onto 0-100 for the progress bar */
+  if (rawTotal <= 0) return 0
+  return Math.min(100, Math.round(((rawTotal - 14) / (56 - 14)) * 100))
 }
 
-/* decidePackage — Q13 is the direct service request and always sets lastBudgetSignal.
-   If any budgetSignal was given we honour it exactly. Score dominance only fires when
-   neither Q12 nor Q13 carried a budgetSignal (edge-case: user somehow skipped both). */
-const decidePackage = (f, g, a, lastBudgetSignal) => {
+const decidePackage = (rawTotal, lastBudgetSignal) => {
   if (lastBudgetSignal) return lastBudgetSignal
-  // Fallback: pure score dominance
-  const dom = f >= g && f >= a ? 'foundation' : g >= a ? 'growth' : 'authority'
-  return dom === 'foundation' ? 'care_plus' : dom === 'growth' ? 'monthly_care' : 'brand_care'
+  if (rawTotal >= 35) return 'brand_care'
+  if (rawTotal >= 20) return 'monthly_care'
+  return 'care_plus'
 }
 
 /* scoreLabel — derived from pkgKey so the bar label always matches the recommendation.
    The numeric score is a business-health %, not a stage classifier on its own. */
 const scoreLabel = (pkgKey) =>
-  pkgKey === 'care_plus' ? 'আর্লি স্টেজ' : pkgKey === 'monthly_care' ? 'গ্রোথ স্টেজ' : 'অথরিটি লেভেল'
+  pkgKey === 'care_plus' ? 'শুরুর পর্যায়' : pkgKey === 'monthly_care' ? 'গ্রোথ রেডি' : 'স্কেল রেডি'
 
 const getDiagnosis = (pkgKey) => ({
   care_plus: {
-    stage: 'আপনার ব্যবসা এখন একদম শুরুর দিকে আছে।',
-    insight: 'শুরুতেই টেকনিক্যাল সাপোর্ট না থাকলে আপনি অহেতুক বাজে ডিজাইন বা স্লো পেজের পেছনে টাকা নষ্ট করবেন।',
-    advice: 'আমাদের Care+ এ আমরা আপনার বেসিক টেকনিক্যাল চেকআপ করে দেব। আপনার প্রথম ল্যান্ডিং পেজটি যাতে হাই-কনভার্টিং হয়, সেই পরামর্শ আমরাই দেব।',
+    stage: 'আপনার ব্যবসা এখন শুরুর পর্যায়ে। সঠিকভাবে শুরু করলে এগিয়ে যাওয়া অনেক সহজ হবে।',
+    insight: 'অনেকেই শুরুতে না বুঝেই অ্যাডে টাকা ঢালেন, কিন্তু বেসিক সেটআপ ঠিক না থাকলে সেই টাকার বেশিরভাগই নষ্ট হয়। কেয়ার+ এ আমরা আপনার অ্যাড অ্যাকাউন্ট ও বিজনেস পেজ সঠিকভাবে সেটআপ করে দেব, একটা ফ্রি বিজনেস অডিট করব এবং কোথায় কী করতে হবে তা পরামর্শ দেব। আপনি শুধু অ্যাডের বাজেট দেবেন, আর কোনো সার্ভিস চার্জ নেই।',
+    advice: 'কেয়ার+ থেকে শুরু করুন, রেজাল্ট দেখুন। তারপর মান্থলি কেয়ার এ আসলে পাবেন কাস্টম ল্যান্ডিং পেজ এবং প্রফেশনাল অ্যাড ম্যানেজমেন্ট একসাথে। যত তাড়াতাড়ি সেই পদক্ষেপ নেবেন, তত দ্রুত সেল বাড়বে।',
   },
   monthly_care: {
-    stage: 'আপনার ব্যবসা এখন বড় হওয়ার (Growth) পথে।',
-    insight: 'আপনার এমন একটি টিম দরকার যারা শুধু অ্যাড চালাবে না, বরং সিজনাল অফার বা নতুন প্রোডাক্টের জন্য মুহূর্তেই ল্যান্ডিং পেজ ডিজাইন করে দিতে পারবে।',
-    advice: 'Monthly Care প্যাকেজে Digitalizen আপনার পার্সোনাল টেক-টিম হিসেবে কাজ করবে। নতুন প্রোডাক্ট লঞ্চ বা উৎসবের অফার—আমরাই আপনার ল্যান্ডিং পেজ রি-ডিজাইন এবং পিক্সেল সেটআপ করে দেব। আপনাকে আর আলাদা করে ডেভেলপার খুঁজতে হবে না।',
+    stage: 'আপনার ব্যবসা বাড়ার জায়গায় আছে। সঠিক সিস্টেম পেলে সেল অনেক বাড়বে।',
+    insight: 'যারা শুধু অ্যাড চালায় আর পেজের দিকে নজর দেয় না, তাদের বেশিরভাগ বাজেটই নষ্ট হয়। ফাস্ট কাস্টম ল্যান্ডিং পেজ আর সঠিক অ্যাড একসাথে চললে কনভার্সন ২ থেকে ৩ গুণ বাড়ে। Digitalizen এর সবচেয়ে বড় সুবিধা হলো আমাদের কাছে মার্কেটার আর ডেভেলপার আলাদা না, তাই ঈদের রাতেও অফার লাইভ করতে পারবেন মাত্র ৩০ মিনিটে।',
+    advice: 'মান্থলি কেয়ার এ আপনি পাচ্ছেন কাস্টম হাই-স্পিড ল্যান্ডিং পেজ, প্রফেশনাল অ্যাড ম্যানেজমেন্ট, Pixel ও CAPI সেটআপ এবং সিজনাল রিডিজাইন। সব এক টিম, এক খরচে। আলাদা ডেভেলপার আর আলাদা মার্কেটার রাখলে তিনগুণ খরচ হবে, তবুও সমন্বয় থাকবে না।',
   },
   brand_care: {
-    stage: 'আপনার ব্যবসা এখন মার্কেট লিডার হওয়ার জন্য তৈরি।',
-    insight: 'এই পর্যায়ে আপনার কাস্টম ব্র্যান্ড আইডেন্টিটি এবং ডাইনামিক সেলস ফানেল থাকা বাধ্যতামূলক। সাধারণ ওয়ার্ডপ্রেস সাইট আপনার স্কেলিং আটকে দিচ্ছে।',
-    advice: 'Brand Care-এ আমরা আপনার জন্য আনলিমিটেড ল্যান্ডিং পেজ সাপোর্ট রাখব। উৎসবের ধরণ বা প্রোডাক্টের বৈশিষ্ট্য অনুযায়ী আমরা নিয়মিত পেজ রি-ডিজাইন করব। প্রোগ্রামিং এবং মার্কেটিং-এর এই কম্বিনেশন আপনার ব্র্যান্ডকে সবার থেকে এগিয়ে রাখবে।',
+    stage: 'আপনার ব্যবসা এখন বড় ব্র্যান্ড হওয়ার দোরগোড়ায়।',
+    insight: 'এই পর্যায়ে WordPress বা সাধারণ থিমের পেজ আপনার ব্র্যান্ডকে ছোট দেখায়। কম্পিটিটরের কাছে পিছিয়ে পড়ার সবচেয়ে বড় কারণ এটাই। শুধু অ্যাড দিলে ব্র্যান্ড হয় না। দরকার প্রিমিয়াম ডিজাইন, ফাস্ট পেজ, আর এমন অ্যাড যেটা ব্র্যান্ডের গল্প বলে। এই তিনটা এক জায়গায় না থাকলে বড় হওয়া কঠিন।',
+    advice: 'ব্র্যান্ড কেয়ার এ আমরা আপনার পুরো ডিজিটাল পরিচয় নতুন করে গড়ব। জিরো থেকে ব্র্যান্ড আইডেন্টিটি, কাস্টম কোডের আনলিমিটেড ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং এবং ফুল-স্ট্যাক মার্কেটিং। একটাই টিম, একটাই ভিশন এবং একটাই লক্ষ্য। আপনার ব্র্যান্ডকে মার্কেটে সবার উপরে নিয়ে যাওয়া।',
   },
 }[pkgKey])
 
@@ -298,8 +306,8 @@ export default function Finder() {
       setVisible(false)
       setTimeout(() => {
         if (currentQ < TOTAL - 1) {
-          setAnswers(newAnswers); setCurrentQ(currentQ + 1)
-          setSelIdx(null); setVisible(true)
+          setAnswers(newAnswers); setCurrentQ(currentQ + 1); setSelIdx(null)
+          setTimeout(() => setVisible(true), 0)
         } else {
           setAnswers(newAnswers); setPhase('loading'); setVisible(true)
           setTimeout(() => {
@@ -327,41 +335,45 @@ export default function Finder() {
           }, 3000)
         }
       }, 170)
-    }, 400)
+    }, 120)
   }, [selIdx, currentQ, answers, q])
 
   const goBack = useCallback(() => {
     if (currentQ === 0) return
     setVisible(false)
     setTimeout(() => {
-      setAnswers(answers.slice(0, -1)); setCurrentQ(currentQ - 1)
-      setSelIdx(null); setVisible(true)
+      const prevAnswers = answers.slice(0, -1)
+      const prevQ = questions[currentQ - 1]
+      const prevSelIdx = prevQ.opts.findIndex(o => o.label === answers[currentQ - 1]?.label)
+      setAnswers(prevAnswers); setCurrentQ(currentQ - 1)
+      setSelIdx(prevSelIdx >= 0 ? prevSelIdx : null); setVisible(true)
     }, 170)
   }, [currentQ, answers])
 
   const computeResult = (all) => {
-    let f = 0, g = 0, a = 0
+    let f = 0, g = 0, a = 0, rawTotal = 0
     let trackingWarning = false, kpiWarning = false, landingPageWarning = null, techGap = false
     let lastBudgetSignal = null
     all.forEach((opt) => {
       f += opt.scores?.foundation || 0
       g += opt.scores?.growth     || 0
       a += opt.scores?.authority  || 0
+      rawTotal += opt.rawScore    || 0
       if (opt.trackingWarning)    trackingWarning    = true
       if (opt.kpiWarning)         kpiWarning         = true
       if (opt.landingPageWarning) landingPageWarning = opt.landingPageWarning
       if (opt.techGap)            techGap            = true
       if (opt.budgetSignal)       lastBudgetSignal   = opt.budgetSignal
     })
-    const score  = normalizeScore(f, g, a)
-    const pkgKey = decidePackage(f, g, a, lastBudgetSignal)
-    return { score, pkgKey, pkg: PACKAGES[pkgKey], diag: getDiagnosis(pkgKey), trackingWarning, kpiWarning, landingPageWarning, techGap }
+    const score  = normalizeScore(rawTotal)
+    const pkgKey = decidePackage(rawTotal, lastBudgetSignal)
+    return { score, rawTotal, pkgKey, pkg: PACKAGES[pkgKey], diag: getDiagnosis(pkgKey), trackingWarning, kpiWarning, landingPageWarning, techGap }
   }
 
   const buildWaMsg = useCallback(() => {
     if (!result) return ''
     const stage = scoreLabel(result.pkgKey).replace(/\s/g, '')
-    const bs    = answers.find(a => a.budgetSignal)?.budgetSignal || 'unknown'
+    const bs    = [...answers].reverse().find(a => a.budgetSignal)?.budgetSignal || 'unknown'
     const bMap  = { care_plus: 'Under10k', monthly_care: '10kTo30k', brand_care: 'Over30k', unknown: 'Unknown' }
     return `HelloDigitalizenAuditReportScore${result.score}Stage${stage}Budget${bMap[bs]}Package${result.pkg.waLabel}`
   }, [result, answers])
@@ -387,7 +399,7 @@ export default function Finder() {
       currency:         'BDT',
       value:            0,
     })
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen! আমি Monthly Care প্ল্যান সম্পর্কে জানতে চাই।')}`, '_blank')
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen! আমি মান্থলি কেয়ার প্ল্যান সম্পর্কে জানতে চাই।')}`, '_blank')
   }, [])
 
   const warnings = result ? [
@@ -407,7 +419,7 @@ export default function Finder() {
     result.techGap && {
       color: 'amber', icon: 'warning',
       title: 'আপনার কি সিজনাল ডিজাইন সাপোর্ট আছে?',
-      text:  'মার্কেটিং টিম যদি ল্যান্ডিং পেজ এডিট করতে না পারে, তবে ক্যাম্পেইনের গতি কমে যায়। Digitalizen-এর বিশেষত্ব: আমরা যেহেতু নিজেই প্রোগ্রামিং বুঝি, তাই যেকোনো উৎসব বা অফারে আপনার পেজ আমরাই ইনস্ট্যান্ট আপডেট করে দেই।',
+      text:  'মার্কেটিং টিম যদি ল্যান্ডিং পেজ এডিট করতে না পারে তবে ক্যাম্পেইনের গতি কমে যায়। Digitalizen এর বিশেষত্ব হলো আমরা নিজেই প্রোগ্রামিং বুঝি, তাই যেকোনো উৎসব বা অফারে আপনার পেজ আমরাই ইনস্ট্যান্ট আপডেট করে দিতে পারি।',
     },
     /* W4 – Landing page issue: title & text differ by 'none' vs 'weak' */
     result.landingPageWarning && {
@@ -416,8 +428,8 @@ export default function Finder() {
         ? 'ল্যান্ডিং পেজ নেই!'
         : 'ল্যান্ডিং পেজ স্লো ও দুর্বল',
       text: result.landingPageWarning === 'none'
-        ? 'ল্যান্ডিং পেজ ছাড়া অ্যাডের ট্রাফিক কোথাও যাচ্ছে না। শুধু ফেসবুক ইনবক্সে পাঠানো কনভার্সন অনেক কমিয়ে দেয়। একটি কাস্টম হাই-স্পিড পেজ আপনার সেল ২–৩ গুণ বাড়াতে পারে।'
-        : 'WordPress বা টেম্পলেট পেজ লোড হতে দেরি হয় — গবেষণা বলছে ১ সেকেন্ড দেরিতে ৭% কনভার্সন কমে। কাস্টম কোড করা পেজ আপনার অ্যাড বাজেটের সর্বোচ্চ ব্যবহার নিশ্চিত করে।',
+        ? 'ল্যান্ডিং পেজ ছাড়া অ্যাডের ট্রাফিক কোথাও যাচ্ছে না। শুধু ফেসবুক ইনবক্সে পাঠানো কনভার্সন অনেক কমিয়ে দেয়। একটি কাস্টম হাই-স্পিড পেজ আপনার সেল ২ থেকে ৩ গুণ বাড়াতে পারে।'
+        : 'WordPress বা টেম্পলেট পেজ লোড হতে দেরি হয়। গবেষণা বলছে ১ সেকেন্ড দেরিতে ৭% কনভার্সন কমে। কাস্টম কোড করা পেজ আপনার অ্যাড বাজেটের সর্বোচ্চ ব্যবহার নিশ্চিত করে।',
     },
   ].filter(Boolean) : []
 
@@ -433,7 +445,7 @@ export default function Finder() {
 
         <h2 className="finder-heading">আপনার ব্যবসার জন্য সঠিক প্ল্যান কোনটি?</h2>
         <p className="finder-sub">
-          ১৩টি প্রশ্নে আপনার বিজনেসের বর্তমান অবস্থা এবং টেকনিক্যাল গ্যাপ জেনে নিন।
+          ১৪টি প্রশ্নে আপনার বিজনেসের বর্তমান অবস্থা এবং টেকনিক্যাল গ্যাপ জেনে নিন।
         </p>
 
         <div className="finder-card">
@@ -541,7 +553,7 @@ export default function Finder() {
                   {result.pkg.priceNote && <span> · {result.pkg.priceNote}</span>}
                 </p>
                 <div className={`finder-score finder-score--${result.pkg.variant}`}>
-                  <span className="finder-score__num">{result.score}</span>
+                  <span className="finder-score__num">{result.rawTotal}<span style={{ fontSize: '0.55em', opacity: 0.6 }}>/৫৬</span></span>
                   <div className="finder-score__bar-wrap">
                     <div className="finder-score__bar-track">
                       <div className={`finder-score__bar-fill finder-score__bar-fill--${result.pkg.variant}`} style={{ width: `${result.score}%` }} />
@@ -566,44 +578,54 @@ export default function Finder() {
               )}
 
               <div className="finder-insights">
-                <span className="finder-insights__label">আপনার ব্যবসার ইনসাইট</span>
+                <span className="finder-insights__label">আপনার বিজনেস অডিট রিপোর্ট</span>
                 <div className="finder-insight">
                   <div className="finder-insight__icon" style={{ background: '#EEF1FC', color: '#1F4BFF' }}>{Icon.trend}</div>
                   <div>
-                    <div className="finder-insight__label">ব্যবসার অবস্থান</div>
+                    <div className="finder-insight__label">এখন কোথায় আছেন</div>
                     <p className="finder-insight__text">{result.diag.stage}</p>
                   </div>
                 </div>
                 <div className="finder-insight">
                   <div className="finder-insight__icon" style={{ background: '#FEF3C7', color: '#D97706' }}>{Icon.info}</div>
                   <div>
-                    <div className="finder-insight__label">ডিজিটাল স্ট্রাটেজি ও ডিজাইন অডিট রিপোর্ট</div>
+                    <div className="finder-insight__label">সবচেয়ে বড় সমস্যা কোথায়</div>
                     <p className="finder-insight__text">{result.diag.insight}</p>
                   </div>
                 </div>
               </div>
 
               <div className={`finder-advice finder-advice--${result.pkg.variant}`}>
-                <div className="finder-advice__label">আমাদের পরামর্শ</div>
+                <div className="finder-advice__label">Digitalizen কীভাবে সাহায্য করবে</div>
                 <p className="finder-advice__text">{result.diag.advice}</p>
               </div>
 
               {result.pkgKey === 'care_plus' && (
                 <div className="finder-upsell">
-                  <div className="finder-upsell__label">Monthly Care এ গেলে যা পাবেন</div>
-                  <p className="finder-upsell__text">আনলিমিটেড ক্যাম্পেইন, কনটেন্ট স্ট্রাটেজি, Meta Pixel সেটআপ এবং ডেডিকেটেড গ্রোথ টিমের সাথে আপনার ব্যবসা অনেক দ্রুত এগিয়ে যাবে।</p>
+                  <div className="finder-upsell__label">মান্থলি কেয়ার এ গেলে কী পরিবর্তন আসবে</div>
+                  <p className="finder-upsell__text">কেয়ার+ এ শুরুটা ভালো হবে। কিন্তু সেল দ্রুত বাড়াতে চাইলে মান্থলি কেয়ার এ আসুন। মাত্র ১০,০০০ টাকায় পাচ্ছেন কাস্টম হাই-স্পিড ল্যান্ডিং পেজ, প্রফেশনাল অ্যাড ম্যানেজমেন্ট, Pixel ও CAPI সেটআপ এবং সিজনাল রিডিজাইন সব এক টিম থেকে। আলাদা ডেভেলপার আর আলাদা মার্কেটার রাখলে তিনগুণ বেশি খরচ হবে, তবুও এই সমন্বয় পাবেন না।</p>
                   <button className="finder-upsell__btn" onClick={handleUpsell}>
-                    Monthly Care সম্পর্কে জানুন
+                    মান্থলি কেয়ার সম্পর্কে বিস্তারিত জানতে চাই
+                  </button>
+                </div>
+              )}
+
+              {result.pkgKey === 'monthly_care' && (
+                <div className="finder-upsell">
+                  <div className="finder-upsell__label">ব্র্যান্ড কেয়ার এ গেলে কী আলাদা হবে</div>
+                  <p className="finder-upsell__text">মান্থলি কেয়ার এ ভালোই আছেন। তবে বাজারে সত্যিকারের বড় ব্র্যান্ড হতে চাইলে আরেক ধাপ এগোনো দরকার। ব্র্যান্ড কেয়ার এ পাচ্ছেন আনলিমিটেড কাস্টম পেজ, পুরো ব্র্যান্ড আইডেন্টিটি অর্থাৎ লোগো, কালার, ফন্ট, স্লোগান এবং একটা ডেডিকেটেড টেক ও মার্কেটিং টিম। কম্পিটিটর যখন সাধারণ WordPress পেজে অ্যাড দিচ্ছে, আপনার প্রিমিয়াম ফাস্ট পেজ দেখে কাস্টমার আগে ট্রাস্ট করবে। আর ট্রাস্টই বড় ব্র্যান্ডের ভিত্তি।</p>
+                  <button className="finder-upsell__btn" onClick={handleUpsell}>
+                    ব্র্যান্ড কেয়ার সম্পর্কে জানতে চাই
                   </button>
                 </div>
               )}
 
               <div className="finder-ctas">
                 <button className={`finder-cta-primary finder-cta-primary--${result.pkg.variant}`} onClick={handleCtaPrimary}>
-                  {Icon.wa} WhatsApp-এ আলাপ শুরু করি
+                  {Icon.wa} WhatsApp এ কথা বলতে চাই
                 </button>
                 <button className="finder-cta-ghost" onClick={reset}>আবার চেকআপ করুন</button>
-                <p className="finder-fine">কোনো বাধ্যবাধকতা নেই, পরামর্শ একদম ফ্রি</p>
+                <p className="finder-fine">পরামর্শ সম্পূর্ণ ফ্রি। কোনো বাধ্যবাধকতা নেই।</p>
               </div>
             </div>
           )}

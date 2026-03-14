@@ -196,12 +196,12 @@
 
 /* ── 24/7 Salesperson sink button ── */
 .hero__salesperson {
-  display: inline-flex;
   display: flex;
   width: 100%;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -215,6 +215,14 @@
   animation: fadeUp 0.6s 0.52s ease both, heroSink 3.2s 1.2s ease-in-out infinite;
   -webkit-tap-highlight-color: transparent;
   text-decoration: none;
+}
+
+.hero__salesperson-face {
+  display: block;
+  margin: 0 auto 4px;
+  color: rgba(31, 75, 255, 0.8);
+  animation: arrowBounce 1.8s ease-in-out infinite;
+  transition: transform 0.3s cubic-bezier(.22,.68,0,1.4);
 }
 
 .hero__salesperson-text {
@@ -242,7 +250,8 @@
   -webkit-text-fill-color: rgba(31, 75, 255, 0.8);
 }
 
-.hero__salesperson:hover .hero__salesperson-arrow {
+.hero__salesperson:hover .hero__salesperson-arrow,
+.hero__salesperson:hover .hero__salesperson-face {
   transform: translateY(4px);
 }
 

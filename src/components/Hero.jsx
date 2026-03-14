@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
+import { Smile } from 'lucide-react'
 import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
 import './Hero.css'
 
@@ -106,14 +107,14 @@ export default function Hero() {
           <span>আমরা সার্ভিস বিক্রি করি না, বিজনেস স্কেল করি। আগে পারফরম্যান্স দেখুন, সিদ্ধান্ত পরে নিন।</span>
         </div>
 
-        <button
-          className="hero__salesperson"
-          onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
-          aria-label="গ্যালারি দেখুন — আপনার ২৪/৭ বিক্রয় সহকারী"
-        >
-          <span className="hero__salesperson-text">Your 24/7 Salesperson</span>
-          <span className="hero__salesperson-arrow" aria-hidden="true">↓</span>
-        </button>
+       <button
+  className="hero__salesperson"
+  onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
+  aria-label="গ্যালারি দেখুন — আপনার ২৪/৭ বিক্রয় সহকারী"
+>
+  <Smile className="hero__salesperson-face" size={22} strokeWidth={2} aria-hidden="true" />
+  <span className="hero__salesperson-text">Your 24/7 Salesperson</span>
+</button>
 
       </div>
     </section>

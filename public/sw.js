@@ -14,7 +14,7 @@
    for returning users regardless of network instability.
 ═══════════════════════════════════════════════════════ */
 
-const CACHE_VERSION  = 'dz-v4.6'
+const CACHE_VERSION  = 'dz-v4.8'
 const STATIC_CACHE   = `${CACHE_VERSION}-static`
 const RUNTIME_CACHE  = `${CACHE_VERSION}-runtime`
 const FONT_CACHE     = `${CACHE_VERSION}-fonts`
