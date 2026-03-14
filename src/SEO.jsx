@@ -409,4 +409,3 @@ export default function SEO({
   return null;
 }
 
-export { buildAgencySchema, buildWebPageSchema, buildFAQSchema, buildCollectionSchema, PAGE_DEFAULTS, SITE as SEO_SITE };
