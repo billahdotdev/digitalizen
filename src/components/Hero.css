@@ -44,7 +44,6 @@
   align-items: center;
   gap: 8px;
   background: var(--white);
-  border: 1px solid var(--border);
   border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 500;
@@ -53,6 +52,44 @@
   margin-bottom: 24px;
   animation: fadeUp 0.6s ease both;
   box-shadow: var(--shadow-sm);
+  position: relative;
+  border: none;
+  isolation: isolate;
+}
+
+/* Rainbow neon moving border via conic-gradient pseudo */
+.hero__badge::before {
+  content: '';
+  position: absolute;
+  inset: -0.5px;
+  border-radius: 100px;
+  background: conic-gradient(
+    from var(--badge-angle, 0deg),
+    #ff0080, #ff4500, #ffdd00, #00ff88,
+    #00cfff, #7b2fff, #ff0080
+  );
+  z-index: -1;
+  animation: badgeSpin 3s linear infinite;
+}
+
+/* Inner fill to mask the gradient, leaving only a thin border */
+.hero__badge::after {
+  content: '';
+  position: absolute;
+  inset: 0.8px;
+  border-radius: 100px;
+  background: var(--white);
+  z-index: -1;
+}
+
+@property --badge-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes badgeSpin {
+  to { --badge-angle: 360deg; }
 }
 
 .badge-dot {
@@ -155,4 +192,74 @@
 .btn-ghost:focus-visible {
   outline: 3px solid var(--blue);
   outline-offset: 3px;
+}
+
+/* ── 24/7 Salesperson sink button ── */
+.hero__salesperson {
+  display: inline-flex;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0;
+  margin-top: 36px;
+  position: relative;
+  animation: fadeUp 0.6s 0.52s ease both, heroSink 3.2s 1.2s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+
+.hero__salesperson-text {
+  background: linear-gradient(
+    90deg,
+    #ff0080 0%,
+    #7b2fff 25%,
+    #1f4bff 50%,
+    #7b2fff 75%,
+    #ff0080 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: salespersonShine 3s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(31, 75, 255, 0.55));
+}
+
+.hero__salesperson-arrow {
+  color: rgba(31, 75, 255, 0.8);
+  font-size: 0.9rem;
+  transition: transform 0.3s cubic-bezier(.22,.68,0,1.4);
+  animation: arrowBounce 1.8s ease-in-out infinite;
+  -webkit-text-fill-color: rgba(31, 75, 255, 0.8);
+}
+
+.hero__salesperson:hover .hero__salesperson-arrow {
+  transform: translateY(4px);
+}
+
+.hero__salesperson:hover .hero__salesperson-text {
+  filter: drop-shadow(0 0 12px rgba(31, 75, 255, 0.7)) drop-shadow(0 0 20px rgba(123, 47, 255, 0.4));
+}
+
+@keyframes heroSink {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(5px); }
+}
+
+@keyframes salespersonShine {
+  to { background-position: 200% center; }
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); }
+  60%       { transform: translateY(3px); }
 }
