@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import './FreeResources.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement } from '../analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -33,10 +33,10 @@ const TOKEN_KEY = 'dz_ebook_v1'
 const NL_KEY    = 'dz_nl_v1'
 
 function ssSet(key, value) {
-  try { sessionStorage.setItem(key, value) } catch (_) {}
+  try { sessionStorage.setItem(key, value) } catch { /* storage unavailable */ }
 }
 function ssGet(key) {
-  try { return sessionStorage.getItem(key) } catch (_) { return null }
+  try { return sessionStorage.getItem(key) } catch { return null }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ function triggerDownload() {
     a.style.cssText = 'display:none;'
     document.body.appendChild(a)
     a.click()
-    setTimeout(() => { try { document.body.removeChild(a) } catch (_) {} }, 100)
+    setTimeout(() => { try { document.body.removeChild(a) } catch { /* already removed */ } }, 100)
   } else {
     window.open(EBOOK_PATH, '_blank', 'noopener,noreferrer')
   }
@@ -155,7 +155,7 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
         [EBOOK_ENTRY_NAME]:      name.trim(),
         [EBOOK_ENTRY_WHATSAPP]:  phone.trim(),
       })
-    } catch (_) {}
+    } catch { /* form submission failed silently */ }
     ssSet(TOKEN_KEY, '1')
     setLoading(false)
     onSuccess(name.trim())
@@ -505,7 +505,7 @@ function WeeklyTipsSection() {
 
     try {
       await submitToGoogleForm(EMAIL_FORM_ACTION, { [EMAIL_ENTRY_EMAIL]: email.trim() })
-    } catch (_) {}
+    } catch { /* form submission failed silently */ }
 
     // CompleteRegistration — confirmed subscription
     track('CompleteRegistration', {

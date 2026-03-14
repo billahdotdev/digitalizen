@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './Process.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, WA_NUMBER } from '../analytics.js'
 
 /* ── Tracking helpers ───────────────────────────────
    Meta Pixel (client-side) + CAPI-ready dataLayer push

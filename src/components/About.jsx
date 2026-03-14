@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement } from '../analytics.js'
 import './About.css'
 
 /* ── SVG Icons ─────────────────────────────────── */

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './Resources.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement } from '../analytics.js'
 
 /* ─────────────────────────────────────────────────────────────
    META PIXEL HELPER
@@ -16,7 +16,6 @@ import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
    ─────────────────────────────────────────────────────────────*/
 const EBOOK_FILENAME       = 'onlineMonline.pdf'
 const EBOOK_PATH           = '/ebook/' + EBOOK_FILENAME
-const EBOOK_COVER          = '/ebook/cover.png'
 const EBOOK_FORM_ACTION    = 'https://docs.google.com/forms/d/e/1FAIpQLSc4az9GfiP2YaonvtjY_ACnkNes7XxnMuPih2520KbT4JC87A/formResponse'
 const EBOOK_ENTRY_NAME     = 'entry.1987000516'
 const EBOOK_ENTRY_WHATSAPP = 'entry.1290851570'
@@ -38,10 +37,10 @@ const TOKEN_KEY = 'dz_ebook_v1'
 const NL_KEY    = 'dz_nl_v1'
 
 function ssSet(key, value) {
-  try { sessionStorage.setItem(key, value) } catch (_) {}
+  try { sessionStorage.setItem(key, value) } catch { /* storage unavailable */ }
 }
 function ssGet(key) {
-  try { return sessionStorage.getItem(key) } catch (_) { return null }
+  try { return sessionStorage.getItem(key) } catch { return null }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -80,7 +79,7 @@ function triggerDownload() {
     a.style.cssText = 'display:none;'
     document.body.appendChild(a)
     a.click()
-    setTimeout(() => { try { document.body.removeChild(a) } catch (_) {} }, 100)
+    setTimeout(() => { try { document.body.removeChild(a) } catch { /* already removed */ } }, 100)
   } else {
     // Fallback (iOS Safari etc.): open PDF in a new tab
     window.open(EBOOK_PATH, '_blank', 'noopener,noreferrer')
@@ -139,7 +138,7 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
         [EBOOK_ENTRY_NAME]:      name.trim(),
         [EBOOK_ENTRY_WHATSAPP]:  phone.trim(),
       })
-    } catch (_) {}
+    } catch { /* form submission failed silently */ }
     ssSet(TOKEN_KEY, '1')
     setLoading(false)
     onSuccess(name.trim())
@@ -383,7 +382,7 @@ function WeeklyTipsSection() {
     track('Lead', { content_name: 'Newsletter Subscribe' })
     try {
       await submitToGoogleForm(EMAIL_FORM_ACTION, { [EMAIL_ENTRY_EMAIL]: email.trim() })
-    } catch (_) {}
+    } catch { /* form submission failed silently */ }
     track('CompleteRegistration', { content_name: 'Newsletter Subscribed' })
     // Persist the email so the thank-you screen can display it after remounts
     ssSet(NL_KEY, email.trim())

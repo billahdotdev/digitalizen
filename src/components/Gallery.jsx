@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Gallery.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement } from '../analytics.js'
 
 /* ─────────────────────────────────────────────
    DATA — swap img + url for real content
@@ -53,7 +53,7 @@ const sites = [
 /* ─────────────────────────────────────────────
    CARD
 ───────────────────────────────────────────── */
-function GCard({ site, index, total }) {
+function GCard({ site, index, _total }) {
   const [ready, setReady] = useState(false)
 
   return (

@@ -165,14 +165,14 @@ export default function Contact() {
   }, [message, errors.message, onFormStart])
 
   /* ── Inline validation ── */
-  const validate = () => {
+  const validate = useCallback(() => {
     const e = {}
     if (!name.trim())    e.name    = 'নাম দিন'
     if (!phone.trim())   e.phone   = 'ফোন নম্বর দিন'
     if (!message.trim()) e.message = 'মেসেজ লিখুন'
     setErrors(e)
     return Object.keys(e).length === 0
-  }
+  }, [name, phone, message])
 
   /* ── Send ── */
   const handleSend = useCallback(() => {
@@ -203,7 +203,7 @@ export default function Contact() {
       formStartFiredRef.current = false
       fieldsFilled.current = 0
     }, 4000)
-  }, [name, phone, message])
+  }, [name, phone, message, validate])
 
   /* ── Social link click ── */
   const handleSocialClick = useCallback((channel) => {

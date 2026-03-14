@@ -208,7 +208,6 @@ export default function Finder() {
   const dropOffQRef    = useRef(null)   // last question reached before abandon
 
   const q   = questions[currentQ]
-  const pct = phase === 'result' ? 100 : Math.round((currentQ / TOTAL) * 100)
 
   /* ── Section ViewContent + time-on-section + drop-off tracking ── */
   useEffect(() => {
@@ -359,13 +358,13 @@ export default function Finder() {
     return { score, pkgKey, pkg: PACKAGES[pkgKey], diag: getDiagnosis(pkgKey), trackingWarning, kpiWarning, landingPageWarning, techGap }
   }
 
-  const buildWaMsg = () => {
+  const buildWaMsg = useCallback(() => {
     if (!result) return ''
     const stage = scoreLabel(result.pkgKey).replace(/\s/g, '')
     const bs    = answers.find(a => a.budgetSignal)?.budgetSignal || 'unknown'
     const bMap  = { care_plus: 'Under10k', monthly_care: '10kTo30k', brand_care: 'Over30k', unknown: 'Unknown' }
     return `HelloDigitalizenAuditReportScore${result.score}Stage${stage}Budget${bMap[bs]}Package${result.pkg.waLabel}`
-  }
+  }, [result, answers])
 
   const handleCtaPrimary = useCallback(() => {
     track('InitiateCheckout', {
@@ -378,7 +377,7 @@ export default function Finder() {
       quiz_package:     result.pkg.waLabel,
     })
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaMsg())}`, '_blank')
-  }, [result])
+  }, [result, buildWaMsg])
 
   const handleUpsell = useCallback(() => {
     track('AddToCart', {
