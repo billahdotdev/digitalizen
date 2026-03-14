@@ -99,23 +99,7 @@ export default function Hero() {
           </button>
         </div>
 
-        {/* ── Social proof stats grid ── */}
-        <div className="hero__stats" aria-label="আমাদের সাফল্য">
-          <div className="hero__stat">
-            <span className="hero__stat-num">৯+</span>
-            <span className="hero__stat-label">বছরের অভিজ্ঞতা</span>
-          </div>
-          <div className="hero__stat-divider" aria-hidden="true" />
-          <div className="hero__stat">
-            <span className="hero__stat-num">৫০+</span>
-            <span className="hero__stat-label">সফল ক্লায়েন্ট</span>
-          </div>
-          <div className="hero__stat-divider" aria-hidden="true" />
-          <div className="hero__stat">
-            <span className="hero__stat-num">৩x+</span>
-            <span className="hero__stat-label">গড় ROAS</span>
-          </div>
-        </div>
+        
 
         <div className="hero__trust">
           <span className="trust-icon">🔒</span>
