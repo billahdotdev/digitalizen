@@ -156,7 +156,6 @@ const PACKAGES = {
   brand_care:   { variant: 'premium', name: 'ব্র্যান্ড কেয়ার',   price: '৩০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'ফুল সার্ভিস',     waLabel: 'BrandCare' },
 }
 
-const MAX_POSSIBLE = { foundation: 18, growth: 25, authority: 25 }  /* kept for fallback */
 
 /* rawScore sum → total 14-56 range
    <20 = Care+  |  20-34 = Monthly Care  |  35+ = Brand Care
@@ -351,13 +350,10 @@ export default function Finder() {
   }, [currentQ, answers])
 
   const computeResult = (all) => {
-    let f = 0, g = 0, a = 0, rawTotal = 0
+    let rawTotal = 0
     let trackingWarning = false, kpiWarning = false, landingPageWarning = null, techGap = false
     let lastBudgetSignal = null
     all.forEach((opt) => {
-      f += opt.scores?.foundation || 0
-      g += opt.scores?.growth     || 0
-      a += opt.scores?.authority  || 0
       rawTotal += opt.rawScore    || 0
       if (opt.trackingWarning)    trackingWarning    = true
       if (opt.kpiWarning)         kpiWarning         = true
