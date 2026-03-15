@@ -16,19 +16,19 @@ const CONFIG = {
   gift: {
     title:    'ফ্রি ডিজিটাল মার্কেটিং গাইড',
     subtitle: 'বাংলাদেশের স্টার্টআপের জন্য',
-    desc:     'Meta Ads, Google Ads ও SEO দিয়ে কিভাবে ৩x ROAS পাবেন — step-by-step গাইড। সম্পূর্ণ বিনামূল্যে।',
+    desc:     'Meta Ads, Google Ads ও SEO দিয়ে কীভাবে ৩x ROAS পাবেন, step-by-step গাইড। সম্পূর্ণ বিনামূল্যে।',
     badge:    '১০০% ফ্রি',
     items: [
-      'Meta Ads শুরু করার সম্পূর্ণ checklist',
-      'Google Ads budget planning template',
-      'SEO keyword research গাইড (বাংলা)',
-      'Facebook Pixel + CAPI setup guide',
+      'Meta Ads শুরু করার সম্পূর্ণ চেকলিস্ট',
+      'Google Ads বাজেট পরিকল্পনা টেমপ্লেট',
+      'SEO কীওয়ার্ড রিসার্চ গাইড (বাংলা)',
+      'Facebook Pixel ও CAPI সেটআপ গাইড',
     ],
   },
   form: {
     namePlaceholder:  'আপনার নাম',
-    phonePlaceholder: '০১৭XXXXXXXX',
-    btnLabel:         'গিফট পাঠান WhatsApp-এ',
+    phonePlaceholder: '০১XXXXXXXXX',
+    btnLabel:         'WhatsApp-এ গিফট পাঠান',
   },
 }
 
@@ -121,8 +121,8 @@ export default function FreeGift() {
     }, 'gift')
 
     const msg = [
-      `হ্যালো Digitalizen!`,
-      `আমি ফ্রি গিফট পেতে চাই।`,
+      `হ্যালো Digitalizen,`,
+      `ফ্রি গাইডটি পেতে চাই।`,
       `নাম: ${name}`,
       `ফোন: ${phone}`,
     ].join('\n')
@@ -233,10 +233,10 @@ export default function FreeGift() {
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
             </div>
-            <h2 className="fg-success-title">WhatsApp খুলছে!</h2>
+            <h2 className="fg-success-title">WhatsApp খুলছে...</h2>
             <p className="fg-success-desc">
-              আমরা শীঘ্রই আপনার গিফট পাঠাবো।<br />
-              গড়ে ১৫ মিনিটের মধ্যে রিপ্লাই।
+              শীঘ্রই আপনার গাইড পাঠানো হবে।<br />
+              সাধারণত ১৫ মিনিটের মধ্যে রিপ্লাই আসে।
             </p>
             <Link to="/" className="fg-home-link">← হোমপেজে ফিরুন</Link>
           </div>

@@ -106,14 +106,14 @@ const plans = [
     stage: 'গ্রোথ রেডি',
     tier: 'মান্থলি কেয়ার',
     tagline: 'মার্কেটিং আর ডেভেলপমেন্ট এক টিমে',
-    priceCurrency: '৳', priceMain: '১০,০০০', priceSub: 'থেকে / মাস',
+    priceCurrency: '৳', priceMain: '১০,০০০', priceSub: 'থেকে প্রতি মাসে',
     ribbon: 'সবচেয়ে জনপ্রিয়',
     features: [
       'কাস্টম হাই-স্পিড ল্যান্ডিং পেজ',
       'প্রফেশনাল অ্যাড ম্যানেজমেন্ট',
       'Meta Pixel ও CAPI সেটআপ',
       'সিজনাল পেজ রিডিজাইন',
-      'কনটেন্ট স্ট্রাটেজি ও পোস্ট',
+      'কনটেন্ট কৌশল ও পোস্ট',
       'মাসিক গ্রোথ রিভিউ মিটিং',
     ],
     guarantee: '৩০ দিনের সন্তুষ্টি গ্যারান্টি',
@@ -124,8 +124,8 @@ const plans = [
     id: '03', variant: 'premium', stars: 3,
     stage: 'স্কেল রেডি',
     tier: 'ব্র্যান্ড কেয়ার',
-    tagline: 'জিরো থেকে মার্কেট লিডার',
-    priceCurrency: '৳', priceMain: '৩০,০০০', priceSub: 'থেকে / মাস',
+    tagline: 'শূন্য থেকে মার্কেট লিডার',
+    priceCurrency: '৳', priceMain: '৩০,০০০', priceSub: 'থেকে প্রতি মাসে',
     features: [
       'ব্র্যান্ড আইডেন্টিটি ডিজাইন',
       'আনলিমিটেড কাস্টম ল্যান্ডিং পেজ',
@@ -182,7 +182,7 @@ export default function Packages() {
       currency:         'BDT',
       value:            0,
     }, 'pkg')
-    const msg = `হ্যালো Digitalizen!\n\n"${plan.wa}" সম্পর্কে জানতে চাই।\nকীভাবে শুরু করতে পারি?`
+    const msg = `হ্যালো Digitalizen,\n\n"${plan.wa}" সম্পর্কে জানতে চাই। কীভাবে শুরু করব?`
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
   }, [])
 
@@ -238,7 +238,7 @@ export default function Packages() {
         <div className="packages-note">
           <span className="packages-note-line" aria-hidden="true" />
           <p className="packages-note-text">
-            নিশ্চিত না?{' '}
+            কোনটা নেবেন বুঝতে পারছেন না?{' '}
             <button
               className="packages-note-link"
               onClick={scrollToFinder}

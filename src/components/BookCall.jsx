@@ -123,13 +123,13 @@ export default function BookCall() {
   /* ── Message builder ── */
   const buildMessage = useCallback(() => {
     const parts = [
-      `হ্যালো Digitalizen! আমি ফ্রি কনসালটেশন কল করতে চাই।`,
-      name     ? `👤 নাম: ${name}`                   : null,
-      business ? `🏢 ব্যবসা: ${business}`             : null,
-      topic    ? `📌 আলোচনার বিষয়: ${topic}`         : null,
-      budget   ? `💰 মান্থলি বাজেট: ${budget}`        : null,
+      `হ্যালো Digitalizen, ফ্রি কনসালটেশন কল করতে চাই।`,
+      name     ? `👤 নাম: ${name}`                 : null,
+      business ? `🏢 ব্যবসা: ${business}`           : null,
+      topic    ? `📌 বিষয়: ${topic}`               : null,
+      budget   ? `💰 মাসিক বাজেট: ${budget}`       : null,
       ``,
-      `কখন কল করা যাবে জানাবেন? ধন্যবাদ! 🙏`,
+      `কখন কথা বলা যাবে জানাবেন? ধন্যবাদ।`,
     ].filter(p => p !== null)
     return parts.join('\n')
   }, [name, business, topic, budget])
@@ -180,14 +180,14 @@ export default function BookCall() {
             </div>
             <h2 className="bookcall-heading">ফ্রি কনসালটেশন কল বুক করুন</h2>
             <p className="bookcall-sub">
-              ৫ মিনিটেই জানুন আপনার ব্যবসার জন্য সেরা অ্যাড স্ট্র্যাটেজি।
+              ৫ মিনিটেই জানুন আপনার ব্যবসার জন্য সেরা অ্যাড কৌশল।
             </p>
 
             <div className="call-perks">
               {[
                 { icon: '⚡', text: 'দ্রুত WhatsApp রিপ্লাই' },
-                { icon: '🎯', text: 'কাস্টম অ্যাড স্ট্র্যাটেজি' },
-                { icon: '💸', text: 'সম্পূর্ণ ফ্রি, কোনো শর্ত নাই' },
+                { icon: '🎯', text: 'আপনার ব্যবসার জন্য কাস্টম পরিকল্পনা' },
+                { icon: '💸', text: 'সম্পূর্ণ ফ্রি, কোনো শর্ত নেই' },
               ].map((p, i) => (
                 <div key={i} className="call-perk">
                   <span aria-hidden="true">{p.icon}</span>
@@ -213,19 +213,19 @@ export default function BookCall() {
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="bc-business">আপনার ব্যবসার ধরন</label>
+              <label className="form-label" htmlFor="bc-business">ব্যবসার ধরন</label>
               <input
                 id="bc-business"
                 type="text"
                 className="form-input"
-                placeholder="যেমন: ফ্যাশন শপ, রেস্টুরেন্ট, অনলাইন কোর্স..."
+                placeholder="যেমন: ফ্যাশন শপ, রেস্টুরেন্ট, অনলাইন কোর্স"
                 value={business}
                 onChange={handleBusiness}
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="bc-topic">কী নিয়ে আলোচনা করতে চান?</label>
+              <label className="form-label" htmlFor="bc-topic">কী নিয়ে কথা বলতে চান?</label>
               <select
                 id="bc-topic"
                 className="form-input form-select"
@@ -240,7 +240,7 @@ export default function BookCall() {
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="bc-budget">মান্থলি বিজ্ঞাপন বাজেট (আনুমানিক)</label>
+              <label className="form-label" htmlFor="bc-budget">মাসিক বিজ্ঞাপন বাজেট (আনুমানিক)</label>
               <select
                 id="bc-budget"
                 className="form-input form-select"
@@ -248,10 +248,10 @@ export default function BookCall() {
                 onChange={handleBudget}
               >
                 <option value="">বাজেট বেছে নিন</option>
-                <option value="১,০০০–৫,০০০ টাকা">১,০০০–৫,০০০ টাকা</option>
-                <option value="৫,০০০–২০,০০০ টাকা">৫,০০০–২০,০০০ টাকা</option>
-                <option value="২০,০০০–৫০,০০০ টাকা">২০,০০০–৫০,০০০ টাকা</option>
-                <option value="৫০,০০০+ টাকা">৫০,০০০+ টাকা</option>
+                <option value="১,০০০ থেকে ৫,০০০ টাকা">১,০০০ থেকে ৫,০০০ টাকা</option>
+                <option value="৫,০০০ থেকে ২০,০০০ টাকা">৫,০০০ থেকে ২০,০০০ টাকা</option>
+                <option value="২০,০০০ থেকে ৫০,০০০ টাকা">২০,০০০ থেকে ৫০,০০০ টাকা</option>
+                <option value="৫০,০০০ টাকার বেশি">৫০,০০০ টাকার বেশি</option>
                 <option value="এখনো নিশ্চিত নই">এখনো নিশ্চিত নই</option>
               </select>
             </div>
@@ -264,7 +264,7 @@ export default function BookCall() {
               aria-expanded={preview}
               aria-controls="bc-preview"
             >
-              {preview ? '▲' : '▼'} WhatsApp মেসেজ প্রিভিউ দেখুন
+              {preview ? '▲' : '▼'} মেসেজ প্রিভিউ {preview ? 'লুকান' : 'দেখুন'}
             </button>
 
             {/* CSS-smooth preview panel — always in DOM */}
@@ -275,7 +275,7 @@ export default function BookCall() {
               aria-label="WhatsApp মেসেজ প্রিভিউ"
               aria-hidden={!preview}
             >
-              <div className="msg-preview__label">আপনার মেসেজটি দেখতে এইরকম হবে:</div>
+              <div className="msg-preview__label">আপনার মেসেজটি এইরকম দেখাবে:</div>
               <div className="msg-preview__bubble">
                 {previewMsg.split('\n').map((line, i) => (
                   <span key={i}>{line}<br /></span>
@@ -295,7 +295,7 @@ export default function BookCall() {
             </button>
 
             <p className="bookcall-fine">
-              কোনো বাধ্যবাধকতা নেই, পরামর্শ একদম ফ্রি।
+              কোনো চাপ নেই, পরামর্শ সম্পূর্ণ ফ্রি।
             </p>
           </div>
         </div>

@@ -163,9 +163,12 @@ const normalizeScore = (rawTotal) => {
 }
 
 const decidePackage = (rawTotal, lastBudgetSignal) => {
+  // Q14 budget signal overrides score — it's the strongest intent signal
   if (lastBudgetSignal) return lastBudgetSignal
-  if (rawTotal >= 35) return 'brand_care'
-  if (rawTotal >= 20) return 'monthly_care'
+  // Thresholds tuned: most users land on monthly_care or brand_care
+  // Raw scores: min=14 (all A), max=56 (all D)
+  if (rawTotal >= 33) return 'brand_care'
+  if (rawTotal >= 18) return 'monthly_care'
   return 'care_plus'
 }
 
@@ -296,12 +299,16 @@ export default function Finder() {
           setAnswers(newAnswers)
           setCurrentQ(currentQ + 1)
           setSelIdx(null)
-          setLocked(false)
           /* visible=true আলাদা setTimeout এ — এতে React flush করে
-             selIdx=null নিয়ে render করে, তারপর fade-in হয় */
-          setTimeout(() => setVisible(true), 50)
+             selIdx=null নিয়ে render করে, তারপর fade-in হয়।
+             locked শুধু এর পরেই false করা হয় → mobile double-tap safe */
+          setTimeout(() => {
+            setVisible(true)
+            setLocked(false)
+          }, 60)
         } else {
           setAnswers(newAnswers); setPhase('loading'); setVisible(true)
+          setLocked(false)
           setTimeout(() => {
             const res = computeResult(newAnswers)
             setResult(res)
@@ -366,11 +373,8 @@ export default function Finder() {
 
   const buildWaMsg = useCallback(() => {
     if (!result) return ''
-    const stage = scoreLabel(result.pkgKey).replace(/\s/g, '')
-    const bs    = [...answers].reverse().find(a => a.budgetSignal)?.budgetSignal || 'unknown'
-    const bMap  = { care_plus: 'Under10k', monthly_care: '10kTo30k', brand_care: 'Over30k', unknown: 'Unknown' }
-    return `HelloDigitalizenAuditReportScore${result.score}Stage${stage}Budget${bMap[bs]}Package${result.pkg.waLabel}`
-  }, [result, answers])
+    return `হ্যালো Digitalizen, ফাইন্ডার থেকে আসছি। প্রস্তাবিত প্ল্যান: ${result.pkg.name}। বিস্তারিত জানতে চাই।`
+  }, [result])
 
   const handleCtaPrimary = useCallback(() => {
     track('InitiateCheckout', {
@@ -385,7 +389,7 @@ export default function Finder() {
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaMsg())}`, '_blank')
   }, [result, buildWaMsg])
 
-  const handleUpsell = useCallback(() => {
+  const handleUpsellMonthly = useCallback(() => {
     track('AddToCart', {
       content_name:     'Monthly Care Upsell',
       content_category: 'Upsell',
@@ -393,26 +397,52 @@ export default function Finder() {
       currency:         'BDT',
       value:            0,
     })
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen! আমি মান্থলি কেয়ার প্ল্যান সম্পর্কে জানতে চাই।')}`, '_blank')
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen, মান্থলি কেয়ার প্ল্যান সম্পর্কে জানতে চাই।')}`, '_blank')
+  }, [])
+
+  const handleUpsellBrand = useCallback(() => {
+    track('AddToCart', {
+      content_name:     'Brand Care Upsell',
+      content_category: 'Upsell',
+      content_ids:      ['finder_pkg_brand_care'],
+      currency:         'BDT',
+      value:            0,
+    })
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen, ব্র্যান্ড কেয়ার প্ল্যান নিয়ে বিস্তারিত জানতে চাই।')}`, '_blank')
+  }, [])
+
+  const handleLandingPageCta = useCallback(() => {
+    track('AddToCart', {
+      content_name:     'Landing Page CTA',
+      content_category: 'Upsell',
+      content_ids:      ['landing_page_service'],
+      currency:         'BDT',
+      value:            0,
+    })
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen, হাই-স্পিড কাস্টম ল্যান্ডিং পেজ বানাতে চাই। বিস্তারিত জানতে চাই।')}`, '_blank')
   }, [])
 
   const warnings = result ? [
     result.trackingWarning && {
+      key: 'tracking',
       color: 'red', icon: 'warning',
       title: 'ট্র্যাকিং সেটআপ করা নেই',
       text:  'Pixel ও CAPI ছাড়া Facebook জানতে পারে না আপনার অ্যাড দেখে কে কিনছে। ফলে অ্যাড বারবার ভুল মানুষের কাছে যায় এবং বাজেট নষ্ট হতে থাকে। এটা একটু টেকনিক্যাল কাজ, আমরা সেটআপ করে দিতে পারি।',
     },
     result.kpiWarning && {
+      key: 'kpi',
       color: 'amber', icon: 'info',
       title: 'অ্যাডের আসল লাভ-লোকসান হিসাব হচ্ছে না',
       text:  'শুধু লাইক বা মেসেজ দেখে বোঝা যায় না অ্যাডে লাভ হচ্ছে কিনা। ROAS ট্র্যাক না করলে কোন ক্যাম্পেইন কাজ করছে আর কোনটা টাকা নষ্ট করছে সেটা বোঝা সম্ভব না।',
     },
     result.techGap && {
+      key: 'techGap',
       color: 'amber', icon: 'warning',
       title: 'সিজনাল ক্যাম্পেইনে পেজ আপডেট করতে পারছেন না',
       text:  'ঈদ, পূজা বা যেকোনো বিশেষ অফারে পেজ দ্রুত বদলাতে পারাটা অনেক বড় সুবিধা। Digitalizen এ মার্কেটার আর ডেভেলপার একই টিমে, তাই নতুন ক্যাম্পেইন লাইভ করতে ঘণ্টার বেশি লাগে না।',
     },
     result.landingPageWarning && {
+      key: 'landingPage',
       color: 'amber', icon: 'warning',
       title: result.landingPageWarning === 'none'
         ? 'আলাদা ল্যান্ডিং পেজ নেই'
@@ -435,7 +465,7 @@ export default function Finder() {
 
         <h2 className="finder-heading">আপনার ব্যবসার জন্য সঠিক প্ল্যান কোনটি?</h2>
         <p className="finder-sub">
-          ১৪টি প্রশ্নে আপনার বিজনেসের বর্তমান অবস্থা এবং টেকনিক্যাল গ্যাপ জেনে নিন।
+          ১৪টি প্রশ্নে আপনার ব্যবসার বর্তমান অবস্থা বুঝুন এবং সঠিক প্ল্যান বেছে নিন।
         </p>
 
         <div className="finder-card">
@@ -591,6 +621,11 @@ export default function Finder() {
                       <div>
                         <div className="finder-warning__title">{w.title}</div>
                         <p className="finder-warning__text">{w.text}</p>
+                        {(w.key === 'landingPage') && (
+                          <button className="finder-warning__cta" onClick={handleLandingPageCta}>
+                            কাস্টম ল্যান্ডিং পেজ দরকার →
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -623,26 +658,26 @@ export default function Finder() {
               {result.pkgKey === 'care_plus' && (
                 <div className="finder-upsell">
                   <div className="finder-upsell__label">পরের ধাপ নিয়ে ভাবছেন?</div>
-                  <p className="finder-upsell__text">মান্থলি কেয়ার এ এলে কাস্টম ল্যান্ডিং পেজ বানানো থেকে শুরু করে অ্যাড ম্যানেজমেন্ট, Pixel ও CAPI সেটআপ এবং সিজনাল ক্যাম্পেইন সব একই টিম থেকে পাবেন। আলাদা ডেভেলপার আর আলাদা মার্কেটার রাখার ঝামেলা এবং সেই বাড়তি খরচ দুটোই বাঁচবে।</p>
-                  <button className="finder-upsell__btn" onClick={handleUpsell}>
-                    মান্থলি কেয়ার নিয়ে জানতে চাই
+                  <p className="finder-upsell__text">মান্থলি কেয়ার নিলে কাস্টম হাই-স্পিড ল্যান্ডিং পেজ, অ্যাড ম্যানেজমেন্ট, Pixel ও CAPI সেটআপ এবং সিজনাল ক্যাম্পেইন সব একই টিম থেকে পাবেন। আলাদা ডেভেলপার আর আলাদা মার্কেটার রাখার ঝামেলা এবং বাড়তি খরচ দুটোই বাঁচবে।</p>
+                  <button className="finder-upsell__btn" onClick={handleUpsellMonthly}>
+                    মান্থলি কেয়ার সম্পর্কে জানতে চাই
                   </button>
                 </div>
               )}
 
               {result.pkgKey === 'monthly_care' && (
                 <div className="finder-upsell">
-                  <div className="finder-upsell__label">আরো বড় ভাবছেন?</div>
-                  <p className="finder-upsell__text">ব্র্যান্ড কেয়ার এ পাচ্ছেন পূর্ণ ব্র্যান্ড আইডেন্টিটি তৈরি, আনলিমিটেড কাস্টম ল্যান্ডিং পেজ এবং একটা ডেডিকেটেড টিম যারা শুধু আপনার বিজনেসের জন্যই কাজ করে। বাজারে একটা আলাদা পরিচয় গড়ে তুলতে চাইলে এটা নিয়ে একবার কথা বলা যাক।</p>
-                  <button className="finder-upsell__btn" onClick={handleUpsell}>
-                    ব্র্যান্ড কেয়ার নিয়ে জানতে চাই
+                  <div className="finder-upsell__label">আরো বড় লক্ষ্য আছে?</div>
+                  <p className="finder-upsell__text">ব্র্যান্ড কেয়ার এ পাবেন পূর্ণ ব্র্যান্ড আইডেন্টিটি তৈরি, আনলিমিটেড কাস্টম ল্যান্ডিং পেজ এবং একটা ডেডিকেটেড টিম যারা শুধু আপনার ব্যবসার জন্যই কাজ করে। বাজারে একটা স্পষ্ট পরিচয় গড়ে তুলতে চাইলে একবার কথা বলুন।</p>
+                  <button className="finder-upsell__btn" onClick={handleUpsellBrand}>
+                    ব্র্যান্ড কেয়ার সম্পর্কে জানতে চাই
                   </button>
                 </div>
               )}
 
               <div className="finder-ctas">
                 <button className={`finder-cta-primary finder-cta-primary--${result.pkg.variant}`} onClick={handleCtaPrimary}>
-                  {Icon.wa} WhatsApp এ কথা বলতে চাই
+                  {Icon.wa} WhatsApp-এ কথা বলতে চাই
                 </button>
                 <button className="finder-cta-ghost" onClick={reset}>আবার চেকআপ করুন</button>
                 <p className="finder-fine">পরামর্শ সম্পূর্ণ ফ্রি। কোনো বাধ্যবাধকতা নেই।</p>

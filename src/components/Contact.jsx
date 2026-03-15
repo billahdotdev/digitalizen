@@ -190,7 +190,7 @@ export default function Contact() {
       value:            0,
     })
     const msg = [
-      `হ্যালো Digitalizen!`,
+      `হ্যালো Digitalizen,`,
       name    ? `নাম: ${name}`       : null,
       phone   ? `মোবাইল: ${phone}`   : null,
       message ? `মেসেজ: ${message}`  : null,
@@ -223,8 +223,8 @@ export default function Contact() {
           <span className="section-title-right">যোগাযোগ</span>
         </div>
 
-        <h2 className="contact-heading">আমাদের সাথে যোগাযোগ করুন</h2>
-        <p className="contact-sub">প্রশ্ন আছে? আমরা আছি আপনার পাশে।</p>
+        <h2 className="contact-heading">কথা বলুন আমাদের সাথে</h2>
+        <p className="contact-sub">যেকোনো প্রশ্ন থাকলে সরাসরি জানান, আমরা আছি।</p>
 
         <div className="contact-grid">
 
@@ -266,7 +266,7 @@ export default function Contact() {
 
           {/* ── Quick form ── */}
           <div className="contact-form-card">
-            <h3 className="form-card-title">দ্রুত মেসেজ পাঠান</h3>
+            <h3 className="form-card-title">মেসেজ পাঠান</h3>
             <div className="contact-form-fields">
 
               <div className="form-group">
@@ -293,7 +293,7 @@ export default function Contact() {
                   id="ct-phone"
                   type="tel"
                   className={`form-input${errors.phone ? ' form-input--error' : ''}`}
-                  placeholder="০১৭XXXXXXXX"
+                  placeholder="০১XXXXXXXXX"
                   value={phone}
                   onChange={handlePhone}
                   autoComplete="tel"
@@ -333,7 +333,7 @@ export default function Contact() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    WhatsApp খুলছে...
+                    WhatsApp-এ পাঠানো হচ্ছে...
                   </>
                 ) : (
                   <>

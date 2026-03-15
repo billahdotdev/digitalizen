@@ -678,6 +678,30 @@
 .finder-warning--red   .finder-warning__text { color: #7f1d1d; }
 .finder-warning--amber .finder-warning__text { color: #78350f; }
 
+/* ── Warning inline CTA (landing page upsell) ── */
+.finder-warning__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  background: none;
+  border: 1.5px solid #d97706;
+  color: #92400e;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px;
+}
+.finder-warning__cta:hover {
+  background: #fef3c7;
+  color: #78350f;
+}
+
 /* ── Insights ── */
 .finder-insights { padding: 0 24px; }
 

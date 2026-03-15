@@ -87,7 +87,7 @@ export default function Nav() {
   const handleWa = useCallback(() => {
     track('Contact', { content_name: 'Nav WhatsApp', content_category: 'CTA' }, 'nav')
     window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি Digitalizen সম্পর্কে জানতে চাই')}`,
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, Digitalizen সম্পর্কে জানতে চাই।')}`,
       '_blank'
     )
   }, [])
@@ -95,7 +95,7 @@ export default function Nav() {
   const handleDrawerCta = useCallback(() => {
     track('InitiateCheckout', { content_name: 'Nav Drawer CTA', content_category: 'CTA', currency: 'BDT', value: 0 }, 'nav')
     window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি ৫ মিনিটের ফ্রি কল বুক করতে চাই')}`,
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, ফ্রি কনসালটেশন কল করতে চাই।')}`,
       '_blank'
     )
     setOpen(false)

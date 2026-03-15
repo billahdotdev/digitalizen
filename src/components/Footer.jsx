@@ -301,8 +301,8 @@ export default function Footer() {
                 digitalizen<span className="footer__logo-dot" aria-hidden="true" />
               </span>
               <p className="footer__tagline">
-                সোশ্যাল মিডিয়াঅ্যাড এক্সপার্ট এজেন্সি<br />
-                ০% ফেক প্রমিজ | ডেটা-ড্রিভেন স্ট্র্যাটেজি
+                সোশ্যাল মিডিয়া অ্যাড এক্সপার্ট এজেন্সি<br />
+                ফেক প্রমিজ নেই, ডেটা দিয়ে কাজ করি
               </p>
 
               {/* WhatsApp CTA */}

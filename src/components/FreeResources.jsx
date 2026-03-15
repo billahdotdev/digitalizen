@@ -183,7 +183,7 @@ function EbookModal({ modal, onClose, onSuccess, submittedName }) {
           <>
             <div className="eb-modal-icon">📘</div>
             <h3 className="eb-modal-title">ফ্রি ইবুক পেতে তথ্য দিন</h3>
-            <p className="eb-modal-sub">মাত্র ২টি তথ্য দিন — তারপর ডাউনলোড বাটন পাবেন।</p>
+            <p className="eb-modal-sub">মাত্র ২টি তথ্য দিন, তারপরেই ডাউনলোড বাটন পাবেন।</p>
 
             <div className="eb-field">
               <label className="eb-label" htmlFor="eb-name">আপনার নাম <span aria-hidden="true">*</span></label>
@@ -375,7 +375,7 @@ function EbookSection() {
               <div className="res-book-content">
                 <span className="res-badge">ফ্রি ইবুক</span>
                 <h3 className="res-title">মেটা অ্যাডস প্লেবুক ২০২৫</h3>
-                <p className="res-sub">১৬০ পেজের বাংলা গাইড — শূন্য থেকে স্কেল পর্যন্ত সব কিছু।</p>
+                <p className="res-sub">১৬০ পেজের বাংলা গাইড, শূন্য থেকে স্কেল পর্যন্ত সব কিছু।</p>
 
                 <ul className="res-features">
                   {[
@@ -549,8 +549,8 @@ function WeeklyTipsSection() {
   return (
     <div className="weekly-card" ref={sectionRef}>
       <div className="weekly-header">
-        <h3 className="weekly-title">📬মার্কেটিং ল্যাব</h3>
-        <p className="weekly-sub">আপনার বিজনেসের গ্রোথ নিশ্চিত করতে সোশ্যাল মিডিয়া অ্যাড ইনসাইট ও কেস স্টাডি সরাসরি আপনার ইনবক্সে।</p>
+        <h3 className="weekly-title">📬 মার্কেটিং ল্যাব</h3>
+        <p className="weekly-sub">সোশ্যাল মিডিয়া অ্যাড ইনসাইট আর কেস স্টাডি সরাসরি আপনার ইনবক্সে। প্রতি সপ্তাহে।</p>
       </div>
       <div className="weekly-form" role="form" aria-label="নিউজলেটার সাবস্ক্রাইব">
         <div className="email-row">

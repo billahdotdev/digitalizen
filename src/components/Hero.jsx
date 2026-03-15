@@ -54,7 +54,7 @@ export default function Hero() {
       value:            0,
     }, 'hero')
     window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, আমি ৫ মিনিটের ফ্রি কল বুক করতে চাই। আমার ব্যবসা সম্পর্কে আলোচনা করতে চাই।')}`,
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, ফ্রি কনসালটেশন কল বুক করতে চাই। ব্যবসা সম্পর্কে কথা বলতে চাই।')}`,
       '_blank'
     )
   }, [])
@@ -68,7 +68,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="hero" id="home" aria-label="হিরো সেকশন" ref={heroRef}>
+    <section className="hero" id="home" aria-label="Digitalizen পারফরম্যান্স মার্কেটিং" ref={heroRef}>
       <div className="hero__bg-grid" aria-hidden="true"></div>
       <div className="hero__bg-glow" aria-hidden="true"></div>
 
@@ -85,7 +85,7 @@ export default function Hero() {
 
         <p className="hero__sub">
           আমরা টেস্ট করি, অপ্টিমাইজ করি এবং স্কেল করি।<br />
-          শো-অফ মেট্রিক্স নয়, কনভারশন আর একচুয়াল গ্রোথ।
+          শো-অফ মেট্রিক্স নয়, কনভার্শন আর একচুয়াল গ্রোথ।
         </p>
 
         <div className="hero__actions">
@@ -100,21 +100,19 @@ export default function Hero() {
           </button>
         </div>
 
-        
-
         <div className="hero__trust">
           <span className="trust-icon">🔒</span>
           <span>আমরা সার্ভিস বিক্রি করি না, বিজনেস স্কেল করি। আগে পারফরম্যান্স দেখুন, সিদ্ধান্ত পরে নিন।</span>
         </div>
 
-       <button
-  className="hero__salesperson"
-  onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
-  aria-label="গ্যালারি দেখুন — আপনার ২৪/৭ বিক্রয় সহকারী"
->
-  <Smile className="hero__salesperson-face" size={22} strokeWidth={2} aria-hidden="true" />
-  <span className="hero__salesperson-text">Your 24/7 Salesperson</span>
-</button>
+        <button
+          className="hero__salesperson"
+          onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
+          aria-label="আমাদের কাজ দেখুন"
+        >
+          <Smile className="hero__salesperson-face" size={22} strokeWidth={2} aria-hidden="true" />
+          <span className="hero__salesperson-text">আমাদের কাজ দেখুন</span>
+        </button>
 
       </div>
     </section>

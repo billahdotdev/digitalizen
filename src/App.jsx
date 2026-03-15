@@ -68,7 +68,7 @@ function StickyCtaBar() {
     window.dataLayer = window.dataLayer || []
     window.dataLayer.push({ event: 'sticky_cta_click', meta_event_name: 'InitiateCheckout', meta_event_id: event_id, cta_location: 'sticky_bar' })
     window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen! আমি ফ্রি কনসালটেশন কল করতে চাই।')}`,
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen, ফ্রি কনসালটেশন কল করতে চাই।')}`,
       '_blank'
     )
   }, [])

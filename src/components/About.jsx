@@ -18,9 +18,9 @@ const Icons = {
 }
 
 const values = [
-  { icon: Icons.data, title: 'ডেটা-ড্রিভেন', desc: 'প্রতিটি সিদ্ধান্ত ডেটার উপর ভিত্তি করে, অনুমানের উপর নয়।' },
-  { icon: Icons.eye,  title: 'স্বচ্ছতা',     desc: 'প্রতিটি টাকা কোথায় যাচ্ছে তা আপনি সবসময় দেখতে পাবেন।' },
-  { icon: Icons.link, title: 'পার্টনারশিপ',  desc: 'আমরা ভেন্ডর নই — আপনার ডিজিটাল গ্রোথ পার্টনার।' },
+  { icon: Icons.data, title: 'ডেটা দিয়ে সিদ্ধান্ত', desc: 'অনুমানে কাজ করি না। প্রতিটি সিদ্ধান্তের পেছনে থাকে সংখ্যা।' },
+  { icon: Icons.eye,  title: 'স্বচ্ছতা',             desc: 'আপনার প্রতিটি টাকা কোথায় যাচ্ছে, সেটা আপনি সবসময় দেখতে পাবেন।' },
+  { icon: Icons.link, title: 'পার্টনারশিপ',          desc: 'আমরা শুধু সার্ভিস দিই না, আপনার ব্যবসার গ্রোথ পার্টনার হই।' },
 ]
 
 const screenshots = [
@@ -150,19 +150,19 @@ export default function About() {
         <div className="about-main">
           <div className="about-badge">
             <span className="about-badge-dot" aria-hidden="true" />
-            বাংলাদেশের ফুল-স্ট্যাক মার্কেটিং এজেন্সি
+            বাংলাদেশের পারফরম্যান্স মার্কেটিং এজেন্সি
           </div>
 
           <h2 className="about-heading">
-            আমরা শুধু অ্যাড চালাই না!<br />
-            <span className="about-blue">আপনার টোটাল ডিজিটাল মার্কেটিং কভার করি</span>
+            আমরা শুধু অ্যাড চালাই না।<br />
+            <span className="about-blue">আপনার পুরো ডিজিটাল মার্কেটিং দেখি</span>
           </h2>
 
           <p className="about-desc">
-            Digitalizen একটি রেজাল্ট-ফোকাসড পারফরম্যান্স মার্কেটিং এজেন্সি। আমরা সোশ্যাল মিডিয়া অ্যাডসের মাধ্যমে সত্যিকারের স্কেলেবল গ্রোথ দিতে কাজ করি।
+            Digitalizen একটি রেজাল্ট-ফোকাসড পারফরম্যান্স মার্কেটিং এজেন্সি। সোশ্যাল মিডিয়া অ্যাডসের মাধ্যমে সত্যিকারের গ্রোথ দিতে আমরা কাজ করি।
           </p>
           <p className="about-desc">
-            আমাদের সহজ মেথড: টেস্ট করো, ডেটা দেখো, স্কেল করো। আমরা বিশ্বাস করি আপনার ইনভেস্ট করা প্রতিটি টাকার প্রপার রিটার্ন থাকা উচিত।
+            আমাদের সহজ পদ্ধতি হলো টেস্ট করা, ডেটা দেখা এবং স্কেল করা। আপনার প্রতিটি বিনিয়োগের সঠিক ফেরত পাওয়া উচিত, এটাই আমরা বিশ্বাস করি।
           </p>
 
           <div className="about-stats">
@@ -194,7 +194,7 @@ export default function About() {
               Real Results
             </span>
           </div>
-          <p className="screenshots-sub">আমাদের ক্লায়েন্টদের চলমান ক্যাম্পেইনের সত্যিকারের ডেটা। কোনো এডিটিং নেই।</p>
+          <p className="screenshots-sub">ক্লায়েন্টদের চলমান ক্যাম্পেইনের সত্যিকারের ডেটা। কোনো এডিটিং করা হয়নি।</p>
 
           <div className="screenshots-outer">
             <ul className="screenshots-strip" aria-label="ক্যাম্পেইন স্ক্রিনশট">
@@ -264,7 +264,7 @@ export default function About() {
                 <div className="founder-badge">ফাউন্ডার ও রেইনমেকার</div>
                 <h3 className="founder-name">Masum Billah</h3>
                 <p className="founder-bio">
-                  ৯+ বছরের অভিজ্ঞতা, ০% ফেক প্রমিজ। সোশ্যাল মিডিয়া অ্যাডস আর ডেটা-ড্রিভেন স্ট্র্যাটেজিতে আপনার বিজনেসের রিয়েল গ্রোথ নিশ্চিত করি।
+                  ৯ বছরেরও বেশি অভিজ্ঞতা, কোনো মিথ্যা প্রতিশ্রুতি নেই। সোশ্যাল মিডিয়া অ্যাডস আর ডেটা নির্ভর পরিকল্পনায় আপনার ব্যবসার সত্যিকারের গ্রোথ নিশ্চিত করি।
                 </p>
 
                 {/* ── EEAT Credential Chips — trust signals for users & AI crawlers ── */}
