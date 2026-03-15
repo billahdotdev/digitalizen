@@ -1,81 +1,152 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="bn" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>You're Offline — Digitalizen Bangladesh</title>
+  <title>আপনি অফলাইনে আছেন — Digitalizen Bangladesh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a0f1e;
-      --surface: #0f172a;
-      --blue: #3b82f6;
-      --cyan: #06b6d4;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --border: rgba(59,130,246,0.2);
+      --blue:       #1F4BFF;
+      --blue-dark:  #1438CC;
+      --blue-light: #E8EEFF;
+      --blue-glow:  rgba(31, 75, 255, 0.15);
+      --bg:         #F5F7FF;
+      --bg2:        #EEF1FC;
+      --white:      #FFFFFF;
+      --text:       #0B1220;
+      --muted:      #5A667A;
+      --muted2:     #8A96AA;
+      --border:     #E2E7F5;
+      --dark:       #0B1220;
+      --dark2:      #101828;
+      --font:       'Noto Sans Bengali', sans-serif;
+      --radius:     12px;
+      --radius-sm:  8px;
+      --shadow:     0 4px 20px rgba(15, 23, 42, 0.08);
+      --shadow-lg:  0 12px 40px rgba(15, 23, 42, 0.14);
+      --shadow-blue: 0 8px 28px rgba(31, 75, 255, 0.22);
     }
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    html, body {
+      min-height: 100%;
       background: var(--bg);
       color: var(--text);
+      font-family: var(--font);
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* dot-grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--border) 1.5px, transparent 1.5px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* top glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 340px;
+      background: radial-gradient(ellipse, var(--blue-glow) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body > * { position: relative; z-index: 1; }
+
+    /* layout */
+    .page {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2rem 1.5rem;
+      padding: 2rem 20px;
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
     }
 
-    .icon {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
+    /* logo */
     .logo {
+      font-family: var(--font);
       font-size: 1rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(135deg, var(--blue), var(--cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text);
       margin-bottom: 2rem;
-      text-transform: lowercase;
+    }
+
+    /* icon */
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      display: block;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    /* section-label — exact brand pattern */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--blue);
+      border-radius: 2px;
+      flex-shrink: 0;
     }
 
     h1 {
-      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      font-family: var(--font);
+      font-size: clamp(1.5rem, 5vw, 2.4rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, var(--text), var(--blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
     }
 
     p {
+      font-family: var(--font);
       color: var(--muted);
       max-width: 420px;
-      line-height: 1.7;
+      line-height: 1.85;
       margin-bottom: 2.5rem;
       font-size: 1rem;
     }
 
+    /* buttons — exact brand classes */
     .actions {
       display: flex;
-      gap: 1rem;
+      gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -83,106 +154,142 @@
     .btn-primary {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      justify-content: center;
+      gap: 8px;
+      background: var(--blue);
       color: #fff;
       border: none;
-      padding: 0.85rem 2rem;
-      border-radius: 12px;
-      font-weight: 700;
+      font-family: var(--font);
       font-size: 0.95rem;
+      font-weight: 700;
+      padding: 15px 28px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      white-space: nowrap;
+      min-height: 44px;
       text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 30px rgba(59,130,246,0.25);
+      -webkit-tap-highlight-color: transparent;
     }
-
     .btn-primary:hover {
+      background: var(--blue-dark);
       transform: translateY(-2px);
-      box-shadow: 0 0 50px rgba(59,130,246,0.4);
+      box-shadow: var(--shadow-blue);
     }
+    .btn-primary:active { transform: translateY(0); }
 
-    .btn-secondary {
+    .btn-ghost {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      background: transparent;
+      justify-content: center;
+      gap: 8px;
+      background: var(--white);
       color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.85rem 2rem;
-      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      font-family: var(--font);
+      font-size: 0.9rem;
       font-weight: 600;
-      font-size: 0.95rem;
+      padding: 14px 24px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      white-space: nowrap;
+      min-height: 44px;
       text-decoration: none;
-      transition: border-color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-ghost:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: var(--blue-light);
     }
 
-    .btn-secondary:hover { border-color: var(--blue); }
-
+    /* dark panel — brand: Finder/modal */
     .status-bar {
-      margin-top: 3rem;
-      display: flex;
+      margin-top: 2.5rem;
+      display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      gap: 8px;
+      background: var(--dark);
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: 100px;
-      padding: 0.5rem 1.25rem;
-      font-size: 0.8rem;
-      color: var(--muted);
+      padding: 8px 18px;
+      font-family: var(--font);
+      font-size: 0.78rem;
+      color: var(--muted2);
+      box-shadow: var(--shadow-lg);
     }
 
     .dot {
-      width: 8px; height: 8px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #ef4444;
-      animation: blink 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+      animation: pulse 1.5s ease-in-out infinite;
     }
-
-    @keyframes blink {
+    @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      50%       { opacity: 0.3; }
     }
 
     .cached-note {
-      margin-top: 1.5rem;
-      font-size: 0.78rem;
+      margin-top: 16px;
+      font-family: var(--font);
+      font-size: 0.8rem;
       color: var(--muted);
       opacity: 0.7;
+    }
+
+    ::selection { background: var(--blue); color: #fff; }
+    :focus { outline: none; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="logo">digitalizen</div>
+  <div class="page">
 
-  <div class="icon">📡</div>
+    <div class="logo">digitalizen</div>
 
-  <h1>ইন্টারনেট কানেকশন নেই</h1>
+    <span class="icon">📡</span>
 
-  <p>
-    আপনার ডিভাইস অফলাইনে আছে। ইন্টারনেট কানেকশন চেক করুন এবং আবার চেষ্টা করুন।<br /><br />
-    <span style="color: #64748b; font-size: 0.9em;">No internet connection detected. Please check your Grameenphone, Robi, or Banglalink connection.</span>
-  </p>
+    <div class="section-label">Offline</div>
 
-  <div class="actions">
-    <button class="btn-primary" onclick="window.location.reload()">
-      🔄 আবার চেষ্টা করুন
-    </button>
-    <a href="/" class="btn-secondary">
-      🏠 হোমে যান
-    </a>
+    <h1>ইন্টারনেট কানেকশন নেই</h1>
+
+    <p>
+      আপনার ডিভাইস অফলাইনে আছে। ইন্টারনেট কানেকশন চেক করুন এবং আবার চেষ্টা করুন।<br /><br />
+      <span style="font-size: 0.88em; opacity: 0.75;">No internet connection detected. Please check your Grameenphone, Robi, or Banglalink connection.</span>
+    </p>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="window.location.reload()">
+        🔄 আবার চেষ্টা করুন
+      </button>
+      <a href="/" class="btn-ghost">
+        🏠 হোমে যান
+      </a>
+    </div>
+
+    <div class="status-bar">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">Offline — Digitalizen · Dhaka, Bangladesh</span>
+    </div>
+
+    <p class="cached-note">
+      আগে দেখা পেজগুলো ক্যাশ থেকে পাওয়া যেতে পারে।
+    </p>
+
   </div>
-
-  <div class="status-bar">
-    <div class="dot"></div>
-    <span>Offline — Digitalizen · Dhaka, Bangladesh</span>
-  </div>
-
-  <p class="cached-note">
-    Previously visited pages may still be available from cache.
-  </p>
 
   <script>
     // Auto-reload when connection restored
@@ -192,8 +299,8 @@
 
     // Show online status
     if (navigator.onLine) {
-      document.querySelector('.dot').style.background = '#22c55e'
-      document.querySelector('.status-bar span').textContent = 'Online — Tap retry to reload'
+      document.getElementById('statusDot').style.background = '#22c55e'
+      document.getElementById('statusText').textContent = 'Online — Tap retry to reload'
     }
   </script>
 

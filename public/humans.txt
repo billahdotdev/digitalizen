@@ -26,13 +26,13 @@ Specializations:
   - Brand Development & Content Strategy
   - Analytics & Data-Driven Decision Making
 
-Years of Experience: 5+
+Years of Experience: 9+
 Clients Served: 50+ startups and SMEs across Bangladesh and worldwide
 
 /* AGENCY */
 Name: Digitalizen
 Tagline: Scale smarter. Grow faster.
-Founded: 2023
+Founded: 2017
 Location: Dhaka, Bangladesh
 Coordinates: 23.8103, 90.4125
 Website: https://digitalizen.billah.dev
