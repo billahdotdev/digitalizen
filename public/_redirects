@@ -2,5 +2,5 @@
 # Works on: Netlify, Cloudflare Pages
 # For Apache: use .htaccess; for Nginx: see README.md
 
-# Serve index.html for all routes (HashRouter handles client-side routing)
+# Serve index.html for all routes (BrowserRouter — client-side routing)
 /*  /index.html  200

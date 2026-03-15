@@ -256,6 +256,28 @@
       border-width: 0;
     }
   </style>
+  <!-- ── GitHub Pages SPA routing fix ─────────────────────────
+       404.html captures the real URL → stores in sessionStorage
+       This script reads it back and restores it via history.replaceState
+       BEFORE React mounts, so BrowserRouter gets the correct path.
+       Source: rafgraph.dev/blog/how-to-create-a-github-pages-spa
+  ──────────────────────────────────────────────────────────── -->
+  <script>
+    (function() {
+      var redirect = sessionStorage.getItem('spa_redirect');
+      if (redirect) {
+        sessionStorage.removeItem('spa_redirect');
+        var parts = redirect.split('&q=');
+        var path  = parts[0].replace(/~and~/g, '&');
+        var query = parts[1] ? '?' + parts[1].replace(/~and~/g, '&') : '';
+        var hash  = path.indexOf('#') !== -1
+          ? path.slice(path.indexOf('#'))
+          : '';
+        if (hash) path = path.slice(0, path.indexOf('#'));
+        history.replaceState(null, null, '/' + path + query + hash);
+      }
+    })();
+  </script>
 </head>
 <body>
   <!-- GTM noscript — replace GTM-XXXXXXX -->

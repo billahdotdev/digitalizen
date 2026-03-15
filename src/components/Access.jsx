@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Access.css'
-import { track } from '../lib/analytics.js'
+import { track, WA_NUMBER } from '../lib/analytics.js'
 
 const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me'
 const DIGITALIZEN_FB_PROFILE_URL = 'https://www.facebook.com/digitalizen'
-const WA_URL         = 'https://wa.me/8801711992558'
+const WA_URL = `https://wa.me/${WA_NUMBER}`
 const AGENCY_FB_NAME = 'Masum Billah'
 
 /* ─────────────────────────────────────────────────

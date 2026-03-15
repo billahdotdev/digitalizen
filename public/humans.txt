@@ -43,7 +43,7 @@ Area Served: Bangladesh (primary), Worldwide
 Languages: English, Bengali (বাংলা)
 
 /* SITE */
-Last update: 2026/03/15
+Last update: 2026/03/13
 Standards: HTML5, CSS3, React 18, Vite 4
 Components: Vite + React SPA, GitHub Pages
 Performance: Lighthouse 95+, Core Web Vitals optimized

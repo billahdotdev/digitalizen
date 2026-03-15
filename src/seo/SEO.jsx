@@ -55,6 +55,20 @@ const PAGE_DEFAULTS = {
     ],
     speakableSelectors: ['h1', 'h2', '.fr-title'],
   },
+  'free-gift': {
+    title:         'ফ্রি ডিজিটাল মার্কেটিং গিফট — Digitalizen Bangladesh',
+    description:   'বাংলাদেশের স্টার্টআপের জন্য ফ্রি ডিজিটাল মার্কেটিং গাইড। Meta Ads, Google Ads ও SEO দিয়ে ৩x ROAS পাওয়ার step-by-step গাইড। সম্পূর্ণ বিনামূল্যে।',
+    keywords:      'free digital marketing gift Bangladesh, free Meta Ads guide, free Google Ads template BD, free SEO guide Dhaka, Digitalizen free gift, digital marketing guide Bangladesh',
+    titleBn:       'ফ্রি ডিজিটাল মার্কেটিং গিফট — ডিজিটালাইজেন বাংলাদেশ',
+    descriptionBn: 'বাংলাদেশের স্টার্টআপের জন্য ফ্রি মার্কেটিং গাইড। Meta Ads, Google Ads ও SEO গাইড।',
+    keywordsBn:    'ফ্রি মার্কেটিং গিফট বাংলাদেশ, ফ্রি Meta Ads গাইড, ফ্রি Google Ads টেমপ্লেট, ডিজিটালাইজেন ফ্রি গিফট',
+    schemaType:    'collection',
+    breadcrumbs:   [
+      { name: 'Home',      item: 'https://digitalizen.billah.dev/'           },
+      { name: 'Free Gift', item: 'https://digitalizen.billah.dev/free-gift'  },
+    ],
+    speakableSelectors: ['h1', '.fg-title'],
+  },
   gallery: {
     title:         'Portfolio & Real Results — Digitalizen Digital Marketing Bangladesh',
     description:   'Real campaign results, case studies, and ROI data from Digitalizen\'s work for Bangladesh startups. Data-driven marketing that actually converts.',

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback, Component, lazy, Suspense } from 'react'
 import './App.css'
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 /* ── Above-fold: eagerly loaded — paint immediately ── */
 import Nav  from './components/Nav'
@@ -21,6 +21,7 @@ const Contact       = lazy(() => import('./components/Contact'))
 const Footer        = lazy(() => import('./components/Footer'))
 const Gallery       = lazy(() => import('./components/Gallery'))
 const FreeResources = lazy(() => import('./components/FreeResources'))
+const FreeGift      = lazy(() => import('./components/FreeGift'))
 const Access        = lazy(() => import('./components/Access'))
 
 /* ── WhatsApp number ── */
@@ -195,25 +196,34 @@ function NotFound() {
 }
 
 /* ══ Router ═════════════════════════════════════════════
-   HOW TO ADD A NEW ROUTE — see README.md
+   Clean URLs: digitalizen.billah.dev/access (no # hash)
+
+   GitHub Pages routing works via:
+     1. public/404.html  → captures URL → sessionStorage
+     2. index.html script → restores URL → history.replaceState
+     3. BrowserRouter picks up the correct path
+
+   HOW TO ADD A NEW ROUTE:
    1. Create src/components/MyPage.jsx + MyPage.css
    2. Add: const MyPage = lazy(() => import('./components/MyPage'))
    3. Add: <Route path="/my-page" element={<Suspense fallback={null}><MyPage /></Suspense>} />
-   4. Add Nav link in Nav.jsx
+   4. Add nav link in Nav.jsx if needed
    5. Add SEO config in src/seo/SEO.jsx → PAGE_DEFAULTS
+   6. Add URL to public/sitemap.xml
 ══════════════════════════════════════════════════════ */
 export default function App() {
   return (
     <ErrorBoundary>
-      <HashRouter>
+      <BrowserRouter>
         <Routes>
-          <Route path="/"        element={<MainLayout />} />
-          <Route path="/free"    element={<Suspense fallback={null}><FreeResources /></Suspense>} />
-          <Route path="/access"  element={<Suspense fallback={null}><Access /></Suspense>} />
-          <Route path="/gallery" element={<Suspense fallback={null}><Gallery /></Suspense>} />
-          <Route path="*"        element={<NotFound />} />
+          <Route path="/"          element={<MainLayout />} />
+          <Route path="/free"      element={<Suspense fallback={null}><FreeResources /></Suspense>} />
+          <Route path="/free-gift" element={<Suspense fallback={null}><FreeGift /></Suspense>} />
+          <Route path="/access"    element={<Suspense fallback={null}><Access /></Suspense>} />
+          <Route path="/gallery"   element={<Suspense fallback={null}><Gallery /></Suspense>} />
+          <Route path="*"          element={<NotFound />} />
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </ErrorBoundary>
   )
 }

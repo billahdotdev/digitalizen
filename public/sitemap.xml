@@ -28,9 +28,20 @@
     <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en"      href="https://digitalizen.billah.dev/free" />
-    <xhtml:link rel="alternate" hreflang="bn-BD"   href="https://digitalizen.billah.dev/free" />
+    <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/free" />
+    <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/free" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/free" />
+  </url>
+
+  <!-- ── Free Gift ─────────────────────────────────────── -->
+  <url>
+    <loc>https://digitalizen.billah.dev/free-gift</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/free-gift" />
+    <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/free-gift" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/free-gift" />
   </url>
 
   <!-- ── Gallery / Portfolio ──────────────────────────── -->
