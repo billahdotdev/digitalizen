@@ -157,7 +157,7 @@
 .finder-opt:hover::before,
 .finder-opt--selected::before { transform: scaleY(1); }
 
-.finder-opt:disabled { cursor: default; }
+.finder-opt:disabled { cursor: default; pointer-events: none; }
 
 .finder-opt:disabled:not(.finder-opt--selected) {
   border-color: var(--border);
@@ -429,6 +429,50 @@
 @keyframes dotPulse {
   0%, 100% { transform: scale(1);    background: var(--border2); }
   45%       { transform: scale(1.6); background: var(--blue); }
+}
+
+
+/* Fact cards */
+.finder-loading__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.finder-loading__fact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  opacity: 0;
+  transform: translateY(6px);
+  animation: stepRise 0.5s ease forwards;
+}
+
+.finder-loading__fact--1 { animation-delay: 1.0s; }
+.finder-loading__fact--2 { animation-delay: 2.2s; }
+.finder-loading__fact--3 { animation-delay: 3.8s; }
+
+.finder-loading__fact-num {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--blue);
+  min-width: 44px;
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
+}
+
+.finder-loading__fact-txt {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.45;
+  flex: 1;
+  text-align: left;
 }
 
 /* ══ RESULT ════════════════════════════════════════ */

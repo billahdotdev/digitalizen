@@ -151,17 +151,13 @@ const questions = [
 const TOTAL = questions.length
 
 const PACKAGES = {
-  care_plus:    { variant: 'basic',   name: 'কেয়ার+',        price: 'অ্যাড বাজেট অনুযায়ী', priceNote: 'সার্ভিস চার্জ ফ্রি', tag: 'ফ্রি স্টার্টার',  waLabel: 'CarePlus' },
-  monthly_care: { variant: 'popular', name: 'মান্থলি কেয়ার', price: '১০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'সবচেয়ে জনপ্রিয়', waLabel: 'MonthlyCare' },
-  brand_care:   { variant: 'premium', name: 'ব্র্যান্ড কেয়ার',   price: '৩০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'ফুল সার্ভিস',     waLabel: 'BrandCare' },
+  care_plus:    { variant: 'basic',   name: 'কেয়ার+',        price: 'অ্যাড বাজেট অনুযায়ী', priceNote: 'সার্ভিস চার্জ ফ্রি', tag: 'ফ্রি স্টার্টার',    waLabel: 'CarePlus' },
+  monthly_care: { variant: 'popular', name: 'মান্থলি কেয়ার', price: '১০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'সবচেয়ে জনপ্রিয়',    waLabel: 'MonthlyCare' },
+  brand_care:   { variant: 'premium', name: 'ব্র্যান্ড কেয়ার',   price: '৩০,০০০ টাকা থেকে শুরু', priceNote: 'মাসিক',           tag: 'ফুল সার্ভিস',   waLabel: 'BrandCare' },
 }
 
 
-/* rawScore sum → total 14-56 range
-   <20 = Care+  |  20-34 = Monthly Care  |  35+ = Brand Care
-   budgetSignal from Q14 always takes final priority */
 const normalizeScore = (rawTotal) => {
-  /* map 14-56 onto 0-100 for the progress bar */
   if (rawTotal <= 0) return 0
   return Math.min(100, Math.round(((rawTotal - 14) / (56 - 14)) * 100))
 }
@@ -203,6 +199,7 @@ export default function Finder() {
   const [currentQ, setCurrentQ] = useState(0)
   const [answers,  setAnswers]  = useState([])
   const [selIdx,   setSelIdx]   = useState(null)
+  const [locked,   setLocked]   = useState(false)
   const [phase,    setPhase]    = useState('quiz')
   const [visible,  setVisible]  = useState(true)
   const [result,   setResult]   = useState(null)
@@ -253,7 +250,7 @@ export default function Finder() {
   useEffect(() => {
     if (phase !== 'quiz') return
     const onKey = (e) => {
-      if (selIdx !== null) return
+      if (locked) return
       const idx = e.key.toUpperCase().charCodeAt(0) - 65  // A=0, B=1 …
       if (idx >= 0 && idx < q.opts.length) pick(idx)
     }
@@ -262,7 +259,7 @@ export default function Finder() {
   }, [phase, selIdx, currentQ, q]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const reset = useCallback(() => {
-    setCurrentQ(0); setAnswers([]); setSelIdx(null)
+    setCurrentQ(0); setAnswers([]); setSelIdx(null); setLocked(false)
     setPhase('quiz'); setVisible(true); setResult(null)
     quizStartTime.current  = null
     dropOffQRef.current    = null
@@ -273,7 +270,8 @@ export default function Finder() {
   }, [])
 
   const pick = useCallback((optIdx) => {
-    if (selIdx !== null) return
+    if (locked) return
+    setLocked(true)
     setSelIdx(optIdx)
 
     const opt         = q.opts[optIdx]
@@ -305,8 +303,11 @@ export default function Finder() {
       setVisible(false)
       setTimeout(() => {
         if (currentQ < TOTAL - 1) {
-          setAnswers(newAnswers); setCurrentQ(currentQ + 1); setSelIdx(null)
-          setTimeout(() => setVisible(true), 0)
+          setAnswers(newAnswers)
+          setCurrentQ(currentQ + 1)
+          setSelIdx(null)
+          setLocked(false)
+          setVisible(true)
         } else {
           setAnswers(newAnswers); setPhase('loading'); setVisible(true)
           setTimeout(() => {
@@ -335,17 +336,22 @@ export default function Finder() {
         }
       }, 170)
     }, 120)
-  }, [selIdx, currentQ, answers, q])
+  }, [locked, currentQ, answers, q])
 
   const goBack = useCallback(() => {
     if (currentQ === 0) return
     setVisible(false)
     setTimeout(() => {
-      const prevAnswers = answers.slice(0, -1)
-      const prevQ = questions[currentQ - 1]
-      const prevSelIdx = prevQ.opts.findIndex(o => o.label === answers[currentQ - 1]?.label)
-      setAnswers(prevAnswers); setCurrentQ(currentQ - 1)
-      setSelIdx(prevSelIdx >= 0 ? prevSelIdx : null); setVisible(true)
+      const prevQ      = questions[currentQ - 1]
+      const prevAnswer = answers[currentQ - 1]
+      const prevIdx    = prevAnswer
+        ? prevQ.opts.findIndex(o => o.label === prevAnswer.label)
+        : null
+      setAnswers(answers.slice(0, -1))
+      setCurrentQ(currentQ - 1)
+      setSelIdx(prevIdx >= 0 ? prevIdx : null)
+      setLocked(false)
+      setVisible(true)
     }, 170)
   }, [currentQ, answers])
 
@@ -474,7 +480,7 @@ export default function Finder() {
                     key={i}
                     className={`finder-opt${selIdx === i ? ' finder-opt--selected' : ''}`}
                     onClick={() => pick(i)}
-                    disabled={selIdx !== null}
+                    disabled={locked}
                     aria-label={`বিকল্প ${String.fromCharCode(0x41 + i)}: ${o.label}`}
                   >
                     <span className="finder-opt__key">{String.fromCharCode(0x41 + i)}</span>
@@ -524,9 +530,9 @@ export default function Finder() {
 
               <div className="finder-loading__steps">
                 {[
-                  { txt: 'ব্যবসার স্তর ও মার্কেটিং গ্যাপ চিহ্নিত করা হচ্ছে', icon: '01' },
-                  { txt: 'ল্যান্ডিং পেজ ও ট্র্যাকিং সেটআপ যাচাই করা হচ্ছে',  icon: '02' },
-                  { txt: 'আপনার বিজনেসের জন্য কাস্টম প্ল্যান রেডি হচ্ছে',     icon: '03' },
+                  { txt: 'ব্যবসার স্তর ও মার্কেটিং গ্যাপ চিহ্নিত করা হচ্ছে' },
+                  { txt: 'ল্যান্ডিং পেজ ও ট্র্যাকিং সেটআপ যাচাই করা হচ্ছে'  },
+                  { txt: 'আপনার বিজনেসের জন্য কাস্টম প্ল্যান রেডি হচ্ছে'     },
                 ].map((s, i) => (
                   <div key={i} className={`finder-loading__step finder-loading__step--${i + 1}`}>
                     <span className={`finder-loading__step-icon finder-loading__step-icon--${i + 1}`} aria-hidden="true">
@@ -535,6 +541,19 @@ export default function Finder() {
                       </svg>
                     </span>
                     <span className="finder-loading__step-txt">{s.txt}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="finder-loading__facts">
+                {[
+                  { num: '৩×', txt: 'ফাস্ট ল্যান্ডিং পেজে কনভার্সন ৩ গুণ বেশি হয়' },
+                  { num: '৭%',  txt: 'পেজ ১ সেকেন্ড স্লো হলে ৭% সেল কমে যায়' },
+                  { num: '৮০%', txt: 'সঠিক ট্র্যাকিং না থাকলে ৮০% অ্যাড বাজেট নষ্ট হয়' },
+                ].map((f, i) => (
+                  <div key={i} className={`finder-loading__fact finder-loading__fact--${i + 1}`}>
+                    <span className="finder-loading__fact-num">{f.num}</span>
+                    <span className="finder-loading__fact-txt">{f.txt}</span>
                   </div>
                 ))}
               </div>
