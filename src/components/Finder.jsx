@@ -246,17 +246,7 @@ export default function Finder() {
     }
   }, [])
 
-  /* ── Keyboard: press A–E to select option ── */
-  useEffect(() => {
-    if (phase !== 'quiz') return
-    const onKey = (e) => {
-      if (locked) return
-      const idx = e.key.toUpperCase().charCodeAt(0) - 65  // A=0, B=1 …
-      if (idx >= 0 && idx < q.opts.length) pick(idx)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [phase, selIdx, currentQ, q]) // eslint-disable-line react-hooks/exhaustive-deps
+
 
   const reset = useCallback(() => {
     setCurrentQ(0); setAnswers([]); setSelIdx(null); setLocked(false)
@@ -307,7 +297,9 @@ export default function Finder() {
           setCurrentQ(currentQ + 1)
           setSelIdx(null)
           setLocked(false)
-          setVisible(true)
+          /* visible=true আলাদা setTimeout এ — এতে React flush করে
+             selIdx=null নিয়ে render করে, তারপর fade-in হয় */
+          setTimeout(() => setVisible(true), 20)
         } else {
           setAnswers(newAnswers); setPhase('loading'); setVisible(true)
           setTimeout(() => {
@@ -469,10 +461,6 @@ export default function Finder() {
               <p className="finder-q">{q.q}</p>
               {q.hint && <p className="finder-hint">{q.hint}</p>}
 
-              {/* Keyboard hint — only on desktop */}
-              <p className="finder-keyboard-hint" aria-hidden="true">
-                কীবোর্ড শর্টকাট: A, B, C… চাপুন
-              </p>
 
               <div className="finder-opts">
                 {q.opts.map((o, i) => (
