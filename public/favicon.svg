@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Background -->
-  <rect width="32" height="32" rx="8" fill="#1F4BFF"/>
-  <!-- "d" letterform as wordmark icon -->
-  <text x="5" y="24" font-family="Georgia, serif" font-size="22" font-weight="900" fill="#FFFFFF" letter-spacing="-1">d</text>
-  <!-- Green accent dot (brand signal) -->
-  <circle cx="26" cy="8" r="4" fill="#16A34A"/>
-</svg>

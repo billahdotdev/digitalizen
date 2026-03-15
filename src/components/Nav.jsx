@@ -180,8 +180,7 @@ export default function Nav() {
 
           <div className="nav__drawer-cta">
             <button
-              className="btn-primary"
-              style={{ width: '100%' }}
+              className="btn-primary nav__drawer-cta-btn"
               onClick={handleDrawerCta}
             >
               ফ্রি কনসালটেশন কল বুক করুন

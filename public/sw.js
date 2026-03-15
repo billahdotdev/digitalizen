@@ -14,7 +14,7 @@
    for returning users regardless of network instability.
 ═══════════════════════════════════════════════════════ */
 
-const CACHE_VERSION  = 'dz-v4.03'
+const CACHE_VERSION  = 'dz-v4.05'   /* ← bumped: added manifest + apple-touch-icon */
 const STATIC_CACHE   = `${CACHE_VERSION}-static`
 const RUNTIME_CACHE  = `${CACHE_VERSION}-runtime`
 const FONT_CACHE     = `${CACHE_VERSION}-fonts`
@@ -25,6 +25,8 @@ const APP_SHELL = [
   '/',
   '/index.html',
   '/favicon.svg',
+  '/manifest.json',
+  '/apple-touch-icon.png',
 ]
 
 /* ── Never-cache patterns ── */

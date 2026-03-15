@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Gallery.css'
-import { track, pushEngagement } from '../lib/analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
 /* ─────────────────────────────────────────────
    DATA — swap img + url for real content
@@ -81,7 +81,7 @@ function GCard({ site, index, _total }) {
 
       {/* Bottom: just title + arrow */}
       <div className="gc__info">
-        <h2 className="gc__title">{site.title}</h2>
+        <h3 className="gc__title">{site.title}</h3>
 
         <a
           className="gc__arrow"
@@ -235,40 +235,41 @@ export default function Gallery() {
 
   const [open, setOpen] = useState(false)
 
+  const handleOpen = useCallback(() => {
+    track('ViewContent', {
+      content_name:     'Gallery Opened',
+      content_category: 'Engagement',
+      content_ids:      ['gallery'],
+    }, 'gal')
+    setOpen(true)
+  }, [])
+
+  const handleClose = useCallback(() => setOpen(false), [])
+
   return (
     <>
-      <section className="gallery-section" id="gallery" ref={sectionRef}>
+      <section
+        className="gallery-section"
+        id="gallery"
+        ref={sectionRef}
+        aria-label="আমাদের কাজ — প্রজেক্ট গ্যালারি"
+      >
         <div className="container">
 
-          {/* ── Header — matches site-wide pattern ── */}
           <div className="row-header">
             <span className="section-num">০০৮</span>
             <span className="section-title-right">গ্যালারি</span>
           </div>
 
-          <h2 style={{
-            fontSize: '1.5rem',
-            fontWeight: 900,
-            color: 'var(--text)',
-            marginBottom: '6px',
-            letterSpacing: '-0.02em',
-            lineHeight: 1.2,
-          }}>
-            আমাদের কাজ
-          </h2>
-          <p style={{
-            fontSize: '0.85rem',
-            color: 'var(--muted)',
-            marginBottom: '28px',
-            lineHeight: 1.6,
-          }}>
+          <h2 className="gallery-heading">আমাদের কাজ</h2>
+          <p className="gallery-sub">
             প্রতিটি ল্যান্ডিং পেজ আলাদাভাবে কাস্টম ডিজাইন করা হয়েছে।
           </p>
 
           <button
-            className="btn-primary"
-            onClick={() => setOpen(true)}
-            style={{ width: '100%' }}
+            className="btn-primary gallery-open-btn"
+            onClick={handleOpen}
+            aria-haspopup="dialog"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -282,7 +283,7 @@ export default function Gallery() {
         </div>
       </section>
 
-      {open && <GalleryOverlay onClose={() => setOpen(false)} />}
+      {open && <GalleryOverlay onClose={handleClose} />}
     </>
   )
 }

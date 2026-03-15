@@ -487,7 +487,7 @@ export default function Resources() {
   }, [])
 
   return (
-    <section id="resources" className="resources-section" ref={sectionRef}>
+    <section id="resources" className="resources-section" ref={sectionRef} aria-label="ফ্রি রিসোর্স ও ইবুক">
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৭</span>

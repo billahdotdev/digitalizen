@@ -41,7 +41,8 @@
 
 .footer__tagline {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.65);
+  /* boosted from 0.65 → 0.82 for WCAG AA contrast on dark bg */
+  color: rgba(255,255,255,0.82);
   line-height: 1.65;
 }
 
@@ -86,12 +87,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  /* WCAG 2.5.5: minimum 44×44px touch target */
+  width: 44px;
+  height: 44px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.55);
   transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
 }
 
@@ -170,7 +172,8 @@
 }
 
 .footer__legal a {
-  color: rgba(255,255,255,0.35);
+  /* boosted from 0.35 → 0.55 for minimum legibility */
+  color: rgba(255,255,255,0.55);
   transition: color 0.15s;
 }
 
@@ -327,8 +330,9 @@
 }
 
 .legal-modal__close {
-  width: 30px;
-  height: 30px;
+  /* WCAG 2.5.5: minimum 44×44px touch target */
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   background: var(--bg);
   border: 1px solid var(--border);

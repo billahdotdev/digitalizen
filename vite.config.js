@@ -21,6 +21,7 @@ import react from '@vitejs/plugin-react'
    • manualChunks → vendor JS cached independently
    • ES2022 target → no legacy polyfills, modern BD Android
    • No source maps in prod → smaller deploy
+   • cssCodeSplit: true → per-component CSS lazy-loads with JS
 ═══════════════════════════════════════════════════════════ */
 
 export default defineConfig({
@@ -36,10 +37,11 @@ export default defineConfig({
   base: '/',
 
   build: {
-    target:    'es2022',
-    outDir:    'dist',
-    sourcemap: false,
-    minify:    'esbuild',
+    target:       'es2022',
+    outDir:       'dist',
+    sourcemap:    false,
+    minify:       'esbuild',
+    cssCodeSplit: true,       // ← lazy CSS loads with its lazy JS chunk
 
     rollupOptions: {
       output: {
@@ -48,17 +50,50 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash][extname]',
 
         manualChunks(id) {
+          /* ── Vendor: React core — cached for months ── */
           if (
             id.includes('node_modules/react/') ||
             id.includes('node_modules/react-dom/') ||
             id.includes('node_modules/react-router')
           ) return 'vendor-react'
 
+          /* ── Vendor: icons — tree-shaken but still isolated ── */
           if (id.includes('node_modules/lucide-react'))
             return 'vendor-icons'
 
+          /* ── Vendor: Calendly widget — heavy, load only in BookCall ── */
           if (id.includes('node_modules/react-calendly'))
             return 'vendor-calendly'
+
+          /*
+           * Group above-fold critical sections into one chunk
+           * so the first paint depends on FEWER sequential fetches.
+           * Finder + Footer are the most important below-fold items.
+           */
+          if (
+            id.includes('/components/Finder') ||
+            id.includes('/components/Footer')
+          ) return 'chunk-priority'
+
+          /*
+           * Group middle sections — loaded after first paint
+           */
+          if (
+            id.includes('/components/Packages') ||
+            id.includes('/components/Process') ||
+            id.includes('/components/About')
+          ) return 'chunk-mid'
+
+          /*
+           * Group lower sections — loaded last
+           */
+          if (
+            id.includes('/components/BookCall') ||
+            id.includes('/components/Resources') ||
+            id.includes('/components/Faq') ||
+            id.includes('/components/Contact') ||
+            id.includes('/components/Gallery')
+          ) return 'chunk-lower'
         },
       },
     },

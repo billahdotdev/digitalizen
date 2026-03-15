@@ -1,31 +1,35 @@
 # ============================================================
 # .github/workflows/deploy-github-pages.yml
 #
-# Digitalizen — GitHub Pages Production Deploy
+# Digitalizen SPA — GitHub Pages Deploy
 # ─────────────────────────────────────────────
-# Pipeline:  lint → build → seo-check → deploy
+# Pipeline:  lint → build → checks → deploy
 # Trigger:   push to main + manual dispatch
-# Node:      from .nvmrc (22 LTS)
+# Node:      22 LTS (from .nvmrc)
 #
-# ONE-TIME SETUP (before first push):
-# ─────────────────────────────────────────────
-# 1. GitHub repo → Settings → Pages
-#       Source: "GitHub Actions"   ← NOT "Deploy from branch"
+# Project structure this workflow expects:
+#   src/           React source (main.jsx, App.jsx, components/…)
+#   public/        Static assets → copied verbatim to dist/
+#   api/           Cloudflare Workers (NOT bundled by Vite)
+#   index.html     Vite HTML entry
+#   vite.config.js
+#
+# ONE-TIME SETUP:
+# ─────────────────
+# 1. Repo → Settings → Pages → Source: "GitHub Actions"
+#    (NOT "Deploy from branch" — that mode ignores this workflow)
 #
 # 2. Custom domain:
-#       Settings → Pages → Custom domain → digitalizen.billah.dev → Save
+#    Settings → Pages → Custom domain → digitalizen.billah.dev → Save
 #
-# 3. DNS at Cloudflare (DNS Only mode — grey cloud):
-#       Type: CNAME | Name: digitalizen | Target: <username>.github.io
+# 3. DNS at Cloudflare (DNS Only — grey cloud):
+#    Type: CNAME | Name: digitalizen | Target: <username>.github.io
 #
-# 4. Tick "Enforce HTTPS" in Pages settings after cert provisions.
+# 4. Tick "Enforce HTTPS" after TLS cert provisions (~10 min)
 #
-# NOTE ON HEADERS:
-#   _headers file does NOT work on GitHub Pages.
-#   Security headers (CSP, etc.) are set via <meta> in index.html.
-#   If you migrate to Cloudflare Pages, _headers activates automatically.
-#
-# REQUIRED SECRETS: none — uses built-in GITHUB_TOKEN
+# REQUIRED SECRETS (for CAPI Workers only — not Pages deploy):
+#   CLOUDFLARE_API_TOKEN   → Cloudflare Profile → API Tokens
+#   CLOUDFLARE_ACCOUNT_ID  → Cloudflare dashboard sidebar
 # ============================================================
 
 name: Deploy → GitHub Pages
@@ -47,7 +51,7 @@ concurrency:
 jobs:
 
   build:
-    name: Lint, Build & SEO Check
+    name: Lint · Build · Check · Upload
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
@@ -55,7 +59,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      - name: Setup Node (reads .nvmrc)
+      - name: Setup Node 22 LTS (reads .nvmrc)
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
         with:
           node-version-file: '.nvmrc'
@@ -65,7 +69,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
+      - name: Lint — blocks deploy on any ESLint error
         run: npm run lint
 
       - name: Build
@@ -73,42 +77,37 @@ jobs:
         env:
           NODE_ENV: production
 
-      # ── SEO sanity checks — catch regressions before deploy ──
-      - name: SEO checks on dist/
+      # ── Post-build sanity checks ─────────────────────────
+      - name: Verify dist/ output
         run: |
-          echo "Checking critical SEO files..."
+          set -e
+          echo "── Checking required files ──"
+          test -f dist/index.html    || (echo "❌ dist/index.html missing"  && exit 1)
+          test -f dist/robots.txt    || (echo "❌ robots.txt missing"       && exit 1)
+          test -f dist/sitemap.xml   || (echo "❌ sitemap.xml missing"      && exit 1)
+          test -f dist/llms.txt      || (echo "❌ llms.txt missing"         && exit 1)
+          test -f dist/sw.js         || (echo "❌ sw.js missing"            && exit 1)
+          test -f dist/manifest.json || (echo "❌ manifest.json missing"    && exit 1)
 
-          # index.html must exist
-          test -f dist/index.html || (echo "❌ dist/index.html missing" && exit 1)
+          echo "── Checking index.html signals ──"
+          grep -q 'application/ld+json'     dist/index.html || (echo "❌ No JSON-LD schema"     && exit 1)
+          grep -q 'rel="canonical"'         dist/index.html || (echo "❌ No canonical tag"      && exit 1)
+          grep -q 'og:image'                dist/index.html || (echo "❌ No og:image meta"      && exit 1)
+          grep -q 'Content-Security-Policy' dist/index.html || (echo "❌ No CSP meta"           && exit 1)
+          grep -q 'geo.region'              dist/index.html || (echo "❌ No GEO region tag"     && exit 1)
+          grep -q 'ai-content-description'  dist/index.html || (echo "❌ No AEO meta tag"       && exit 1)
+          grep -q 'MarketingAgency'         dist/index.html || (echo "❌ No agency schema"      && exit 1)
 
-          # robots.txt must be served
-          test -f dist/robots.txt || (echo "❌ robots.txt missing from dist/" && exit 1)
+          echo "── Checking JS chunks ──"
+          ls dist/assets/vendor-react-*.js    || (echo "❌ vendor-react chunk missing"    && exit 1)
+          ls dist/assets/chunk-priority-*.js  || (echo "❌ chunk-priority chunk missing"  && exit 1)
+          ls dist/assets/chunk-mid-*.js       || (echo "❌ chunk-mid chunk missing"       && exit 1)
+          ls dist/assets/chunk-lower-*.js     || (echo "❌ chunk-lower chunk missing"     && exit 1)
 
-          # sitemap.xml must be served
-          test -f dist/sitemap.xml || (echo "❌ sitemap.xml missing from dist/" && exit 1)
+          echo "✅ All checks passed"
 
-          # llms.txt must be present
-          test -f dist/llms.txt || (echo "❌ llms.txt missing from dist/" && exit 1)
-
-          # sw.js must be present for PWA
-          test -f dist/sw.js || (echo "❌ sw.js missing from dist/" && exit 1)
-
-          # Verify JSON-LD present in HTML
-          grep -q 'application/ld+json' dist/index.html || (echo "❌ No JSON-LD in index.html" && exit 1)
-
-          # Verify canonical tag
-          grep -q 'rel="canonical"' dist/index.html || (echo "❌ No canonical tag in index.html" && exit 1)
-
-          # Verify og:image is set
-          grep -q 'og:image' dist/index.html || (echo "❌ No og:image in index.html" && exit 1)
-
-          # Verify CSP meta tag (since _headers doesn't work on GitHub Pages)
-          grep -q 'Content-Security-Policy' dist/index.html || (echo "❌ No CSP meta tag in index.html" && exit 1)
-
-          echo "✅ All SEO checks passed"
-
-      # Re-write CNAME after every Vite build (Vite clears dist/ each time)
-      - name: Write CNAME
+      # ── CNAME: must be written AFTER build (Vite clears dist/) ──
+      - name: Write CNAME for custom domain
         run: echo "digitalizen.billah.dev" > dist/CNAME
 
       - name: Upload Pages artifact

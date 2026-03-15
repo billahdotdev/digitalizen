@@ -209,7 +209,7 @@ export default function Process() {
   return (
     <>
       {/* ═══════ SECTION ═══════ */}
-      <section id="process" className="process-section" ref={sectionRef}>
+      <section id="process" className="process-section" ref={sectionRef} aria-label="আমাদের কাজের প্রক্রিয়া">
         <div className="container">
 
           <div className="row-header">

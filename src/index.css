@@ -271,7 +271,9 @@ label {
   border-radius: 4px;
 }
 
-/* ── Minimum touch target: 44×44px (WCAG 2.5.5) ── */
+/* ── Minimum touch target: 44×44px (WCAG 2.5.5) ──
+   Exemptions: small decorative/UI elements whose touch area
+   is handled by a larger parent or fixed in their own CSS.   */
 button:not(.finder-pip):not(.sc-thumb):not(.pkg-star):not(.loader-dot),
 [role="button"] {
   min-height: 44px;

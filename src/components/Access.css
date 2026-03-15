@@ -483,14 +483,15 @@
   align-items: center;
   gap: 11px;
   margin-top: 12px;
-  background: #25D366;
+  /* darkened from #25D366 → #0e7a36 for WCAG AA contrast ≥4.5:1 on #fff */
+  background: #0e7a36;
   color: #fff;
   border-radius: 10px;
   padding: 11px 15px;
   text-decoration: none;
   transition: background .18s, transform .15s;
 }
-.ac-wa-goto:hover { background: #1ebe5a; transform: translateY(-1px); }
+.ac-wa-goto:hover { background: #0a5c28; transform: translateY(-1px); }
 .ac-wa-goto:active { transform: translateY(0); }
 
 .ac-wa-goto-icon {

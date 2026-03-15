@@ -425,7 +425,7 @@ export default function Finder() {
 
   /* ─── RENDER ─── */
   return (
-    <section id="finder" className="finder-section" ref={sectionRef}>
+    <section id="finder" className="finder-section" ref={sectionRef} aria-label="প্যাকেজ ফাইন্ডার — আপনার বিজনেসের জন্য সঠিক প্ল্যান খুঁজুন">
       <div className="container">
 
         <div className="row-header">

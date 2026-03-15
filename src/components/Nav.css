@@ -86,9 +86,17 @@
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  padding: 6px 4px;
-  width: 36px;
-  height: 36px;
+  padding: 6px;
+  /* WCAG 2.5.5: minimum 44×44px touch target */
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav__burger:hover {
+  background: var(--blue-light);
 }
 
 .nav__burger span {
@@ -165,4 +173,9 @@
 
 .nav__drawer-cta {
   padding: 16px 20px;
+}
+
+/* ── Drawer CTA full-width button ── */
+.nav__drawer-cta-btn {
+  width: 100%;
 }

@@ -196,7 +196,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #25d366;
+  /* darkened from #25d366 → #0e7a36 for WCAG AA contrast (≥4.5:1 on white) */
+  background: #0e7a36;
   color: #fff;
   border: none;
   font-family: var(--font);
@@ -206,14 +207,14 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+  box-shadow: 0 4px 14px rgba(14, 122, 54, 0.28);
   -webkit-tap-highlight-color: transparent;
 }
 
 .faq-cta-btn:hover {
-  background: #1aab52;
+  background: #0a5c28;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  box-shadow: 0 6px 20px rgba(14, 122, 54, 0.38);
 }
 
 .faq-cta-btn:active {

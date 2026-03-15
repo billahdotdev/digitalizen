@@ -180,10 +180,11 @@
   align-items: center;
   gap: 7px;
   font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--green);
+  font-weight: 700;
+  /* darkened from #16A34A → #0d6e2e for WCAG AA on #DCFCE7 bg (≥4.5:1) */
+  color: #0d6e2e;
   background: var(--green-bg);
-  border: 1px solid rgba(22, 163, 74, 0.18);
+  border: 1px solid rgba(13, 110, 46, 0.22);
   border-radius: 100px;
   padding: 6px 14px;
   margin-top: 12px;

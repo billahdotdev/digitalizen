@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <!-- CSP meta tag — active on ALL hosts including GitHub Pages
        (_headers file only works on Cloudflare Pages / Netlify) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://static.tiktokcdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com https://analytics.tiktok.com https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev; frame-src https://calendly.com; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://static.tiktokcdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com https://analytics.tiktok.com https://analytics-ipv6.tiktokw.us https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev; frame-src https://calendly.com; object-src 'none'; base-uri 'self';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="theme-color" content="#1F4BFF" />
@@ -63,6 +63,8 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
 
   <!-- Fonts — non-blocking load (eliminates 450ms render-block on FCP/LCP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -85,13 +87,22 @@
   </noscript>
 
   <!-- ═══════════════════════════════════════════
-       GOOGLE TAG MANAGER — replace GTM-XXXXXXX
+       GOOGLE TAG MANAGER
+       ⚠️  REPLACE GTM-XXXXXXX with your real GTM ID before deploying.
+       Leaving the placeholder causes a 404 on every page load and
+       breaks your Best Practices score in Lighthouse.
+       Get your ID from: tagmanager.google.com
   ═══════════════════════════════════════════ -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+  <script>
+  /* Only load GTM when a real ID is configured — prevents 404 on staging */
+  (function(w,d,s,l,i){
+    if (!i || i === 'GTM-XXXXXXX') return; /* ← remove this guard after setting real ID */
+    w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-XXXXXXX');
+  </script>
 
   <!-- ═══════════════════════════════════════════
        META PIXEL INIT — replace XXXXXXXXXXXXXXXXXX
@@ -280,9 +291,9 @@
   </script>
 </head>
 <body>
-  <!-- GTM noscript — replace GTM-XXXXXXX -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- GTM noscript — replace GTM-XXXXXXX with your real ID -->
+  <!-- <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript> -->
 
   <!-- Meta Pixel noscript — must live in <body>, not <head> -->
   <noscript><img height="1" width="1" style="display:none"

@@ -259,10 +259,11 @@
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* Modal close — WCAG 2.5.5: 44×44px minimum touch target */
 .eb-modal-close {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 32px; height: 32px;
+  top: 8px; right: 8px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   border: none;
   background: #f1f5f9;
@@ -272,6 +273,7 @@
   align-items: center;
   justify-content: center;
   transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 .eb-modal-close:hover {
   background: #e2e8f0;

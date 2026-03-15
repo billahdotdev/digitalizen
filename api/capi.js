@@ -141,7 +141,7 @@ async function handleCAPI(request, env) {
   };
 
   // ── Forward to Meta Graph API ──
-  const metaUrl = `https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`;
+  const metaUrl = `https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`;
 
   let metaResponse;
   try {

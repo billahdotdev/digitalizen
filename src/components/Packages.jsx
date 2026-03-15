@@ -1,5 +1,6 @@
+import { useEffect, useRef, useCallback } from 'react'
 import './Packages.css'
-import { track, WA_NUMBER } from '../lib/analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
 
 /* ── Icons ──────────────────────────────────────── */
@@ -143,14 +144,59 @@ const trustItems = ['চুক্তি নেই', '৪৮ ঘণ্টায�
 
 /* ── Component ─────────────────────────────────── */
 export default function Packages() {
-  const waOrder = (plan) => {
-    track('AddToCart', { content_name: plan.tier, value: 0, currency: 'BDT' })
+  const sectionRef   = useRef(null)
+  const enterTimeRef = useRef(null)
+  const firedRef     = useRef(false)
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !firedRef.current) {
+        firedRef.current     = true
+        enterTimeRef.current = Date.now()
+        track('ViewContent', {
+          content_name:     'Packages Section',
+          content_category: 'Section',
+          content_ids:      ['packages'],
+        }, 'pkg')
+        io.unobserve(el)
+      }
+    }, { threshold: 0.2 })
+    io.observe(el)
+    const push  = () => pushEngagement('packages', enterTimeRef)
+    const onVis = () => { if (document.visibilityState === 'hidden') push() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('beforeunload', push)
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('beforeunload', push)
+    }
+  }, [])
+
+  const waOrder = useCallback((plan) => {
+    track('AddToCart', {
+      content_name:     plan.tier,
+      content_category: 'Package',
+      currency:         'BDT',
+      value:            0,
+    }, 'pkg')
     const msg = `হ্যালো Digitalizen!\n\n"${plan.wa}" সম্পর্কে জানতে চাই।\nকীভাবে শুরু করতে পারি?`
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
-  }
+  }, [])
+
+  const scrollToFinder = useCallback(() => {
+    document.getElementById('finder')?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
 
   return (
-    <section id="packages" className="packages-section">
+    <section
+      id="packages"
+      className="packages-section"
+      ref={sectionRef}
+      aria-label="প্যাকেজ ও মূল্য তালিকা"
+    >
       <div className="container">
 
         <div className="row-header">
@@ -169,22 +215,19 @@ export default function Packages() {
 
         <div className="packages-grid">
 
-          {/* ── Care+ : thin fixed blue border ─── */}
+          {/* ── Care+ ─── */}
           <div className="pkg-card pkg-card--basic">
             <CardBody plan={plans[0]} onOrder={waOrder} />
           </div>
 
-          {/* ── Monthly Care : spinning border ────
-               Wrapper carries the conic animation.
-               Inner .pkg-card--popular is solid white,
-               fully contained — no overflow gap.     */}
+          {/* ── Monthly Care (spinning border) ── */}
           <div className="pkg-popular-wrapper">
             <div className="pkg-card pkg-card--popular">
               <CardBody plan={plans[1]} onOrder={waOrder} />
             </div>
           </div>
 
-          {/* ── Brand Care : glowing border + neo ─ */}
+          {/* ── Brand Care ── */}
           <div className="pkg-card pkg-card--premium">
             <div className="pkg-grid-bg" aria-hidden="true" />
             <CardBody plan={plans[2]} onOrder={waOrder} />
@@ -198,7 +241,7 @@ export default function Packages() {
             নিশ্চিত না?{' '}
             <button
               className="packages-note-link"
-              onClick={() => document.getElementById('finder')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={scrollToFinder}
             >
               ফ্রি অডিট করুন →
             </button>

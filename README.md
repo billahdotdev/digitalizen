@@ -1,124 +1,151 @@
 # Digitalizen — Production SPA
 
-> **Performance Marketing Agency Website**
-> Stack: Vite 6 · React 19 · Pure CSS · React Router v7 (BrowserRouter) · Service Worker
+> **Performance Marketing Agency — Bangladesh**
+> Stack: **Vite 6 · React 19 · Pure CSS · React Router v7 · Service Worker · PWA**
 > Domain: [digitalizen.billah.dev](https://digitalizen.billah.dev)
 > Author: [Masum Billah](https://billah.dev) · [@billahdotdev](https://x.com/billahdotdev)
 
 ---
 
-## Table of Contents
-
-1. [Project Structure](#1-project-structure)
-2. [Quick Start](#2-quick-start)
-3. [First-time Setup Checklist](#3-first-time-setup-checklist)
-4. [Adding a New Route](#4-adding-a-new-route-page-with-its-own-url)
-5. [Adding a New Section](#5-adding-a-new-section-on-the-home-page)
-6. [SEO — Adding Meta for a New Route](#6-seo--adding-meta-for-a-new-route)
-7. [Sitemap — Registering a New URL](#7-sitemap--registering-a-new-url)
-8. [Analytics — Tracking Events](#8-analytics--tracking-events)
-9. [Nav — Adding Links](#9-nav--adding-links)
-10. [Build and Deploy](#10-build-and-deploy)
-11. [GitHub Actions CI/CD](#11-github-actions-cicd)
-12. [Cloudflare Workers — CAPI Setup](#12-cloudflare-workers--capi-setup)
-13. [Required Images Checklist](#13-required-images-checklist)
-14. [Tech Decisions and 2026 Best Practices](#14-tech-decisions-and-2026-best-practices)
-
----
-
-## 1. Project Structure
+## Project Structure
 
 ```
 digitalizen/
-├── index.html                    ← Vite entry (must stay at root)
-├── vite.config.js                ← Chunk splitting, aliases, publicDir
-├── package.json                  ← React 19, Vite 6, React Router v7
-├── eslint.config.js              ← ESLint v9 flat config
-├── wrangler.toml                 ← Cloudflare Workers deployment
+│
+├── index.html                    Vite HTML entry — meta, JSON-LD, pixels, loader
+├── vite.config.js                Chunk splitting, cssCodeSplit, ES2022 target
+├── eslint.config.js              ESLint 9 flat config
+├── package.json                  React 19 · Vite 6 · React Router v7
+├── package-lock.json             Lockfile — commit this
 ├── .gitignore
-├── .nvmrc                        ← Node 22 LTS
-├── .env.example                  ← Copy to .env.local and fill secrets
+├── .nvmrc                        Node 22 LTS — read by GitHub Actions
+├── wrangler.toml                 Meta CAPI Worker config
+├── wrangler.tt-capi.toml         TikTok CAPI Worker config
+├── _headers                      Cache-Control + security headers (root copy)
+├── README.md
+├── FIXES-APPLIED.md              Full audit log
 │
-├── public/                       ← Copied verbatim to dist/ at build time
-│   ├── _headers                  ← Security + cache headers (CF Pages / Netlify)
-│   ├── _redirects                ← SPA fallback (CF Pages / Netlify)
-│   ├── 404.html                  ← GitHub Pages SPA redirect script
-│   ├── offline.html              ← Service Worker offline fallback
-│   ├── favicon.svg
-│   ├── robots.txt                ← SEO + AI crawler rules
-│   ├── sitemap.xml               ← All public URLs with hreflang
-│   ├── llms.txt                  ← AI entity data (ChatGPT, Claude, Perplexity)
-│   ├── humans.txt                ← E-E-A-T credits
-│   ├── sw.js                     ← Service Worker (Cache-First)
-│   └── IMAGES-REQUIRED.md        ← Images to add before going live
-│
-├── src/
-│   ├── main.jsx                  ← React 19 createRoot entry
-│   ├── App.jsx                   ← BrowserRouter + Routes + ErrorBoundary
-│   ├── App.css                   ← App shell styles
-│   ├── index.css                 ← Global design tokens + resets
+├── src/                          ← All React source code lives here
+│   ├── main.jsx                  React 19 createRoot entry
+│   ├── App.jsx                   BrowserRouter + Routes + ErrorBoundary + StickyBar
+│   ├── App.css                   App shell + 404 page styles
+│   ├── index.css                 Design tokens, resets, shared utilities
+│   │
 │   ├── lib/
-│   │   └── analytics.js          ← Unified: Meta Pixel + TikTok + GTM
+│   │   └── analytics.js          Unified track() → Meta Pixel + TikTok + GTM
+│   │
 │   ├── seo/
-│   │   └── SEO.jsx               ← Per-route meta + JSON-LD injection
-│   └── components/               ← 15 components, each .jsx + .css
-│       ├── Nav           Hero     Finder      Packages     Process
-│       ├── About         BookCall Resources   Faq          Contact
-│       ├── Gallery       Footer   FreeResources FreeGift   Access
+│   │   └── SEO.jsx               Per-route title/meta/JSON-LD injection
+│   │
+│   └── components/               15 components — each has .jsx + .css
+│       ├── Nav.jsx / .css        Fixed nav, scroll-spy, mobile drawer
+│       ├── Hero.jsx / .css       Above-fold hero, primary CTA
+│       ├── Finder.jsx / .css     14-question package quiz (score-based)
+│       ├── Packages.jsx / .css   3-tier pricing cards
+│       ├── Process.jsx / .css    3-step modal process
+│       ├── About.jsx / .css      Founder + values + screenshot carousel
+│       ├── BookCall.jsx / .css   WhatsApp call booking form
+│       ├── Resources.jsx / .css  Ebook download + newsletter
+│       ├── Faq.jsx / .css        Accordion FAQ (8 questions)
+│       ├── Contact.jsx / .css    Contact methods + inline form
+│       ├── Gallery.jsx / .css    Full-screen proof gallery
+│       ├── Footer.jsx / .css     Links + legal modals
+│       ├── FreeResources.jsx     Standalone /free route
+│       ├── FreeGift.jsx          Standalone /free-gift route
+│       └── Access.jsx            Standalone /access client portal
 │
-├── api/
-│   ├── capi.js                   ← Meta CAPI Cloudflare Worker
-│   └── tt-capi.js                ← TikTok CAPI Cloudflare Worker
+├── api/                          Cloudflare Workers — NOT bundled by Vite
+│   ├── capi.js                   Meta Conversions API proxy
+│   └── tt-capi.js                TikTok Events API proxy
 │
-└── .github/workflows/
-    ├── deploy-github-pages.yml   ← Lint → Build → SEO check → Deploy
-    └── deploy-workers.yml        ← Deploy CAPI Workers on api/ changes
+└── public/                       Copied verbatim into dist/ at build time
+    ├── _headers                  1-year cache + security headers (CF Pages/Netlify)
+    ├── _redirects                SPA fallback for CF Pages/Netlify
+    ├── 404.html                  GitHub Pages SPA redirect script
+    ├── offline.html              Service Worker offline fallback
+    ├── manifest.json             PWA manifest
+    ├── robots.txt                Crawl rules + AI crawler permissions
+    ├── sitemap.xml               All public URLs with hreflang alternates
+    ├── llms.txt                  AI entity data (ChatGPT, Claude, Perplexity)
+    ├── humans.txt                E-E-A-T credits
+    ├── sw.js                     Service Worker (cache strategies)
+    ├── og-image.jpg              1200×630 social share image (replace placeholder)
+    ├── apple-touch-icon.png      180×180 iOS bookmark icon
+    ├── IMAGES-REQUIRED.md        Images needed before launch
+    └── ebook/
+        └── cover.jpg             Ebook cover (replace placeholder)
 ```
 
 ---
 
-## 2. Quick Start
+## Quick Start
 
 ```bash
-cd digitalizen
 npm install
 npm run dev        # http://localhost:5173
 npm run build      # → dist/
 npm run preview    # http://localhost:4173
-npm run lint
+npm run lint       # ESLint — must pass before deploy
+```
+
+**Requires Node 22** (set in `.nvmrc`).
+
+---
+
+## Before Going Live — Mandatory Checklist
+
+```
+[ ] Replace GTM-XXXXXXX in index.html (2 places)
+[ ] Replace XXXXXXXXXXXXXXXXXX Meta Pixel ID in index.html
+[ ] Replace XXXXXXXXXXXXXXXXXX TikTok Pixel ID in index.html
+[ ] Add public/favicon.svg (referenced in index.html)
+[ ] Replace public/og-image.jpg with real 1200×630 px image
+[ ] Replace public/ebook/cover.jpg with real cover (400×560 px WebP)
+[ ] Add public/ebook/onlineMonline.pdf (actual ebook)
+[ ] Run wrangler secret put for all 4 CAPI secrets (see §CAPI section)
+[ ] Enable GitHub Pages: Repo → Settings → Pages → Source: "GitHub Actions"
+[ ] Set custom domain + DNS (see §Deploy section)
 ```
 
 ---
 
-## 3. First-time Setup Checklist
+## Editing Components — What to Change Where
 
-- [ ] Replace `GTM-XXXXXXX` in `index.html` (2 places: script tag + noscript iframe)
-- [ ] Replace `XXXXXXXXXXXXXXXXXX` Meta Pixel ID in `index.html` (fbq init + noscript img)
-- [ ] Replace `XXXXXXXXXXXXXXXXXX` TikTok Pixel ID in `index.html` (ttq.load)
-- [ ] Update `WA_NUMBER` in `src/lib/analytics.js` if phone number changes
-- [ ] Update `SITE.url` in `src/seo/SEO.jsx` if domain changes
-- [ ] Add `public/og-image.jpg` (1200x630px) — social share image
-- [ ] Add `public/apple-touch-icon.png` (180x180px) — iPhone bookmark icon
-- [ ] Enable GitHub Pages (see section 11)
-- [ ] Set Cloudflare Worker secrets (see section 12)
+| What you want to change | File | What to edit |
+|---|---|---|
+| Hero headline / sub text | `src/components/Hero.jsx` | JSX text directly |
+| WhatsApp number | `src/lib/analytics.js` | `WA_NUMBER` constant — single source of truth |
+| Package names/prices | `src/components/Packages.jsx` | `plans` array at top of file |
+| FAQ questions/answers | `src/components/Faq.jsx` | `faqs` array at top of file |
+| Process steps | `src/components/Process.jsx` | `steps` array at top of file |
+| Contact channels | `src/components/Contact.jsx` | `CHANNELS` array at top of file |
+| Footer nav links | `src/components/Footer.jsx` | `navLinks` array |
+| Footer social icons | `src/components/Footer.jsx` | `socials` array |
+| Legal modal content | `src/components/Footer.jsx` | `LEGAL` object at top of file |
+| Nav scroll links | `src/components/Nav.jsx` | `navLinks` array |
+| Gallery projects | `src/components/Gallery.jsx` | `sites` array at top of file |
+| Ebook download config | `src/components/Resources.jsx` | constants at top of file |
+| Brand colours | `src/index.css` | `:root` CSS variables |
+| Font | `index.html` Google Fonts URL + `src/index.css` `--font` variable |
+| SEO title/description | `src/seo/SEO.jsx` | `PAGE_DEFAULTS` object per route |
+| JSON-LD schemas | `index.html` | `<script type="application/ld+json">` blocks |
+| GEO/AEO signals | `index.html` | `geo.*`, `ai-content-description` meta tags |
 
 ---
 
-## 4. Adding a New Route (Page with its own URL)
+## Adding a New Page (Route)
 
-**4 steps. Do not skip steps 3 and 4.**
+**4 steps — all required.**
 
-### Step 1 — Create the files
+### Step 1 — Create component + CSS
 
 ```bash
-touch src/components/Pricing.jsx
-touch src/components/Pricing.css
+touch src/components/Pricing.jsx src/components/Pricing.css
 ```
 
-Minimal component template:
+Minimal template (copy this exactly):
 
 ```jsx
-// src/components/Pricing.jsx
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import './Pricing.css'
@@ -132,7 +159,6 @@ export default function Pricing() {
     window.__removeLoader?.()
     enterTimeRef.current = Date.now()
     track('ViewContent', { content_name: 'Pricing Page', content_category: 'Page' })
-
     const push  = () => pushEngagement('pricing', enterTimeRef)
     const onVis = () => { if (document.visibilityState === 'hidden') push() }
     document.addEventListener('visibilitychange', onVis)
@@ -146,68 +172,53 @@ export default function Pricing() {
   return (
     <div className="pricing-page">
       <SEO page="pricing" />
-      <div className="pricing-topbar">
-        <Link to="/" className="pricing-back">← ফিরে যান</Link>
-      </div>
+      <Link to="/" className="back-link">← ফিরে যান</Link>
       <main id="main-content" className="container">
-        <h1>Pricing</h1>
+        <h1>প্রাইসিং</h1>
       </main>
     </div>
   )
 }
 ```
 
-### Step 2 — Register in App.jsx
+### Step 2 — Register in src/App.jsx
 
 ```jsx
-// Add lazy import (top of file, with other lazy imports):
+// Add with other lazy imports at top:
 const Pricing = lazy(() => import('./components/Pricing'))
 
-// Add route inside <Routes>:
+// Add inside <Routes>:
 <Route path="/pricing" element={<Suspense fallback={null}><Pricing /></Suspense>} />
 ```
 
-Always wrap new routes in `<Suspense fallback={null}>`.
-
 ### Step 3 — Add SEO config in src/seo/SEO.jsx
 
-Without this: Google shows homepage title on your new page.
+Find `PAGE_DEFAULTS` and add:
 
-Open `src/seo/SEO.jsx`, find `PAGE_DEFAULTS`, add:
-
-```jsx
+```js
 pricing: {
   title:         'Pricing — Digitalizen Digital Marketing Bangladesh',
   description:   'Transparent pricing for Meta Ads, Google Ads, SEO in Bangladesh.',
-  keywords:      'digital marketing pricing Bangladesh, Meta Ads cost BD',
-  titleBn:       'প্রাইসিং — ডিজিটালাইজেন',
-  descriptionBn: 'মেটা অ্যাডস, গুগল অ্যাডস, SEO-এর স্বচ্ছ মূল্য।',
+  keywords:      'digital marketing pricing Bangladesh, Meta Ads cost Dhaka',
+  titleBn:       'মূল্য তালিকা — ডিজিটালাইজেন বাংলাদেশ',
+  descriptionBn: 'মেটা অ্যাডস, গুগল অ্যাডস, SEO মূল্য তালিকা।',
   keywordsBn:    'ডিজিটাল মার্কেটিং মূল্য বাংলাদেশ',
-  schemaType:    'webpage',
+  schemaType:    'webpage',   // 'webpage' | 'collection' | 'home'
   breadcrumbs: [
     { name: 'Home',    item: 'https://digitalizen.billah.dev/'        },
     { name: 'Pricing', item: 'https://digitalizen.billah.dev/pricing' },
   ],
   speakableSelectors: ['h1', 'h2'],
-  // noindex: true    ← uncomment to hide from Google (e.g. /access)
+  // noindex: true   ← uncomment to hide from Google
 },
 ```
 
-schemaType values:
-- `'webpage'`    — standard page
-- `'collection'` — listing/gallery page
-- `'home'`       — homepage only
-
 ### Step 4 — Add to public/sitemap.xml
-
-Without this: Google takes days or weeks to discover the new page.
-
-Add before `</urlset>`:
 
 ```xml
 <url>
   <loc>https://digitalizen.billah.dev/pricing</loc>
-  <lastmod>2026-03-15</lastmod>
+  <lastmod>2026-03-16</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.7</priority>
   <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/pricing" />
@@ -216,29 +227,24 @@ Add before `</urlset>`:
 </url>
 ```
 
-Priority guide: `1.0` homepage · `0.8` high-value · `0.7` standard · never add noindex pages.
-
 ---
 
-## 5. Adding a New Section (on the Home Page)
-
-A section renders inside MainLayout — it scrolls on the homepage, not a separate URL.
+## Adding a New Section (Home Page)
 
 ### Step 1 — Create files
 
 ```bash
-touch src/components/MySection.jsx
-touch src/components/MySection.css
+touch src/components/Testimonials.jsx src/components/Testimonials.css
 ```
 
-### Step 2 — Minimal component
+### Step 2 — Standard section template
 
 ```jsx
 import { useEffect, useRef, useState } from 'react'
-import './MySection.css'
+import './Testimonials.css'
 import { track, pushEngagement } from '../lib/analytics.js'
 
-export default function MySection() {
+export default function Testimonials() {
   const sectionRef   = useRef(null)
   const enterTimeRef = useRef(null)
   const firedRef     = useRef(false)
@@ -249,15 +255,15 @@ export default function MySection() {
     if (!el) return
     const io = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !firedRef.current) {
-        firedRef.current = true
+        firedRef.current     = true
         enterTimeRef.current = Date.now()
         setEntered(true)
-        track('ViewContent', { content_name: 'My Section', content_category: 'Section' })
+        track('ViewContent', { content_name: 'Testimonials', content_category: 'Section' })
         io.unobserve(el)
       }
     }, { threshold: 0.2 })
     io.observe(el)
-    const push  = () => pushEngagement('my-section', enterTimeRef)
+    const push  = () => pushEngagement('testimonials', enterTimeRef)
     const onVis = () => { if (document.visibilityState === 'hidden') push() }
     document.addEventListener('visibilitychange', onVis)
     window.addEventListener('beforeunload', push)
@@ -270,263 +276,162 @@ export default function MySection() {
 
   return (
     <section
-      id="my-section"
-      className={`my-section${entered ? ' my-section--entered' : ''}`}
+      id="testimonials"
+      className={`testimonials-section${entered ? ' testimonials-section--entered' : ''}`}
+      aria-label="ক্লায়েন্ট রিভিউ"
       ref={sectionRef}
     >
       <div className="container">
         <div className="row-header">
           <span className="section-num">০১০</span>
-          <span className="section-title-right">নতুন সেকশন</span>
+          <span className="section-title-right">রিভিউ</span>
         </div>
-        <h2>Heading</h2>
+        <h2 className="testimonials-heading">ক্লায়েন্ট রিভিউ</h2>
       </div>
     </section>
   )
 }
 ```
 
-### Step 3 — Add to App.jsx MainLayout
+### Step 3 — Add to src/App.jsx
 
 ```jsx
 // Lazy import:
-const MySection = lazy(() => import('./components/MySection'))
+const Testimonials = lazy(() => import('./components/Testimonials'))
 
-// Inside MainLayout <main>:
-<Suspense fallback={null}>
-  <Finder />
-  <Packages />
-  <MySection />   {/* add in order you want it */}
-  ...
-</Suspense>
+// Inside <Suspense fallback={null}> in MainLayout, in scroll order:
+<Gallery />
+<Testimonials />   {/* ← insert at the position you want */}
 ```
 
-### Step 4 — Nav scroll link (optional)
+### Step 4 — Optional nav link (src/components/Nav.jsx)
 
-```jsx
-// In src/components/Nav.jsx navLinks array:
-{ label: 'নতুন সেকশন', id: 'my-section' }  // id must match section id=""
+```js
+{ label: 'রিভিউ', id: 'testimonials' }   // must match section id=""
 ```
 
 ---
 
-## 6. SEO — Adding Meta for a New Route
-
-Open `src/seo/SEO.jsx` → `PAGE_DEFAULTS` → add entry:
+## Removing a Component
 
 ```jsx
-'page-key': {
-  title:         'English Title — Digitalizen Bangladesh',
-  description:   'English meta description. 150-160 characters.',
-  keywords:      'keyword1 Bangladesh, keyword2 Dhaka',
-  titleBn:       'বাংলা শিরোনাম',
-  descriptionBn: 'বাংলা বিবরণ।',
-  keywordsBn:    'বাংলা কীওয়ার্ড',
-  schemaType:    'webpage',
-  breadcrumbs: [
-    { name: 'Home',     item: 'https://digitalizen.billah.dev/'          },
-    { name: 'pageName', item: 'https://digitalizen.billah.dev/page-path' },
-  ],
-  speakableSelectors: ['h1', 'h2'],
-},
-```
+// 1. src/App.jsx — delete lazy import:
+const Gallery = lazy(() => import('./components/Gallery'))
 
-Use in the component:
+// 2. src/App.jsx — delete JSX:
+<Gallery />
 
-```jsx
-import SEO from '../seo/SEO'
-// Inside return:
-<SEO page="page-key" />
+// 3. src/components/Nav.jsx — remove from navLinks if present
+
+// Files (Gallery.jsx + Gallery.css) can stay — Vite tree-shakes them out.
+// Or delete them if you're certain they won't be needed.
 ```
 
 ---
 
-## 7. Sitemap — Registering a New URL
+## Analytics & Tracking
 
-Add to `public/sitemap.xml` before `</urlset>`:
+### Architecture
 
-```xml
-<url>
-  <loc>https://digitalizen.billah.dev/your-page</loc>
-  <lastmod>2026-03-15</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.7</priority>
-  <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/your-page" />
-  <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/your-page" />
-  <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/your-page" />
-</url>
+```
+User action
+    │
+    ▼
+track(event, params) — src/lib/analytics.js
+    ├── fbq()              Meta Pixel (browser)
+    ├── ttq.track()        TikTok Pixel (browser)
+    └── dataLayer.push()   GTM → GA4 + CAPI Workers (server-side)
+                                      └── event_id deduplication
 ```
 
-Rules:
-- Update `lastmod` when you change a page
-- Never add noindex pages (e.g. /access is excluded)
-- Always include all three xhtml:link alternates
+### Using track()
 
-After deploying, submit to Google Search Console:
-`https://digitalizen.billah.dev/sitemap.xml`
-
----
-
-## 8. Analytics — Tracking Events
-
-```jsx
+```js
 import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
-// Section enters viewport:
-track('ViewContent', { content_name: 'Section', content_category: 'Section' })
+// Section view (fires once on viewport entry):
+track('ViewContent', { content_name: 'Section Name', content_category: 'Section' })
 
-// CTA click:
-track('InitiateCheckout', { content_name: 'CTA', content_category: 'CTA', currency: 'BDT', value: 0 })
+// WhatsApp CTA click:
+track('InitiateCheckout', { content_name: 'Hero CTA', currency: 'BDT', value: 0 })
+window.open(`https://wa.me/${WA_NUMBER}?text=...`, '_blank')
 
-// Form submit:
-track('Lead', { content_name: 'Form', content_category: 'Form', currency: 'BDT', value: 0 })
+// Form submit / lead:
+track('Lead', { content_name: 'Book Call', currency: 'BDT', value: 0 })
 
-// WhatsApp click:
-track('Contact', { content_name: 'WhatsApp', content_category: 'Contact' })
-window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('message')}`, '_blank')
+// Download:
+track('Purchase', { content_name: 'Ebook Downloaded', value: 0, currency: 'BDT' })
 
-// Time-on-section:
-const enterTimeRef = useRef(null)
-enterTimeRef.current = Date.now()           // on enter
-pushEngagement('section-name', enterTimeRef) // on leave
+// Newsletter:
+track('CompleteRegistration', { content_name: 'Newsletter Subscribed' })
+
+// Time on section (call on visibilitychange + beforeunload):
+pushEngagement('section-name', enterTimeRef)
 ```
 
-`track()` fires Meta Pixel + TikTok Pixel + GTM dataLayer in one call.
-Shared `event_id` enables CAPI deduplication — no double-counting.
+### Changing the phone number
 
----
-
-## 9. Nav — Adding Links
-
-### Scroll link (home page section)
-
-```jsx
-// src/components/Nav.jsx — navLinks array:
-{ label: 'নতুন সেকশন', id: 'my-section' }  // must match section id=""
-```
-
-### Router link (separate URL)
-
-```jsx
-import { Link } from 'react-router-dom'
-
-// Inside Nav drawer JSX:
-<Link to="/pricing" className="nav__drawer-link" onClick={() => setOpen(false)} role="menuitem">
-  প্রাইসিং
-</Link>
+```js
+// src/lib/analytics.js — line 20 — ONLY place to change:
+export const WA_NUMBER = '8801711992558'
 ```
 
 ---
 
-## 10. Build and Deploy
+## SEO / AEO / GEO Signal Map
 
-```bash
-npm run build   # → dist/
-```
+### Where each signal lives
 
-### GitHub Pages (via CI/CD — recommended)
-Push to main. See section 11.
+| Signal | File | Edit when |
+|--------|------|-----------|
+| JSON-LD: Agency + Person + Services | `index.html` `<script type="application/ld+json">` | Services change |
+| JSON-LD: FAQPage (Benglish Q&A) | `index.html` `buildFAQSchema()` | Add more Q&A |
+| JSON-LD: WebPage + BreadcrumbList | `src/seo/SEO.jsx` `buildWebPageSchema()` | Per-route, auto |
+| `<title>` + `<meta description>` | `src/seo/SEO.jsx` `PAGE_DEFAULTS` | Per-route content |
+| Open Graph + Twitter cards | `src/seo/SEO.jsx` `applyAll()` | Auto from PAGE_DEFAULTS |
+| `geo.region`, `geo.position`, ICBM | `index.html` lines ~59–62 | Office moves |
+| GeoCoordinates JSON-LD | `index.html` `"geo"` in agency schema | Office moves |
+| `ai-content-description` | `index.html` line ~46 | Services change |
+| `ai-topic` | `src/seo/SEO.jsx` `applyAll()` | Topic keywords change |
+| AI crawlers permission | `public/robots.txt` | Add new AI bots |
+| AI entity data (plain text) | `public/llms.txt` | Services/pricing change |
+| Canonical + hreflang | `src/seo/SEO.jsx` `applyAll()` | Auto per route |
+| Sitemap | `public/sitemap.xml` | New page added |
+| Identity links (AI entity graph) | `index.html` `<link rel="me">` | New social profiles |
 
-### Cloudflare Pages
-```bash
-npx wrangler pages deploy dist --project-name=digitalizen
-# Or connect GitHub repo in Cloudflare dashboard
-# Build command: npm run build | Output: dist
-```
+### Updating for a new service
 
-### Netlify
-```bash
-npx netlify deploy --prod --dir=dist
-```
-
-### Nginx (VPS)
-```nginx
-location / { try_files $uri $uri/ /index.html; }
-location /assets/ { expires 1y; add_header Cache-Control "public, immutable"; }
-```
-
----
-
-## 11. GitHub Actions CI/CD
-
-### Pipeline
-
-```
-git push origin main
-  ├─► deploy-github-pages.yml
-  │     ├─ npm ci
-  │     ├─ npm run lint          (blocks on error)
-  │     ├─ npm run build
-  │     ├─ SEO checks            (robots.txt, sitemap, JSON-LD, CSP, llms.txt)
-  │     ├─ echo domain > dist/CNAME
-  │     └─ deploy → GitHub Pages
-  │
-  └─► deploy-workers.yml (only if api/ changed)
-        ├─ wrangler deploy api/capi.js
-        ├─ wrangler deploy api/tt-capi.js
-        ├─ sleep 8
-        └─ smoke tests
-```
-
-### One-time Setup
-
-**Step 1** — Enable Pages source:
-`Repo → Settings → Pages → Source: "GitHub Actions"`
-
-**Step 2** — Custom domain + DNS:
-```
-Settings → Pages → Custom domain → digitalizen.billah.dev
-
-DNS (Cloudflare — DNS Only, grey cloud):
-  Type: CNAME | Name: digitalizen | Target: <username>.github.io
-```
-
-Then tick "Enforce HTTPS" after cert provisions (~10 min).
-
-**Step 3** — Add GitHub Secrets:
-`Repo → Settings → Secrets → Actions`
-
-| Secret | Where to get |
-|--------|-------------|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare → My Profile → API Tokens → "Edit Cloudflare Workers" |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → right sidebar |
-
-### Troubleshooting
-
-| Problem | Fix |
-|---------|-----|
-| Deploy fails "pages source error" | Source must be "GitHub Actions" not "Deploy from branch" |
-| Custom domain reverts | Check dist/CNAME is written in build step |
-| Workers fail "missing token" | Add CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID to secrets |
-| SEO check fails | Check public/ has robots.txt, sitemap.xml, llms.txt |
-| Lint blocks deploy | Run `npm run lint` locally, fix all errors |
+1. `index.html` → `OfferCatalog` → add new `Service` object
+2. `index.html` → `ai-content-description` → append service name
+3. `public/llms.txt` → `### Services` section → add service
+4. `src/seo/SEO.jsx` → `PAGE_DEFAULTS.home.keywords` → add keyword
 
 ---
 
-## 12. Cloudflare Workers — CAPI Setup
+## CAPI Workers — Server-Side Tracking
 
-Server-side event proxies. Bypass ad blockers and iOS ITP for maximum CAPI match rate.
-
-### One-time secret setup
+### One-time setup (run locally once)
 
 ```bash
 npm install -g wrangler
 wrangler login
 
-# Meta CAPI
-wrangler secret put META_PIXEL_ID       --name digitalizen-capi
-wrangler secret put CAPI_ACCESS_TOKEN   --name digitalizen-capi
+# Meta CAPI secrets
+wrangler secret put META_PIXEL_ID
+wrangler secret put CAPI_ACCESS_TOKEN
 
-# TikTok CAPI
-wrangler secret put TT_PIXEL_ID         --name digitalizen-tt-capi
-wrangler secret put TT_ACCESS_TOKEN     --name digitalizen-tt-capi
+# TikTok CAPI secrets
+wrangler secret put TT_PIXEL_ID     --config wrangler.tt-capi.toml
+wrangler secret put TT_ACCESS_TOKEN --config wrangler.tt-capi.toml
 ```
 
-Where to find tokens:
-- Meta: Events Manager → Pixel → Settings → Conversions API → Generate Access Token
-- TikTok: Events Manager → Pixel → Settings → Generate Access Token
+Where to get tokens:
+- **Meta:** Events Manager → Pixel → Settings → Conversions API → Generate token
+- **TikTok:** TikTok Ads Manager → Assets → Events → Pixel → Settings → Generate token
 
-### GTM Custom HTML Tag
+### GTM Custom HTML tag (send to CAPI from GTM)
+
+Create a Custom HTML tag in GTM, trigger: All Pages + custom `meta_*` events:
 
 ```html
 <script>
@@ -541,9 +446,14 @@ Where to find tokens:
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      event_name:       ev.meta_event_name,
-      event_id:         ev.meta_event_id,
+      event_name: ev.meta_event_name,
+      event_id:   ev.meta_event_id,
       event_source_url: ev.meta_event_source_url,
+      user_data: {
+        client_user_agent: navigator.userAgent,
+        fbp: document.cookie.match(/_fbp=([^;]+)/)?.[1] || null,
+        fbc: document.cookie.match(/_fbc=([^;]+)/)?.[1] || null,
+      },
     }),
   });
 })();
@@ -552,62 +462,88 @@ Where to find tokens:
 
 ---
 
-## 13. Required Images Checklist
+## Deploy — GitHub Actions
 
-| File | Size | Used by |
-|------|------|---------|
-| `public/og-image.jpg` | 1200x630px, JPG, <200KB | Facebook, WhatsApp, LinkedIn previews |
-| `public/apple-touch-icon.png` | 180x180px, PNG, solid bg | iPhone Safari bookmark icon |
+### How it works
 
-og-image guide: blue background (#1F4BFF) + Digitalizen logo + Bengali tagline. Make in Canva.
-Icons: use [realfavicongenerator.net](https://realfavicongenerator.net).
+```
+git push origin main
+    │
+    ├─► deploy-github-pages.yml
+    │     lint → build → verify dist/ → write CNAME → deploy
+    │
+    └─► deploy-workers.yml  (only when api/ changes)
+          deploy Meta CAPI → deploy TikTok CAPI → smoke tests
+```
+
+### One-time GitHub setup
+
+**1.** Repo → Settings → Pages → Source: **"GitHub Actions"** (not "Deploy from branch")
+
+**2.** Custom domain: Settings → Pages → Custom domain → `digitalizen.billah.dev`
+
+**3.** DNS at Cloudflare (DNS Only — grey cloud):
+```
+Type: CNAME | Name: digitalizen | Target: <yourusername>.github.io
+```
+
+**4.** Tick "Enforce HTTPS" after TLS cert provisions (~10 min)
+
+**5.** Add GitHub Secrets (Repo → Settings → Secrets → Actions):
+
+| Secret | Value |
+|--------|-------|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare Profile → API Tokens → "Edit Cloudflare Workers" |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → right sidebar |
+
+### If deploy fails
+
+| Error | Fix |
+|-------|-----|
+| "Pages source error" | Source must be "GitHub Actions" not "Deploy from branch" |
+| "chunk-priority chunk missing" | `vite.config.js` manualChunks paths are wrong |
+| "No JSON-LD schema" | `index.html` JSON-LD block was accidentally deleted |
+| "ESLint error" | Run `npm run lint` locally and fix all errors first |
+| "CLOUDFLARE_API_TOKEN not found" | Add the secret in Repo → Settings → Secrets |
 
 ---
 
-## 14. Tech Decisions and 2026 Best Practices
+## Service Worker & PWA
 
-### BrowserRouter vs HashRouter
+After each deploy, bump the cache version in `public/sw.js`:
 
-BrowserRouter gives clean URLs: `/access` not `/#/access`.
-GitHub Pages needs a two-part workaround:
-1. `public/404.html` captures the URL → stores in sessionStorage → redirects to `/`
-2. `index.html` script reads sessionStorage → `history.replaceState` restores the URL before React mounts
-
-Cloudflare Pages and Netlify handle this via `public/_redirects` automatically.
-
-### Pure CSS
-
-No Tailwind, no CSS Modules. Design tokens via `var(--blue)`, `var(--font)` etc. in `index.css`.
-Each component owns its `.css` file. Zero build overhead. Zero class collisions.
-
-### React.lazy + Suspense
-
-Nav and Hero load eagerly. All 12 below-fold components are lazy chunks.
-Result: first paint is fast, below-fold JS is deferred and split into separate cached files.
-
-### Analytics architecture
-
-```
-track() call
-  ├─ Meta Pixel (browser)     → fbq()
-  ├─ TikTok Pixel (browser)   → ttq.track()
-  └─ GTM dataLayer            → GA4 + CAPI Workers (server-side)
+```js
+const CACHE_VERSION = 'dz-v4.05'  // ← increment each deploy
 ```
 
-Shared event_id between browser and server = deduplication. Server-side = bypass ad blockers.
+Without bumping, stale users may see old JS/CSS for up to 24 hours.
 
-### SEO/GEO/AEO layers
+---
 
-```
-index.html static JSON-LD    → Google indexes before JS runs
-src/seo/SEO.jsx              → Per-route title/meta/schema updated on navigation
-public/llms.txt              → Clean markdown for ChatGPT, Claude, Perplexity citations
-public/robots.txt            → AI crawlers explicitly permitted
+## Design Tokens (src/index.css)
+
+```css
+/* Colours */
+--blue:       #1F4BFF   /* primary — CTAs, links */
+--blue-dark:  #1438CC   /* hover */
+--green:      #16A34A   /* success, WhatsApp */
+--text:       #0B1220   /* body text */
+--muted:      #4A5568   /* helper text */
+--bg:         #F5F7FF   /* page background */
+--border:     #E2E7F5   /* card borders */
+--dark2:      #101828   /* footer background */
+
+/* Layout */
+--font:       'Noto Sans Bengali', sans-serif
+--nav-h:      64px       /* nav height — also sets scroll-margin-top */
+--max-w:      700px      /* max content width */
+--radius:     12px       /* card radius */
+--radius-sm:  8px        /* button radius */
 ```
 
 ---
 
 ## License
 
-2026 Digitalizen. All rights reserved.
+© 2026 Digitalizen. All rights reserved.
 Built by [Masum Billah](https://billah.dev) · [@billahdotdev](https://x.com/billahdotdev)

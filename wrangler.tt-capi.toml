@@ -1,0 +1,28 @@
+# ============================================================
+# wrangler.tt-capi.toml — TikTok CAPI Worker config
+# ============================================================
+# Deploy: wrangler deploy --config wrangler.tt-capi.toml
+#
+# Secrets:
+#   wrangler secret put TT_PIXEL_ID     --config wrangler.tt-capi.toml
+#   wrangler secret put TT_ACCESS_TOKEN --config wrangler.tt-capi.toml
+# ============================================================
+
+name                 = "digitalizen-tt-capi"
+main                 = "api/tt-capi.js"
+compatibility_date   = "2025-09-01"
+compatibility_flags  = ["nodejs_compat"]
+
+routes = [
+  { pattern = "tt-capi.digitalizen.billah.dev/*", zone_name = "digitalizen.billah.dev" }
+]
+
+[vars]
+ALLOWED_ORIGIN = "https://digitalizen.billah.dev"
+
+# Secrets — set via CLI:
+#   wrangler secret put TT_PIXEL_ID     --config wrangler.tt-capi.toml
+#   wrangler secret put TT_ACCESS_TOKEN --config wrangler.tt-capi.toml
+
+[observability]
+enabled = true

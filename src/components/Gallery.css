@@ -261,8 +261,9 @@
   animation: fadeIn 0.4s 0.22s both;
 }
 
+/* Pagination dot — WCAG 2.5.5: 44×44px minimum touch target */
 .go__dot {
-  width: 28px; height: 28px;
+  width: 44px; height: 44px;
   background: none;
   border: none;
   padding: 0;
@@ -321,4 +322,25 @@
 @keyframes hintPulse {
   0%,100% { opacity: 0.3; transform: scaleY(1); }
   50%     { opacity: 0.8; transform: scaleY(0.65); }
+}
+
+/* ── Section heading / sub ── */
+.gallery-heading {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.gallery-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.gallery-open-btn {
+  width: 100%;
 }

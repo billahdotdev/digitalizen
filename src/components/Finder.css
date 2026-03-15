@@ -790,14 +790,15 @@
 
 .finder-cta-primary--basic,
 .finder-cta-primary--popular {
-  background: #25d366;
-  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+  /* darkened from #25d366 → #0e7a36 for WCAG AA contrast ≥4.5:1 on #fff */
+  background: #0e7a36;
+  box-shadow: 0 4px 16px rgba(14, 122, 54, 0.30);
 }
 .finder-cta-primary--basic:hover,
 .finder-cta-primary--popular:hover {
-  background: #1aab52;
+  background: #0a5c28;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+  box-shadow: 0 8px 24px rgba(14, 122, 54, 0.40);
 }
 
 .finder-cta-primary--premium {

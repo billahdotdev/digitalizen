@@ -164,7 +164,7 @@ export default function BookCall() {
   const previewMsg = buildMessage()
 
   return (
-    <section id="book-call" className="bookcall-section" ref={sectionRef}>
+    <section id="book-call" className="bookcall-section" ref={sectionRef} aria-label="ফ্রি কনসালটেশন কল বুক করুন">
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৬</span>
