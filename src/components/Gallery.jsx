@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Gallery.css'
-import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
+import { track, pushEngagement} from '../lib/analytics.js'
 
 /* ─────────────────────────────────────────────
    DATA — swap img + url for real content
