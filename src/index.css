@@ -4,7 +4,8 @@
    Mobile-first, clean, professional
    ====================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&display=swap');
+/* Font loaded non-blocking via <link media="print" onload> in index.html — no @import needed */
+
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -23,8 +24,8 @@
   --white:       #FFFFFF;
   --text:        #0B1220;
   --text2:       #1E2A40;
-  --muted:       #5A667A;
-  --muted2:      #8A96AA;
+  --muted:       #4A5568;
+  --muted2:      #718096;
   --border:      #E2E7F5;
   --border2:     #D0D8EE;
   --dark:        #0B1220;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 import './Faq.css'
 
 

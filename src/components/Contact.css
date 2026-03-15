@@ -85,7 +85,8 @@
 
 .method-note {
   font-size: 0.72rem;
-  color: var(--muted2);
+  font-weight: 500;
+  color: var(--muted);
   margin-top: 2px;
 }
 

@@ -32,7 +32,7 @@
 }
 .packages-hint {
   font-size: 0.85rem;
-  color: #5A667A;
+  color: #4A5568;
   margin-bottom: 36px;
   line-height: 1.6;
 }
@@ -47,7 +47,7 @@
 .packages-trust-item {
   font-size: 0.67rem;
   font-weight: 700;
-  color: #5A667A;
+  color: #4A5568;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   padding: 0 13px;
@@ -413,7 +413,7 @@
   font-size: 0.78rem;
   margin: 0 0 20px;
   line-height: 1.55;
-  color: #5A667A;
+  color: #4A5568;
 }
 
 /* ══ Price block ════════════════════════════════════ */
@@ -430,7 +430,7 @@
 .pkg-price__currency {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #5A667A;
+  color: #4A5568;
   align-self: flex-start;
   margin-top: 7px;
 }
@@ -449,12 +449,12 @@
 
 .pkg-price__sub {
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.4;
   max-width: 62px;
   align-self: flex-end;
   margin-bottom: 3px;
-  color: #8A96AA;
+  color: #4A5568;
 }
 
 /* ══ Feature list ═══════════════════════════════════ */
@@ -558,7 +558,7 @@
   font-weight: 600;
   text-align: center;
   letter-spacing: 0.02em;
-  color: #8A96AA;
+  color: #718096;
 }
 .pkg-guarantee--popular { color: rgba(31,75,255,0.50); }
 .pkg-guarantee--premium { color: rgba(31,75,255,0.50); }
@@ -575,7 +575,7 @@
   background: #D0D8EE;
   flex-shrink: 0;
 }
-.packages-note-text { font-size: 0.78rem; color: #8A96AA; }
+.packages-note-text { font-size: 0.78rem; color: #4A5568; }
 .packages-note-link {
   background: none;
   border: none;

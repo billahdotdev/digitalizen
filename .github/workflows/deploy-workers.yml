@@ -1,37 +1,32 @@
 # ============================================================
 # .github/workflows/deploy-workers.yml
 #
-# Digitalizen — Cloudflare Workers CAPI Auto-Deploy
-# ─────────────────────────────────────────────────
+# Digitalizen — Cloudflare Workers CAPI Deploy
+# ─────────────────────────────────────────────
 # Deploys two Workers on every push to main that touches api/:
 #   • api/capi.js    → Meta Conversions API proxy
 #   • api/tt-capi.js → TikTok Events API proxy
 #
-# Workers run at the Cloudflare edge — closest nodes to Dhaka —
-# bypassing ad blockers and iOS 14+ ITP restrictions for maximum
-# event match rate on Meta and TikTok.
+# Workers run at Cloudflare edge — closest PoP to Dhaka —
+# bypassing ad blockers and iOS 14+ ITP for maximum CAPI match rate.
 #
 # WORKER SECRETS — set ONCE via CLI, stored encrypted in Cloudflare:
-# ─────────────────────────────────────────────────────────────────
-#   wrangler secret put META_PIXEL_ID       ← your Meta Pixel ID
-#   wrangler secret put CAPI_ACCESS_TOKEN   ← Meta Events Manager → CAPI token
-#   wrangler secret put TT_PIXEL_ID         ← your TikTok Pixel ID
-#   wrangler secret put TT_ACCESS_TOKEN     ← TikTok Events Manager token
+# ──────────────────────────────────────────────────────────────────
+#   wrangler secret put META_PIXEL_ID
+#   wrangler secret put CAPI_ACCESS_TOKEN
+#   wrangler secret put TT_PIXEL_ID
+#   wrangler secret put TT_ACCESS_TOKEN
 #
-#   Run each command once locally. Secrets live in Cloudflare,
-#   never in this repo or any GitHub Secret.
+#   Run each once locally. Secrets live in Cloudflare, never in this repo.
+#   This workflow deploys Worker CODE only — not secrets.
 #
 # GITHUB SECRETS — add in repo → Settings → Secrets → Actions:
-# ─────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────────
 #   CLOUDFLARE_API_TOKEN   → Cloudflare → My Profile → API Tokens
-#                            Create Token → template: "Edit Cloudflare Workers"
-#                            Permissions needed: Workers Scripts:Edit, Account:Read
+#                            Template: "Edit Cloudflare Workers"
+#                            Scopes:   Workers Scripts:Edit + Account:Read
 #
-#   CLOUDFLARE_ACCOUNT_ID  → Cloudflare dashboard → right sidebar → Account ID
-#
-# IMPORTANT: This workflow does NOT deploy the pixel secrets —
-# those are already stored in Cloudflare from your one-time CLI setup.
-# It only deploys the Worker *code* (api/capi.js, api/tt-capi.js).
+#   CLOUDFLARE_ACCOUNT_ID  → Cloudflare dashboard → right sidebar
 # ============================================================
 
 name: Deploy → Cloudflare Workers (CAPI)
@@ -40,65 +35,78 @@ on:
   push:
     branches: [main]
     paths:
-      - 'api/capi.js'       # Only triggers when these specific files change
+      - 'api/capi.js'
       - 'api/tt-capi.js'
       - 'wrangler.toml'
-  workflow_dispatch:        # Manual trigger from Actions tab
+  workflow_dispatch:
+
+# Least-privilege — Workers deploy needs no repo write access
+permissions:
+  contents: read
 
 concurrency:
   group: workers-deploy
   cancel-in-progress: true
 
 jobs:
+
   deploy-workers:
     name: Deploy Meta & TikTok CAPI Workers
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04        # Pinned OS
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
-      # ── Deploy Meta CAPI Worker ────────────────────────────
-      - name: Deploy Meta CAPI → capi.digitalizen.billah.dev
-        uses: cloudflare/wrangler-action@v3
+      # Deploy Meta CAPI Worker via wrangler.toml config (no inline flags)
+      - name: Deploy Meta CAPI Worker
+        uses: cloudflare/wrangler-action@392b948197e5a2f1c737f985a2af3cdbe45da91  # v3.14.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: >
-            deploy api/capi.js
-            --name digitalizen-capi
-            --compatibility-date 2024-09-23
-            --compatibility-flags nodejs_compat
+          wranglerVersion: '3.114.4'     # Pinned Wrangler version
+          command: deploy api/capi.js --name digitalizen-capi
 
-      # ── Deploy TikTok CAPI Worker ──────────────────────────
-      - name: Deploy TikTok CAPI → tt-capi.digitalizen.billah.dev
-        uses: cloudflare/wrangler-action@v3
+      # Deploy TikTok CAPI Worker
+      - name: Deploy TikTok CAPI Worker
+        uses: cloudflare/wrangler-action@392b948197e5a2f1c737f985a2af3cdbe45da91  # v3.14.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: >
-            deploy api/tt-capi.js
-            --name digitalizen-tt-capi
-            --compatibility-date 2024-09-23
-            --compatibility-flags nodejs_compat
+          wranglerVersion: '3.114.4'
+          command: deploy api/tt-capi.js --name digitalizen-tt-capi
 
-      # ── Smoke-test: confirm Workers are reachable ──────────
+      # Wait for global edge propagation before smoke testing
+      # Workers deploy near-instantly but DNS TTL needs a few seconds
+      - name: Wait for edge propagation
+        run: sleep 8
+
+      # Smoke-test: confirm Workers respond (not 000 = unreachable)
+      # 200 = OK, 400/500 = Worker reached but missing secrets (expected in CI)
+      # 000 = Worker is down or URL wrong → hard fail
       - name: Smoke-test Meta CAPI Worker
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
             -X POST https://capi.digitalizen.billah.dev \
             -H "Content-Type: application/json" \
-            -d '{"event_name":"TestEvent","event_id":"ci_test"}')
-          echo "Meta CAPI response: $STATUS"
-          # 200 = success, 500 = missing env secrets (acceptable in CI)
-          # 000 = Worker not reachable (fail)
-          if [ "$STATUS" = "000" ]; then exit 1; fi
+            -d '{"event_name":"TestEvent","event_id":"ci_smoke_test"}')
+          echo "Meta CAPI HTTP status: $STATUS"
+          if [ "$STATUS" = "000" ]; then
+            echo "❌ Meta CAPI Worker unreachable"
+            exit 1
+          fi
+          echo "✅ Meta CAPI Worker is up (HTTP $STATUS)"
 
       - name: Smoke-test TikTok CAPI Worker
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
             -X POST https://tt-capi.digitalizen.billah.dev \
             -H "Content-Type: application/json" \
-            -d '{"event_name":"TestEvent","event_id":"ci_test"}')
-          echo "TikTok CAPI response: $STATUS"
-          if [ "$STATUS" = "000" ]; then exit 1; fi
+            -d '{"event_name":"TestEvent","event_id":"ci_smoke_test"}')
+          echo "TikTok CAPI HTTP status: $STATUS"
+          if [ "$STATUS" = "000" ]; then
+            echo "❌ TikTok CAPI Worker unreachable"
+            exit 1
+          fi
+          echo "✅ TikTok CAPI Worker is up (HTTP $STATUS)"

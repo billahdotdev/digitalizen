@@ -5,42 +5,45 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
 >
 
-  <!-- ── Home ── -->
+  <!-- ── Home ─────────────────────────────────────────── -->
   <url>
     <loc>https://digitalizen.billah.dev/</loc>
-    <lastmod>2026-03-13</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://digitalizen.billah.dev/" />
+    <!-- Bilingual: same URL serves Bengali + English -->
+    <xhtml:link rel="alternate" hreflang="en"      href="https://digitalizen.billah.dev/" />
+    <xhtml:link rel="alternate" hreflang="bn-BD"   href="https://digitalizen.billah.dev/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/" />
     <image:image>
-      <image:loc>https://digitalizen.billah.dev/marketing-og.jpg</image:loc>
+      <image:loc>https://digitalizen.billah.dev/og-image.jpg</image:loc>
       <image:title>Digitalizen — Performance Marketing Agency Dhaka Bangladesh</image:title>
-      <image:caption>Bangladesh's top digital marketing agency specializing in SEO, Google Ads, and Meta Ads</image:caption>
+      <image:caption>Bangladesh's top digital marketing agency: SEO, Google Ads, Meta Ads, TikTok Ads</image:caption>
     </image:image>
   </url>
 
-  <!-- ── Free Resources ── -->
+  <!-- ── Free Resources ───────────────────────────────── -->
   <url>
     <loc>https://digitalizen.billah.dev/free</loc>
-    <lastmod>2026-03-13</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en"      href="https://digitalizen.billah.dev/free" />
+    <xhtml:link rel="alternate" hreflang="bn-BD"   href="https://digitalizen.billah.dev/free" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/free" />
   </url>
 
-  <!-- ── Gallery ── -->
+  <!-- ── Gallery / Portfolio ──────────────────────────── -->
   <url>
     <loc>https://digitalizen.billah.dev/gallery</loc>
-    <lastmod>2026-03-13</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en"      href="https://digitalizen.billah.dev/gallery" />
+    <xhtml:link rel="alternate" hreflang="bn-BD"   href="https://digitalizen.billah.dev/gallery" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/gallery" />
   </url>
 
-  <!-- ── Access ── -->
-  <url>
-    <loc>https://digitalizen.billah.dev/access</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <!-- NOTE: /access is noindex — intentionally excluded from sitemap -->
 
 </urlset>

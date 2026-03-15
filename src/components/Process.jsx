@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import './Process.css'
-import { track, WA_NUMBER } from '../analytics.js'
+import { track, WA_NUMBER } from '../lib/analytics.js'
 
 /* ── Tracking helpers ───────────────────────────────
    Meta Pixel (client-side) + CAPI-ready dataLayer push
@@ -271,7 +271,7 @@ export default function Process() {
         className={`prc-overlay${activeModal !== null ? ' prc-overlay--open' : ''}`}
         role="dialog"
         aria-modal="true"
-        aria-label={active ? active.modal.title : undefined}
+        aria-labelledby={activeModal !== null ? 'prc-modal-title-id' : undefined}
         onClick={(e) => { if (e.target === e.currentTarget) closeModal() }}
       >
         <div className="prc-modal">
@@ -294,7 +294,7 @@ export default function Process() {
                   {active.modal.stepLabel}
                 </div>
 
-                <h2 className="prc-modal-title">{active.modal.title}</h2>
+                <h2 id="prc-modal-title-id" className="prc-modal-title">{active.modal.title}</h2>
                 <p className="prc-modal-tagline">{active.modal.tagline}</p>
 
                 {/* Stats */}

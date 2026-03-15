@@ -26,13 +26,11 @@ export default [
       ...reactPlugin.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'react/react-in-jsx-scope': 'off',   // not needed in React 17+
-      'react/prop-types': 'off',           // TypeScript users: swap to TS instead
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types':         'off',
+      'no-unused-vars':           ['warn', { argsIgnorePattern: '^_' }],
+      'no-console':               ['warn', { allow: ['warn', 'error'] }],
     },
-    settings: {
-      react: { version: 'detect' },
-    },
+    settings: { react: { version: 'detect' } },
   },
 ]

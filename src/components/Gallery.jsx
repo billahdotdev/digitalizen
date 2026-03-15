@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Gallery.css'
-import { track, pushEngagement } from '../analytics.js'
+import { track, pushEngagement } from '../lib/analytics.js'
 
 /* ─────────────────────────────────────────────
    DATA — swap img + url for real content
@@ -10,42 +10,42 @@ const sites = [
     id: 1,
     title: 'ফ্যাশন বুটিক',
     tag: 'ই-কমার্স',
-    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=100&fit=crop&auto=format',
+    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=75&fit=crop&auto=format&fm=webp',
     url: 'https://digitalizen.agency',
   },
   {
     id: 2,
     title: 'রেস্টুরেন্ট প্রো',
     tag: 'ফুড',
-    img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=100&fit=crop&auto=format',
+    img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=75&fit=crop&auto=format&fm=webp',
     url: 'https://digitalizen.agency',
   },
   {
     id: 3,
     title: 'কোচিং সেন্টার',
     tag: 'এডটেক',
-    img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=100&fit=crop&auto=format',
+    img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=75&fit=crop&auto=format&fm=webp',
     url: 'https://digitalizen.agency',
   },
   {
     id: 4,
     title: 'রিয়েল এস্টেট',
     tag: 'প্রপার্টি',
-    img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=100&fit=crop&auto=format',
+    img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=75&fit=crop&auto=format&fm=webp',
     url: 'https://digitalizen.agency',
   },
   {
     id: 5,
     title: 'বিউটি সালোন',
     tag: 'বিউটি',
-    img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200&q=100&fit=crop&auto=format',
+    img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=75&fit=crop&auto=format&fm=webp',
     url: 'https://digitalizen.agency',
   },
   {
     id: 6,
     title: 'ফিটনেস ক্লাব',
     tag: 'হেলথ',
-    img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=100&fit=crop&auto=format',
+    img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75&fit=crop&auto=format&fm=webp',
     url: 'https://digitalizen.agency',
   },
 ]

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Footer.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -318,22 +318,22 @@ export default function Footer() {
               </button>
 
               {/* Social icons */}
-              <div className="footer__socials" role="list" aria-label="সোশ্যাল মিডিয়া লিংক">
+              <ul className="footer__socials" aria-label="সোশ্যাল মিডিয়া লিংক">
                 {socials.map(s => (
-                  <a
-                    key={s.name}
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="social-icon"
-                    aria-label={s.name}
-                    role="listitem"
-                    onClick={() => handleSocial(s.name)}
-                  >
-                    {s.icon}
-                  </a>
+                  <li key={s.name}>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="social-icon"
+                      aria-label={s.name}
+                      onClick={() => handleSocial(s.name)}
+                    >
+                      {s.icon}
+                    </a>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
 
             {/* Nav links */}

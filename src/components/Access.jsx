@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Access.css'
-import { track } from '../analytics.js'
+import { track } from '../lib/analytics.js'
 
 const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me'
 const DIGITALIZEN_FB_PROFILE_URL = 'https://www.facebook.com/digitalizen'

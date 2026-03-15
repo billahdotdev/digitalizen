@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════
    ACCESS.CSS  —  Digitalizen
    #1F4BFF primary · #F5F7FF bg · #0B1220 text
-   #5A667A muted  · #E6EAF5 border
+   #4A5568 muted  · #E6EAF5 border
 ═══════════════════════════════════════════════════ */
 :root {
   --p:        #1F4BFF;
@@ -10,7 +10,7 @@
   --bg:       #F5F7FF;
   --white:    #FFFFFF;
   --text:     #0B1220;
-  --muted:    #5A667A;
+  --muted:    #4A5568;
   --border:   #E6EAF5;
   --fb:       #1877F2;
   --fb-h:     #166FE5;

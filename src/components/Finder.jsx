@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './Finder.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
 
 /* ══════════════════════════════════════════════════

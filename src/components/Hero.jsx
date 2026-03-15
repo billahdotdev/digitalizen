@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { Smile } from 'lucide-react'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 import './Hero.css'
 
 export default function Hero() {

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import './FreeResources.css'
-import { track, pushEngagement } from '../analytics.js'
+import { track, pushEngagement } from '../lib/analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING

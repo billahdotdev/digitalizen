@@ -1,5 +1,5 @@
 import './Packages.css'
-import { track, WA_NUMBER } from '../analytics.js'
+import { track, WA_NUMBER } from '../lib/analytics.js'
 
 
 /* ── Icons ──────────────────────────────────────── */
@@ -22,7 +22,7 @@ const Star = () => (
 )
 
 const Stars = ({ variant, count }) => (
-  <div className={`pkg-stars pkg-stars--${variant}`} aria-label={`${count} star plan`}>
+  <div className={`pkg-stars pkg-stars--${variant}`} role="img" aria-label={`${count} star plan`}>
     {Array.from({ length: count }).map((_, i) => <Star key={i} />)}
   </div>
 )

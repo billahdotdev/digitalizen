@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './BookCall.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING

@@ -2,13 +2,12 @@
 <html lang="bn-BD" dir="ltr">
 <head>
   <meta charset="UTF-8" />
+  <!-- CSP meta tag — active on ALL hosts including GitHub Pages
+       (_headers file only works on Cloudflare Pages / Netlify) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://static.tiktokcdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com https://analytics.tiktok.com https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev; frame-src https://calendly.com; object-src 'none'; base-uri 'self';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="theme-color" content="#1F4BFF" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Digitalizen" />
 
   <title>Digitalizen: বাংলাদেশের সেরা পারফরম্যান্স মার্কেটিং ও ওয়েব সলিউশন</title>
   <meta name="description" content="Digitalizen — ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি। Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS। Dhakar shera digital marketing agency. Founded by Masum Billah (billahdotdev). ৯+ বছরের অভিজ্ঞতা।" />
@@ -29,7 +28,7 @@
   <meta property="og:site_name" content="Digitalizen" />
   <meta property="og:title" content="Digitalizen — ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি | Bangladesh" />
   <meta property="og:description" content="Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS। বাংলাদেশের স্টার্টআপ ও ব্র্যান্ডের জন্য ডেটা-ড্রিভেন মার্কেটিং সলিউশন।" />
-  <meta property="og:image" content="https://digitalizen.billah.dev/marketing-og.jpg" />
+  <meta property="og:image" content="https://digitalizen.billah.dev/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Digitalizen – Performance Marketing Agency in Dhaka, Bangladesh" />
@@ -41,7 +40,7 @@
   <meta name="twitter:creator" content="@billahdotdev" />
   <meta name="twitter:title" content="Digitalizen — Data-Driven Marketing Agency, Dhaka Bangladesh" />
   <meta name="twitter:description" content="Meta Ads, Google Ads, SEO & TikTok for Bangladeshi startups. Real ROAS, zero fake promises. Founded by Masum Billah (@billahdotdev)." />
-  <meta name="twitter:image" content="https://digitalizen.billah.dev/marketing-og.jpg" />
+  <meta name="twitter:image" content="https://digitalizen.billah.dev/og-image.jpg" />
 
   <!-- AEO / GEO — AI Engine Optimization -->
   <meta name="ai-content-description" content="Digitalizen is a performance marketing agency in Dhaka, Bangladesh founded by Masum Billah (billahdotdev). Services: Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, social media management, landing page development. Speciality: CAPI server-side tracking, conversion optimization, ROAS scaling for Bangladeshi startups." />
@@ -62,16 +61,28 @@
   <meta name="geo.position" content="23.8103;90.4125" />
   <meta name="ICBM" content="23.8103, 90.4125" />
 
-  <!-- PWA -->
+  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- Fonts — Noto Sans Bengali covers all Latin glyphs; no need for Inter -->
+  <!-- Fonts — non-blocking load (eliminates 450ms render-block on FCP/LCP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Preconnect to GitHub avatars CDN — saves ~380ms on founder image LCP -->
+  <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin />
+  <!--
+    media="print" triggers non-blocking async download.
+    onload="this.media='all'" switches to screen once loaded.
+    <noscript> ensures fonts load for users without JS.
+  -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap"
+    media="print"
+    onload="this.media='all'"
+  />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" />
+  </noscript>
 
   <!-- ═══════════════════════════════════════════
        GOOGLE TAG MANAGER — replace GTM-XXXXXXX
@@ -127,11 +138,11 @@
         "name": "Digitalizen",
         "alternateName": ["Digitalizen Agency","Digitalizen Marketing","ডিজিটালাইজেন","Dhakar shera marketing agency","Bangladesh best digital marketing agency"],
         "url": "https://digitalizen.billah.dev/",
-        "logo": { "@type": "ImageObject", "url": "https://digitalizen.billah.dev/logo.png", "width": 512, "height": 512 },
-        "image": "https://digitalizen.billah.dev/marketing-og.jpg",
+        "logo": { "@type": "ImageObject", "url": "https://digitalizen.billah.dev/favicon.svg", "width": 512, "height": 512 },
+        "image": "https://digitalizen.billah.dev/og-image.jpg",
         "description": "Digitalizen is a performance-focused digital marketing agency in Dhaka, Bangladesh. Expert in Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, and CAPI server-side tracking to help startups achieve measurable ROAS.",
         "slogan": "Scale smarter. Grow faster.",
-        "foundingDate": "2016",
+        "foundingDate": "2017",
         "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressRegion": "Dhaka Division", "addressCountry": "BD" },
         "areaServed": [
           { "@type": "Country", "name": "Bangladesh" },
@@ -143,7 +154,7 @@
           "telephone": "+8801711992558",
           "contactType": "customer service",
           "availableLanguage": ["Bengali","English"],
-          "hoursAvailable": { "@type": "OpeningHoursSpecification", "opens": "09:00", "closes": "22:00" }
+          "hoursAvailable": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "09:00", "closes": "22:00" }
         },
         "founder": {
           "@type": "Person",
@@ -196,7 +207,7 @@
         "about": { "@id": "https://digitalizen.billah.dev/#agency" },
         "inLanguage": ["bn-BD","en-US"],
         "datePublished": "2023-01-01",
-        "dateModified": "2026-03-14",
+        "dateModified": "2026-03-15",
         "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://digitalizen.billah.dev/" }] },
         "speakable": { "@type": "SpeakableSpecification", "cssSelector": [".hero__headline",".hero__sub",".about-heading"] }
       },
@@ -235,7 +246,15 @@
     .loader-bar { height: 100%; background: #1F4BFF; border-radius: 99px; animation: ldb 1.8s ease infinite; }
     @keyframes ldp { 0%,100%{opacity:1} 50%{opacity:.3} }
     @keyframes ldb { 0%{width:0%} 70%{width:88%} 100%{width:100%} }
-    .seo-fallback { display: none; }
+    .seo-fallback {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border-width: 0;
+    }
   </style>
 </head>
 <body>

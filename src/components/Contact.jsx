@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import './Contact.css'
-import { track, pushEngagement, WA_NUMBER } from '../analytics.js'
+import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
 
 /* ══════════════════════════════════════════════════
    TRACKING
@@ -28,7 +28,7 @@ const CHANNELS = [
   },
   {
     label:   'Facebook',
-    value:   '@digitalizen',
+    value:   'Facebook: @digitalizen',
     note:    'পেজে মেসেজ করুন',
     bg:      '#eff6ff',
     href:    'https://facebook.com/digitalizen',
@@ -41,7 +41,7 @@ const CHANNELS = [
   },
   {
     label:   'Instagram',
-    value:   '@digitalizen',
+    value:   'Instagram: @digitalizen',
     note:    'ডিএম করুন',
     bg:      '#fdf4ff',
     href:    'https://instagram.com/digitalizen',
@@ -54,7 +54,7 @@ const CHANNELS = [
   },
   {
     label:   'TikTok',
-    value:   '@digitalizen',
+    value:   'TikTok: @digitalizen',
     note:    'ভিডিও দেখুন',
     bg:      '#f0f0f0',
     href:    'https://tiktok.com/@digitalizen',

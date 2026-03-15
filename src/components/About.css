@@ -261,12 +261,21 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+.screenshots-strip li {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  display: flex;
 }
 .screenshots-strip::-webkit-scrollbar { display: none; }
 
 /* ── Thumbnail card ─────────────────────────── */
 .sc-thumb {
-  flex: 0 0 160px;
+  flex: 1 1 auto;
+  width: 160px;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;

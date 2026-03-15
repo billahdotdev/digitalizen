@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { track, pushEngagement } from '../analytics.js'
+import { track, pushEngagement } from '../lib/analytics.js'
 import './About.css'
 
 /* ── SVG Icons ─────────────────────────────────── */
@@ -197,23 +197,24 @@ export default function About() {
           <p className="screenshots-sub">আমাদের ক্লায়েন্টদের চলমান ক্যাম্পেইনের সত্যিকারের ডেটা। কোনো এডিটিং নেই।</p>
 
           <div className="screenshots-outer">
-            <div className="screenshots-strip" role="list">
+            <ul className="screenshots-strip" aria-label="ক্যাম্পেইন স্ক্রিনশট">
               {screenshots.map((s, i) => (
-                <button
-                  key={i}
-                  className={`sc-thumb${active === i ? ' sc-thumb--active' : ''}`}
-                  onClick={() => handleThumb(i)}
-                  aria-label={`${s.caption} — ${active === i ? 'বন্ধ করুন' : 'দেখুন'}`}
-                  role="listitem"
-                >
-                  <div className="sc-thumb-wrap">
-                    <img src={s.src} alt={s.caption} className="sc-thumb-img" loading="lazy" />
-                    <div className="sc-thumb-icon" aria-hidden="true">{Icons.expand}</div>
-                  </div>
-                  <span className="sc-thumb-caption">{s.caption}</span>
-                </button>
+                <li key={i}>
+                  <button
+                    className={`sc-thumb${active === i ? ' sc-thumb--active' : ''}`}
+                    onClick={() => handleThumb(i)}
+                    aria-label={`${s.caption} — ${active === i ? 'বন্ধ করুন' : 'দেখুন'}`}
+                    aria-pressed={active === i}
+                  >
+                    <div className="sc-thumb-wrap">
+                      <img src={s.src} alt="" className="sc-thumb-img" loading="lazy" aria-hidden="true" />
+                      <div className="sc-thumb-icon" aria-hidden="true">{Icons.expand}</div>
+                    </div>
+                    <span className="sc-thumb-caption">{s.caption}</span>
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
           <div
@@ -249,9 +250,13 @@ export default function About() {
             <div className="founder-card">
               <div className="founder-img-wrap">
                 <img
-                  src="https://avatars.githubusercontent.com/u/112099343?v=4"
-                  alt="ফাউন্ডার — Masum Billah (billahdotdev)"
+                  src="https://avatars.githubusercontent.com/u/112099343?s=294&v=4"
+                  alt="Masum Billah — Digitalizen Founder"
                   className="founder-img"
+                  width="147"
+                  height="147"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
 

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './Resources.css'
-import { track, pushEngagement } from '../analytics.js'
+import { track, pushEngagement } from '../lib/analytics.js'
 
 /* ─────────────────────────────────────────────────────────────
    META PIXEL HELPER

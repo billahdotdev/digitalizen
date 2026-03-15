@@ -41,7 +41,7 @@
 
 .footer__tagline {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.65);
   line-height: 1.65;
 }
 
@@ -74,6 +74,12 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 4px;
+  list-style: none;
+  padding: 0;
+}
+
+.footer__socials li {
+  display: flex;
 }
 
 .social-icon {
@@ -107,7 +113,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.6);
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -115,7 +121,7 @@
 .footer__link {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.65);
   font-family: var(--font);
   font-size: 0.86rem;
   font-weight: 500;
@@ -149,7 +155,7 @@
   flex-direction: column;
   gap: 10px;
   font-size: 0.74rem;
-  color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.6);
 }
 
 .footer__copy {
@@ -192,7 +198,7 @@
   border: none;
   font-family: var(--font);
   font-size: 0.74rem;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.6);
   cursor: pointer;
   padding: 0;
   transition: color 0.15s;

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { track, WA_NUMBER } from '../analytics.js'
+import { track, WA_NUMBER } from '../lib/analytics.js'
 import './Nav.css'
 
 /* ── Scroll-spy hook ─────────────────────────────────

@@ -3,18 +3,16 @@
 # Optimized for: Google, Bing, AI crawlers (2026)
 # ============================================================
 
-# ── Default: All crawlers ────────────────────────────────
+# ── Default: all crawlers ─────────────────────────────────
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /private/
-Disallow: /*.json$
 Crawl-delay: 1
 
 # ── Google ───────────────────────────────────────────────
 User-agent: Googlebot
 Allow: /
-Disallow: /admin/
 Crawl-delay: 0
 
 User-agent: Googlebot-Image
@@ -25,35 +23,36 @@ User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
-# ── OpenAI GPTBot (ChatGPT) ───────────────────────────────
+# ── AI Crawlers — allowed to cite Digitalizen as source ──
+# OpenAI / ChatGPT
 User-agent: GPTBot
 Allow: /
-# Allowing GPTBot enables ChatGPT to cite Digitalizen as a source
 
-# ── Anthropic ClaudeBot ───────────────────────────────────
+# Anthropic / Claude
 User-agent: ClaudeBot
 Allow: /
 
-# ── Google Gemini/Bard ────────────────────────────────────
+User-agent: anthropic-ai
+Allow: /
+
+# Google Gemini
 User-agent: Google-Extended
 Allow: /
 
-# ── Perplexity ────────────────────────────────────────────
+# Perplexity
 User-agent: PerplexityBot
 Allow: /
 
-# ── Meta AI ───────────────────────────────────────────────
+# Meta AI
 User-agent: FacebookBot
 Allow: /
 
-# ── Common AI Research Crawlers ───────────────────────────
-User-agent: CCBot
-Allow: /
-
+# Cohere
 User-agent: cohere-ai
 Allow: /
 
-User-agent: anthropic-ai
+# Common AI training crawlers
+User-agent: CCBot
 Allow: /
 
 # ── SEO Tools ────────────────────────────────────────────
@@ -68,9 +67,5 @@ Crawl-delay: 10
 User-agent: MJ12bot
 Disallow: /
 
-# ── Sitemap ──────────────────────────────────────────────
+# ── Sitemaps ──────────────────────────────────────────────
 Sitemap: https://digitalizen.billah.dev/sitemap.xml
-Sitemap: https://digitalizen.billah.dev/sitemap-images.xml
-
-# ── Host ─────────────────────────────────────────────────
-Host: https://digitalizen.billah.dev
