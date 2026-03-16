@@ -111,7 +111,7 @@ export default function Hero() {
           aria-label="আমাদের কাজ দেখুন"
         >
           <Smile className="hero__salesperson-face" size={22} strokeWidth={2} aria-hidden="true" />
-          <span className="hero__salesperson-text">আমাদের কাজ দেখুন</span>
+          <span className="hero__salesperson-text">সেলস পারসন; যে কখনো ঘুমায় না</span>
         </button>
 
       </div>
