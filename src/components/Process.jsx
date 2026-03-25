@@ -9,7 +9,6 @@ import { track, WA_NUMBER } from '../lib/analytics.js'
    your CAPI endpoint can deduplicate with Meta.
 ─────────────────────────────────────────────────── */
 
-
 /* ── WhatsApp icon ──────────────────────────────── */
 const WaIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -25,102 +24,131 @@ const CheckIcon = () => (
   </svg>
 )
 
+/* ── Step icons ─────────────────────────────────── */
+const Icons = {
+  data: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M17.5 14v6M14.5 17h6" />
+    </svg>
+  ),
+  cog: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+    </svg>
+  ),
+  eye: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ),
+  check: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ),
+}
+
 /* ── Step data ──────────────────────────────────── */
-const steps = [
+const STEPS = [
   {
-    num: '01',
-    numBn: '১',
-    title: 'টেস্ট',
-    desc: 'ছোট বাজেটে ৩ থেকে ৫টি অ্যাড ভেরিয়েন্ট চালাই। কনটেন্ট রেডি থাকলে দ্রুতই শুরু করা যায়।',
-    metric: '৭ দিন',
-    metricLabel: 'প্রথম ডেটা',
+    id: '01',
+    label: 'Audit & Strategy',
+    lbl: 'Audit',
+    title: 'বিজনেসের গভীর বিশ্লেষণ',
+    desc: 'আপনার বর্তমান অ্যাড অ্যাকাউন্ট এবং ল্যান্ডিং পেজের ডাটা এনালাইসিস করে আমরা একটি কাস্টম রোডম্যাপ তৈরি করি।',
+    icon: Icons.data,
     modal: {
-      stepLabel: 'ধাপ ০১',
-      title: 'টেস্ট ফেজ',
-      tagline: 'ডেটা ছাড়া সিদ্ধান্ত নয়। আমরা আগে প্রমাণ সংগ্রহ করি, তারপর বিনিয়োগ বাড়াই।',
-      stats: [
-        { num: '৭ দিন', lbl: 'প্রথম ডেটা পয়েন্ট' },
-        { num: '৩ থেকে ৫টি', lbl: 'ভেরিয়েন্ট একসাথে' },
-      ],
-      story: 'আমরা কখনো সরাসরি বড় বাজেট ঢালি না। ছোট পরিসরে একাধিক ভিন্ন অ্যাড ভেরিয়েন্ট রান করি, ভিন্ন হেডলাইন, ভিন্ন ভিজ্যুয়াল, ভিন্ন অডিয়েন্স। মাত্র ৭ দিনেই বোঝা যায় কোনটা আপনার কাস্টমার টানছে।',
-      checksLabel: 'এই ধাপে আমরা যা করি',
+      story: 'অ্যাড রান করার আগে আমরা দেখি আপনার ব্যবসার ফানেল ঠিক আছে কি না। সঠিক অডিট ছাড়া অ্যাড চালানো মানে অন্ধের মতো টাকা খরচ করা।',
+      checksLabel: 'আমরা যা চেক করি:',
       checks: [
-        'Meta Pixel ও Conversion API সেটআপ',
-        'A/B টেস্ট কপি ও ক্রিয়েটিভ তৈরি',
-        '৩ থেকে ৫টি অডিয়েন্স সেগমেন্ট টেস্ট',
-        'লো-বাজেটে ক্যাম্পেইন লঞ্চ',
-        'প্রতিদিন পারফরম্যান্স মনিটরিং',
+        'বর্তমান কনভার্সন রেট এনালাইসিস',
+        'প্রতিযোগী ও মার্কেট রিসার্চ',
+        'সঠিক পিক্সেল ও ট্র্যাকিং সেটআপ',
+        'রি-টার্গেটিং ফানেল প্ল্যানিং',
       ],
       insight: {
-        title: 'কেন এটা জরুরি',
-        text: 'টেস্ট না করে স্কেল করলে বাজেটের ৬০ থেকে ৭০% নষ্ট হয়। আমাদের ক্লায়েন্টরা প্রথম সপ্তাহেই জানতে পারেন কোন ক্রিয়েটিভে সবচেয়ে কম খরচে সবচেয়ে বেশি রেজাল্ট আসছে।',
+        title: 'প্রো টিপ: ',
+        text: 'ভুল ফানেলে অ্যাড দিলে শুধু টাকা নষ্ট হয়, সেল আসে না।',
       },
-      ctaText: 'ফ্রি টেস্ট স্ট্র্যাটেজি নিন',
-      waMsg: 'হ্যালো Digitalizen, টেস্ট ফেজ সম্পর্কে জানতে চাই। কীভাবে শুরু করব সেটা বুঝতে চাই।',
+      ctaText: 'ফ্রি বিজনেস অডিট বুক করুন',
     },
   },
   {
-    num: '02',
-    numBn: '২',
-    title: 'অপ্টিমাইজ',
-    desc: 'ডেটা বিশ্লেষণ করি। কোনটা কাজ করছে সেটায় বাজেট বাড়াই, বাকিগুলো বন্ধ করি।',
-    metric: '2X',
-    metricLabel: 'কম খরচ',
+    id: '02',
+    label: 'Automation System',
+    lbl: 'System',
+    title: 'সেলস অটোমেশন সেটআপ',
+    desc: 'আমরা আপনার জন্য এমন এক সিস্টেম (Make/ManyChat) তৈরি করি যা আপনার অনুপস্থিতিতেও কাস্টমারকে গাইড করবে।',
+    icon: Icons.cog,
     modal: {
-      stepLabel: 'ধাপ ০২',
-      title: 'অপ্টিমাইজ ফেজ',
-      tagline: 'লুজার বন্ধ করো, উইনার স্কেল করো। এই নীতিতেই প্রতিটি টাকার মূল্য দ্বিগুণ হয়।',
-      stats: [
-        { num: '2X',   lbl: 'বাজেট এফিশিয়েন্সি' },
-        { num: '৪০ থেকে ৬০%', lbl: 'CPL কমে গড়ে' },
-      ],
-      story: 'টেস্ট ডেটা হাতে আসার পর আমরা বিশ্লেষণ করি। যে অ্যাড কম খরচে বেশি কনভার্ট করছে সেটায় বাজেট সরিয়ে দিই। বাকিগুলো নিষ্ঠুরভাবে বন্ধ করি। এই ধাপেই একই বাজেটে দ্বিগুণ ফল আসে।',
-      checksLabel: 'এই ধাপে আমরা যা করি',
+      story: 'অ্যাড থেকে আসা লিডগুলো যেন রিপ্লাই না পেয়ে হারিয়ে না যায়, সেজন্য আমরা হোয়াটসঅ্যাপ ও মেসেঞ্জার অটোমেশন সেট করি।',
+      checksLabel: 'অটোমেশনের সুফল:',
       checks: [
-        'CPL, ROAS, CTR গভীরভাবে বিশ্লেষণ',
-        'পারফর্মিং ক্রিয়েটিভ আইডেন্টিফাই',
-        'বাজেট রিঅ্যালোকেশন',
-        'অডিয়েন্স রিফাইনমেন্ট',
-        'ল্যান্ডিং পেজ ও ফানেল অডিট',
+        'লিড পাওয়ার সাথে সাথে অটো-রিপ্লাই',
+        'কাস্টমার ডাটা অটোমেটিক গুগল শিটে জমা',
+        'রি-মার্কেটিং এর জন্য অটোমেটেড ফলো-আপ',
+        'কাস্টমার সাপোর্ট ম্যানেজমেন্ট সহজ করা',
       ],
       insight: {
-        title: 'রিয়েল নাম্বার',
-        text: 'গড়ে আমাদের ক্লায়েন্টদের CPL এই ধাপে ৪০ থেকে ৬০% কমে যায়। একই বাজেটে দ্বিগুণ লিড মানে হলো মার্কেটিং ROI সরাসরি 2X হওয়া।',
+        title: 'কেন অটোমেশন? ',
+        text: 'দ্রুত রিপ্লাই দিলে সেলস ক্লোজ হওয়ার সম্ভাবনা ৪ গুণ বেড়ে যায়।',
       },
-      ctaText: 'অপ্টিমাইজেশন কল বুক করুন',
-      waMsg: 'হ্যালো Digitalizen, চলমান অ্যাড ক্যাম্পেইন অপ্টিমাইজ করতে চাই। কীভাবে শুরু করা যায়?',
+      ctaText: 'অটোমেশন নিয়ে কথা বলি',
     },
   },
   {
-    num: '03',
-    numBn: '৩',
-    title: 'স্কেল',
-    desc: 'প্রমাণিত উইনার অ্যাড স্কেল করি। ROAS ধরে রেখে ইনকাম বাড়াই।',
-    metric: '৩৪০%',
-    metricLabel: 'গড় ROAS',
+    id: '03',
+    label: 'Conversion Assets',
+    lbl: 'Assets',
+    title: 'হাই-কনভার্টিং ল্যান্ডিং পেজ',
+    desc: 'শুধু অ্যাড না, আমরা হাই-স্পিড Vite+React ল্যান্ডিং পেজ ডিজাইন করি যা কাস্টমারকে ট্রাস্ট করতে বাধ্য করে।',
+    icon: Icons.eye,
     modal: {
-      stepLabel: 'ধাপ ০৩',
-      title: 'স্কেল ফেজ',
-      tagline: 'প্রমাণিত ফর্মুলায় বাজেট বাড়াও। অনুমান নয়, ডেটায় নিশ্চিত।',
-      stats: [
-        { num: '৩৪০%', lbl: 'গড় ROAS আমাদের ক্লায়েন্টের' },
-        { num: '৩X',   lbl: 'বাজেট বাড়িয়েও ROAS একই' },
-      ],
-      story: 'এখন আমাদের কাছে উইনার আছে। এই স্টেজে সেই অ্যাডগুলো দিয়ে নতুন অডিয়েন্সে যাই, Lookalike তৈরি করি এবং বাজেট ধীরে ধীরে বাড়াই। ROAS যেন না কমে সেদিকে প্রতিটি ধাপে নজর রাখি।',
-      checksLabel: 'এই ধাপে আমরা যা করি',
+      story: 'ফেসবুক পেজের চেয়ে একটি প্রফেশনাল ল্যান্ডিং পেজ কাস্টমারের ট্রাস্ট বহুগুণ বাড়িয়ে দেয় এবং ব্র্যান্ড ভ্যালু তৈরি করে।',
+      checksLabel: 'ল্যান্ডিং পেজের বৈশিষ্ট্য:',
       checks: [
-        'Lookalike Audience তৈরি',
-        'Retargeting ফানেল সেটআপ',
-        'ধাপে ধাপে বাজেট স্কেলিং',
-        'ROAS ট্র্যাকিং ও মেইনটেন',
-        'মাসিক গ্রোথ রিভিউ মিটিং',
+        'আল্ট্রা-ফাস্ট লোডিং স্পিড (Vite+React)',
+        'মোবাইল-ফ্রেন্ডলি ক্লিন ডিজাইন',
+        'কনভার্সন অপ্টিমাইজড কপিরাইটিং',
+        'সার্ভার সাইড ট্র্যাকিং (CAPI) সেটআপ',
       ],
       insight: {
-        title: 'ক্লায়েন্টের অভিজ্ঞতা',
-        text: 'সঠিকভাবে স্কেল করলে বাজেট ৩ গুণ বাড়িয়েও ROAS একই রাখা সম্ভব। আমাদের ক্লায়েন্টরা গড়ে ৩৪০% ROAS পাচ্ছেন — মানে প্রতি ১০০ টাকায় ৩৪০ টাকা ফেরত।',
+        title: 'সিক্রেট: ',
+        text: 'আপনার ল্যান্ডিং পেজই আপনার ব্যবসার ২৪/৭ সেরা সেলস পারসন।',
       },
-      ctaText: 'স্কেলিং স্ট্র্যাটেজি নিন',
-      waMsg: 'হ্যালো Digitalizen, ব্যবসা স্কেল করতে চাই। ROAS এবং গ্রোথ নিয়ে কথা বলতে চাই।',
+      ctaText: 'আমার ল্যান্ডিং পেজ দরকার',
+    },
+  },
+  {
+    id: '04',
+    label: 'Scaling & Growth',
+    lbl: 'Growth',
+    title: 'স্কেলিং এবং প্রফিট নিশ্চিত করা',
+    desc: 'সিস্টেম রেডি হওয়ার পর আমরা ডাটা দেখে বাজেট বাড়াই এবং আপনার বিজনেসের দীর্ঘমেয়াদী গ্রোথ নিশ্চিত করি।',
+    icon: Icons.check,
+    modal: {
+      story: 'সবকিছু যখন অটোমেটেড এবং অপ্টিমাইজড থাকে, তখন বিজ্ঞাপনের বাজেট বাড়ানো খুব সহজ ও রিস্ক-ফ্রি হয়ে যায়।',
+      checksLabel: 'স্কেলিং প্রসেস:',
+      checks: [
+        'এ/বি টেস্টিং (A/B Testing)',
+        'অ্যাডের আরও ভ্যারিয়েশন তৈরি',
+        'লো-কস্ট লিড জেনারেশন',
+        'মাসিক পারফরম্যান্স রিপোর্ট প্রদান',
+      ],
+      insight: {
+        title: 'লক্ষ্য: ',
+        text: 'আমাদের লক্ষ্য আপনার প্রতি ১ টাকা ইনভেস্টমেন্টকে ৫ টাকায় রূপান্তর করা।',
+      },
+      ctaText: 'বিজনেস স্কেল করতে চাই',
     },
   },
 ]
@@ -171,7 +199,7 @@ export default function Process() {
     setActiveModal(idx)
     document.body.style.overflow = 'hidden'
     track('ViewContent', {
-      content_name: `Process Step ${idx + 1} – ${steps[idx].title}`,
+      content_name: `Process Step ${idx + 1} – ${STEPS[idx].title}`,
       content_category: 'Modal',
       content_ids: [`process_step_${idx + 1}`],
     })
@@ -195,16 +223,17 @@ export default function Process() {
     track('InitiateCheckout', {
       content_name: step.title,
       content_category: 'WhatsApp CTA',
-      content_ids: [`process_step_${steps.indexOf(step) + 1}`],
+      content_ids: [`process_step_${STEPS.indexOf(step) + 1}`],
       currency: 'BDT',
     })
+    const waMsg = `হ্যালো Digitalizen, ${step.modal.ctaText} সম্পর্কে জানতে চাই।`
     window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(step.modal.waMsg)}`,
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMsg)}`,
       '_blank'
     )
   }
 
-  const active = activeModal !== null ? steps[activeModal] : null
+  const active = activeModal !== null ? STEPS[activeModal] : null
 
   return (
     <>
@@ -219,48 +248,51 @@ export default function Process() {
 
           <h2 className="process-heading">আমাদের প্রমাণিত পদ্ধতি</h2>
           <p className="process-sub">
-            তিনটি ধাপ, ছোট টেস্ট থেকে বড় স্কেল পর্যন্ত।
+            চারটি ধাপ, অডিট থেকে স্কেলিং পর্যন্ত।
             প্রতিটি কার্ড চাপলে বিস্তারিত জানতে পারবেন।
           </p>
 
           {/* Cards */}
           <div className="process-cards">
-            {steps.map((s, i) => (
-              <button
-                key={i}
-                className="prc-card"
-                onClick={() => openModal(i)}
-                aria-haspopup="dialog"
-                aria-label={`${s.title} সম্পর্কে বিস্তারিত দেখুন`}
-              >
-                {/* Orb */}
-                <div className="prc-orb-col">
-                  <div className="prc-orb">
-                    <span className="prc-orb-num">{s.num}</span>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <div className="prc-thread" aria-hidden="true" />
-                  )}
-                </div>
-
-                {/* Body */}
-                <div className="prc-body" data-n={s.num}>
-                  <div className="prc-body-shine" aria-hidden="true" />
-                  <div className="prc-row">
-                    <h3 className="prc-title">{s.title}</h3>
-                    <div className="prc-metric">
-                      <span className="prc-metric-num">{s.metric}</span>
-                      <span className="prc-metric-label">{s.metricLabel}</span>
+            {STEPS.map((s, i) => {
+              const StepIcon = s.icon
+              return (
+                <button
+                  key={i}
+                  className="prc-card"
+                  onClick={() => openModal(i)}
+                  aria-haspopup="dialog"
+                  aria-label={`${s.title} সম্পর্কে বিস্তারিত দেখুন`}
+                >
+                  {/* Orb */}
+                  <div className="prc-orb-col">
+                    <div className="prc-orb">
+                      <span className="prc-orb-num">{s.id}</span>
                     </div>
+                    {i < STEPS.length - 1 && (
+                      <div className="prc-thread" aria-hidden="true" />
+                    )}
                   </div>
-                  <p className="prc-desc">{s.desc}</p>
-                  <span className="prc-cue" aria-hidden="true">
-                    বিস্তারিত দেখুন
-                    <span className="prc-cue-arr">→</span>
-                  </span>
-                </div>
-              </button>
-            ))}
+
+                  {/* Body */}
+                  <div className="prc-body" data-n={s.id}>
+                    <div className="prc-body-shine" aria-hidden="true" />
+                    <div className="prc-row">
+                      <h3 className="prc-title">{s.title}</h3>
+                      <div className="prc-label-chip">
+                        <span className="prc-label-icon"><StepIcon /></span>
+                        <span className="prc-label-text">{s.lbl}</span>
+                      </div>
+                    </div>
+                    <p className="prc-desc">{s.desc}</p>
+                    <span className="prc-cue" aria-hidden="true">
+                      বিস্তারিত দেখুন
+                      <span className="prc-cue-arr">→</span>
+                    </span>
+                  </div>
+                </button>
+              )
+            })}
           </div>
 
         </div>
@@ -291,21 +323,10 @@ export default function Process() {
               <div className="prc-modal-header">
                 <div className="prc-modal-step-pill">
                   <span className="prc-modal-step-pill-dot" aria-hidden="true" />
-                  {active.modal.stepLabel}
+                  ধাপ {active.id} — {active.label}
                 </div>
 
-                <h2 id="prc-modal-title-id" className="prc-modal-title">{active.modal.title}</h2>
-                <p className="prc-modal-tagline">{active.modal.tagline}</p>
-
-                {/* Stats */}
-                <div className="prc-modal-stat-row">
-                  {active.modal.stats.map((st, i) => (
-                    <div key={i} className="prc-modal-stat">
-                      <span className="prc-modal-stat-num">{st.num}</span>
-                      <span className="prc-modal-stat-lbl">{st.lbl}</span>
-                    </div>
-                  ))}
-                </div>
+                <h2 id="prc-modal-title-id" className="prc-modal-title">{active.title}</h2>
               </div>
 
               {/* Content */}

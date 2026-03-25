@@ -4,6 +4,7 @@ import './About.css'
 
 /* ── SVG Icons ─────────────────────────────────── */
 const Icons = {
+  cog: (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>),
   data: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>),
   eye:  (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>),
   link: (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>),
@@ -13,15 +14,12 @@ const Icons = {
   github: (<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>),
   globe: (<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>),
   shield: (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>),
-  check: (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>),
+  code: (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>),
   progress: (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>),
+  growth: (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>),
 }
 
-const values = [
-  { icon: Icons.data, title: 'ডেটা দিয়ে সিদ্ধান্ত', desc: 'অনুমানে কাজ করি না। প্রতিটি সিদ্ধান্তের পেছনে থাকে সংখ্যা।' },
-  { icon: Icons.eye,  title: 'স্বচ্ছতা',             desc: 'আপনার প্রতিটি টাকা কোথায় যাচ্ছে, সেটা আপনি সবসময় দেখতে পাবেন।' },
-  { icon: Icons.link, title: 'পার্টনারশিপ',          desc: 'আমরা শুধু সার্ভিস দিই না, আপনার ব্যবসার গ্রোথ পার্টনার হই।' },
-]
+
 
 const screenshots = [
   { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', caption: 'ক্যাম্পেইন ড্যাশবোর্ড', overlay: 'Campaign Overview' },
@@ -142,7 +140,7 @@ export default function About() {
     >
       <div className="container">
         <div className="row-header">
-          <span className="section-num">০০৫</span>
+          <span className="section-num">০০১</span>
           <span className="section-title-right">আমাদের সম্পর্কে</span>
         </div>
 
@@ -154,36 +152,15 @@ export default function About() {
           </div>
 
           <h2 className="about-heading">
-            আমরা শুধু অ্যাড চালাই না।<br />
-            <span className="about-blue">আপনার পুরো ডিজিটাল মার্কেটিং দেখি</span>
+            আমরা শুধু অ্যাড চালাই না,<br />
+            <span className="about-blue">একটি কমপ্লিট সেলস সিস্টেম তৈরি করি</span>
           </h2>
-
           <p className="about-desc">
-            Digitalizen একটি রেজাল্ট-ফোকাসড পারফরম্যান্স মার্কেটিং এজেন্সি। সোশ্যাল মিডিয়া অ্যাডসের মাধ্যমে সত্যিকারের গ্রোথ দিতে আমরা কাজ করি।
-          </p>
-          <p className="about-desc">
-            আমাদের সহজ পদ্ধতি হলো টেস্ট করা, ডেটা দেখা এবং স্কেল করা। আপনার প্রতিটি বিনিয়োগের সঠিক ফেরত পাওয়া উচিত, এটাই আমরা বিশ্বাস করি।
-          </p>
-
-          <div className="about-stats">
-            <div className="about-stat"><span className="about-stat__num">৯+</span><span className="about-stat__label">বছরের অভিজ্ঞতা</span></div>
-            <div className="about-stat"><span className="about-stat__num">২৩,০০০+</span><span className="about-stat__label">সফল ক্যাম্পেইন</span></div>
-            <div className="about-stat"><span className="about-stat__num">৩,৬০০+</span><span className="about-stat__label">সন্তুষ্ট ক্লায়েন্ট</span></div>
-          </div>
+            Digitalizen একটি রেজাল্ট-ফোকাসড এজেন্সি। আমরা বিশ্বাস করি সোশ্যাল মিডিয়া অ্যাডস তখনই কাজ করে যখন পেছনে একটি শক্তিশালী <strong>অটোমেশন</strong> এবং <strong>ল্যান্ডিং পেজ</strong> থাকে।
+          </p>    
         </div>
 
-        {/* ── Values ── */}
-        <div className="about-values" aria-label="আমাদের মূল্যবোধ">
-          {values.map((v, i) => (
-            <div key={i} className="value-card">
-              <div className="value-icon" aria-hidden="true">{v.icon}</div>
-              <div>
-                <h3 className="value-title">{v.title}</h3>
-                <p className="value-desc">{v.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        
 
         {/* ── Screenshot Gallery ── */}
         <div className="about-screenshots" aria-label="ক্যাম্পেইন স্ক্রিনশট">
@@ -264,25 +241,28 @@ export default function About() {
                 <div className="founder-badge">ফাউন্ডার ও রেইনমেকার</div>
                 <h3 className="founder-name">Masum Billah</h3>
                 <p className="founder-bio">
-                  ৯ বছরেরও বেশি অভিজ্ঞতা, কোনো মিথ্যা প্রতিশ্রুতি নেই। সোশ্যাল মিডিয়া অ্যাডস আর ডেটা নির্ভর পরিকল্পনায় আপনার ব্যবসার সত্যিকারের গ্রোথ নিশ্চিত করি।
+                  ৯+ বছরের অভিজ্ঞতা। ০% ফেক প্রমিস। সুপার-ফাস্ট রিঅ্যাক্ট ল্যান্ডিং পেজ, AI অটোমেশন আর সঠিক অ্যাডস ম্যানেজমেন্টের মাধ্যমে আপনার ব্যবসার সত্যিকারের গ্রোথ নিশ্চিত করি।
                 </p>
 
                 {/* ── EEAT Credential Chips — trust signals for users & AI crawlers ── */}
                 <div className="founder-credentials" aria-label="সার্টিফিকেশন ও যোগ্যতা">
                   <span className="founder-cred founder-cred--ai" title="ML & AI Specialist — NINA, Korea">
-                    {Icons.shield}&nbsp;ML &amp; AI Specialist
+                    {Icons.cog}&nbsp;AI &amp; Automation Specialist
                     <span className="founder-cred-sub">NINA, Korea</span>
                   </span>
+                  
+                  <span className="founder-cred founder-cred--mktg" title="Marketing Expert — AMA Philippines, Google & Meta">
+                    {Icons.growth}&nbsp;Marketing Expert
+                    <span className="founder-cred-sub">AMA, Philippines</span>
+                  </span>
+
                   <span className="founder-cred founder-cred--dev" title="Full Stack Web Developer — BUET & IAC">
-                    {Icons.check}&nbsp;Full Stack Web Dev
+                    {Icons.code}&nbsp;Full Stack Web Dev
                     <span className="founder-cred-sub">BUET &amp; IAC</span>
                   </span>
-                  <span className="founder-cred founder-cred--mktg" title="Marketing Expert — AMA Philippines, Google & Meta">
-                    {Icons.check}&nbsp;Marketing Expert
-                    <span className="founder-cred-sub">AMA · Google · Meta</span>
-                  </span>
+                  
                   <span className="founder-cred founder-cred--web" title="Web Mastery in Progress — University of Helsinki">
-                    {Icons.progress}&nbsp;Web Mastery
+                    {Icons.progress}&nbsp;Modern Web Mastery
                     <span className="founder-cred-sub">University of Helsinki · in progress</span>
                   </span>
                 </div>

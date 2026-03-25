@@ -147,7 +147,7 @@ export default function Faq() {
       <div className="container">
 
         <div className="row-header">
-          <span className="section-num">০০৮</span>
+          <span className="section-num">০০৭</span>
           <span className="section-title-right">FAQ</span>
         </div>
 

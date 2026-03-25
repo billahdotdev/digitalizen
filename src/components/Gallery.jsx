@@ -257,11 +257,11 @@ export default function Gallery() {
         <div className="container">
 
           <div className="row-header">
-            <span className="section-num">০০৮</span>
-            <span className="section-title-right">গ্যালারি</span>
+            <span className="section-num">০০৩</span>
+            <span className="section-title-right">কাস্টম ল্যান্ডিং পেজ</span>
           </div>
 
-          <h2 className="gallery-heading">আমাদের কাজ</h2>
+          <h2 className="gallery-heading">ল্যান্ডিং পেজ গ্যালারি</h2>
           <p className="gallery-sub">
             প্রতিটি ল্যান্ডিং পেজ আলাদাভাবে কাস্টম ডিজাইন করা হয়েছে।
           </p>

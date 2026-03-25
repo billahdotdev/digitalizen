@@ -193,7 +193,7 @@ export default function Packages() {
       <div className="container">
 
         <div className="row-header">
-          <span className="section-num">০০২</span>
+          <span className="section-num">০০৫</span>
           <span className="section-title-right">প্যাকেজ</span>
         </div>
 

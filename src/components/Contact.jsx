@@ -219,7 +219,7 @@ export default function Contact() {
     <section id="contact" className="contact-section" aria-label="যোগাযোগ" ref={sectionRef}>
       <div className="container">
         <div className="row-header">
-          <span className="section-num">০০৯</span>
+          <span className="section-num">০০৮</span>
           <span className="section-title-right">যোগাযোগ</span>
         </div>
 

@@ -22,7 +22,6 @@ const Process       = lazy(() => import('./components/Process'))
 const Packages      = lazy(() => import('./components/Packages'))
 const About         = lazy(() => import('./components/About'))
 const BookCall      = lazy(() => import('./components/BookCall'))
-const Resources     = lazy(() => import('./components/Resources'))
 const Faq           = lazy(() => import('./components/Faq'))
 const Contact       = lazy(() => import('./components/Contact'))
 const Footer        = lazy(() => import('./components/Footer'))
@@ -165,15 +164,14 @@ function MainLayout() {
       <main id="main-content">
         <Hero />
         <Suspense fallback={null}>
+          <About />
+          <Process />
+          <Gallery />
           <Finder />
           <Packages />
-          <Process />
-          <Faq />
-          <About />
           <BookCall />
-          <Resources />
+          <Faq />
           <Contact />
-          <Gallery />
         </Suspense>
       </main>
       <Suspense fallback={null}>

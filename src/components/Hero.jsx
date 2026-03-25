@@ -75,7 +75,7 @@ export default function Hero() {
       <div className="container hero__inner">
         <div className="hero__badge">
           <span className="badge-dot"></span>
-          ডিজিটাল অ্যাড এক্সপার্ট এজেন্সি
+          ডিজিটাল অ্যাড ও অটোমেশন স্পেশালিস্ট এজেন্সি
         </div>
 
         <h1 className="hero__headline">
