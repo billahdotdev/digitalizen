@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import './Contact.css'
 import { WA_NUMBER } from '../lib/analytics.js'
 
@@ -19,68 +18,71 @@ export default function Contact() {
       setErrors({ name: !form.name, phone: !form.phone })
       return
     }
-    const msg = `Contact Request:\nName: ${form.name}\nPhone: ${form.phone}\nBrand: ${form.business}`
+    const msg = `নতুন ইনকোয়ারি:\nনাম: ${form.name}\nফোন: ${form.phone}\nব্র্যান্ড: ${form.business || 'N/A'}`
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank', 'noreferrer')
   }
 
   return (
-    <section className="ct-wrap" id="contact">
-      <div className="ct-container">
-        
-        {/* Left: Branding & Status */}
-        <div className="ct-left">
-          <div className="ct-status-pill">
-            <span className="ct-dot"></span>
-            SYSTEM ONLINE: ACCEPTING PROJECTS
-          </div>
-          <h2 className="ct-big-title">Ready to <br/>Scale?</h2>
-          <div className="ct-meta-info">
-            <div className="ct-meta-row">
-              <span className="ct-meta-label">Direct Line</span>
-              <a href={`https://wa.me/${WA_NUMBER}`} target="_blank" rel="noreferrer" className="ct-meta-link">WhatsApp / +880 1711-925588</a>
-            </div>
+    <section className="ct-ghost-section" id="contact">
+      <div className="ct-grid-overlay"></div>
+      
+      <div className="container ct-main-grid">
+        <div className="ct-vision">
+          <div className="ct-tag">009 / Contact</div>
+          <h2 className="ct-hero-text">
+            Let&apos;s build <br /> 
+            something <span className="text-glow">Legendary.</span>
+          </h2>
+          <div className="ct-availability">
+            <span className="pulse-ring"></span>
+            Currently taking 2 new projects
           </div>
         </div>
 
-        {/* Right: The Modernist Form */}
-        <div className="ct-right">
-          <form onSubmit={handleSubmit} className="ct-minimal-form">
+        <div className="ct-form-side">
+          <form onSubmit={handleSubmit} className="ct-ghost-form">
             
-            <div className={`ct-input-group ${errors.name ? 'ct-error' : ''}`}>
-              <label className="ct-label">01 / Full Name</label>
+            <div className={`ct-ghost-field ${errors.name ? 'is-err' : ''}`}>
+              <span className="ct-num">01</span>
               <input 
-                type="text" name="name" placeholder="Type here..."
+                type="text" name="name" autoComplete="off" required
                 value={form.name} onChange={handleInput} 
               />
-              <div className="ct-focus-line"></div>
+              <label className="ct-floating-label">আপনার নাম কি?</label>
+              <div className="ct-bar"></div>
             </div>
 
-            <div className={`ct-input-group ${errors.phone ? 'ct-error' : ''}`}>
-              <label className="ct-label">02 / Phone Number</label>
+            <div className={`ct-ghost-field ${errors.phone ? 'is-err' : ''}`}>
+              <span className="ct-num">02</span>
               <input 
-                type="tel" name="phone" placeholder="01XXXXXXXXX"
+                type="tel" name="phone" autoComplete="off" required
                 value={form.phone} onChange={handleInput} 
               />
-              <div className="ct-focus-line"></div>
+              <label className="ct-floating-label">আপনার ফোন নম্বর?</label>
+              <div className="ct-bar"></div>
             </div>
 
-            <div className="ct-input-group">
-              <label className="ct-label">03 / Brand Name (Optional)</label>
+            <div className="ct-ghost-field">
+              <span className="ct-num">03</span>
               <input 
-                type="text" name="business" placeholder="Your brand..."
+                type="text" name="business" autoComplete="off" required
                 value={form.business} onChange={handleInput} 
               />
-              <div className="ct-focus-line"></div>
+              <label className="ct-floating-label">আপনার ব্র্যান্ড?</label>
+              <div className="ct-bar"></div>
             </div>
 
-            <button type="submit" className="ct-magnetic-btn">
-              <span className="ct-btn-text">Initiate Growth</span>
-              <span className="ct-btn-arrow">→</span>
+            <button type="submit" className="ct-industrial-btn">
+              <span className="ct-btn-label">INITIATE GROWTH</span>
+              <div className="ct-btn-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </div>
             </button>
             
           </form>
         </div>
-
       </div>
     </section>
   )
