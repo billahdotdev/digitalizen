@@ -1,130 +1,151 @@
 .pk-section {
-  padding: 80px 0;
+  padding: 100px 0;
   background: var(--bg);
 }
 
-/* ══ Mobile-First Stack ═══════════════════════ */
 .pk-stack {
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  margin-top: 48px;
+  /* কার্ডগুলো একটার ওপর একটা স্ট্যাক হওয়ার গ্যাপ */
+  gap: 60px; 
+  margin-top: 60px;
+  perspective: 1000px;
 }
 
 .pk-card {
-  position: sticky; /* Cards stack as you scroll on mobile */
-  top: 100px;
+  position: sticky;
+  top: 120px;
+  width: 100%;
+  /* শার্পনেস ধরে রাখার জন্য view-timeline */
+  view-timeline-name: --card-stack;
+  view-timeline-axis: block;
+}
+
+.pk-card-inner {
   background: var(--white);
   border: 1px solid var(--border);
-  padding: 40px 24px;
-  display: grid;
-  gap: 32px;
-  /* Sharp corners as per Gallery style */
+  padding: 48px 32px;
   border-radius: 0;
-  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  /* Animation: No Blur, only Scale and Darken */
+  animation: card-stack-effect linear both;
+  animation-timeline: --card-stack;
+  animation-range: exit 0% exit 100%;
+  transform-origin: center top;
 }
 
-/* ══ Tier Materials ═══════════════════════════ */
-.pk-card--electric {
+@keyframes card-stack-effect {
+  to {
+    /* কার্ডটি ৩% ছোট হবে এবং ১০% ডার্ক হবে */
+    transform: scale(0.97);
+    filter: brightness(0.9);
+  }
+}
+
+/* ══ Tier Specific Aesthetics ════════════════ */
+
+.pk-card--electric .pk-card-inner {
   border: 2px solid var(--blue);
-  box-shadow: 0 20px 40px var(--blue-glow);
-  z-index: 2;
+  box-shadow: 0 25px 50px -12px rgba(31, 75, 255, 0.25);
 }
 
-.pk-card--obsidian {
+.pk-card--obsidian .pk-card-inner {
   background: var(--dark);
-  color: var(--white);
-  border-color: var(--dark2);
+  color: #fff;
+  border: 1px solid #1e2a40;
 }
 
-/* ══ Content ══════════════════════════════════ */
-.pk-id {
+/* ══ Actionable Elements ═════════════════════ */
+
+.pk-btn {
+  width: 100%;
+  height: 64px;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  font-weight: 900;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 32px;
+}
+
+/* Playful Button Hover */
+.pk-btn:hover {
+  background: var(--blue);
+  gap: 20px; /* অ্যারো আইকনটি একটু সরে যাবে */
+}
+
+.pk-btn svg {
+  transition: transform 0.2s ease;
+}
+
+/* ══ Typography ══════════════════════════════ */
+
+.pk-serial {
   font-family: monospace;
-  font-size: 11px;
-  color: var(--muted2);
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 700;
+  margin-bottom: 12px;
   display: block;
-  margin-bottom: 8px;
 }
 
 .pk-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 900;
-  margin-bottom: 4px;
+  line-height: 1.1;
+  margin-bottom: 24px;
 }
-
-.pk-desc {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.pk-card--obsidian .pk-desc { color: var(--muted2); }
 
 .pk-price {
   display: flex;
   align-items: baseline;
   gap: 4px;
-  margin-top: 24px;
-}
-
-.pk-taka { font-size: 1.2rem; font-weight: 700; }
-.pk-num { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
-
-.pk-feats {
-  list-style: none;
-  display: grid;
-  gap: 12px;
   margin-bottom: 32px;
 }
 
-.pk-feat {
+.pk-unit { font-size: 1.2rem; font-weight: 700; }
+.pk-amount { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.05em; }
+
+.pk-feat-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--text2);
 }
 
-.pk-feat svg {
-  width: 16px;
-  color: var(--blue);
+.pk-card--obsidian .pk-feat-item { color: #cbd5e1; }
+
+.pk-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--blue);
   flex-shrink: 0;
 }
 
-/* ══ Action ═══════════════════════════════════ */
-.pk-cta {
-  width: 100%;
-  padding: 20px;
-  background: var(--blue);
-  color: white;
-  border: none;
-  font-weight: 800;
-  text-transform: uppercase;
-  cursor: pointer;
+/* ══ Mobile Responsive ═══════════════════════ */
+@media (max-width: 768px) {
+  .pk-amount { font-size: 2.8rem; }
+  .pk-title { font-size: 1.5rem; }
+  .pk-card { top: 90px; }
 }
 
-.pk-card--obsidian .pk-cta { background: var(--white); color: var(--dark); }
-
-.pk-popular-tag {
-  position: absolute;
-  top: -12px;
-  left: 24px;
-  background: var(--blue);
-  color: white;
-  padding: 4px 12px;
-  font-size: 0.7rem;
-  font-weight: 800;
-}
-
-/* ══ Desktop Refinement ═══════════════════════ */
-@media (min-width: 768px) {
-  .pk-card {
-    grid-template-columns: 1fr 1fr;
+@media (min-width: 1024px) {
+  .pk-content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
     align-items: center;
-    padding: 60px 48px;
-  }
-  
-  .pk-stack {
-    gap: 24px;
   }
 }

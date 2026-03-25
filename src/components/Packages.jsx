@@ -7,7 +7,7 @@ const packages = [
     name: 'মাইক্রো টেস্ট',
     price: '১,৪৫০',
     tagline: 'দ্রুত রেজাল্ট দেখার জন্য',
-    features: ['১টি হাই-কনভার্টিং ভিডিও অ্যাড', 'টার্গেটেড অডিয়েন্স রিসার্চ', '৩ দিন ম্যানেজমেন্ট', 'বিস্তারিত রিপোর্ট'],
+    features: ['১টি হাই-কনভার্টিং ভিডিও অ্যাড', 'টার্গেটেড অডিয়েন্স রিসার্চ', '৩ দিন ম্যানেজমেন্ট'],
     cta: 'শুরু করুন',
     type: 'frosted'
   },
@@ -16,7 +16,7 @@ const packages = [
     name: 'গ্রোথ প্যাক',
     price: '৪,৯৫০',
     tagline: 'সবচেয়ে জনপ্রিয় চয়েস',
-    features: ['৩টি কাস্টম ভিডিও অ্যাডস', 'পিক্সেল ও কনভার্শন সেটআপ', '১০ দিন ম্যানেজমেন্ট', 'অ্যাড কপিরাইটিং'],
+    features: ['৩টি কাস্টম ভিডিও অ্যাডস', 'পিক্সেল ও কনভার্শন সেটআপ', '১০ দিন ম্যানেজমেন্ট'],
     cta: 'গ্রোথ শুরু করুন',
     type: 'electric',
     popular: true
@@ -26,7 +26,7 @@ const packages = [
     name: 'স্কেল আপ',
     price: '১২,০০০',
     tagline: 'বিজনেসের পূর্ণাঙ্গ সল্যুশন',
-    features: ['আনলিমিটেড ক্রিয়েটিভস', 'CAPI ইমপ্লিমেন্টেশন', '৩০ দিন ম্যানেজমেন্ট', 'ডেডিকেটেড একাউন্ট ম্যানেজার'],
+    features: ['আনলিমিটেড ক্রিয়েটিভস', 'CAPI ইমপ্লিমেন্টেশন', '৩০ দিন ম্যানেজমেন্ট'],
     cta: 'স্কেল করুন',
     type: 'obsidian'
   }
@@ -52,36 +52,35 @@ export default function Packages() {
             <div 
               key={pkg.id} 
               className={`pk-card pk-card--${pkg.type}`}
-              style={{ '--index': i }}
+              style={{ '--index': i + 1 }}
             >
-              {pkg.popular && <div className="pk-popular-tag">সেরা ভ্যালু</div>}
-              
-              <div className="pk-left">
-                <span className="pk-id">PACKAGE // {pkg.id}</span>
-                <h3 className="pk-title">{pkg.name}</h3>
-                <p className="pk-desc">{pkg.tagline}</p>
+              <div className="pk-card-inner">
+                {pkg.popular && <div className="pk-badge">BEST ROI</div>}
                 
-                <div className="pk-price">
-                  <span className="pk-taka">৳</span>
-                  <span className="pk-num">{pkg.price}</span>
+                <div className="pk-content-grid">
+                  <div className="pk-main-info">
+                    <span className="pk-serial">0{i+1}. // PACKAGE</span>
+                    <h3 className="pk-title">{pkg.name}</h3>
+                    <div className="pk-price">
+                      <span className="pk-unit">৳</span>
+                      <span className="pk-amount">{pkg.price}</span>
+                    </div>
+                  </div>
+
+                  <div className="pk-details">
+                    <ul className="pk-feat-list">
+                      {pkg.features.map((f, j) => (
+                        <li key={j} className="pk-feat-item">
+                          <span className="pk-dot" /> {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <button className="pk-btn" onClick={() => handleCta(pkg)}>
+                      <span>{pkg.cta}</span>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="pk-right">
-                <ul className="pk-feats">
-                  {pkg.features.map((f, i) => (
-                    <li key={i} className="pk-feat">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                <button className="pk-cta" onClick={() => handleCta(pkg)}>
-                  {pkg.cta}
-                </button>
               </div>
             </div>
           ))}

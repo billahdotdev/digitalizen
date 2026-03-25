@@ -1,237 +1,262 @@
 /* ═══════════════════════════════════════════════
-   GALLERY.CSS — Mobile-First Architecture
-═══════════════════════════════════════════════ */
+   GALLERY.CSS — Kinetic Archive System
+   - Sticky Stacking
+   - Internal Parallax
+   - Mobile Floating HUD & Scanner
+   ═══════════════════════════════════════════════ */
 
-/* ══ 1. Mobile Base (Default) ═════════════════ */
-.gallery-section {
-  padding: 64px 0;
+.gl-archive {
+  padding: 100px 0;
   background: var(--bg);
 }
 
-.gallery-heading {
-  font-size: clamp(1.5rem, 5vw, 2.5rem);
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
-}
-
-.gallery-sub {
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin-bottom: 40px;
-  line-height: 1.55;
-}
-
-.gallery-list {
+.gl-stack {
   display: flex;
   flex-direction: column;
-  gap: 48px;
-  width: 100%;
 }
 
-/* ══ Project Item & Animations ════════════════ */
-.gallery-item {
+/* ── Sticky Frame Logic ────────────────────── */
+.gl-frame-wrapper {
+  position: sticky;
+  top: 80px;
+  /* একে অপরের ওপর ১৫% ওভারল্যাপ তৈরি করবে */
+  padding-bottom: 15vh; 
+  view-timeline-name: --frame;
+}
+
+.gl-frame {
+  background: var(--white);
+  border: 1px solid var(--border);
   position: relative;
-  width: 100%;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
-              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: var(--stagger-delay, 0s);
+  overflow: hidden;
+  
+  /* Scroll-Linked Animation: পেছনে যাওয়ার সময় ছোট ও ডার্ক হবে */
+  animation: frame-stack linear both;
+  animation-timeline: --frame;
+  animation-range: exit 0% exit 100%;
+  transform-origin: center top;
 }
 
-.gallery-item--visible {
-  opacity: 1;
-  transform: translateY(0);
+@keyframes frame-stack {
+  to {
+    transform: scale(0.95) translateY(-20px);
+    filter: brightness(0.8);
+  }
 }
 
-/* ══ Item Header ══════════════════════════════ */
-.gallery-item-header {
+/* ── Card Header ───────────────────────────── */
+.gl-frame-top {
+  padding: 24px 32px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+  z-index: 10;
+  position: relative;
 }
 
-.gallery-item-number {
+.gl-id {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--blue);
+  font-weight: 700;
+  display: block;
+}
+
+.gl-name {
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.gl-status {
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--muted);
+  color: var(--muted2);
 }
 
-.gallery-item-square {
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
-  border-radius: 2px;
-  transition: transform 0.3s ease;
+.gl-pulse {
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-glow 2s infinite;
 }
 
-/* Horizontal line scales in from left */
-.gallery-item-line {
-  flex: 1;
-  flex-basis: 100%;
-  height: 1px;
-  background: var(--border);
-  order: 3;
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
-.gallery-item--visible .gallery-item-line {
-  transform: scaleX(1);
-}
-
-.gallery-item-title {
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  text-transform: uppercase;
-  order: 2;
-  margin-left: auto;
-}
-
-/* ══ Image Container (Mobile specific ratio) ══ */
-.gallery-item-image-wrapper {
+/* ── The Window & Parallax ─────────────────── */
+.gl-window {
+  display: block;
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden; /* Sharp corners by default */
-  background: var(--border);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: var(--shadow-sm);
-  isolation: isolate; 
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  text-decoration: none;
 }
 
-.gallery-item-image {
+.gl-parallax-box {
+  width: 100%;
+  height: 130%; /* পিক্সেল মুভমেন্টের জন্য বাড়তি হাইট */
+  position: absolute;
+  top: 0;
+  animation: img-parallax linear both;
+  animation-timeline: --frame;
+  animation-range: entry 0% exit 100%;
+}
+
+@keyframes img-parallax {
+  from { transform: translateY(-15%); }
+  to { transform: translateY(15%); }
+}
+
+.gl-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top; 
-  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  display: block;
 }
 
-/* Completely kill the overlay on mobile */
-.gallery-item-overlay {
-  display: none;
-}
-
-/* ══ Loading Skeleton ═════════════════════════ */
-.gallery-item-skeleton {
+/* ── Desktop Hover HUD ─────────────────────── */
+.gl-hud {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--bg2) 0%, var(--border) 50%, var(--bg2) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite linear;
-  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 18, 32, 0);
+  transition: background 0.4s ease;
+  z-index: 5;
 }
 
-.gallery-item-image--loaded ~ .gallery-item-skeleton {
+.gl-hud-btn {
+  background: var(--white);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 900;
+  font-size: 0.9rem;
+  color: var(--text);
+  transform: translateY(30px);
   opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: all 0.4s cubic-bezier(.22,.68,0,1.4);
 }
 
-/* ══ Color Tokens ═════════════════════════════ */
-.gallery-item-square--brown  { background: #8b7355; }
-.gallery-item-square--blue   { background: var(--blue); }
-.gallery-item-square--gray   { background: var(--muted2); }
-.gallery-item-square--dark   { background: var(--text); }
-.gallery-item-square--orange { background: var(--amber); }
-.gallery-item-square--purple { background: #7c3aed; }
+.gl-window:hover .gl-hud { 
+  background: rgba(11, 18, 32, 0.5); 
+}
 
-/* ══ 2. Tablet / Desktop Enhancements ═════════ */
-@media (min-width: 640px) {
-  .gallery-section {
-    padding: 96px 0;
+.gl-window:hover .gl-hud-btn { 
+  transform: translateY(0); 
+  opacity: 1; 
+}
+
+/* ── Extraordinary Mobile View ─────────────── */
+@media (max-width: 768px) {
+  .gl-window { 
+    aspect-ratio: 9 / 14; /* সিনেমাটিক ভার্টিক্যাল রেশিও */
   }
   
-  .gallery-list {
-    gap: 80px;
+  .gl-frame-wrapper { 
+    top: 70px; 
+    padding-bottom: 10vh;
   }
 
-  .gallery-item-header {
-    flex-wrap: nowrap;
-    gap: 20px;
-    height: 32px;
+  .gl-frame-top {
+    padding: 16px 20px;
   }
 
-  .gallery-item-title {
-    margin-left: 0;
-    order: unset;
-    font-size: 1.1rem;
+  .gl-name {
+    font-size: 1rem;
   }
 
-  .gallery-item-line {
-    flex-basis: auto;
-    order: unset;
+  /* Floating Action Button (FAB) Style */
+  .gl-hud-btn {
+    opacity: 1;
+    transform: none;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+    width: auto; 
+    min-width: 150px;
+    height: 48px;
+    padding: 0 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 100px;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: float-btn 3s ease-in-out infinite;
   }
 
-  .gallery-item-image-wrapper {
-    aspect-ratio: 16 / 9; 
-    /* No border-radius here either. Sharp corners globally. */
-  }
-}
-
-/* ══ 3. Hardware Hover States ═════════════════ 
-   Keeps mobile completely clean, injects overlay only for mouse users */
-@media (hover: hover) and (pointer: fine) {
-  .gallery-item:hover .gallery-item-square {
-    transform: scale(1.3) rotate(45deg);
+  @keyframes float-btn {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
   }
 
-  .gallery-item:hover .gallery-item-title {
+  .gl-hud-btn span {
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .gl-hud-btn svg {
+    width: 16px;
+    height: 16px;
     color: var(--blue);
   }
 
-  .gallery-item-image-wrapper:hover .gallery-item-image {
-    transform: scale(1.03);
-  }
-
-  /* Only build the overlay UI if a mouse is present */
-  .gallery-item-overlay {
-    display: flex;
+  /* Interactive Sheen (Touch Follow) */
+  .gl-glass-sheen {
     position: absolute;
     inset: 0;
-    background: rgba(11, 18, 32, 0);
-    align-items: center;
-    justify-content: center;
-    transition: background 0.4s ease;
     pointer-events: none;
-    z-index: 2;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+      rgba(255,255,255,0.25) 0%, 
+      transparent 60%
+    );
+    mix-blend-mode: overlay;
+    z-index: 4;
   }
 
-  .gallery-item-link-icon {
-    opacity: 0;
-    transform: scale(0.8) translateY(10px);
-    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    color: var(--white);
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(11, 18, 32, 0.6);
-    border-radius: 50%;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+  /* Scanner Line Effect */
+  .gl-window::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--blue);
+    box-shadow: 0 0 15px var(--blue);
+    animation: scan 4s linear infinite;
+    opacity: 0.5;
+    z-index: 6;
   }
 
-  .gallery-item-image-wrapper:hover .gallery-item-overlay {
-    background: rgba(11, 18, 32, 0.25);
+  /* Active/Touch Feedback */
+  .gl-window:active .gl-parallax-box {
+    transform: scale(0.98);
+    transition: transform 0.1s;
   }
+}
 
-  .gallery-item-image-wrapper:hover .gallery-item-link-icon {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+@keyframes scan {
+  from { top: 0%; }
+  to { top: 100%; }
 }
