@@ -1,833 +1,130 @@
-/* ══════════════════════════════════════════════════
-   PACKAGES — "Tiers of Light"
-   Three materials. Three personalities.
-   free     = frosted glass — clean, approachable
-   popular  = live electric panel — bold, kinetic
-   premium  = obsidian + liquid gold — extraordinary
-══════════════════════════════════════════════════ */
-
-/* ══════════════════════════════════════════════════
-   SECTION
-══════════════════════════════════════════════════ */
-.packages-section {
-  padding: 80px 0 72px;
-  border-top: 1px solid #E6EAF5;
-  background: #F5F7FF;
-  position: relative;
-  overflow: hidden;
+.pk-section {
+  padding: 80px 0;
+  background: var(--bg);
 }
 
-/* Large diffused radial behind the grid */
-.packages-section::before {
-  content: '';
-  position: absolute;
-  inset: -20% -30%;
-  background:
-    radial-gradient(ellipse 55% 45% at 20% 60%, rgba(31,75,255,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 45% 50% at 80% 30%, rgba(31,75,255,0.04) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
+/* ══ Mobile-First Stack ═══════════════════════ */
+.pk-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-top: 48px;
 }
 
-.packages-section > .container {
-  position: relative;
-  z-index: 1;
-}
-
-/* ══════════════════════════════════════════════════
-   HEADER
-══════════════════════════════════════════════════ */
-.packages-heading {
-  font-size: 1.6rem;
-  font-weight: 900;
-  color: #0B1220;
-  margin-bottom: 8px;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-
-.packages-hint {
-  font-size: 0.85rem;
-  color: #4A5568;
-  margin-bottom: 40px;
-  line-height: 1.6;
-}
-
-/* ══════════════════════════════════════════════════
-   GRID
-══════════════════════════════════════════════════ */
-.packages-grid {
+.pk-card {
+  position: sticky; /* Cards stack as you scroll on mobile */
+  top: 100px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 40px 24px;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-  align-items: stretch;
+  gap: 32px;
+  /* Sharp corners as per Gallery style */
+  border-radius: 0;
+  transition: transform 0.3s ease;
 }
 
-@media (min-width: 520px) {
-  .packages-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-}
-
-/* ══════════════════════════════════════════════════
-   BASE CARD
-   3D perspective tilt driven by JS CSS vars
-══════════════════════════════════════════════════ */
-.pkg-card {
-  position: relative;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  cursor: default;
-
-  /* 3D tilt */
-  transform-style: preserve-3d;
-  transform:
-    perspective(900px)
-    rotateX(var(--rx, 0deg))
-    rotateY(var(--ry, 0deg))
-    translateY(0px);
-  transition:
-    transform 0.55s cubic-bezier(0.23, 1, 0.32, 1),
-    box-shadow 0.4s ease;
-  will-change: transform;
-
-  /* entrance: start invisible */
-  opacity: 0;
-  translate: 0 28px;
-}
-
-.pkg-card--visible {
-  animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger, 0ms) both;
-}
-
-@keyframes cardIn {
-  from { opacity: 0; translate: 0 28px; }
-  to   { opacity: 1; translate: 0 0; }
-}
-
-/* ══════════════════════════════════════════════════
-   CARD — FREE  (frosted glass)
-   Material: white frosted glass with a green pulse
-   on the badge. Feels airy and approachable.
-══════════════════════════════════════════════════ */
-.pkg-card--free {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.8);
-  box-shadow:
-    0 2px 0 0 rgba(31,75,255,0.18),        /* top accent line */
-    0 4px 24px rgba(31,75,255,0.07),
-    0 1px 4px rgba(31,75,255,0.04),
-    inset 0 1px 0 rgba(255,255,255,1);
-}
-
-.pkg-card--free:hover,
-.pkg-card--free[style*="--tilt: 1"] {
-  box-shadow:
-    0 2px 0 0 rgba(31,75,255,0.28),
-    0 18px 48px rgba(31,75,255,0.11),
-    0 6px 16px rgba(31,75,255,0.06),
-    inset 0 1px 0 rgba(255,255,255,1);
-}
-
-/* The frosted sheen — moves with mouse via CSS vars */
-.pkg-sheen {
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: radial-gradient(
-    circle 180px at var(--mx, 50%) var(--my, 0%),
-    rgba(255,255,255,0.55) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.pkg-card--free:hover .pkg-sheen { opacity: 1; }
-
-/* ══════════════════════════════════════════════════
-   CARD — POPULAR  (electric panel)
-   Material: crisp white panel with electric blue
-   border, scanning beam, corner sparks.
-══════════════════════════════════════════════════ */
-.pkg-card--popular {
-  background: #FFFFFF;
-  border: 1.5px solid #1F4BFF;
-  box-shadow:
-    0 0 0 4px rgba(31,75,255,0.06),
-    0 6px 32px rgba(31,75,255,0.16),
-    0 2px 8px rgba(31,75,255,0.10);
-}
-
-.pkg-card--popular:hover,
-.pkg-card--popular[style*="--tilt: 1"] {
-  box-shadow:
-    0 0 0 5px rgba(31,75,255,0.10),
-    0 20px 56px rgba(31,75,255,0.22),
-    0 6px 20px rgba(31,75,255,0.14);
-}
-
-/* Scanning beam — sweeps top-to-bottom on loop */
-.pkg-scan-beam {
-  position: absolute;
-  top: -100%;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(31,75,255,0.06) 40%,
-    rgba(31,75,255,0.10) 50%,
-    rgba(31,75,255,0.06) 60%,
-    transparent 100%
-  );
-  animation: scanBeam 3.5s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes scanBeam {
-  0%   { top: -40%; }
-  100% { top: 110%; }
-}
-
-/* Corner electric sparks */
-.pkg-corner {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  pointer-events: none;
+/* ══ Tier Materials ═══════════════════════════ */
+.pk-card--electric {
+  border: 2px solid var(--blue);
+  box-shadow: 0 20px 40px var(--blue-glow);
   z-index: 2;
 }
 
-.pkg-corner--tl { top: -1px;  left: -1px;  border-top: 2px solid #1F4BFF; border-left:  2px solid #1F4BFF; border-radius: 4px 0 0 0; }
-.pkg-corner--tr { top: -1px;  right: -1px; border-top: 2px solid #1F4BFF; border-right: 2px solid #1F4BFF; border-radius: 0 4px 0 0; }
-.pkg-corner--bl { bottom: -1px; left: -1px;  border-bottom: 2px solid #1F4BFF; border-left:   2px solid #1F4BFF; border-radius: 0 0 0 4px; }
-.pkg-corner--br { bottom: -1px; right: -1px; border-bottom: 2px solid #1F4BFF; border-right:  2px solid #1F4BFF; border-radius: 0 0 4px 0; }
-
-/* Corner glow pulse */
-.pkg-corner::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  background: rgba(31,75,255,0.4);
-  border-radius: 50%;
-  animation: cornerPulse 2s ease-in-out infinite;
-  opacity: 0;
+.pk-card--obsidian {
+  background: var(--dark);
+  color: var(--white);
+  border-color: var(--dark2);
 }
 
-.pkg-corner--tl::after { top: -3px;  left: -3px; }
-.pkg-corner--tr::after { top: -3px;  right: -3px; }
-.pkg-corner--bl::after { bottom: -3px; left: -3px; }
-.pkg-corner--br::after { bottom: -3px; right: -3px; }
-
-@keyframes cornerPulse {
-  0%, 100% { opacity: 0; transform: scale(0.5); }
-  50%       { opacity: 0.6; transform: scale(1.8); }
-}
-
-.pkg-corner--tl::after { animation-delay: 0s; }
-.pkg-corner--tr::after { animation-delay: 0.5s; }
-.pkg-corner--bl::after { animation-delay: 1s; }
-.pkg-corner--br::after { animation-delay: 1.5s; }
-
-/* ══════════════════════════════════════════════════
-   CARD — PREMIUM  (obsidian + liquid gold)
-   Playful & alive:
-   • Card itself gently floats up/down
-   • Border breathes gold intensity
-   • Aurora wave washes across the background
-   • Two gold orbs drift independently
-   • Tiny star-particles twinkle via ::before/::after
-══════════════════════════════════════════════════ */
-.pkg-card--premium {
-  background: linear-gradient(160deg, #0e1628 0%, #0B1220 40%, #101830 100%);
-  border: 1px solid rgba(201,168,76,0.25);
-  box-shadow:
-    0 0 0 1px rgba(201,168,76,0.08),
-    0 8px 40px rgba(0,0,0,0.38),
-    0 2px 8px rgba(0,0,0,0.22),
-    inset 0 1px 0 rgba(201,168,76,0.12);
-
-}
-
-/* Float only starts after card has entered — overrides the base --visible animation */
-.pkg-card--premium.pkg-card--visible {
-  animation:
-    cardIn       0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--stagger, 0ms) both,
-    premiumFloat 5s   ease-in-out                      1s                  infinite;
-}
-
-@keyframes premiumFloat {
-  0%, 100% { translate: 0 0px; }
-  50%       { translate: 0 -7px; }
-}
-
-/* Border breathes — gold intensity pulses */
-.pkg-card--premium::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 19px;
-  background: transparent;
-  animation: borderBreathe 3s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes borderBreathe {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(201,168,76,0.15), 0 0 12px rgba(201,168,76,0.06); }
-  50%       { box-shadow: 0 0 0 1px rgba(201,168,76,0.45), 0 0 28px rgba(201,168,76,0.16); }
-}
-
-/* Aurora wave — slow diagonal shimmer across the dark surface */
-.pkg-card--premium::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: linear-gradient(
-    125deg,
-    transparent         0%,
-    transparent        35%,
-    rgba(201,168,76,0.04) 45%,
-    rgba(31,75,255,0.05)  50%,
-    rgba(201,168,76,0.04) 55%,
-    transparent        65%,
-    transparent       100%
-  );
-  background-size: 300% 300%;
-  animation: auroraWave 7s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes auroraWave {
-  0%   { background-position: 0%   50%; opacity: 0; }
-  20%  { opacity: 1; }
-  50%  { background-position: 100% 50%; }
-  80%  { opacity: 1; }
-  100% { background-position: 0%   50%; opacity: 0; }
-}
-
-.pkg-card--premium:hover,
-.pkg-card--premium[style*="--tilt: 1"] {
-  border-color: rgba(201,168,76,0.45);
-  box-shadow:
-    0 0 0 1px rgba(201,168,76,0.18),
-    0 24px 60px rgba(0,0,0,0.48),
-    0 8px 24px rgba(0,0,0,0.28),
-    0 0 40px rgba(201,168,76,0.08),
-    inset 0 1px 0 rgba(201,168,76,0.18);
-}
-
-/* ── Gold orb 1 — top-right, drifts lazily ── */
-.pkg-gold-light {
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(
-    circle,
-    rgba(201,168,76,0.16) 0%,
-    rgba(201,168,76,0.06) 40%,
-    transparent 70%
-  );
-  animation: goldDrift 7s ease-in-out infinite alternate;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes goldDrift {
-  0%   { transform: translate(0, 0)       scale(1);   opacity: 0.8; }
-  33%  { transform: translate(-18px, 22px) scale(1.15); opacity: 1;   }
-  66%  { transform: translate(-8px, 10px)  scale(0.95); opacity: 0.7; }
-  100% { transform: translate(12px, -14px) scale(1.1);  opacity: 0.9; }
-}
-
-/* ── Gold orb 2 — bottom-left, counter-drifts ── */
-.pkg-gold-light::after {
-  content: '';
-  position: absolute;
-  bottom: -180px;
-  left: -180px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(
-    circle,
-    rgba(31,75,255,0.10) 0%,
-    rgba(201,168,76,0.06) 45%,
-    transparent 70%
-  );
-  animation: goldDrift2 9s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes goldDrift2 {
-  0%   { transform: translate(0, 0)       scale(1);   }
-  40%  { transform: translate(22px, -16px) scale(1.2); }
-  100% { transform: translate(-10px, 20px) scale(0.85);}
-}
-
-/* ── Twinkling star particles (5 pseudo-dots via box-shadow) ── */
-.pkg-gold-light::before {
-  content: '';
-  position: absolute;
-  top: 80px;
-  left: 20px;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: rgba(201,168,76,0.7);
-  animation: starTwinkle 2.8s ease-in-out infinite;
-  box-shadow:
-    40px  20px 0 1px rgba(201,168,76,0.5),
-    80px -10px 0 0px rgba(255,255,255,0.35),
-    20px  60px 0 1px rgba(201,168,76,0.4),
-   -20px  40px 0 0px rgba(255,255,255,0.25),
-    60px  80px 0 1px rgba(201,168,76,0.3);
-}
-
-@keyframes starTwinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  25%       { opacity: 1;   transform: scale(1.4); }
-  50%       { opacity: 0.4; transform: scale(0.9); }
-  75%       { opacity: 0.9; transform: scale(1.2); }
-}
-
-/* ══════════════════════════════════════════════════
-   BADGE STRIP (top ribbon)
-══════════════════════════════════════════════════ */
-.pkg-badge-strip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 16px;
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 5;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.pkg-badge-strip--free {
-  background: linear-gradient(90deg, rgba(22,163,74,0.08), rgba(22,163,74,0.14), rgba(22,163,74,0.08));
-  color: #15803d;
-  border-bottom: 1px solid rgba(22,163,74,0.15);
-}
-
-.pkg-badge-strip--popular {
-  background: #1F4BFF;
-  color: #fff;
-}
-
-/* White shimmer sweep on popular badge */
-.pkg-badge-strip--popular::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: badgeSweep 2.2s ease-in-out infinite;
-}
-
-@keyframes badgeSweep {
-  0%   { background-position: -100% center; }
-  60%  { background-position: 200%  center; }
-  100% { background-position: 200%  center; }
-}
-
-.pkg-badge-strip--premium {
-  background: linear-gradient(90deg, #0a0f1e 0%, #111827 50%, #0a0f1e 100%);
-  color: #c9a84c;
-  border-bottom: 1px solid rgba(201,168,76,0.15);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Gold sweep on premium badge */
-.pkg-badge-strip--premium::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.22) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: badgeSweep 3s ease-in-out infinite;
-  animation-delay: 0.5s;
-}
-
-/* Blinking dot */
-.pkg-badge-pulse {
+/* ══ Content ══════════════════════════════════ */
+.pk-id {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--muted2);
+  letter-spacing: 0.1em;
   display: block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
-  animation: dotBlink 1.8s ease-in-out infinite;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 8px;
 }
 
-.pkg-badge-pulse--right { animation-delay: 0.9s; }
-.pkg-badge-pulse--gold  { background: #c9a84c; }
-
-@keyframes dotBlink {
-  0%, 100% { opacity: 0.3; transform: scale(0.7); }
-  50%       { opacity: 1;   transform: scale(1.2); }
+.pk-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 4px;
 }
 
-/* ══════════════════════════════════════════════════
-   CARD BODY
-══════════════════════════════════════════════════ */
-.pkg-body {
-  padding: 20px 18px 18px;
+.pk-desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.pk-card--obsidian .pk-desc { color: var(--muted2); }
+
+.pk-price {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  position: relative;
-  z-index: 2;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 24px;
 }
 
-/* ══ Price area ═══════════════════════════════════ */
-.pkg-price-area {
-  margin-bottom: 16px;
-}
+.pk-taka { font-size: 1.2rem; font-weight: 700; }
+.pk-num { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
 
-.pkg-price-label {
-  display: block;
-  font-size: 1.35rem;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  color: #0B1220;
-  margin-bottom: 7px;
-}
-
-.pkg-price-label--popular { color: #1F4BFF; }
-
-.pkg-price-label--premium {
-  background: linear-gradient(135deg, #e2c97e 0%, #c9a84c 50%, #e2c97e 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: goldShine 3s linear infinite;
-}
-
-@keyframes goldShine {
-  to { background-position: 200% center; }
-}
-
-/* Ad note pill */
-.pkg-adnote {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.66rem;
-  font-weight: 600;
-  border-radius: 20px;
-  padding: 3px 10px;
-}
-
-.pkg-adnote--free    { color: #15803d;  background: rgba(22,163,74,0.10); }
-.pkg-adnote--popular { color: #1F4BFF;  background: rgba(31,75,255,0.08); }
-.pkg-adnote--premium { color: #c9a84c;  background: rgba(201,168,76,0.10); border: 1px solid rgba(201,168,76,0.20); }
-
-/* ══ Divider ══════════════════════════════════════ */
-.pkg-divider {
-  height: 1px;
-  background: #E6EAF5;
-  margin-bottom: 16px;
-}
-
-.pkg-divider--popular { background: rgba(31,75,255,0.12); }
-.pkg-divider--premium { background: rgba(201,168,76,0.18); }
-
-/* ══ Name + Tagline ═══════════════════════════════ */
-.pkg-name {
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: -0.022em;
-  margin: 0 0 5px;
-  line-height: 1.2;
-  color: #0B1220;
-}
-
-.pkg-name--popular { color: #1F4BFF; }
-.pkg-name--premium { color: rgba(255,255,255,0.92); }
-
-.pkg-tagline {
-  font-size: 0.76rem;
-  margin: 0 0 16px;
-  line-height: 1.55;
-  color: #5A667A;
-}
-
-.pkg-tagline--premium { color: rgba(255,255,255,0.45); }
-
-/* ══════════════════════════════════════════════════
-   FEATURES — draw-in on visible
-══════════════════════════════════════════════════ */
-.pkg-features {
+.pk-feats {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
-  flex: 1;
+  display: grid;
+  gap: 12px;
+  margin-bottom: 32px;
 }
 
-.pkg-feature {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  font-size: 0.79rem;
-  font-weight: 600;
-  line-height: 1.45;
-  color: #1E2A40;
-
-  /* start hidden, slide+fade in */
-  opacity: 0;
-  transform: translateX(-10px);
-  transition:
-    opacity   0.35s ease,
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(var(--stagger, 0ms) + var(--fi, 0) * 55ms + 200ms);
-}
-
-.pkg-feature--premium { color: rgba(255,255,255,0.75); }
-
-.pkg-card--visible .pkg-feature {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* check icon */
-.pkg-check {
-  flex-shrink: 0;
-  margin-top: 2px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.pkg-feature:hover .pkg-check { transform: scale(1.3) rotate(-10deg); }
-
-.pkg-check--green { background: #dcfce7; color: #16a34a; }
-.pkg-check--blue  { background: rgba(31,75,255,0.12); color: #1F4BFF; }
-.pkg-check--gold  {
-  background: rgba(201,168,76,0.15);
-  color: #c9a84c;
-  animation: goldCheckIdle 3s ease-in-out infinite;
-}
-
-@keyframes goldCheckIdle {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); }
-  50%       { box-shadow: 0 0 0 3px rgba(201,168,76,0.18); }
-}
-
-/* ══════════════════════════════════════════════════
-   CTA BUTTONS
-══════════════════════════════════════════════════ */
-.pkg-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  width: 100%;
-  border: none;
-  font-family: var(--font);
-  font-size: 0.88rem;
-  font-weight: 800;
-  padding: 14px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  letter-spacing: 0.01em;
-  margin-top: auto;
-  min-height: 48px;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-  overflow: hidden;
-  transition:
-    transform  0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-}
-
-/* Physical press feel */
-.pkg-cta:active {
-  transform: scale(0.96) translateY(1px) !important;
-}
-
-/* Ripple on click */
-.pkg-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.15);
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.pkg-cta:active::before { opacity: 1; }
-
-/* Ghost — Care+ */
-.pkg-cta--ghost {
-  background: transparent;
-  color: #1F4BFF;
-  border: 1.5px solid rgba(31,75,255,0.38);
-}
-
-.pkg-cta--ghost:hover {
-  background: rgba(31,75,255,0.06);
-  border-color: #1F4BFF;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 22px rgba(31,75,255,0.18);
-}
-
-/* Primary — Monthly */
-.pkg-cta--primary {
-  background: #1F4BFF;
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(31,75,255,0.35), 0 1px 4px rgba(31,75,255,0.2);
-}
-
-/* Sweep shimmer */
-.pkg-cta--primary::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255,255,255,0.20) 50%,
-    transparent 70%
-  );
-  background-size: 200% 100%;
-  background-position: -100% center;
-  transition: background-position 0.55s ease;
-}
-
-.pkg-cta--primary:hover::after { background-position: 200% center; }
-
-.pkg-cta--primary:hover {
-  background: #1538e0;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 32px rgba(31,75,255,0.46), 0 2px 8px rgba(31,75,255,0.24);
-}
-
-/* Premium — Brand Care */
-.pkg-cta--premium {
-  background: linear-gradient(135deg, #c9a84c 0%, #e2c97e 50%, #c9a84c 100%);
-  background-size: 200% auto;
-  color: #0B1220;
-  font-weight: 900;
-  box-shadow: 0 4px 20px rgba(201,168,76,0.35), 0 1px 4px rgba(0,0,0,0.2);
-  animation: goldBtnShine 3s linear infinite, goldBtnPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes goldBtnPulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(201,168,76,0.35), 0 1px 4px rgba(0,0,0,0.2); }
-  50%       { box-shadow: 0 6px 28px rgba(201,168,76,0.55), 0 2px 8px rgba(0,0,0,0.22); }
-}
-
-@keyframes goldBtnShine {
-  to { background-position: 200% center; }
-}
-
-.pkg-cta--premium:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 12px 36px rgba(201,168,76,0.45),
-    0 4px 12px rgba(0,0,0,0.2),
-    0 0 0 3px rgba(201,168,76,0.20);
-}
-
-/* ══════════════════════════════════════════════════
-   BOTTOM NOTE
-══════════════════════════════════════════════════ */
-.packages-note {
+.pk-feat {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 32px;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-.packages-note-line {
-  height: 1px;
-  width: 28px;
-  background: #D0D8EE;
+.pk-feat svg {
+  width: 16px;
+  color: var(--blue);
   flex-shrink: 0;
 }
 
-.packages-note-text {
-  font-size: 0.78rem;
-  color: #4A5568;
-  line-height: 1.6;
-}
-
-.packages-note-text strong {
-  color: #0B1220;
-  font-weight: 700;
-}
-
-.packages-note-link {
-  background: none;
+/* ══ Action ═══════════════════════════════════ */
+.pk-cta {
+  width: 100%;
+  padding: 20px;
+  background: var(--blue);
+  color: white;
   border: none;
-  color: #1F4BFF;
-  font-family: var(--font);
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
+  text-transform: uppercase;
   cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  transition: color 0.15s;
 }
 
-.packages-note-link:hover { color: #1438CC; }
+.pk-card--obsidian .pk-cta { background: var(--white); color: var(--dark); }
 
-/* ══════════════════════════════════════════════════
-   REDUCED MOTION
-══════════════════════════════════════════════════ */
-@media (prefers-reduced-motion: reduce) {
-  .pkg-card,
-  .pkg-feature,
-  .pkg-scan-beam,
-  .pkg-gold-light,
-  .pkg-gold-light::before,
-  .pkg-gold-light::after,
-  .pkg-badge-strip::after,
-  .pkg-price-label--premium,
-  .pkg-cta--premium,
-  .pkg-check--gold,
-  .pkg-corner::after,
-  .pkg-badge-pulse,
-  .pkg-card--premium,
-  .pkg-card--premium::before,
-  .pkg-card--premium::after {
-    animation: none !important;
-    transition: none !important;
+.pk-popular-tag {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  background: var(--blue);
+  color: white;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+/* ══ Desktop Refinement ═══════════════════════ */
+@media (min-width: 768px) {
+  .pk-card {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 60px 48px;
   }
-  .pkg-card    { opacity: 1 !important; translate: none !important; transform: none !important; }
-  .pkg-card--premium.pkg-card--visible { animation: none !important; opacity: 1 !important; translate: none !important; }
-  .pkg-feature { opacity: 1 !important; transform: none !important; }
+  
+  .pk-stack {
+    gap: 24px;
+  }
 }

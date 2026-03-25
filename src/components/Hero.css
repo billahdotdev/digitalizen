@@ -61,12 +61,12 @@
 .hero__badge::before {
   content: '';
   position: absolute;
-  inset: -0.5px;
+  inset: -0.3px;
   border-radius: 100px;
   background: conic-gradient(
     from var(--badge-angle, 0deg),
-    #ff0080, #ff4500, #ffdd00, #00ff88,
-    #00cfff, #7b2fff, #ff0080
+    #ff0080, #ff4500, #dcbf00, #00d16f,
+    #00b2da, #7221fd, #ff0080
   );
   z-index: -1;
   animation: badgeSpin 3s linear infinite;

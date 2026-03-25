@@ -1,289 +1,164 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './Gallery.css'
-import { track, pushEngagement} from '../lib/analytics.js'
 
 /* ─────────────────────────────────────────────
-   DATA — swap img + url for real content
+   DATA — Local Public Assets
 ───────────────────────────────────────────── */
-const sites = [
+const projects = [
   {
     id: 1,
-    title: 'ফ্যাশন বুটিক',
-    tag: 'ই-কমার্স',
-    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=75&fit=crop&auto=format&fm=webp',
-    url: 'https://digitalizen.agency',
+    number: '001',
+    title: 'FERTILE AGENCY',
+    colorClass: 'brown',
+    image: './one.jpg',
+    url: '#',
   },
   {
     id: 2,
-    title: 'রেস্টুরেন্ট প্রো',
-    tag: 'ফুড',
-    img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=75&fit=crop&auto=format&fm=webp',
-    url: 'https://digitalizen.agency',
+    number: '002',
+    title: 'CAMILLE JUTEL',
+    colorClass: 'blue',
+    image: './one.jpg',
+    url: '#',
   },
   {
     id: 3,
-    title: 'কোচিং সেন্টার',
-    tag: 'এডটেক',
-    img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=75&fit=crop&auto=format&fm=webp',
-    url: 'https://digitalizen.agency',
+    number: '003',
+    title: 'AMOURATROI',
+    colorClass: 'gray',
+    image: './one.jpg',
+    url: '#',
   },
   {
     id: 4,
-    title: 'রিয়েল এস্টেট',
-    tag: 'প্রপার্টি',
-    img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=75&fit=crop&auto=format&fm=webp',
-    url: 'https://digitalizen.agency',
+    number: '004',
+    title: 'MARINE BENABOU',
+    colorClass: 'dark',
+    image: './one.jpg',
+    url: '#',
   },
   {
     id: 5,
-    title: 'বিউটি সালোন',
-    tag: 'বিউটি',
-    img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=75&fit=crop&auto=format&fm=webp',
-    url: 'https://digitalizen.agency',
+    number: '005',
+    title: 'LCDO FESTIVAL',
+    colorClass: 'orange',
+    image: './one.jpg',
+    url: '#',
   },
   {
     id: 6,
-    title: 'ফিটনেস ক্লাব',
-    tag: 'হেলথ',
-    img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75&fit=crop&auto=format&fm=webp',
-    url: 'https://digitalizen.agency',
+    number: '006',
+    title: 'CREATIVE STUDIO',
+    colorClass: 'purple',
+    image: './one.jpg',
+    url: '#',
   },
 ]
 
 /* ─────────────────────────────────────────────
-   CARD
+   PROJECT ITEM COMPONENT
 ───────────────────────────────────────────── */
-function GCard({ site, index, _total }) {
-  const [ready, setReady] = useState(false)
+function ProjectItem({ project, index }) {
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const itemRef = useRef(null)
+
+  // Minimal intersection observer for zero-jank scroll entrances
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.unobserve(entry.target)
+        }
+      },
+      { rootMargin: '0px 0px -50px 0px', threshold: 0 }
+    )
+
+    if (itemRef.current) observer.observe(itemRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const handleAction = (e) => {
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return
+    e.preventDefault()
+    if (project.url) window.open(project.url, '_blank', 'noopener,noreferrer')
+  }
 
   return (
     <div
-      className={`gc ${ready ? 'gc--ready' : ''}`}
-      data-index={index}
+      ref={itemRef}
+      className={`gallery-item ${isVisible ? 'gallery-item--visible' : ''}`}
+      style={{ '--stagger-delay': `${(index % 3) * 0.15}s` }}
     >
-      <div className="gc__skeleton" aria-hidden="true" />
-
-      <img
-        className="gc__img"
-        src={site.img}
-        alt={site.title}
-        loading={index <= 1 ? 'eager' : 'lazy'}
-        decoding="async"
-        fetchPriority={index === 0 ? 'high' : 'auto'}
-        onLoad={() => setReady(true)}
-        draggable="false"
-      />
-
-      <div className="gc__grad" aria-hidden="true" />
-
-      {/* Tag — top right, minimal */}
-      <span className="gc__tag" aria-label={site.tag}>{site.tag}</span>
-
-      {/* Bottom: just title + arrow */}
-      <div className="gc__info">
-        <h3 className="gc__title">{site.title}</h3>
-
-        <a
-          className="gc__arrow"
-          href={site.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${site.title} — লাইভ সাইট খুলুন`}
-          onClick={e => e.stopPropagation()}
-        >
-          {/* Northeast arrow */}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M7 17L17 7" />
-            <path d="M7 7h10v10" />
-          </svg>
-        </a>
+      <div className="gallery-item-header">
+        <div className="gallery-item-number">
+          <span
+            className={`gallery-item-square gallery-item-square--${project.colorClass}`}
+            aria-hidden="true"
+          />
+          {project.number}
+        </div>
+        <div className="gallery-item-line" aria-hidden="true" />
+        <h3 className="gallery-item-title">{project.title}</h3>
       </div>
-    </div>
-  )
-}
 
-/* ─────────────────────────────────────────────
-   OVERLAY
-───────────────────────────────────────────── */
-function GalleryOverlay({ onClose }) {
-  const scrollRef = useRef(null)
-  const [active, setActive]   = useState(0)
-  const [scrolled, setScrolled] = useState(false)
-
-  /* Lock body scroll */
-  useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = prev }
-  }, [])
-
-  /* Escape closes */
-  useEffect(() => {
-    const fn = e => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', fn)
-    return () => window.removeEventListener('keydown', fn)
-  }, [onClose])
-
-  /* Track visible card */
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const cards = el.querySelectorAll('.gc')
-    const io = new IntersectionObserver(
-      entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            const idx = Number(e.target.dataset.index)
-            setActive(idx)
-            if (idx > 0) setScrolled(true)
-          }
-        })
-      },
-      { root: el, threshold: 0.55 }
-    )
-    cards.forEach(c => io.observe(c))
-    return () => io.disconnect()
-  }, [])
-
-  const goTo = useCallback(idx => {
-    scrollRef.current
-      ?.querySelectorAll('.gc')
-      ?.[idx]
-      ?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-
-  return (
-    <div className="go" role="dialog" aria-modal="true" aria-label="গ্যালারি">
-
-      {/* Close */}
-      <button
-        className="go__close"
-        onClick={onClose}
-        aria-label="গ্যালারি বন্ধ করুন"
+      <div
+        className="gallery-item-image-wrapper"
+        onClick={handleAction}
+        onKeyDown={handleAction}
+        role="button"
+        tabIndex={0}
+        aria-label={`View ${project.title} project`}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-          <path d="M19 12H5M12 5l-7 7 7 7" />
-        </svg>
-        ফিরে যান
-      </button>
-
-      {/* Counter */}
-      <div className="go__counter" aria-live="polite">
-        <span className="go__counter-cur">{String(active + 1).padStart(2, '0')}</span>
-        <span className="go__counter-sep">/</span>
-        <span className="go__counter-total">{String(sites.length).padStart(2, '0')}</span>
+        <img
+          src={project.image}
+          alt={`Screenshot of ${project.title} landing page`}
+          className={`gallery-item-image ${imageLoaded ? 'gallery-item-image--loaded' : ''}`}
+          loading={index <= 1 ? 'eager' : 'lazy'}
+          fetchPriority={index === 0 ? 'high' : 'auto'}
+          onLoad={() => setImageLoaded(true)}
+          draggable="false"
+        />
+        {!imageLoaded && <div className="gallery-item-skeleton" aria-hidden="true" />}
+        
+        <div className="gallery-item-overlay" aria-hidden="true">
+          <div className="gallery-item-link-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </div>
+        </div>
       </div>
-
-      {/* Dot nav */}
-      <nav className="go__dots" aria-label="কার্ড নেভিগেশন">
-        {sites.map((s, i) => (
-          <button
-            key={s.id}
-            className={`go__dot ${active === i ? 'go__dot--active' : ''}`}
-            onClick={() => goTo(i)}
-            aria-label={`${s.title}`}
-            aria-current={active === i ? 'true' : undefined}
-          >
-            <span className="go__dot-pip" />
-          </button>
-        ))}
-      </nav>
-
-      {/* Scroll hint */}
-      <div className={`go__hint ${scrolled ? 'go__hint--gone' : ''}`} aria-hidden="true">
-        <div className="go__hint-line" />
-        <div className="go__hint-dot" />
-      </div>
-
-      {/* Cards */}
-      <div className="go__scroll" ref={scrollRef}>
-        {sites.map((site, i) => (
-          <GCard key={site.id} site={site} index={i} total={sites.length} />
-        ))}
-      </div>
-
     </div>
   )
 }
 
 /* ─────────────────────────────────────────────
-   SECTION (place in MainLayout after Resources)
+   MAIN GALLERY COMPONENT
 ───────────────────────────────────────────── */
 export default function Gallery() {
-  const sectionRef   = useRef(null)
-  const enterTimeRef = useRef(null)
-  const firedRef     = useRef(false)
-
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !firedRef.current) {
-        firedRef.current     = true
-        enterTimeRef.current = Date.now()
-        track('ViewContent', { content_name: 'Gallery Section', content_category: 'Section' }, 'gal')
-        io.unobserve(el)
-      }
-    }, { threshold: 0.15 })
-    io.observe(el)
-    const push = () => pushEngagement('gallery', enterTimeRef)
-    const onVis = () => { if (document.visibilityState === 'hidden') push() }
-    document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', push)
-    return () => { io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('beforeunload', push) }
-  }, [])
-
-  const [open, setOpen] = useState(false)
-
-  const handleOpen = useCallback(() => {
-    track('ViewContent', {
-      content_name:     'Gallery Opened',
-      content_category: 'Engagement',
-      content_ids:      ['gallery'],
-    }, 'gal')
-    setOpen(true)
-  }, [])
-
-  const handleClose = useCallback(() => setOpen(false), [])
-
   return (
-    <>
-      <section
-        className="gallery-section"
-        id="gallery"
-        ref={sectionRef}
-        aria-label="আমাদের কাজ — প্রজেক্ট গ্যালারি"
-      >
-        <div className="container">
-
-          <div className="row-header">
-            <span className="section-num">০০৩</span>
-            <span className="section-title-right">কাস্টম ল্যান্ডিং পেজ</span>
-          </div>
-
-          <h2 className="gallery-heading">ল্যান্ডিং পেজ গ্যালারি</h2>
-          <p className="gallery-sub">
-            প্রতিটি ল্যান্ডিং পেজ আলাদাভাবে কাস্টম ডিজাইন করা হয়েছে।
-          </p>
-
-          <button
-            className="btn-primary gallery-open-btn"
-            onClick={handleOpen}
-            aria-haspopup="dialog"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="3" y="3" width="7" height="7" rx="1.5" />
-              <rect x="14" y="3" width="7" height="7" rx="1.5" />
-              <rect x="3" y="14" width="7" height="7" rx="1.5" />
-              <rect x="14" y="14" width="7" height="7" rx="1.5" />
-            </svg>
-            গ্যালারি দেখুন — {sites.length}টি প্রজেক্ট
-          </button>
-
+    <section className="gallery-section" id="gallery" aria-label="আমাদের কাজ — প্রজেক্ট গ্যালারি">
+      <div className="container">
+        <div className="row-header">
+          <span className="section-num">০০৮</span>
+          <span className="section-title-right">গ্যালারি</span>
         </div>
-      </section>
 
-      {open && <GalleryOverlay onClose={handleClose} />}
-    </>
+        <h2 className="gallery-heading">আমাদের কাজ</h2>
+        <p className="gallery-sub">
+          প্রতিটি ল্যান্ডিং পেজ আলাদাভাবে কাস্টম ডিজাইন করা হয়েছে।
+        </p>
+
+        <div className="gallery-list" role="list">
+          {projects.map((project, index) => (
+            <ProjectItem key={project.id} project={project} index={index} />
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
