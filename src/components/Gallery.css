@@ -1,26 +1,8 @@
 /* ═══════════════════════════════════════════════
-   GALLERY.CSS — Final
+   GALLERY.CSS
    Mobile-first · Scroll-Driven Stack · Parallax
-
-   ── JPG IMAGE GUIDE ────────────────────────────
-   Size    : 900 × 600 px
-   Format  : JPG, 80–85% quality
-   Output  : ~80–150 KB per image (fast load)
-
-   Why 900 × 600 (3:2)?
-   • Container max-width is 700px — 900px gives
-     enough headroom for retina screens (2×: 700px)
-   • 3:2 is natural for website screenshots
-   • object-fit: cover handles both desktop (16:9)
-     and mobile (9:14) crops from the same file
-   • Going larger (1280×720) wastes ~3× the bytes
-     with zero visible quality difference here
-
-   Exporting from Figma / Photoshop / Canva:
-   → Export as JPG, quality 80–85%, 900px wide
    ═══════════════════════════════════════════════ */
 
-/* ── Section ────────────────────────────────── */
 .gl-archive {
   padding: 72px 0 100px;
   background: var(--bg);
@@ -32,7 +14,7 @@
   margin-top: 40px;
 }
 
-/* ── Sticky wrapper ─────────────────────────── */
+/* ── Sticky wrapper ── */
 .gl-frame-wrapper {
   position: sticky;
   top: 70px;
@@ -41,13 +23,12 @@
   view-timeline-axis: block;
 }
 
-/* ── Card ───────────────────────────────────── */
+/* ── Card ── */
 .gl-frame {
   background: var(--white);
   border: 1px solid var(--border);
   overflow: hidden;
   transform-origin: center top;
-
   animation: frame-stack linear both;
   animation-timeline: --frame;
   animation-range: exit 0% exit 100%;
@@ -60,19 +41,17 @@
   }
 }
 
-/* ── Image window ───────────────────────────── */
+/* ── Image window ── */
 .gl-window {
   display: block;
   position: relative;
   width: 100%;
-  /* Mobile: portrait crop fills the screen nicely */
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: var(--dark);
   text-decoration: none;
 }
 
-/* Desktop: landscape */
 @media (min-width: 600px) {
   .gl-window { aspect-ratio: 16 / 9; }
 }
@@ -82,13 +61,12 @@
   outline-offset: 3px;
 }
 
-/* ── Parallax ───────────────────────────────── */
+/* ── Parallax ── */
 .gl-parallax-box {
   width: 100%;
   height: 130%;
   position: absolute;
   inset-block-start: 0;
-
   animation: img-parallax linear both;
   animation-timeline: --frame;
   animation-range: entry 0% exit 100%;
@@ -107,15 +85,11 @@
   display: block;
 }
 
-/* ── CTA button — mobile: always visible FAB ──
-   Base (mobile-first): pinned to bottom of image,
-   pill shape, frosted glass. Always tappable.
-───────────────────────────────────────────────── */
+/* ── HUD ── */
 .gl-hud {
   position: absolute;
   inset: 0;
   z-index: 2;
-  /* No dark overlay on mobile — image stays bright */
   pointer-events: none;
 }
 
@@ -125,7 +99,6 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: all;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,20 +106,17 @@
   padding: 0 22px;
   height: 48px;
   white-space: nowrap;
-
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 100px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
-
   font-family: var(--font);
   font-weight: 900;
   font-size: 0.85rem;
   color: var(--text);
   text-decoration: none;
-
   animation: float-btn 3s ease-in-out infinite;
 }
 
@@ -157,7 +127,6 @@
 
 .gl-hud-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-/* ── Desktop: hover-reveal, sharp corners ──── */
 @media (min-width: 600px) {
   .gl-hud {
     display: flex;
@@ -167,17 +136,11 @@
     transition: background 0.35s ease;
     pointer-events: auto;
   }
-
   .gl-window:hover .gl-hud { background: rgba(11, 18, 32, 0.5); }
-
   .gl-hud-btn {
-    /* Reset mobile positioning */
     position: static;
     transform: none;
-    bottom: auto;
-    left: auto;
-
-    /* Sharp corners on desktop */
+    bottom: auto; left: auto;
     border-radius: 0;
     border: none;
     background: var(--white);
@@ -187,8 +150,6 @@
     padding: 16px 28px;
     height: auto;
     font-size: 0.9rem;
-
-    /* Hidden until hover */
     opacity: 0;
     transform: translateY(30px);
     transition:
@@ -196,14 +157,12 @@
       opacity   0.35s ease;
     animation: none;
   }
-
   .gl-window:hover .gl-hud-btn {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Touch sheen */
 .gl-glass-sheen {
   position: absolute;
   inset: 0;
@@ -217,9 +176,8 @@
   z-index: 1;
 }
 
-/* Mobile scanner line */
 @media (max-width: 599px) {
-  .gl-window::after {
+  .gl-window:not(.gl-window--ask)::after {
     content: '';
     position: absolute;
     inset-inline: 0;
@@ -230,14 +188,13 @@
     opacity: 0.45;
     z-index: 3;
   }
-
   @keyframes scan {
     from { top: 0; }
     to   { top: 100%; }
   }
 }
 
-/* ── Name bar — below the image ─────────────── */
+/* ── Name bar ── */
 .gl-frame-bottom {
   padding: 18px 20px;
   display: flex;
@@ -273,7 +230,6 @@
   .gl-name { font-size: 1.2rem; }
 }
 
-/* Live indicator — just the pulsing dot, no text */
 .gl-pulse {
   width: 8px;
   height: 8px;
@@ -289,22 +245,86 @@
   50%       { opacity: 0.4; box-shadow: 0 0 3px #10b981; }
 }
 
-/* ── Reduced motion ─────────────────────────── */
+/* ══════════════════════════════════════════════
+   CARD 007 — THE ASK
+   Same shell. Dark window. Giant question.
+   Surprise lands because the format is identical.
+   ══════════════════════════════════════════════ */
+
+.gl-window--ask {
+  cursor: default;
+  background: var(--dark3);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 32px 28px;
+}
+
+.gl-ask__headline {
+  font-size: clamp(2.8rem, 14vw, 4.8rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.0;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.gl-ask__headline em {
+  font-style: normal;
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--blue-mid) 0%,
+    #7fa8ff        50%,
+    var(--blue-mid) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* WA button sits in the name bar where the pulse dot lives */
+.gl-ask__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25D366;
+  color: #fff;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.gl-ask__btn:hover {
+  background: #1ebe59;
+  transform: translateY(-1px);
+}
+
+.gl-ask__btn:active { transform: translateY(0); }
+
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .gl-frame,
   .gl-parallax-box,
   .gl-pulse,
   .gl-hud-btn,
-  .gl-window::after {
+  .gl-window:not(.gl-window--ask)::after,
+  .gl-ask__headline em {
     animation: none !important;
     transition: none !important;
   }
-
-  .gl-hud-btn {
-    opacity: 1 !important;
-    transform: translateX(-50%) !important;
-  }
-
+  .gl-hud-btn { opacity: 1 !important; transform: translateX(-50%) !important; }
   @media (min-width: 600px) {
     .gl-hud-btn { transform: none !important; }
   }

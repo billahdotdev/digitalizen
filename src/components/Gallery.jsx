@@ -5,13 +5,10 @@
  *   Size   : 900 × 600 px
  *   Format : JPG, quality 80–85%
  *   Size   : ~80–150 KB per file
- *
- * Export steps (Figma / Photoshop / Canva):
- *   1. Resize canvas to 900px wide, 600px tall
- *   2. Export as JPG, quality 80–85%
- *   3. Drop into /public/images/ as 1.jpg, 2.jpg …
  */
 
+import { useCallback } from 'react'
+import { track, WA_NUMBER } from '../lib/analytics.js'
 import './Gallery.css'
 
 const projects = [
@@ -23,6 +20,8 @@ const projects = [
   { id: 6, number: '006', title: 'resto',         image: './images/6.jpg', url: 'https://billahdotdev.github.io/resto/' },
 ]
 
+const WA_MSG = encodeURIComponent('হ্যালো, আমার ব্যবসার জন্য একটি কাস্টম ল্যান্ডিং পেজ বানাতে চাই। একটু জানাবেন?')
+
 export default function Gallery() {
   const handleTouch = (e) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -31,6 +30,8 @@ export default function Gallery() {
     e.currentTarget.style.setProperty('--mouse-x', `${x}%`)
     e.currentTarget.style.setProperty('--mouse-y', `${y}%`)
   }
+
+
 
   return (
     <section className="gl-archive" id="gallery">
@@ -50,8 +51,6 @@ export default function Gallery() {
               style={{ '--index': i }}
             >
               <article className="gl-frame">
-
-                {/* Image window — the whole thing is the link */}
                 <a
                   href={project.url}
                   target="_blank"
@@ -73,7 +72,6 @@ export default function Gallery() {
                     />
                   </div>
 
-                  {/* Single CTA — FAB on mobile, hover-reveal on desktop */}
                   <div className="gl-hud" aria-hidden="true">
                     <div className="gl-hud-btn">
                       <span>লাইভ দেখুন</span>
@@ -86,7 +84,6 @@ export default function Gallery() {
                   <div className="gl-glass-sheen" aria-hidden="true" />
                 </a>
 
-                {/* Name bar — serial + title + live dot, no duplicate CTA */}
                 <div className="gl-frame-bottom">
                   <div>
                     <span className="gl-id">{project.number}</span>
@@ -94,11 +91,13 @@ export default function Gallery() {
                   </div>
                   <span className="gl-pulse" aria-label="লাইভ" />
                 </div>
-
               </article>
             </div>
           ))}
         </div>
+
+
+
       </div>
     </section>
   )
