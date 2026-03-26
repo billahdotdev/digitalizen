@@ -27,7 +27,6 @@ const Contact       = lazy(() => import('./components/Contact'))
 const Footer        = lazy(() => import('./components/Footer'))
 const Gallery       = lazy(() => import('./components/Gallery'))
 const FreeResources = lazy(() => import('./components/FreeResources'))
-const FreeGift      = lazy(() => import('./components/FreeGift'))
 const Access        = lazy(() => import('./components/Access'))
 
 /* ── WhatsApp number ── */
@@ -221,7 +220,7 @@ export default function App() {
         <Routes>
           <Route path="/"          element={<MainLayout />} />
           <Route path="/free"      element={<Suspense fallback={null}><FreeResources /></Suspense>} />
-          <Route path="/free-gift" element={<Suspense fallback={null}><FreeGift /></Suspense>} />
+         
           <Route path="/access"    element={<Suspense fallback={null}><Access /></Suspense>} />
           <Route path="/gallery"   element={<Suspense fallback={null}><Gallery /></Suspense>} />
           <Route path="*"          element={<NotFound />} />
