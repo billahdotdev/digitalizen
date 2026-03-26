@@ -1,131 +1,219 @@
+/* ═══════════════════════════════════════════════
+   PACKAGES.CSS — Pricing Stack v2026.2
+   Mobile-first · Sticky Stack · Scroll-Driven
+   Three tiers: plain · electric · obsidian-premium
+   ═══════════════════════════════════════════════ */
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* ── Section shell ─────────────────────────────── */
 .pk-section {
-  padding: 100px 0;
+  padding: 72px 0 100px;
   background: var(--bg);
 }
 
+/* ── Stack container ───────────────────────────── */
 .pk-stack {
   display: flex;
   flex-direction: column;
-  /* কার্ডগুলো একটার ওপর একটা স্ট্যাক হওয়ার গ্যাপ */
-  gap: 60px; 
-  margin-top: 60px;
+  gap: 48px;
+  margin-top: 48px;
   perspective: 1000px;
 }
 
+/* ── Sticky wrapper — one per card ────────────── */
 .pk-card {
   position: sticky;
-  top: 120px;
+  top: 80px;
   width: 100%;
-  /* শার্পনেস ধরে রাখার জন্য view-timeline */
   view-timeline-name: --card-stack;
   view-timeline-axis: block;
 }
 
+@media (min-width: 768px) {
+  .pk-card { top: 100px; }
+  .pk-stack { gap: 60px; }
+}
+
+/* ── Card inner shell (shared base) ───────────── */
 .pk-card-inner {
-  background: var(--white);
-  border: 1px solid var(--border);
-  padding: 48px 32px;
   border-radius: 0;
+  padding: 32px 20px;
   display: flex;
   flex-direction: column;
   position: relative;
-  
-  /* Animation: No Blur, only Scale and Darken */
+  overflow: hidden;
+  transform-origin: center top;
+
   animation: card-stack-effect linear both;
   animation-timeline: --card-stack;
   animation-range: exit 0% exit 100%;
-  transform-origin: center top;
+}
+
+@media (min-width: 768px) {
+  .pk-card-inner { padding: 48px 36px; }
 }
 
 @keyframes card-stack-effect {
   to {
-    /* কার্ডটি ৩% ছোট হবে এবং ১০% ডার্ক হবে */
     transform: scale(0.97);
-    filter: brightness(0.9);
+    filter: brightness(0.88);
   }
 }
 
-/* ══ Tier Specific Aesthetics ════════════════ */
-
-.pk-card--electric .pk-card-inner {
-  border: 2px solid var(--blue);
-  box-shadow: 0 25px 50px -12px rgba(31, 75, 255, 0.25);
-}
-
-.pk-card--obsidian .pk-card-inner {
-  background: var(--dark);
-  color: #fff;
-  border: 1px solid #1e2a40;
-}
-
-/* ══ Actionable Elements ═════════════════════ */
-
-.pk-btn {
-  width: 100%;
-  height: 64px;
-  background: var(--text);
-  color: #fff;
-  border: none;
-  font-weight: 900;
-  text-transform: uppercase;
+/* ── Content grid: mobile stacked → 2-col ──── */
+.pk-content-grid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: 32px;
+  flex-direction: column;
+  gap: 28px;
 }
 
-/* Playful Button Hover */
-.pk-btn:hover {
-  background: var(--blue);
-  gap: 20px; /* অ্যারো আইকনটি একটু সরে যাবে */
+@media (min-width: 960px) {
+  .pk-content-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 52px;
+    align-items: center;
+  }
 }
 
-.pk-btn svg {
-  transition: transform 0.2s ease;
-}
-
-/* ══ Typography ══════════════════════════════ */
-
-.pk-serial {
-  font-family: monospace;
-  font-size: 12px;
-  color: var(--blue);
-  font-weight: 700;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.pk-title {
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: 24px;
-}
-
+/* ── Price block ───────────────────────────── */
 .pk-price {
   display: flex;
   align-items: baseline;
   gap: 4px;
-  margin-bottom: 32px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
-.pk-unit { font-size: 1.2rem; font-weight: 700; }
-.pk-amount { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.05em; }
+.pk-unit        { font-size: 1.15rem; font-weight: 700; }
+.pk-amount      { font-size: 3rem;   font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+.pk-period      { font-size: 0.85rem; font-weight: 600; opacity: 0.55; align-self: flex-end; padding-bottom: 4px; }
+
+@media (min-width: 768px) {
+  .pk-amount { font-size: 3.5rem; }
+}
+
+/* ── Ad cost chip ──────────────────────────── */
+.pk-ad-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--blue-light);
+  color: var(--blue);
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border: 1px solid rgba(31, 75, 255, 0.18);
+  margin-bottom: 28px;
+  width: fit-content;
+}
+
+.pk-ad-chip::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background: var(--blue);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── CTA Button ────────────────────────────── */
+.pk-btn {
+  width: 100%;
+  height: 56px;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  font-family: var(--font);
+  font-weight: 900;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition:
+    background 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    gap        0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    transform  0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer sweep on hover */
+.pk-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  transition: background-position 0.5s ease;
+}
+
+.pk-btn:hover  {
+  background: var(--blue);
+  gap: 20px;
+  transform: translateY(-1px);
+}
+.pk-btn:hover::after {
+  background-position: -200% 0;
+}
+.pk-btn:active { opacity: 0.85; transform: translateY(0); }
+.pk-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* ── Typography ───────────────────────────────── */
+.pk-serial {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--blue);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.pk-title {
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  text-wrap: balance;
+}
+
+@media (min-width: 768px) {
+  .pk-title { font-size: 2rem; }
+}
+
+/* ── Feature list ──────────────────────────────── */
+.pk-feat-list { list-style: none; padding: 0; margin: 0; }
 
 .pk-feat-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  line-height: 1.4;
   margin-bottom: 14px;
   color: var(--text2);
 }
-
-.pk-card--obsidian .pk-feat-item { color: #cbd5e1; }
 
 .pk-dot {
   width: 5px;
@@ -134,18 +222,247 @@
   flex-shrink: 0;
 }
 
-/* ══ Mobile Responsive ═══════════════════════ */
-@media (max-width: 768px) {
-  .pk-amount { font-size: 2.8rem; }
-  .pk-title { font-size: 1.5rem; }
-  .pk-card { top: 90px; }
+/* ── Popular badge ─────────────────────────────── */
+.pk-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--blue);
+  color: #fff;
+  font-family: monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  z-index: 2;
 }
 
-@media (min-width: 1024px) {
-  .pk-content-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 60px;
-    align-items: center;
+
+/* ══════════════════════════════════════════════════
+   TIER 1 — FROSTED (plain bg)
+   ══════════════════════════════════════════════════ */
+
+.pk-card--frosted .pk-card-inner {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+}
+
+/* Hover: subtle lift */
+.pk-card--frosted .pk-card-inner {
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.pk-card--frosted:hover .pk-card-inner {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px) scale(0.998);
+}
+
+
+/* ══════════════════════════════════════════════════
+   TIER 2 — ELECTRIC
+   Body: plain var(--bg). Border: spinning conic gradient.
+   ══════════════════════════════════════════════════ */
+
+.pk-card--electric .pk-card-inner {
+  border: 2px solid transparent;
+  background-image:
+    linear-gradient(var(--bg), var(--bg)),
+    conic-gradient(
+      from var(--border-angle) at 50% 50%,
+      var(--blue)    0%,
+      #7eb3ff       20%,
+      #ffffff       25%,
+      #7eb3ff       30%,
+      var(--blue)   50%,
+      transparent   58%,
+      transparent   92%,
+      var(--blue)  100%
+    );
+  background-origin: padding-box, border-box;
+  background-clip:   padding-box, border-box;
+
+  animation:
+    card-stack-effect linear both,
+    border-spin 4s linear infinite;
+  animation-timeline:
+    --card-stack,
+    auto;
+  animation-range: exit 0% exit 100%, auto;
+
+  box-shadow:
+    0 0 28px rgba(31, 75, 255, 0.16),
+    0 20px 48px -12px rgba(31, 75, 255, 0.22);
+}
+
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+
+.pk-card--electric .pk-btn        { background: var(--blue); }
+.pk-card--electric .pk-btn:hover  { background: var(--blue-dark); }
+.pk-card--electric .pk-ad-chip    {
+  background: rgba(31,75,255,0.06);
+  border-color: rgba(31,75,255,0.22);
+}
+
+
+/* ══════════════════════════════════════════════════
+   TIER 3 — OBSIDIAN PREMIUM
+   New animation system:
+   1. Particle constellation (canvas via JS in JSX)
+   2. Liquid-metal shimmer sweep (::before)
+   3. Corner accent glow (::after)
+   WCAG AA contrast maintained from v1.
+   ══════════════════════════════════════════════════ */
+
+.pk-card--obsidian .pk-card-inner {
+  background: var(--dark);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  isolation: isolate;
+
+  animation:
+    card-stack-effect linear both,
+    obsidian-breathe 8s ease-in-out infinite;
+  animation-timeline:
+    --card-stack,
+    auto;
+  animation-range: exit 0% exit 100%, auto;
+}
+
+/* Slow border-glow breathe */
+@keyframes obsidian-breathe {
+  0%,100% { box-shadow: 0 0 0px rgba(31,75,255,0), 0 30px 80px -12px rgba(0,0,0,0.8); }
+  50%     { box-shadow: 0 0 40px rgba(31,75,255,0.25), 0 30px 80px -12px rgba(0,0,0,0.8); }
+}
+
+/* ── Liquid-metal shimmer sweep (::before) ──
+   A wide diagonal highlight that slowly crosses
+   the card every ~5s — like light catching chrome. */
+.pk-card--obsidian .pk-card-inner::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -80%;
+  width: 60%;
+  height: 220%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 30%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(31, 75, 255, 0.06)  65%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  animation: shimmer-sweep 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes shimmer-sweep {
+  0%   { left: -80%; opacity: 0;   }
+  8%   { opacity: 1;               }
+  88%  { opacity: 1;               }
+  100% { left: 130%; opacity: 0;  }
+}
+
+/* ── Corner radial accent (::after) ──
+   A static-ish blue radial in top-right corner
+   that pulses very slowly. Expensive, not chaotic. */
+.pk-card--obsidian .pk-card-inner::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(
+    circle,
+    rgba(31, 75, 255, 0.28) 0%,
+    rgba(31, 75, 255, 0.10) 40%,
+    transparent 72%
+  );
+  animation: corner-pulse 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes corner-pulse {
+  0%,100% { transform: scale(1);    opacity: 0.7; }
+  50%     { transform: scale(1.18); opacity: 1;   }
+}
+
+/* Particle canvas sits behind content */
+.pk-obsidian-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+/* Content grid floats above all pseudos + canvas */
+.pk-card--obsidian .pk-content-grid {
+  position: relative;
+  z-index: 1;
+}
+
+.pk-card--obsidian .pk-badge { z-index: 2; }
+
+/* ── Obsidian text overrides ── */
+.pk-card--obsidian .pk-serial  { color: rgba(255,255,255,0.55); }
+.pk-card--obsidian .pk-title   { color: #fff; }
+.pk-card--obsidian .pk-unit,
+.pk-card--obsidian .pk-amount  { color: #fff; }
+.pk-card--obsidian .pk-period  { color: rgba(255,255,255,0.45); }
+.pk-card--obsidian .pk-feat-item { color: #cbd5e1; }
+.pk-card--obsidian .pk-ad-chip {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.70);
+  border-color: rgba(255,255,255,0.12);
+}
+.pk-card--obsidian .pk-ad-chip::before { background: rgba(255,255,255,0.7); }
+.pk-card--obsidian .pk-dot     { background: rgba(255,255,255,0.5); }
+
+.pk-card--obsidian .pk-btn {
+  background: #fff;
+  color: var(--dark);
+  position: relative;
+  z-index: 1;
+}
+.pk-card--obsidian .pk-btn:hover {
+  background: var(--blue);
+  color: #fff;
+}
+
+
+/* ══ Mobile Responsive ═══════════════════════════ */
+@media (max-width: 480px) {
+  .pk-amount     { font-size: 2.6rem; }
+  .pk-title      { font-size: 1.45rem; }
+  .pk-card       { top: 70px; }
+  .pk-card-inner { padding: 28px 18px; }
+}
+
+/* ══ Reduced Motion ══════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .pk-card-inner,
+  .pk-card--obsidian .pk-card-inner::before,
+  .pk-card--obsidian .pk-card-inner::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .pk-card--electric .pk-card-inner {
+    background-image: none;
+    background: var(--bg);
+    border: 2px solid var(--blue);
+  }
+
+  .pk-card--obsidian .pk-card-inner {
+    box-shadow: 0 30px 80px -12px rgba(0,0,0,0.8);
   }
 }

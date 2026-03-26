@@ -13,7 +13,6 @@
   box-shadow: 0 1px 0 var(--border), 0 4px 16px rgba(15, 23, 42, 0.06);
 }
 
-
 .nav__inner {
   height: 100%;
   display: flex;
@@ -21,6 +20,7 @@
   justify-content: space-between;
 }
 
+/* ── Logo ── */
 .nav__logo {
   background: none;
   border: none;
@@ -49,12 +49,14 @@
   animation: pulse 2s ease infinite;
 }
 
+/* ── Right cluster ── */
 .nav__right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* ── WhatsApp button ── */
 .nav__wa-btn {
   display: flex;
   align-items: center;
@@ -77,7 +79,10 @@
   transform: translateY(-1px);
 }
 
-/* Burger */
+/* ── Burger ──
+   44×44 touch target (WCAG 2.5.5).
+   Three spans animate to X when .nav__burger--open is present.
+── */
 .nav__burger {
   background: none;
   border: none;
@@ -85,9 +90,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 5px;
   padding: 6px;
-  /* WCAG 2.5.5: minimum 44×44px touch target */
   width: 44px;
   height: 44px;
   border-radius: var(--radius-sm);
@@ -105,10 +110,12 @@
   height: 2px;
   background: var(--text);
   border-radius: 2px;
-  transition: all 0.3s ease;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity   0.2s ease;
   transform-origin: center;
 }
 
+/* ── X state ── */
 .nav__burger--open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -120,7 +127,18 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Drawer */
+/* ── Backdrop: dims content behind drawer, tappable to close ── */
+.nav__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 998;                          /* below drawer (999), above content */
+  background: rgba(11, 18, 32, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+/* ── Drawer ── */
 .nav__drawer {
   position: absolute;
   top: var(--nav-h);
@@ -130,10 +148,11 @@
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
-  animation: slideDown 0.22s ease;
+  animation: slideDown 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 999;
 }
 
+/* ── Drawer links ── */
 .nav__drawer-link {
   background: none;
   border: none;
@@ -149,6 +168,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  text-decoration: none;   /* covers <Link> */
 }
 
 .nav__drawer-link::before {
@@ -162,7 +182,8 @@
   transition: opacity 0.15s;
 }
 
-.nav__drawer-link:hover {
+.nav__drawer-link:hover,
+.nav__drawer-link:focus-visible {
   background: var(--blue-light);
   color: var(--blue);
 }
@@ -171,11 +192,22 @@
   opacity: 1;
 }
 
+/* ── Active link ── */
+.nav__drawer-link--active {
+  background: var(--blue-light);
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.nav__drawer-link--active::before {
+  opacity: 1;
+}
+
+/* ── Drawer CTA ── */
 .nav__drawer-cta {
   padding: 16px 20px;
 }
 
-/* ── Drawer CTA full-width button ── */
 .nav__drawer-cta-btn {
   width: 100%;
 }

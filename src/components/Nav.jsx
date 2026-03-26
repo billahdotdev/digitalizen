@@ -4,9 +4,7 @@ import { track, WA_NUMBER } from '../lib/analytics.js'
 import './Nav.css'
 
 /* ── Scroll-spy hook ─────────────────────────────────
-   Returns the id of the section currently in viewport.
-   Uses IntersectionObserver with a generous rootMargin
-   so the active item updates smoothly as you scroll.
+   Highest-ratio section wins. Smooth, no jank.
 ── */
 function useActiveSection(ids) {
   const [active, setActive] = useState(null)
@@ -17,7 +15,6 @@ function useActiveSection(ids) {
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach(e => map.set(e.target.id, e.intersectionRatio))
-        // Pick whichever observed section has the highest visible ratio
         let best = null, bestRatio = 0
         map.forEach((ratio, id) => {
           if (ratio > bestRatio) { bestRatio = ratio; best = id }
@@ -44,25 +41,39 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen]         = useState(false)
   const activeSection           = useActiveSection(NAV_SECTION_IDS)
+  const navRef                  = useRef(null)   // ← covers burger + drawer
 
+  /* ── Scroll listener ── */
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  // Close drawer on outside click
-  const drawerRef = useRef(null)
+  /* ── Body scroll-lock while drawer is open ── */
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
+  /* ── Outside-click on 'click' (not mousedown) ──
+     Using 'click' prevents the race condition where mousedown
+     closes the drawer and the subsequent click re-opens it.
+     Ref covers the entire <nav>, so burger taps are correctly
+     treated as "inside" and handled by the toggle alone.
+  ── */
   useEffect(() => {
     if (!open) return
     const onClickOutside = (e) => {
-      if (drawerRef.current && !drawerRef.current.contains(e.target)) setOpen(false)
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setOpen(false)
+      }
     }
-    document.addEventListener('mousedown', onClickOutside)
-    return () => document.removeEventListener('mousedown', onClickOutside)
+    document.addEventListener('click', onClickOutside)
+    return () => document.removeEventListener('click', onClickOutside)
   }, [open])
 
-  // Close drawer on Escape
+  /* ── Escape key ── */
   useEffect(() => {
     if (!open) return
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
@@ -76,15 +87,12 @@ export default function Nav() {
   }, [])
 
   const navLinks = [
-    { label: 'আমাদের সম্পর্কে',   id: 'about'    },
-    { label: 'ভালো রেজাল্ট কীভাবে আসে',         id: 'process'  },
-    { label: 'কাস্টম ল্যান্ডিং পেজ',           id: 'gallery' },
-    { label: 'প্যাকেজ ফাইন্ডার', id: 'finder'   },
-    
-    { label: 'প্যাকেজ',           id: 'packages' },
-    
-    
-    { label: 'যোগাযোগ',           id: 'contact'  },
+    { label: 'আমাদের সম্পর্কে',          id: 'about'    },
+    { label: 'ভালো রেজাল্ট কীভাবে আসে', id: 'process'  },
+    { label: 'কাস্টম ল্যান্ডিং পেজ',    id: 'gallery'  },
+    { label: 'প্যাকেজ ফাইন্ডার',        id: 'finder'   },
+    { label: 'প্যাকেজ',                  id: 'packages' },
+    { label: 'যোগাযোগ',                  id: 'contact'  },
   ]
 
   const handleWa = useCallback(() => {
@@ -96,7 +104,12 @@ export default function Nav() {
   }, [])
 
   const handleDrawerCta = useCallback(() => {
-    track('InitiateCheckout', { content_name: 'Nav Drawer CTA', content_category: 'CTA', currency: 'BDT', value: 0 }, 'nav')
+    track('InitiateCheckout', {
+      content_name: 'Nav Drawer CTA',
+      content_category: 'CTA',
+      currency: 'BDT',
+      value: 0,
+    }, 'nav')
     window.open(
       `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, ফ্রি কনসালটেশন কল করতে চাই।')}`,
       '_blank'
@@ -105,92 +118,108 @@ export default function Nav() {
   }, [])
 
   return (
-    <nav
-      className={`nav${scrolled ? ' nav--solid' : ''}`}
-      role="navigation"
-      aria-label="প্রধান নেভিগেশন"
-    >
-      <div className="nav__inner container">
-        <button
-          className="nav__logo"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          aria-label="হোমে যান"
-        >
-          <span className="logo-text">digitalizen</span>
-          <span className="logo-dot"></span>
-        </button>
-
-        <div className="nav__right">
-          <button
-            className="nav__wa-btn"
-            onClick={handleWa}
-            aria-label="WhatsApp-এ যোগাযোগ করুন"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            <span>WhatsApp</span>
-          </button>
-
-          <button
-            className={`nav__burger${open ? ' nav__burger--open' : ''}`}
-            onClick={() => setOpen(o => !o)}
-            aria-label={open ? 'মেনু বন্ধ করুন' : 'মেনু খুলুন'}
-            aria-expanded={open}
-            aria-controls="nav-drawer"
-          >
-            <span></span><span></span><span></span>
-          </button>
-        </div>
-      </div>
-
+    <>
+      {/* ── Backdrop: tap anywhere outside drawer to close ── */}
       {open && (
         <div
-          id="nav-drawer"
-          className="nav__drawer"
-          role="menu"
-          ref={drawerRef}
-        >
-          {navLinks.map(l => (
+          className="nav__backdrop"
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      <nav
+        ref={navRef}   /* ← single ref, wraps both burger & drawer */
+        className={`nav${scrolled ? ' nav--solid' : ''}`}
+        role="navigation"
+        aria-label="প্রধান নেভিগেশন"
+      >
+        <div className="nav__inner container">
+
+          {/* Logo */}
+          <button
+            className="nav__logo"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="হোমে যান"
+          >
+            <span className="logo-text">digitalizen</span>
+            <span className="logo-dot" aria-hidden="true"></span>
+          </button>
+
+          <div className="nav__right">
+            {/* WhatsApp CTA */}
             <button
-              key={l.id}
-              className={`nav__drawer-link${activeSection === l.id ? ' nav__drawer-link--active' : ''}`}
-              onClick={() => go(l.id)}
-              role="menuitem"
-              aria-current={activeSection === l.id ? 'true' : undefined}
+              className="nav__wa-btn"
+              onClick={handleWa}
+              aria-label="WhatsApp-এ যোগাযোগ করুন"
             >
-              {l.label}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              <span>WhatsApp</span>
             </button>
-          ))}
 
-          <Link
-            to="/free"
-            className="nav__drawer-link"
-            onClick={() => setOpen(false)}
-            role="menuitem"
-          >
-            ফ্রি রিসোর্স
-          </Link>
-
-          <Link
-            to="/access"
-            className="nav__drawer-link"
-            onClick={() => setOpen(false)}
-            role="menuitem"
-          >
-            অ্যাড অ্যাক্সেস
-          </Link>
-
-          <div className="nav__drawer-cta">
+            {/* Burger — toggle only, outside-click handled by nav ref */}
             <button
-              className="btn-primary nav__drawer-cta-btn"
-              onClick={handleDrawerCta}
+              className={`nav__burger${open ? ' nav__burger--open' : ''}`}
+              onClick={() => setOpen(o => !o)}
+              aria-label={open ? 'মেনু বন্ধ করুন' : 'মেনু খুলুন'}
+              aria-expanded={open}
+              aria-controls="nav-drawer"
             >
-              ফ্রি কনসালটেশন কল বুক করুন
+              <span></span><span></span><span></span>
             </button>
           </div>
         </div>
-      )}
-    </nav>
+
+        {/* ── Drawer ── */}
+        {open && (
+          <div
+            id="nav-drawer"
+            className="nav__drawer"
+            role="menu"
+          >
+            {navLinks.map(l => (
+              <button
+                key={l.id}
+                className={`nav__drawer-link${activeSection === l.id ? ' nav__drawer-link--active' : ''}`}
+                onClick={() => go(l.id)}
+                role="menuitem"
+                aria-current={activeSection === l.id ? 'true' : undefined}
+              >
+                {l.label}
+              </button>
+            ))}
+
+            <Link
+              to="/free"
+              className="nav__drawer-link"
+              onClick={() => setOpen(false)}
+              role="menuitem"
+            >
+              ফ্রি রিসোর্স
+            </Link>
+
+            <Link
+              to="/access"
+              className="nav__drawer-link"
+              onClick={() => setOpen(false)}
+              role="menuitem"
+            >
+              অ্যাড অ্যাক্সেস
+            </Link>
+
+            <div className="nav__drawer-cta">
+              <button
+                className="btn-primary nav__drawer-cta-btn"
+                onClick={handleDrawerCta}
+              >
+                ফ্রি কনসালটেশন কল বুক করুন
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+    </>
   )
 }
