@@ -4,43 +4,43 @@ const projects = [
   { 
     id: 1, 
     number: '001', 
-    title: 'FERTILE AGENCY', 
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80', 
-    url: '#' 
+    title: 'DhakaTeez', 
+    image: './images/1.jpg', 
+    url: 'https://billahdotdev.github.io/dhakateez/' 
   },
   { 
     id: 2, 
     number: '002', 
-    title: 'CAMILLE JUTEL', 
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&q=80', 
-    url: '#' 
+    title: 'Auora', 
+    image: './images/2.jpg', 
+    url: 'https://billahdotdev.github.io/velore_bangla/' 
   },
   { 
     id: 3, 
     number: '003', 
-    title: 'AMOURATROI', 
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1200&q=80', 
+    title: 'xyzxyz', 
+    image: './images/3.jpg', 
     url: '#' 
   },
   { 
     id: 4, 
     number: '004', 
     title: 'FERTILE AGENCY', 
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80', 
+    image: './images/4.jpg', 
     url: '#' 
   },
   { 
     id: 5, 
     number: '005', 
     title: 'CAMILLE JUTEL', 
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&q=80', 
+    image: './images/5.jpg', 
     url: '#' 
   },
   { 
     id: 6, 
     number: '006', 
     title: 'AMOURATROI', 
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1200&q=80', 
+    image: './images/6.jpg', 
     url: '#' 
   }
 
@@ -65,7 +65,7 @@ export default function Gallery() {
         </div>
         <h2 className="finder-heading">ল্যান্ডিং পেজ কি আপনার ব্যবসার গল্প বলে?</h2>
         <p className="finder-sub">
-         ৩ সেকেন্ডে লোড না হলে ৪০% সেল লস। আপনি কি জানতেন?
+         ৩ সেকেন্ডে লোড না হলে ৪০% সেল লস। ঝুঁকিতে আছেন?
         </p>
 
         <div className="gl-stack">
@@ -84,7 +84,7 @@ export default function Gallery() {
                   </div>
                   <div className="gl-status">
                     <span className="gl-pulse"></span>
-                    LIVE_PREVIEW
+                    লাইভ দেখুন
                   </div>
                 </div>
 
@@ -108,7 +108,7 @@ export default function Gallery() {
                   {/* Action HUD */}
                   <div className="gl-hud">
                     <div className="gl-hud-btn">
-                      <span>প্রজেক্ট দেখুন</span>
+                      <span>লাইভ দেখুন</span>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                         <path d="M7 17L17 7M17 7H7M17 7V17" />
                       </svg>
