@@ -36,8 +36,7 @@ export default function Footer() {
                 Digitalizen<span className="footer__logo-dot"></span>
               </div>
               <p className="footer__tagline">
-                পারফরম্যান্স-ড্রিভেন মার্কেটিং এজেন্সি। আমরা শুধু ক্যাম্পেইন চালাই না, 
-                আমরা আপনার ব্যবসার গ্রোথ পার্টনার।
+                ডিজিটালাইজেন | আপনার ডিজিটাল গ্রোথ পার্টনার
               </p>
 
               {/* WhatsApp Button */}
@@ -99,7 +98,7 @@ export default function Footer() {
 
             {/* Navigation Section */}
             <div className="footer__nav">
-              <h3 className="footer__nav-title">নেভিগেশন</h3>
+              <h3 className="footer__nav-title">{"//নেভিগেশন"}</h3>
               <button onClick={() => scrollTo('home')} className="footer__link">
                 হোম
               </button>

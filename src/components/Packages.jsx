@@ -43,9 +43,13 @@ export default function Packages() {
     <section className="pk-section" id="pricing">
       <div className="container">
         <div className="row-header">
-          <span className="section-num">০০৯</span>
-          <span className="section-title-right">প্যাকেজ</span>
+          <span className="section-num">০০৫</span>
+          <span className="section-title-right">{"// প্যাকেজ"}</span>
         </div>
+        <h2 className="finder-heading">সবার জন্য এক সলিউশন নয়; আপনার চাই ইউনিক গ্রোথ প্ল্যান!</h2>
+        <p className="finder-sub">
+          প্রতিটি ব্যবসার চ্যালেঞ্জ আলাদা। আপনার বর্তমান প্রয়োজন এবং ভবিষ্যৎ পরিকল্পনা মাথায় রেখে আমাদের ৩টি প্ল্যান থেকে বেছে নিন।
+        </p>
 
         <div className="pk-stack">
           {packages.map((pkg, i) => (

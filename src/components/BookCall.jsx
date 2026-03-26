@@ -168,7 +168,7 @@ export default function BookCall() {
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৬</span>
-          <span className="section-title-right">ফ্রি কল</span>
+          <span className="section-title-right">{"// ফ্রি কনসালটেশন কল"}</span>
         </div>
 
         <div className="bookcall-card">

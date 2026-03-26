@@ -60,9 +60,13 @@ export default function Gallery() {
     <section className="gl-archive" id="gallery">
       <div className="container">
         <div className="row-header">
-          <span className="section-num">০০৮</span>
-          <span className="section-title-right">গ্যালারি</span>
+          <span className="section-num">০০৩</span>
+          <span className="section-title-right">{"// ল্যান্ডিং পেজ"}</span>
         </div>
+        <h2 className="finder-heading">ল্যান্ডিং পেজ কি আপনার ব্যবসার গল্প বলে?</h2>
+        <p className="finder-sub">
+         ৩ সেকেন্ডে লোড না হলে ৪০% সেল লস। আপনি কি জানতেন?
+        </p>
 
         <div className="gl-stack">
           {projects.map((project, i) => (

@@ -460,12 +460,12 @@ export default function Finder() {
 
         <div className="row-header">
           <span className="section-num">০০৪</span>
-          <span className="section-title-right">প্যাকেজ ফাইন্ডার</span>
+          <span className="section-title-right">{"// প্যাকেজ ফাইন্ডার"}</span>
         </div>
 
-        <h2 className="finder-heading">আপনার ব্যবসার জন্য সঠিক প্ল্যান কোনটি?</h2>
+        <h2 className="finder-heading">আপনার ব্যবসার স্বাস্থ্য পরীক্ষা!</h2>
         <p className="finder-sub">
-          ১৪টি প্রশ্নে আপনার ব্যবসার বর্তমান অবস্থা বুঝুন এবং সঠিক প্ল্যান বেছে নিন।
+          ১৪টি ছোট প্রশ্ন = ১টি বড় সমাধান। আপনার ব্যবসার টেকনিক্যাল গ্যাপগুলো জানুন।
         </p>
 
         <div className="finder-card">

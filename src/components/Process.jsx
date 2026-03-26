@@ -243,7 +243,7 @@ export default function Process() {
 
           <div className="row-header">
             <span className="section-num">০০২</span>
-            <span className="section-title-right">ভালো রেজাল্ট কীভাবে আসে</span>
+            <span className="section-title-right">{"// ভালো রেজাল্ট কীভাবে আসে"}</span>
           </div>
 
           <h2 className="process-heading">আমাদের প্রমাণিত পদ্ধতি</h2>

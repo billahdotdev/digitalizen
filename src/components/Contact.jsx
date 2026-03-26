@@ -28,7 +28,7 @@ export default function Contact() {
       
       <div className="container ct-main-grid">
         <div className="ct-vision">
-          <div className="ct-tag">009 / Contact</div>
+          <div className="ct-tag">{"//  Contact"}</div>
           <h2 className="ct-hero-text">
             Let&apos;s build <br /> 
             something <span className="text-glow">Legendary.</span>

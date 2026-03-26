@@ -141,7 +141,7 @@ export default function About() {
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০১</span>
-          <span className="section-title-right">আমাদের সম্পর্কে</span>
+          <span className="section-title-right">{"// আমাদের সম্পর্কে"}</span>
         </div>
 
         {/* ── Main copy ── */}
