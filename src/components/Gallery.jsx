@@ -25,23 +25,23 @@ const projects = [
   { 
     id: 4, 
     number: '004', 
-    title: 'FERTILE AGENCY', 
+    title: '@billahdotdev', 
     image: './images/4.jpg', 
-    url: '#' 
+    url: 'https://billah.dev' 
   },
   { 
     id: 5, 
     number: '005', 
-    title: 'CAMILLE JUTEL', 
+    title: 'GARMENTIK', 
     image: './images/5.jpg', 
-    url: '#' 
+    url: 'https://billahdotdev.github.io/garmentik/' 
   },
   { 
     id: 6, 
     number: '006', 
-    title: 'AMOURATROI', 
+    title: 'resto', 
     image: './images/6.jpg', 
-    url: '#' 
+    url: 'https://billahdotdev.github.io/resto/' 
   }
 
 ]
