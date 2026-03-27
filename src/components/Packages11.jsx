@@ -59,7 +59,7 @@ function ParticleCanvas() {
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < CONNECT) {
             const alpha = (1 - dist / CONNECT) * 0.35
-            ctx.strokeStyle = `rgba(31, 75, 255, ${alpha})`
+            ctx.strokeStyle = `rgba(16, 185, 129, ${alpha})`  // emerald edges
             ctx.lineWidth   = 0.6
             ctx.beginPath()
             ctx.moveTo(particles[i].x, particles[i].y)
@@ -69,11 +69,14 @@ function ParticleCanvas() {
         }
       }
 
-      // Draw nodes
-      for (const p of particles) {
+      // Draw nodes — alternating emerald / gold
+      for (let k = 0; k < particles.length; k++) {
+        const p = particles[k]
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(100, 149, 255, 0.55)'
+        ctx.fillStyle = k % 3 === 0
+          ? 'rgba(251, 191, 36,  0.70)'   // gold
+          : 'rgba(52,  211, 153, 0.60)'   // emerald
         ctx.fill()
       }
 
@@ -144,6 +147,7 @@ const packages = [
     ],
     cta: 'স্কেল করুন',
     type: 'obsidian',
+    premium: true,
   },
 ]
 
@@ -191,10 +195,22 @@ export default function Packages() {
                 {/* Particle canvas — obsidian only */}
                 {pkg.type === 'obsidian' && <ParticleCanvas />}
 
+                {/* Scanline texture — obsidian only */}
+                {pkg.type === 'obsidian' && (
+                  <div className="pk-scanlines" aria-hidden="true" />
+                )}
+
                 {/* Popular badge */}
                 {pkg.popular && (
                   <div className="pk-badge" aria-label="সবচেয়ে জনপ্রিয় প্যাকেজ">
                     BEST ROI
+                  </div>
+                )}
+
+                {/* Premium badge — obsidian tier */}
+                {pkg.premium && (
+                  <div className="pk-badge pk-badge--premium" aria-label="প্রিমিয়াম প্যাকেজ">
+                    ✦ PREMIUM
                   </div>
                 )}
 
