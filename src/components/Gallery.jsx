@@ -35,8 +35,8 @@ export default function Gallery() {
           <span className="section-title-right">{'// ল্যান্ডিং পেজ'}</span>
         </div>
         <h2 className="finder-heading">ল্যান্ডিং পেজ কি আপনার ব্যবসার গল্প বলে?</h2>
-        <p className="finder-sub">৩ সেকেন্ডে লোড না হলে ৪০% সেল লস। ঝুঁকিতে আছেন?</p>
-
+        <p className="finder-sub">১ সেকেন্ড দেরি = ২০% কনভার্সন লস, ৩ সেকেন্ড = ৪৭% কাস্টমার চিরতরে হারায়, ৫ সেকেন্ড = ৯০% বাউন্স ও গুগল র‍্যাঙ্কিং হারানো।</p>
+        <p className="finder-sub">মনে রাখবেন: ২০২৬ সালে স্লো, সাধারণ ল্যান্ডিং পেজ মানে হচ্ছে কাস্টমারের মুখের সামনে দরজা বন্ধ করে দেওয়া। আপনি কি এই ঝুঁকি নিতে প্রস্তুত?</p>
         <div className="gl-stack">
 
           {/* ── Cards 001–006 ── */}

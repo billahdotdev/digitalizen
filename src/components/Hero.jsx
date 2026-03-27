@@ -63,8 +63,8 @@ export default function Hero() {
   const handleSecondaryCta = useCallback(() => {
     ctaClicksRef.current += 1
     window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({ event: 'hero_secondary_cta', scroll_target: 'about' })
-    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
+    window.dataLayer.push({ event: 'hero_secondary_cta', scroll_target: 'gallery' })
+    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
   return (
