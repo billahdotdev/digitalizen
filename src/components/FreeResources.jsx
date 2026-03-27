@@ -140,8 +140,9 @@ export default function FreeResources() {
       window.removeEventListener('beforeunload', handleLeave)
       document.removeEventListener('visibilitychange', onHide)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [unlocked, form.name, form.phone])
+
 
   /* ── Input handler ───────────────────────────────── */
   const handleInput = (e) => {
