@@ -460,7 +460,7 @@ export default function Finder() {
 
         <div className="row-header">
           <span className="section-num">০০৪</span>
-          <span className="section-title-right">{"// প্যাকেজ ফাইন্ডার"}</span>
+          <span className="section-title-right">{"// বিজনেস অডিট"}</span>
         </div>
 
         <h2 className="finder-heading">আপনার ব্যবসার স্বাস্থ্য পরীক্ষা!</h2>
