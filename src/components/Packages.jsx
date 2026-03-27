@@ -20,9 +20,9 @@ function ParticleCanvas() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reducedMotion) return
 
-    const COUNT    = 38
-    const CONNECT  = 90   // max px to draw edge
-    const SPEED    = 0.22
+    const COUNT    = 42
+    const CONNECT  = 80   // max px to draw edge
+    const SPEED    = 0.28
 
     let W, H, particles
 
@@ -58,9 +58,9 @@ function ParticleCanvas() {
           const dy   = particles[i].y - particles[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < CONNECT) {
-            const alpha = (1 - dist / CONNECT) * 0.35
-            ctx.strokeStyle = `rgba(31, 75, 255, ${alpha})`
-            ctx.lineWidth   = 0.6
+            const alpha = (1 - dist / CONNECT) * 0.5
+            ctx.strokeStyle = `rgba(60, 120, 255, ${alpha})`
+            ctx.lineWidth   = 0.8
             ctx.beginPath()
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
@@ -73,7 +73,7 @@ function ParticleCanvas() {
       for (const p of particles) {
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(100, 149, 255, 0.55)'
+        ctx.fillStyle = 'rgba(80, 160, 255, 0.75)'
         ctx.fill()
       }
 
