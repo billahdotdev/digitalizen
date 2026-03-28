@@ -32,7 +32,7 @@ export default function Gallery() {
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৩</span>
-          <span className="section-title-right">{'// ডিজিটাল সেলস পারসন'}</span>
+          <span className="section-title-right">{'// আপনার ডিজিটাল দোকান'}</span>
         </div>
         <h2 className="finder-heading">ল্যান্ডিং পেজ কি আপনার ব্যবসার গল্প বলে?</h2>
         <p className="finder-sub">১ সেকেন্ড দেরি = ২০% কনভার্সন লস, ৩ সেকেন্ড = ৪৭% কাস্টমার চিরতরে হারায়, ৫ সেকেন্ড = ৯০% বাউন্স ও গুগল র‍্যাঙ্কিং হারানো।</p>
