@@ -108,48 +108,57 @@ const packages = [
   {
     id: '01',
     name: 'মাইক্রো টেস্ট',
-    price: '০',
-    tagline: 'দ্রুত রেজাল্ট দেখার জন্য',
+    price: 'ফ্রি',
+    tagline: '১০০% রিস্ক-ফ্রি এন্ট্রি',
+    serial: '01. // গাইডলাইন আমাদের; সিদ্ধান্ত আপনার',
+    period: '/লাইফটাইম',
+    adChip: 'অ্যাড কস্ট আলাদা',
     features: [
       'ফ্রি বিজনেস অডিট',
       'গ্রোথ স্ট্র্যাটেজি ২০২৬',
       'হাই-কনভার্টিং অ্যাড সেটআপ',
-      'গ্রোথ স্ট্র্যাটেজি ২০২৬',
+      'ইউনিক কনটেন্ট আইডিয়া',
     ],
-    cta: 'শুরু করুন',
+    cta: 'কুইক স্টার্ট',
     type: 'frosted',
   },
   {
     id: '02',
-    name: 'গ্রোথ প্যাক',
+    name: 'মান্থলি কেয়ার',
     price: '১০,০০০',
     tagline: 'সবচেয়ে জনপ্রিয় চয়েস',
+    serial: '02. // মার্কেটিং + ওয়েব ডেভ একসাথে',
+    period: '/মাস',
+    adChip: 'অ্যাড কস্ট আলাদা',
     features: [
       'AI সেলস ফানেল অটোমেশন',
-      'ফ্রি আল্ট্রা-ফাস্ট ল্যান্ডিং পেজ (Vite + react)',
+      'ফ্রি আল্ট্রা-ফাস্ট ল্যান্ডিং পেজ (Vite + React)',
       'ফ্রি পিক্সেল ও কনভার্শন সেটআপ',
       'আনলিমিটেড অ্যাড ম্যানেজমেন্ট',
-      'অ্যাড কনটেন্ট আইডিয়া',
+      'এক্সক্লুসিভ অ্যাড কনটেন্ট আইডিয়া',
     ],
-    cta: 'গ্রোথ শুরু করুন',
+    cta: 'আনলক প্রফিট',
     type: 'electric',
     popular: true,
   },
   {
     id: '03',
-    name: 'স্কেল আপ',
+    name: 'ব্র্যান্ড কেয়ার',
     price: '৩০,০০০',
     tagline: 'বিজনেসের পূর্ণাঙ্গ সল্যুশন',
+    serial: '03. // মার্কেটে ডমিন্যান্স',
+    period: '/মাস',
+    adChip: 'অ্যাড কস্ট আলাদা',
     features: [
-      'সেলস ফানেল অটোমেশন',
-      'আনলিমিটেড ল্যান্ডিং পেজ',
-      'AI ডমিন্যান্স, অথরিটি বিল্ডিং (AEO,GEO)',
-      'সেন্টিমেন্ট অ্যানালাইসিস',
-      'মডার্ন ট্র্যাকিং (CAPI, GA4, TTK PIXEL), ',
-      'উইনিং অ্যাড কনটেন্ট আইডিয়া',
-      'ব্র্যান্ড আইডেন্টিটি ডিজাইন',
+      'অ্যাডভান্সড সেলস ফানেল অটোমেশন',
+      'আনলিমিটেড ল্যান্ডিং পেজ সাপোর্ট (Vite + React)',
+      'AI ডমিন্যান্স ও অথরিটি বিল্ডিং (AEO, GEO)',
+      'কাস্টমার সেন্টিমেন্ট অ্যানালাইসিস',
+      'মডার্ন ট্র্যাকিং (CAPI, GA4, TTK পিক্সেল), ',
+      'উইনিং অ্যাড কনটেন্ট আইডিয়া',
+      'প্রিমিয়াম ব্র্যান্ড আইডেন্টিটি ডিজাইন',
     ],
-    cta: 'স্কেল করুন',
+    cta: 'বি দ্য অথরিটি',
     type: 'obsidian',
   },
 ]
@@ -174,7 +183,7 @@ export default function Packages() {
 
         <div className="row-header">
           <span className="section-num">০০৫</span>
-          <span className="section-title-right">{'// 1প্যাকেজ'}</span>
+          <span className="section-title-right">{'// প্যাকেজ'}</span>
         </div>
 
         <h2 className="finder-heading">
@@ -209,19 +218,19 @@ export default function Packages() {
 
                   {/* Left: identity + price */}
                   <div className="pk-main-info">
-                    <span className="pk-serial">0{i + 1}. // PACKAGE</span>
+                    <span className="pk-serial">{pkg.serial}</span>
                     <h3 className="pk-title">{pkg.name}</h3>
 
                     {/* Price with /মাস */}
                     <div className="pk-price">
                       <span className="pk-unit" aria-hidden="true">৳</span>
                       <span className="pk-amount">{pkg.price}</span>
-                      <span className="pk-period">/মাস</span>
+                      <span className="pk-period">{pkg.period}</span>
                     </div>
 
                     {/* Ad cost chip */}
                     <div className="pk-ad-chip" aria-label="বিজ্ঞাপনের খরচ আলাদা">
-                      অ্যাড কস্ট আলাদা
+                      {pkg.adChip}
                     </div>
                   </div>
 
