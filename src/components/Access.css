@@ -336,12 +336,11 @@
   font-size: .78rem;
   color: #9aa3b0;
   line-height: 1.6;
-  padding-left: 2px;
   border-left: 2px solid var(--border);
   padding-left: 8px;
 }
 
-
+/* ── Copy block (step 01) ── */
 .ac-copy-block {
   margin-top: 12px;
   display: flex;
@@ -372,6 +371,22 @@
   object-fit: cover;
   display: block;
   border: 2px solid var(--border);
+}
+
+/* ── Initials fallback — shown via JS onError ── */
+.ac-fb-profile-avatar--initials {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--p);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  align-items: center;
+  justify-content: center;
+  /* display:flex toggled via JS — default hidden */
 }
 
 .ac-fb-profile-avatar-badge {
@@ -522,7 +537,9 @@
   color: rgba(255,255,255,.65);
 }
 
-
+/* ══════════════════════════
+   FOOTER
+══════════════════════════ */
 .ac-footer {
   background: var(--white);
   border-top: 1px solid var(--border);

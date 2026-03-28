@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './Access.css'
 import { track, WA_NUMBER } from '../lib/analytics.js'
 
-const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me'
+const FB_PROFILE_URL = 'https://www.facebook.com/billahdotdev.me/'
 const DIGITALIZEN_FB_PROFILE_URL = 'https://www.facebook.com/digitalizen'
 const WA_URL = `https://wa.me/${WA_NUMBER}`
 const AGENCY_FB_NAME = 'Masum Billah'
@@ -150,7 +150,7 @@ export default function Access() {
           {/* trust pills */}
           <div className="ac-hero-pills" aria-hidden="true">
             <span>🛡️ পেজ নিরাপদ</span>
-            <span>🔒 নো পাসওয়ার্ড</span>
+            <span>🔒 নো পাসওয়ার্ড</span>
             <span>⚡ দ্রুত কাজ শুরু</span>
           </div>
         </div>
@@ -202,11 +202,24 @@ export default function Access() {
                     <div className="ac-copy-block">
                       <div className="ac-fb-profile-card">
                         <div className="ac-fb-profile-avatar-wrap">
+                          {/* ─ Drop your photo at: public/images/masum-billah.jpg ─ */}
                           <img
-                            src="https://scontent.fdac138-2.fna.fbcdn.net/v/t39.30808-1/615992009_1439135541186957_7638633866097988635_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeEMmnNAwEwkZ7VyuaVLbLfe9tRGicXg_xH21EaJxeD_EdAOw_FpFUwyBEq61j9P0_b1CSGvSOy56BX9jIt1WYa9&_nc_ohc=Tdq5GNp8Z5cQ7kNvwF0QEbf&_nc_oc=AdlTghAfuWtjYnfA_yK4HMlTN7tF8EznRKnV7G493DkgbPkLxSq5cDdVidCm5lEdvt8&_nc_zt=24&_nc_ht=scontent.fdac138-2.fna&_nc_gid=W2UyslrM_y9V9-VubFecUg&_nc_ss=8&oh=00_AfwGroOOsD2yK7Zew2HfiHN6bv6zAAbzp4ndhECjEoARng&oe=69B49EAE"
+                            src="/images/masum.png"
                             alt={AGENCY_FB_NAME}
                             className="ac-fb-profile-avatar"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                              e.currentTarget.nextElementSibling.style.display = 'flex'
+                            }}
                           />
+                          {/* initials fallback — rendered only if image 404s */}
+                          <span
+                            className="ac-fb-profile-avatar--initials"
+                            style={{ display: 'none' }}
+                            aria-hidden="true"
+                          >
+                            MB
+                          </span>
                           <span className="ac-fb-profile-avatar-badge" aria-hidden="true">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
