@@ -631,11 +631,11 @@ const validateBusinessName = (name) => {
   if (trimmed.length < 4) return 'বিজনেসের নাম কমপক্ষে ৪ অক্ষর হতে হবে।'
   
   // Must contain at least some letters (not just numbers/symbols)
-  if (!/[a-zA-Z\u09BE-\u09EF]/.test(trimmed)) return 'বিজনেসের নামে অক্ষর থাকতে হবে।'
+  if (!/\p{L}/u.test(trimmed)) return 'বিজনেসের নামে অক্ষর থাকতে হবে।'
   
   // Check spam patterns
   for (const pattern of SPAM_PATTERNS) {
-    if (pattern.test(trimmed)) return 'বিজনেসের সঠিক নাম দিন।'
+    if (pattern.test(trimmed)) return 'সঠিক বিজনেসের নাম দিন।'
   }
   
   return null // Valid
@@ -649,7 +649,7 @@ const validateBdPhone = (phone) => {
   const validPattern = /^(0?1[3-9]\d{8})$/
   
   if (!validPattern.test(trimmed)) {
-    return 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন।'
+    return 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন (১০ বা ১১ ডিজিট)।'
   }
   
   return null // Valid
