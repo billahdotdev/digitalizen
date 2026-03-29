@@ -80,7 +80,7 @@ export default function Hero() {
 
         <h1 className="hero__headline">
           মেটা অ্যাডে<br />
-          <span className="hero__blue">রিয়েল রেজাল্ট</span>
+          <span className="hero__blue">রিয়েল রেজাল্ট *Mr Sajid --v</span>
         </h1>
 
         <p className="hero__sub">
