@@ -1,7 +1,6 @@
 /* ══════════════════════════════════════════════════
-   FinderPdfLayer.css — Digitalizen Brand PDF v2026.5
+   FinderPdfLayer.css — Digitalizen Brand PDF v2026.4
    ──────────────────────────────────────────────────
-   A4 Page Architecture: Each .fpl-a4-page is captured separately
    Width: 794px (A4 @ 96dpi). Captured by html2canvas.
 
    RULE: ZERO CSS variables. Literal hex only.
@@ -30,27 +29,6 @@
   line-height: 1.6;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-}
-
-/* ══════════════════════════════════════════════════
-   A4 PAGE WRAPPER — Discrete capture unit
-   Each page is exactly A4 dimensions (210mm × 297mm at 96dpi)
-   Captured separately to avoid mid-text slicing
-   ══════════════════════════════════════════════════ */
-.fpl-a4-page {
-  width: 210mm;
-  min-height: 297mm;
-  box-sizing: border-box;
-  padding: 0;
-  background: #ffffff;
-  page-break-after: always;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Last page: no break after */
-.fpl-a4-page:last-child {
-  page-break-after: auto;
 }
 
 /* ══════════════════════════════════════════════════
@@ -418,13 +396,13 @@
    B&W severity: border-left weight = critical level.
    ══════════════════════════════════════════════════ */
 .fpl-problem-section {
-  background: #ffffff;
+  background: #fafafa;
 }
 
 .fpl-problem-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 18px;
   margin-bottom: 14px;
 }
 
@@ -699,7 +677,6 @@
   align-items: stretch;
   border-top: 3px solid #0d1117;
   border-bottom: 3px solid #0d1117;
-  margin-top: auto;
 }
 
 .fpl-action-label {
@@ -773,7 +750,6 @@
   align-items: stretch;
   background: #080d18;
   border-top: 3px solid #1F4BFF;
-  margin-top: auto;
 }
 
 .fpl-footer-contact,

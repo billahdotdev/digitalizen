@@ -474,7 +474,7 @@ const computeResult = (all) => {
     rawTotal,
     pkgKey,
     pkg: PACKAGES[pkgKey],
-    diag: getDiagnosis(pkgKey, allTags, flags, crossRuleApplied),
+    diag: getDiagnosis(pkgKey, allTags, flags),
     ...flags,
     crossRuleApplied,
     weightedScores: scores,
@@ -483,30 +483,17 @@ const computeResult = (all) => {
 
 /* ══════════════════════════════════════════════════
    DIAGNOSIS — Problem → Insight → Solution → Action
-   
-   Generates HUMAN-LIKE narrative based on actual tags + flags.
-   Feels like a consultant, not a calculator.
-   
-   Enhanced with hyper-contextual bridging logic:
-   - If they land on Micro Test but show high-budget + severe gaps → explain why upgrade
-   - Dynamic text that feels custom-tailored to their exact pain points
+   Generates narrative based on actual tags, not just package
 ══════════════════════════════════════════════════ */
-const getDiagnosis = (pkgKey, tags = [], flags = {}, crossRule = null) => {
+const getDiagnosis = (pkgKey, tags = [], flags = {}) => {
   const hasTrackingProblem  = flags.trackingWarning
   const hasRoasProblem      = flags.kpiWarning
   const hasTechGap          = flags.techGap
   const hasNoLp             = flags.landingPageWarning === 'none'
   const hasWeakLp           = flags.landingPageWarning === 'weak'
-  
   const wantsBrand          = tags.includes('goal_brand') || tags.includes('need_fullstack')
-  const wantsFullstack      = tags.includes('need_fullstack')
   const isEarly             = tags.includes('stage_early') || tags.includes('stage_stuck')
   const isScaling           = tags.includes('stage_scaling') || tags.includes('stage_premium')
-  const hasHighBudget       = tags.includes('need_funnel') || tags.includes('need_fullstack')
-  const isManufacturer      = tags.includes('manufacturer')
-  const painIsRoas          = tags.includes('pain_roas')
-  const painIsTech          = tags.includes('pain_tech')
-  const painIsTrust         = tags.includes('pain_trust')
 
   // Build dynamic problem string
   const problems = []
@@ -520,140 +507,28 @@ const getDiagnosis = (pkgKey, tags = [], flags = {}, crossRule = null) => {
     ? problems.join('। ') + '।'
     : 'আপনার ডিজিটাল উপস্থিতিতে কিছু সুনির্দিষ্ট গ্যাপ চিহ্নিত হয়েছে।'
 
-  /* ── MICRO TEST DIAGNOSIS ────────────────────── */
-  if (pkgKey === 'micro_test') {
-    // Hyper-contextual bridging: If they WANTED fullstack/brand but got capped to micro_test
-    const wasCappped = crossRule && (crossRule.name === 'eager_no_foundation' || crossRule.name === 'absolute_beginner')
-    
-    if (wasCappped && wantsBrand && (hasTrackingProblem || hasRoasProblem)) {
-      return {
-        problem: problemText,
-        stage: 'আপনার উচ্চাভিলাষ ভালো — ব্র্যান্ড বিল্ডিং একটা শক্তিশালী লক্ষ্য। কিন্তু এই মুহূর্তে ফাউন্ডেশন ঠিক না থাকায় সেখানে পৌঁছানো কঠিন।',
-        insight: `${hasTrackingProblem ? 'Pixel ও CAPI ছাড়া' : ''} ${hasRoasProblem ? 'ROAS/ROI ট্র্যাকিং ছাড়া' : ''} ব্র্যান্ড কেয়ার শুরু করলে অ্যাড বাজেট অনুমানে চলবে এবং কোন ক্যাম্পেইন কাজ করছে সেটা জানার উপায় থাকবে না। মাইক্রো টেস্ট দিয়ে শুরু করুন — ডিজিটাল ফাউন্ডেশন ঠিক করুন, তারপর ব্র্যান্ড বিল্ডিং করা অনেক সহজ হবে।`,
-        advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। আমরা আপনার পুরো সেটআপ দেখব, কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব। ফাউন্ডেশন ঠিক হলে পরে ব্র্যান্ড কেয়ারে আপগ্রেড করতে পারবেন।',
-      }
-    }
-
-    return {
-      problem: problemText || 'সঠিক ফাউন্ডেশন ছাড়া পরে বিজ্ঞাপনে টাকা ঢালা মানে বালুতে বাড়ি বানানো।',
-      stage: isEarly 
-        ? 'আপনার বিজনেস এখন শুরুর পর্যায়ে। এই সময়টা সবচেয়ে গুরুত্বপূর্ণ — এখনকার সিদ্ধান্তই পরের গ্রোথ নির্ধারণ করে।'
-        : 'আপনার বিজনেসে এখন সঠিক ডিজিটাল ভিত্তি তৈরির সময়।',
-      insight: 'অ্যাড অ্যাকাউন্ট ও বিজনেস পেজ ঠিকমতো সেটআপ না হলে পরে টাকা খরচ করেও ফলাফল আসবে না। মাইক্রো টেস্ট-এ আমরা আপনার পুরো ডিজিটাল সেটআপ একবার দেখব এবং কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব।',
-      advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। কোনো চুক্তি নেই। শুরু করুন, আমাদের সাথে কথা বলুন, নিজেই বুঝুন পরের ধাপটা কী।',
-    }
+  if (pkgKey === 'micro_test') return {
+    problem: problemText || 'সঠিক ফাউন্ডেশন ছাড়া পরে বিজ্ঞাপনে টাকা ঢালা মানে বালুতে বাড়ি বানানো।',
+    stage:   isEarly ? 'আপনার বিজনেস এখন শুরুর পর্যায়ে। এই সময়টা সবচেয়ে গুরুত্বপূর্ণ — এখনকার সিদ্ধান্তই পরের গ্রোথ নির্ধারণ করে।'
+                     : 'আপনার বিজনেসে এখন সঠিক ডিজিটাল ভিত্তি তৈরির সময়।',
+    insight: 'অ্যাড অ্যাকাউন্ট ও বিজনেস পেজ ঠিকমতো সেটআপ না হলে পরে টাকা খরচ করেও ফলাফল আসবে না। মাইক্রো টেস্ট-এ আমরা আপনার পুরো ডিজিটাল সেটআপ একবার দেখব এবং কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব।',
+    advice:  'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। কোনো চুক্তি নেই। শুরু করুন, আমাদের সাথে কথা বলুন, নিজেই বুঝুন পরের ধাপটা কী।',
   }
 
-  /* ── MONTHLY CARE DIAGNOSIS ──────────────────── */
-  if (pkgKey === 'monthly_care') {
-    // Hyper-contextual: If they have tech gaps AND budget for custom funnel
-    const needsFunnelBadly = hasHighBudget && (hasTechGap || painIsTech)
-    const agencyDowngraded = crossRule && crossRule.name === 'agency_budget_conscious'
-    
-    if (needsFunnelBadly) {
-      return {
-        problem: problemText,
-        stage: 'আপনার বিজনেস এখন বাড়ার পর্যায়ে। টেকনিক্যাল সাপোর্ট ঠিক থাকলে সেল দ্রুত বাড়বে।',
-        insight: `${painIsTech ? 'আপনার সবচেয়ে বড় সমস্যা টেকনিক্যাল গ্যাপ।' : 'Legacy Tech দিয়ে সিজনাল ক্যাম্পেইন আপডেট করা কঠিন হচ্ছে।'} মান্থলি কেয়ারে একই টিম মার্কেটিং + ডেভেলপমেন্ট দেখে — ঈদ/পূজার অফার মিনিটে লাইভ করা যায়, ট্র্যাকিং সবসময় ঠিক থাকে। আলাদা মার্কেটার আর আলাদা ডেভেলপার রাখলে এই সমন্বয় কখনো ঠিকমতো হয় না।`,
-        advice: 'মান্থলি কেয়ারে ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে। একটাই টিম — ক্যাম্পেইন থেকে কোড পর্যন্ত।',
-      }
-    }
-
-    if (agencyDowngraded) {
-      return {
-        problem: problemText,
-        stage: 'আপনার এজেন্সি ব্যাকগ্রাউন্ড আছে, যার মানে আপনি জানেন ভালো মার্কেটিং কেমন হয়। কিন্তু এই মুহূর্তে বাজেট নিয়ন্ত্রণই মূল প্রায়োরিটি।',
-        insight: 'মান্থলি কেয়ার দিয়ে শুরু করলে ফ্রি ল্যান্ডিং পেজ, ফ্রি Pixel+CAPI সেটআপ পাবেন — কোনো আপফ্রন্ট খরচ ছাড়াই। এজেন্সি-কোয়ালিটি কাজ, কিন্তু ছোট বিজনেসের বাজেটে।',
-        advice: 'মান্থলি কেয়ার মানে — প্রফেশনাল মার্কেটিং যা আপনার বাজেটের মধ্যে থেকেই স্কেল করে। পরে যখন বিজনেস আরো বাড়বে তখন ব্র্যান্ড কেয়ারে আপগ্রেড করতে পারবেন।',
-      }
-    }
-
-    return {
-      problem: problemText || 'অ্যাড খরচ হচ্ছে কিন্তু ট্র্যাকিং ও ফানেল না থাকায় কনভার্শন রেট কম।',
-      stage: 'আপনার বিজনেস এখন বাড়ার পর্যায়ে। সঠিক সাপোর্ট পেলে সেল আরো দ্রুত বাড়বে।',
-      insight: 'অ্যাড ম্যানেজমেন্ট আর ল্যান্ডিং পেজ যখন এক টিম দেখে, ফলাফল অনেক বেশি হয়। ঈদ বা পূজার অফার তাৎক্ষণিক লাইভ করা যায়, ট্র্যাকিং সবসময় ঠিক থাকে। আলাদা মার্কেটার আর আলাদা ডেভেলপার রাখলে এই সমন্বয় কখনো ঠিকমতো হয় না।',
-      advice: 'মান্থলি কেয়ারে একটাই টিম — ক্যাম্পেইন থেকে কোড পর্যন্ত। ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে।',
-    }
-  }
-
-  /* ── BRAND CARE DIAGNOSIS ────────────────────── */
-  // Hyper-contextual: Manufacturer needs brand authority, trust-building needs brand identity
-  const manufacturerNeedsBrand = isManufacturer && (painIsTrust || wantsBrand)
-  const trustIssuePrimary      = painIsTrust && wantsFullstack
-
-  if (manufacturerNeedsBrand) {
-    return {
-      problem: problemText || 'নিজস্ব ম্যানুফ্যাকচারিং থাকলেও ব্র্যান্ড আইডেন্টিটি ছাড়া প্রিমিয়াম দাম পাওয়া কঠিন।',
-      stage: 'আপনি নিজে প্রোডাক্ট বানান — এটা বিশাল সুবিধা। কিন্তু মার্কেটে ব্র্যান্ড আইডেন্টিটি ছাড়া আপনাকে আর দশজনের মতোই দেখায়।',
-      insight: 'ম্যানুফ্যাকচারার হলে প্রিমিয়াম মার্কেটে আপনার জায়গা হওয়া উচিত। কিন্তু সেটা করতে দরকার শক্তিশালী ব্র্যান্ড আইডেন্টিটি, কাস্টম ডিজাইন, সুনির্দিষ্ট সেলস ফানেল এবং ডেটা-চালিত মার্কেটিং। Legacy Tech (WP/Themes) দিয়ে ২০২৬-এ প্রিমিয়াম ব্র্যান্ড বানানো অসম্ভব।',
-      advice: 'ব্র্যান্ড কেয়ারে আমরা পুরো ব্র্যান্ড গড়ার কাজ করব — লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং। একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
-    }
-  }
-
-  if (trustIssuePrimary) {
-    return {
-      problem: problemText || 'বাজারে ট্রাস্ট তৈরি না হলে প্রতিযোগিতায় টিকে থাকা কঠিন।',
-      stage: 'আপনার সবচেয়ে বড় চ্যালেঞ্জ ট্রাস্ট বিল্ডিং। মানুষ এখনো আপনাকে একটা প্রতিষ্ঠিত ব্র্যান্ড হিসেবে দেখছে না।',
-      insight: 'ট্রাস্ট শুধু ভালো প্রোডাক্ট দিয়ে আসে না — আসে ব্র্যান্ড আইডেন্টিটি, প্রফেশনাল ওয়েবসাইট, কনসিস্টেন্ট কমিউনিকেশন এবং কাস্টমার এক্সপেরিয়েন্স থেকে। ব্র্যান্ড কেয়ারে আমরা এই পুরো ইকোসিস্টেম তৈরি করি — মানুষ যখন আপনার নাম দেখবে, তখন "এদের বিশ্বাস করা যায়" এই অনুভূতি আসবে।',
-      advice: 'ব্র্যান্ড কেয়ারে পাবেন পূর্ণ ব্র্যান্ড আইডেন্টিটি, প্রিমিয়াম ডিজাইন, অ্যাডভান্সড ট্র্যাকিং এবং ডেডিকেটেড টিম যারা শুধু আপনার ব্যবসার জন্যই কাজ করে।',
-    }
+  if (pkgKey === 'monthly_care') return {
+    problem: problemText || 'অ্যাড খরচ হচ্ছে কিন্তু ট্র্যাকিং ও ফানেল না থাকায় কনভার্শন রেট কম।',
+    stage:   'আপনার বিজনেস এখন বাড়ার পর্যায়ে। সঠিক সাপোর্ট পেলে সেল আরো দ্রুত বাড়বে।',
+    insight: 'অ্যাড ম্যানেজমেন্ট আর ল্যান্ডিং পেজ যখন এক টিম দেখে, ফলাফল অনেক বেশি হয়। ঈদ বা পূজার অফার তাৎক্ষণিক লাইভ করা যায়, ট্র্যাকিং সবসময় ঠিক থাকে। আলাদা মার্কেটার আর আলাদা ডেভেলপার রাখলে এই সমন্বয় কখনো ঠিকমতো হয় না।',
+    advice:  'মান্থলি কেয়ারে একটাই টিম — ক্যাম্পেইন থেকে কোড পর্যন্ত। ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে।',
   }
 
   return {
     problem: problemText || 'ব্র্যান্ড আইডেন্টিটি ও অথরিটি ছাড়া প্রিমিয়াম মার্কেটে টিকে থাকা কঠিন।',
-    stage: isScaling 
-      ? 'আপনার বিজনেস এখন শক্তিশালী ব্র্যান্ড হওয়ার জায়গায়। এটা অনেক বড় অর্জন।'
-      : 'আপনার বিজনেস এখন মার্কেট লিডার হওয়ার পর্যায়ে।',
+    stage:   isScaling ? 'আপনার বিজনেস এখন শক্তিশালী ব্র্যান্ড হওয়ার জায়গায়। এটা অনেক বড় অর্জন।'
+                       : 'আপনার বিজনেস এখন মার্কেট লিডার হওয়ার পর্যায়ে।',
     insight: 'এই পর্যায়ে শুধু সেল না — দরকার একটা ব্র্যান্ড আইডেন্টিটি যা মানুষ চেনে এবং বিশ্বাস করে। Legacy Tech (WP/Themes) দিয়ে ২০২৬-এ মার্কেট ডমিনেট করা অসম্ভব। কাস্টম ডিজাইন, সুনির্দিষ্ট সেলস ফানেল এবং ডেটা-চালিত মার্কেটিং একসাথে থাকলে ব্র্যান্ড দ্রুত বড় হয়।',
-    advice: 'ব্র্যান্ড কেয়ারে আমরা পুরো ব্র্যান্ড গড়ার কাজ করব। লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং — একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
+    advice:  'ব্র্যান্ড কেয়ারে আমরা পুরো ব্র্যান্ড গড়ার কাজ করব। লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং — একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
   }
-}
-
-/* ══════════════════════════════════════════════════
-   SMART VALIDATION — Lead Capture Gate
-   
-   Phone: Bangladesh-specific validation (10-11 digits, proper format)
-   Name: Anti-spam logic (reject "test", "asdf", numbers-only)
-   Business: Minimum 4 chars, must contain actual letters
-══════════════════════════════════════════════════ */
-
-// Common spam patterns to reject
-const SPAM_PATTERNS = [
-  /^test$/i, /^asdf/i, /^qwer/i, /^zxcv/i,
-  /^aaa+$/i, /^bbb+$/i, /^xxx+$/i,
-  /^demo$/i, /^sample$/i, /^example$/i,
-  /^\d+$/, // numbers only
-]
-
-const validateBusinessName = (name) => {
-  const trimmed = name.trim()
-  
-  // Minimum length
-  if (trimmed.length < 4) return 'বিজনেসের নাম কমপক্ষে ৪ অক্ষর হতে হবে।'
-  
-  // Must contain at least some letters (not just numbers/symbols)
-  if (!/[a-zA-Zা-৯]/.test(trimmed)) return 'বিজনেসের নামে অক্ষর থাকতে হবে।'
-  
-  // Check spam patterns
-  for (const pattern of SPAM_PATTERNS) {
-    if (pattern.test(trimmed)) return 'সঠিক বিজনেসের নাম দিন।'
-  }
-  
-  return null // Valid
-}
-
-const validateBdPhone = (phone) => {
-  const trimmed = phone.trim()
-  
-  // BD numbers: 10 digits (without country code) or 11 digits (with leading 0)
-  // Valid formats: 1XXXXXXXXX (10 digits) or 01XXXXXXXXX (11 digits starting with 0)
-  const validPattern = /^(0?1[3-9]\d{8})$/
-  
-  if (!validPattern.test(trimmed)) {
-    return 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন (১০ বা ১১ ডিজিট)।'
-  }
-  
-  return null // Valid
 }
 
 const scoreLabel = (pkgKey) =>
@@ -780,12 +655,8 @@ export default function Finder() {
     const name  = leadName.trim()
     const phone = leadPhone.trim()
 
-    // Smart validation
-    const nameError = validateBusinessName(name)
-    if (nameError) { setLeadError(nameError); return }
-
-    const phoneError = validateBdPhone(phone)
-    if (phoneError) { setLeadError(phoneError); return }
+    if (!name)              { setLeadError('আপনার বিজনেসের নাম দিন।'); return }
+    if (phone.length < 10)  { setLeadError('সঠিক WhatsApp নম্বর দিন।'); return }
 
     setLeadError(''); setLeadSubmitting(true)
 
