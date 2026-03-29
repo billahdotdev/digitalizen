@@ -237,7 +237,7 @@ export default function FinderPdfLayer({ id, result, leadName }) {
           <SectionHeader num={nextNum()} title="SOLUTION — আমাদের পরামর্শ" />
           <div className="fpl-section-body fpl-section-body--full">
             <div className="fpl-advice-box">
-              <span className="fpl-advice-quote">"</span>
+              <span className="fpl-advice-quote">{'"'}</span>
               <p className="fpl-advice-text">{result.diag.advice}</p>
             </div>
           </div>

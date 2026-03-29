@@ -14,8 +14,6 @@ import jsPDF       from 'jspdf'
 import html2canvas from 'html2canvas'
 
 /* ── Constants ─────────────────────────────────── */
-const A4_W_MM        = 210
-const A4_H_MM        = 297
 const ELEMENT_W_PX   = 794   // A4 at 96 dpi
 const CANVAS_SCALE   = 2     // 192 dpi → retina-crisp output
 const JPEG_QUALITY   = 0.93
@@ -74,7 +72,6 @@ export async function generateBrandedPdf(
 
   const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' })
   const pageW = pdf.internal.pageSize.getWidth()   // 210 mm
-  const pageH = pdf.internal.pageSize.getHeight()  // 297 mm
 
   try {
     for (let i = 0; i < pages.length; i++) {
