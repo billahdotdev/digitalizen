@@ -90,7 +90,7 @@ export default function Nav() {
     { label: 'আমাদের সম্পর্কে',          id: 'about'    },
     { label: 'ভালো রেজাল্ট কীভাবে আসে', id: 'process'  },
     { label: 'কাস্টম ল্যান্ডিং পেজ',    id: 'gallery'  },
-    { label: 'প্যাকেজ ফাইন্ডার',        id: 'finder'   },
+    { label: 'ফ্রি বিজনেস অডিট',        id: 'finder'   },
     { label: 'প্যাকেজ',                  id: 'packages' },
     { label: 'যোগাযোগ',                  id: 'contact'  },
   ]

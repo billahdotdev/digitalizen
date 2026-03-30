@@ -156,7 +156,7 @@ export default function About() {
             <span className="about-blue">একটি কমপ্লিট সেলস সিস্টেম তৈরি করি</span>
           </h2>
           <p className="about-desc">
-            Digitalizen একটি রেজাল্ট-ফোকাসড এজেন্সি। আমরা বিশ্বাস করি সোশ্যাল মিডিয়া অ্যাডস তখনই কাজ করে যখন পেছনে একটি শক্তিশালী <strong>অটোমেশন</strong> এবং <strong>ল্যান্ডিং পেজ</strong> থাকে।
+            <strong>Digitalizen</strong> একটি রেজাল্ট-ফোকাসড এজেন্সি। আমরা বিশ্বাস করি সোশ্যাল মিডিয়া অ্যাডস তখনই কাজ করে, যখন এর পেছনে সঠিক <strong>ডেটা</strong>, একটি শক্তিশালী <strong>ল্যান্ডিং পেজ</strong> এবং যথাযথ <strong>অটোমেশন</strong> থাকে।
           </p>    
         </div>
 

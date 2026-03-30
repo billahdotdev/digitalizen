@@ -1,26 +1,28 @@
 /* ══════════════════════════════════════════════════
-   FinderPdfLayer.css — Digitalizen Brand PDF v2026.5
+   FinderPdfLayer.css — Digitalizen Brand PDF v2026.8
    ──────────────────────────────────────────────────
-   A4 Page Architecture: Each .fpl-a4-page is captured separately
-   Width: 794px (A4 @ 96dpi). Captured by html2canvas.
+   A4 Page Architecture: Each .fpl-a4-page captured separately.
+   Width: 794px (A4 @ 96dpi). Captured by html2canvas @ 2x scale.
+
+   DESIGN LANGUAGE: Industrial Editorial — Block Card System
+   Each section lives in a bordered card (.fpl-card).
+   Cards stack in a flex column with gap — zero bleed between sections.
+   Heavy borders. Zero border-radius. Monospace accents.
+
+   B&W PRINT — grayscale luminance map:
+     #080d18 → ~4%  (near-black — headers, primary text)
+     #0d1117 → ~6%  (body black)
+     #1F4BFF → ~35% (brand blue → dark gray in B&W)
+     #374151 → ~42% (secondary)
+     #6b7280 → ~54% (muted)
+     #e5e7eb → ~92% (subtle bg tint)
+     #f5f5f5 → ~96% (near-white)
 
    RULE: ZERO CSS variables. Literal hex only.
-   RULE: ZERO monospace / code fonts — readability first.
-   RULE: ZERO border-radius. Industrial = sharp.
-
-   B&W PRINT LOGIC — grayscale luminance map:
-     #080d18 → ~4%  gray  (near-black bg, perfect dark)
-     #0d1117 → ~6%  gray  (body black)
-     #1F4BFF → ~35% gray  (brand blue — readable, not black)
-     #374151 → ~42% gray  (secondary — medium gray)
-     #9ca3af → ~63% gray  (muted — light gray, decorative ok)
-     #f5f5f5 → ~96% gray  (near-white — subtle bg tint)
-
-   Rule: Never carry info via color alone.
-   Always reinforce: weight + border + shape + position.
+   RULE: ZERO border-radius. Sharp = industrial.
+   RULE: Monospace for numeric labels, code values, tags.
    ══════════════════════════════════════════════════ */
 
-/* ── Root shell ─────────────────────────────────── */
 .fpl-root {
   display: none;
   width: 794px;
@@ -32,14 +34,10 @@
   print-color-adjust: exact;
 }
 
-/* ══════════════════════════════════════════════════
-   A4 PAGE WRAPPER — Discrete capture unit
-   Each page is exactly A4 dimensions (210mm × 297mm at 96dpi)
-   Captured separately to avoid mid-text slicing
-   ══════════════════════════════════════════════════ */
 .fpl-a4-page {
-  width: 210mm;
-  min-height: 297mm;
+  width: 794px;
+  height: 1122px;
+  overflow: hidden;
   box-sizing: border-box;
   padding: 0;
   background: #ffffff;
@@ -48,123 +46,186 @@
   flex-direction: column;
 }
 
-/* Last page: no break after */
-.fpl-a4-page:last-child {
-  page-break-after: auto;
+.fpl-a4-page:last-child { page-break-after: auto; }
+
+/* ── Cards area — flex column with gap between blocks ── */
+.fpl-cards-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 14px 36px 0;
 }
 
-/* ══════════════════════════════════════════════════
-   HEADER
-   ══════════════════════════════════════════════════ */
+/* ── Section Card — the core block unit ─────────────── */
+.fpl-card {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #0d1117;
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+.fpl-card--problem  { border-color: #374151; }
+.fpl-card--solution { border-color: #0d1117; }
+.fpl-card--table    { border-color: #0d1117; }
+
+.fpl-card-body { padding: 14px 18px; }
+
+/* ── Page Strip (pages 2+) ──────────────────────────── */
+.fpl-page-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  background: #080d18;
+  padding: 0 40px;
+  flex-shrink: 0;
+  border-bottom: 3px solid #1F4BFF;
+}
+
+.fpl-page-strip__brand {
+  font-family: 'Courier New', 'Roboto Mono', monospace;
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.fpl-page-strip__meta { display: flex; align-items: center; gap: 20px; }
+
+.fpl-page-strip__pkg {
+  font-size: 9px;
+  font-weight: 800;
+  color: #1F4BFF;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.fpl-page-strip__pg {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.08em;
+}
+
+/* ── Header — Page 1 ────────────────────────────────── */
 .fpl-header {
   display: flex;
   align-items: stretch;
   background: #080d18;
-  border-bottom: 3px solid #1F4BFF;
+  border-bottom: 5px solid #1F4BFF;
+  flex-shrink: 0;
 }
 
 .fpl-header-left {
   flex: 1;
-  padding: 22px 40px;
-  border-right: 1px solid rgba(255,255,255,0.07);
+  padding: 24px 40px;
+  border-right: 1px solid rgba(255,255,255,0.08);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .fpl-brand-wordmark {
-  font-size: 30px;
+  font-family: 'Courier New', 'Roboto Mono', monospace;
+  font-size: 34px;
   font-weight: 900;
   color: #ffffff;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   line-height: 1;
+  text-transform: uppercase;
 }
 
 .fpl-brand-tagline {
+  font-family: 'Courier New', monospace;
   font-size: 8px;
   font-weight: 600;
-  color: rgba(255,255,255,0.38);
-  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  margin-top: 6px;
+  margin-top: 7px;
 }
 
 .fpl-header-right {
-  padding: 22px 40px;
+  padding: 24px 40px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .fpl-report-badge {
+  font-family: 'Courier New', monospace;
   font-size: 9px;
-  font-weight: 800;
-  color: #ffffff;
+  font-weight: 900;
+  color: #080d18;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   background: #1F4BFF;
-  padding: 5px 13px;
+  padding: 5px 14px;
   display: inline-block;
 }
 
 .fpl-report-date {
-  font-size: 10px;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 0.05em;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.06em;
 }
 
-/* ══════════════════════════════════════════════════
-   IDENTITY BAND — "Prepared for [Business Name]"
-   The moment personalisation makes it feel bespoke.
-   ══════════════════════════════════════════════════ */
+/* ── Identity Band ──────────────────────────────────── */
 .fpl-identity {
   display: flex;
   align-items: stretch;
   background: #f5f5f5;
-  border-bottom: 2px solid #0d1117;
+  border-bottom: 3px solid #0d1117;
+  flex-shrink: 0;
 }
 
 .fpl-identity-for {
   flex: 1;
-  padding: 13px 40px;
-  border-right: 1px solid #d1d5db;
+  padding: 14px 40px;
+  border-right: 2px solid #d1d5db;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
 }
 
 .fpl-identity-label {
-  font-size: 8.5px;
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
   font-weight: 700;
   color: #9ca3af;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
 .fpl-identity-value {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 900;
-  color: #0d1117;
+  color: #080d18;
   letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .fpl-identity-meta {
-  padding: 13px 40px;
+  padding: 14px 40px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .fpl-identity-type {
-  font-size: 8.5px;
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
   font-weight: 700;
   color: #9ca3af;
   letter-spacing: 0.2em;
@@ -172,120 +233,117 @@
 }
 
 .fpl-identity-pkg {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 900;
   color: #1F4BFF;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
-/* ══════════════════════════════════════════════════
-   HERO — Score panel + Package panel
-   Two-column industrial split — the report's cover.
-   ══════════════════════════════════════════════════ */
+/* ── Hero — Score + Package ─────────────────────────── */
 .fpl-hero {
   display: flex;
   align-items: stretch;
-  border-bottom: 2px solid #0d1117;
+  border-bottom: 3px solid #0d1117;
+  flex-shrink: 0;
 }
 
-/* LEFT: Score — editorial stat treatment */
 .fpl-score-panel {
-  width: 190px;
+  width: 200px;
   flex-shrink: 0;
+  padding: 24px 32px;
   background: #080d18;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 30px 20px;
   gap: 6px;
   border-right: 3px solid #1F4BFF;
 }
 
 .fpl-score-number {
-  font-size: 62px;
+  font-family: 'Courier New', monospace;
+  font-size: 72px;
   font-weight: 900;
   color: #ffffff;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
-
+  line-height: 1;
+  letter-spacing: -0.06em;
 }
 
 .fpl-score-denom {
-  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
   font-weight: 700;
   color: rgba(255,255,255,0.35);
-
-  letter-spacing: 0.06em;
-  margin-top: 2px;
+  letter-spacing: 0.05em;
+  margin-top: -4px;
 }
 
 .fpl-score-bar-track {
   width: 100%;
-  height: 2px;
-  background: rgba(255,255,255,0.1);
-  margin-top: 10px;
+  height: 6px;
+  background: rgba(255,255,255,0.12);
+  margin-top: 8px;
 }
 
 .fpl-score-bar-fill {
-  height: 2px;
+  height: 100%;
   background: #1F4BFF;
+  transition: none;
 }
 
 .fpl-score-label {
+  font-family: 'Courier New', monospace;
   font-size: 10px;
   font-weight: 800;
   color: #1F4BFF;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  text-align: center;
   margin-top: 8px;
 }
 
 .fpl-score-sub {
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 600;
-  color: rgba(255,255,255,0.3);
-  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
   letter-spacing: 0.1em;
-  text-align: center;
+  text-transform: uppercase;
 }
 
-/* RIGHT: Package */
 .fpl-pkg-panel {
   flex: 1;
-  padding: 28px 36px;
+  padding: 24px 32px;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
-  background: #ffffff;
+  gap: 6px;
 }
 
 .fpl-pkg-eyebrow {
+  font-family: 'Courier New', monospace;
   font-size: 9px;
-  font-weight: 800;
-  color: #1F4BFF;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
 }
 
 .fpl-pkg-name {
-  font-size: 40px;
+  font-size: 30px;
   font-weight: 900;
   color: #080d18;
   letter-spacing: -0.04em;
-  line-height: 1.0;
-  margin: 3px 0;
+  line-height: 1;
 }
 
 .fpl-pkg-price-row {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 2px;
 }
 
 .fpl-pkg-price {
+  font-family: 'Courier New', monospace;
   font-size: 22px;
   font-weight: 900;
   color: #1F4BFF;
@@ -293,29 +351,30 @@
 }
 
 .fpl-pkg-period {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   color: #6b7280;
+  letter-spacing: 0.04em;
 }
 
 .fpl-biz-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1.5px solid #d1d5db;
-  border-left: 4px solid #374151;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #374151;
+  gap: 6px;
+  background: #080d18;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  margin-top: 4px;
   width: fit-content;
-  margin-top: 8px;
-  background: #f9fafb;
 }
 
 .fpl-biz-pulse {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   background: #1F4BFF;
   flex-shrink: 0;
 }
@@ -324,407 +383,339 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
-/* B&W-safe: border weight + left-accent carry severity, not color */
 .fpl-warn-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 5px 10px;
-  border: 1.5px solid #d1d5db;
-  color: #374151;
-  letter-spacing: 0.02em;
+  gap: 5px;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-left: 3px solid;
+  text-transform: uppercase;
 }
 
-.fpl-warn-chip--red {
-  border-color: #0d1117;
-  border-left-width: 4px;
-  color: #0d1117;
-  background: #f9fafb;
-}
-
-.fpl-warn-chip--amber {
-  border-color: #374151;
-  border-left-width: 3px;
-  color: #374151;
-}
+.fpl-warn-chip--red   { background: #fef2f2; color: #991b1b; border-color: #dc2626; }
+.fpl-warn-chip--amber { background: #fffbeb; color: #92400e; border-color: #d97706; }
 
 .fpl-warn-dot {
   width: 5px;
   height: 5px;
+  border-radius: 50%;
   background: currentColor;
   flex-shrink: 0;
 }
 
-/* ══════════════════════════════════════════════════
-   SECTION SHELL — numbered editorial structure
-   ══════════════════════════════════════════════════ */
-.fpl-section {
-  border-bottom: 1px solid #e5e7eb;
-}
-
+/* ── Section Header (inside .fpl-card) ──────────────── */
 .fpl-section-header {
   display: flex;
   align-items: stretch;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1.5px solid #0d1117;
+  flex-shrink: 0;
+  background: #f5f5f5;
 }
 
 .fpl-section-num {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: 900;
+  color: #ffffff;
+  background: #080d18;
+  padding: 7px 14px;
+  letter-spacing: 0.1em;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 54px;
   flex-shrink: 0;
-  background: #080d18;
-  color: rgba(255,255,255,0.7);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  border-right: 2px solid #1F4BFF;
 }
 
 .fpl-section-title {
-  flex: 1;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
+  font-family: 'Courier New', monospace;
   font-size: 9.5px;
   font-weight: 800;
-  color: #0d1117;
-  letter-spacing: 0.18em;
+  color: #374151;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  background: #f5f5f5;
-  border-left: 4px solid #1F4BFF;
-}
-
-.fpl-section-title--problem {
-  border-left-color: #0d1117;
-}
-
-/* Body aligned to 54px num tab */
-.fpl-section-body {
-  padding: 20px 36px 20px 72px;
-}
-
-.fpl-section-body--full {
-  padding: 20px 36px;
-}
-
-/* ══════════════════════════════════════════════════
-   PROBLEM SECTION
-   B&W severity: border-left weight = critical level.
-   ══════════════════════════════════════════════════ */
-.fpl-problem-section {
-  background: #ffffff;
-}
-
-.fpl-problem-grid {
+  padding: 7px 16px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.fpl-section-title--problem { color: #991b1b; }
+
+/* ── 01 Problem ─────────────────────────────────────── */
+.fpl-problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 14px;
 }
 
 .fpl-problem-item {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  padding: 9px 11px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  gap: 10px;
+  padding: 10px 14px;
+  border-left: 4px solid;
 }
 
-.fpl-problem-item--critical { border-left: 5px solid #0d1117; }
-.fpl-problem-item--high     { border-left: 4px solid #374151; }
-.fpl-problem-item--medium   { border-left: 3px solid #9ca3af; }
+.fpl-problem-item--critical { border-left-color: #dc2626; background: #fef2f2; }
+.fpl-problem-item--high     { border-left-color: #d97706; background: #fffbeb; }
+.fpl-problem-item--medium   { border-left-color: #6b7280; background: #f9fafb; }
 
 .fpl-problem-dot {
-  width: 7px;
-  height: 7px;
-  flex-shrink: 0;
-  margin-top: 3px;
+  width: 7px; height: 7px;
+  flex-shrink: 0; margin-top: 4px;
+  background: currentColor;
 }
-
-.fpl-problem-item--critical .fpl-problem-dot { background: #0d1117; }
-.fpl-problem-item--high     .fpl-problem-dot { background: #374151; }
-.fpl-problem-item--medium   .fpl-problem-dot { background: #9ca3af; }
 
 .fpl-problem-text {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: #374151;
-  line-height: 1.55;
+  color: #0d1117;
+  line-height: 1.45;
 }
-
-.fpl-problem-item--critical .fpl-problem-text { color: #0d1117; }
 
 .fpl-problem-note {
-  font-size: 11.5px;
+  font-size: 10px;
+  font-weight: 500;
   color: #6b7280;
-  line-height: 1.7;
-  margin: 0;
+  line-height: 1.5;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #d1d5db;
   font-style: italic;
-  padding-top: 14px;
-  border-top: 1px solid #e5e7eb;
+  margin-bottom: 0;
 }
 
-/* ══════════════════════════════════════════════════
-   DIAGNOSIS — two-column
-   ══════════════════════════════════════════════════ */
+/* ── 02 Diagnosis ───────────────────────────────────── */
 .fpl-diag-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
+  border: 1.5px solid #0d1117;
 }
 
-.fpl-diag-col:first-child {
-  padding-right: 22px;
-  border-right: 1px solid #e5e7eb;
-}
-
-.fpl-diag-col:last-child { padding-left: 22px; }
+.fpl-diag-col { padding: 14px 18px; }
+.fpl-diag-col:first-child { border-right: 1.5px solid #0d1117; }
 
 .fpl-diag-head {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
-  font-weight: 800;
-  color: #0d1117;
+  font-size: 9px;
+  font-weight: 900;
+  color: #080d18;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 7px;
+  border-bottom: 1.5px solid #0d1117;
 }
 
 .fpl-diag-icon {
-  display: inline-flex;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 900;
+  color: #ffffff;
+  background: #080d18;
+  width: 20px;
+  height: 20px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  font-size: 12px;
-  font-weight: 800;
-  font-style: normal;
   flex-shrink: 0;
-  background: #0d1117;
-  color: #ffffff;
 }
 
 .fpl-diag-body {
-  font-size: 12.5px;
-  color: #374151;
-  line-height: 1.75;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 1.6;
   margin: 0;
 }
 
-/* ══════════════════════════════════════════════════
-   ADVICE / SOLUTION CALLOUT
-   Heavy left-border quote — editorial authority.
-   ══════════════════════════════════════════════════ */
-.fpl-advice-section {
-  background: #f9fafb;
-}
-
+/* ── 03 Solution ────────────────────────────────────── */
 .fpl-advice-box {
   position: relative;
-  padding: 6px 0 6px 22px;
-  border-left: 5px solid #0d1117;
+  padding: 16px 20px 16px 24px;
+  background: #f5f5f5;
+  border-left: 6px solid #1F4BFF;
 }
 
 .fpl-advice-quote {
   position: absolute;
-  left: 22px;
-  top: -8px;
-  font-size: 52px;
-  color: #0d1117;
-  opacity: 0.07;
-  font-family: Georgia, serif;
+  top: 8px; right: 20px;
+  font-size: 64px;
+  font-weight: 900;
+  color: rgba(31,75,255,0.08);
   line-height: 1;
+  font-family: Georgia, serif;
 }
 
 .fpl-advice-text {
-  font-size: 13px;
-  color: #0d1117;
-  line-height: 1.85;
-  margin: 0;
+  font-size: 12.5px;
   font-weight: 600;
+  color: #0d1117;
+  line-height: 1.65;
+  margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
-/* ══════════════════════════════════════════════════
-   FEATURES — two-column checklist
-   ══════════════════════════════════════════════════ */
+/* ── 04 Features ────────────────────────────────────── */
 .fpl-feat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 32px;
+  gap: 0 24px;
+}
+
+/* Single-column layout for brand_care (8 features) */
+.fpl-feat-grid--single {
+  grid-template-columns: 1fr;
+  column-gap: 0;
+}
+
+.fpl-feat-grid--single .fpl-feat-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 32px;
 }
 
 .fpl-feat-col {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 7px;
 }
 
 .fpl-feat-item {
   display: flex;
   align-items: flex-start;
-  gap: 11px;
-  font-size: 12.5px;
+  gap: 9px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: #374151;
-  padding: 9px 0;
-  border-bottom: 1px solid #f0f0f0;
-  line-height: 1.55;
+  color: #1f2937;
+  line-height: 1.45;
 }
-
-.fpl-feat-item:last-child { border-bottom: none; }
 
 .fpl-feat-tick {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  background: #0d1117;
-  color: #ffffff;
-  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
   font-weight: 900;
-  flex-shrink: 0;
-  margin-top: 2px;
+  color: #ffffff;
+  background: #080d18;
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
 }
 
-/* ══════════════════════════════════════════════════
-   30-DAY SPRINT
-   ══════════════════════════════════════════════════ */
+/* ── 05 Sprint ──────────────────────────────────────── */
 .fpl-roadmap {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 0;
 }
 
 .fpl-roadmap-item {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
   position: relative;
+  padding: 10px 0;
+  border-bottom: 1px dashed #e5e7eb;
 }
 
 .fpl-roadmap-item:last-child { border-bottom: none; }
 
 .fpl-roadmap-num {
-  font-size: 10px;
-  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 900;
   color: #ffffff;
-  background: #0d1117;
-  padding: 4px 9px;
-  flex-shrink: 0;
-  letter-spacing: 0.04em;
-  margin-top: 2px;
-  min-width: 34px;
-  text-align: center;
+  background: #080d18;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; letter-spacing: 0.04em;
 }
 
 .fpl-roadmap-connector {
-  position: absolute;
-  left: 24px;
-  top: 34px;
-  bottom: -10px;
-  width: 1px;
-  background: #d1d5db;
+  position: absolute; left: 14px; top: 38px;
+  width: 1px; bottom: 0;
+  background: #e5e7eb;
 }
 
 .fpl-roadmap-item:last-child .fpl-roadmap-connector { display: none; }
 
 .fpl-roadmap-text {
-  font-size: 12.5px;
-  color: #374151;
-  line-height: 1.7;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.5;
   margin: 0;
-  padding-top: 2px;
+  padding-top: 4px;
 }
 
-/* ══════════════════════════════════════════════════
-   COMPARISON TABLE
-   B&W: good = black+bold, bad = gray+light.
-   Weight carries the judgement — no color needed.
-   ══════════════════════════════════════════════════ */
-.fpl-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 2px solid #0d1117;
-}
+/* ── 06 Table ───────────────────────────────────────── */
+.fpl-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+.fpl-table thead { background: #080d18; }
 
-.fpl-table thead tr { background: #0d1117; }
-
-.fpl-table th {
-  padding: 12px 16px;
-  font-size: 10px;
+th {
+  padding: 9px 12px;
+  font-family: 'Courier New', monospace;
   font-weight: 800;
-  text-transform: uppercase;
+  font-size: 9px;
   letter-spacing: 0.12em;
+  text-transform: uppercase;
   text-align: left;
-  color: #ffffff;
-  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
-.fpl-table th:first-child  { color: rgba(255,255,255,0.55); }
-.fpl-table th:last-child   { border-right: none; }
+.fpl-th-metric { color: rgba(255,255,255,0.55); width: 34%; }
+.fpl-th-good   { color: #ffffff; width: 33%; border-left: 2px solid #1F4BFF; }
+.fpl-th-bad    { color: rgba(255,255,255,0.55); width: 33%; border-left: 1px solid rgba(255,255,255,0.12); }
 
+.fpl-table tbody tr { border-bottom: 1px solid #e5e7eb; }
 .fpl-tr-alt { background: #f9fafb; }
 
-.fpl-table td {
-  padding: 11px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  font-size: 12.5px;
-}
+td { padding: 8px 12px; font-size: 10.5px; font-weight: 600; line-height: 1.4; }
 
-.fpl-table td:last-child { border-right: none; }
+.fpl-td-metric { color: #374151; font-weight: 700; border-right: 1.5px solid #0d1117; }
+.fpl-td-good   { color: #0d1117; font-weight: 700; border-left: 2px solid #1F4BFF; border-right: 1px solid #e5e7eb; }
+.fpl-td-bad    { color: #6b7280; font-weight: 500; }
 
-.fpl-td-metric { color: #374151; font-weight: 700; }
-.fpl-td-good   { color: #0d1117; font-weight: 900; }
-.fpl-td-bad    { color: #9ca3af; font-weight: 400; }
-
-/* ══════════════════════════════════════════════════
-   ACTION STRIP — "The door before the door"
-   B&W: blue bg → ~35% gray; white text → legible.
-   ══════════════════════════════════════════════════ */
+/* ── Action Strip ───────────────────────────────────── */
 .fpl-action-strip {
+  background: #080d18;
+  border-top: 5px solid #1F4BFF;
   display: flex;
   align-items: stretch;
-  border-top: 3px solid #0d1117;
-  border-bottom: 3px solid #0d1117;
+  flex-shrink: 0;
   margin-top: auto;
 }
 
 .fpl-action-label {
-  flex-shrink: 0;
-  padding: 0 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  font-weight: 900;
+  color: #1F4BFF;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 16px 12px;
+  border-right: 1px solid rgba(255,255,255,0.08);
   display: flex;
   align-items: center;
-  background: #0d1117;
-  font-size: 8.5px;
-  font-weight: 800;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+  flex-shrink: 0;
 }
 
 .fpl-action-body {
   flex: 1;
-  padding: 20px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #1F4BFF;
+  padding: 16px 32px;
 }
 
 .fpl-action-left { display: flex; flex-direction: column; gap: 5px; }
@@ -734,94 +725,89 @@
   font-weight: 900;
   color: #ffffff;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .fpl-action-sub {
-  font-size: 11px;
-  color: rgba(255,255,255,0.72);
-  letter-spacing: 0.03em;
-}
-
-.fpl-action-contact {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.fpl-action-wa-label {
-  font-size: 8.5px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.55);
-  letter-spacing: 0.18em;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.42);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.fpl-action-wa-num {
-  font-size: 15px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: 0.03em;
-}
-
-/* ══════════════════════════════════════════════════
-   FOOTER — mirrors header
-   ══════════════════════════════════════════════════ */
-.fpl-footer {
-  display: flex;
-  align-items: stretch;
-  background: #080d18;
-  border-top: 3px solid #1F4BFF;
-  margin-top: auto;
-}
-
-.fpl-footer-contact,
-.fpl-footer-web {
-  padding: 18px 36px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
+.fpl-action-contact {
+  text-align: right;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding-left: 28px;
   flex-shrink: 0;
 }
 
-.fpl-footer-brand {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  border-left: 1px solid rgba(255,255,255,0.07);
-  border-right: 1px solid rgba(255,255,255,0.07);
+.fpl-action-wa-label {
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
+.fpl-action-wa-num {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1F4BFF;
+  letter-spacing: 0.02em;
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+.fpl-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 40px;
+  background: #f5f5f5;
+  border-top: 2px solid #0d1117;
+  flex-shrink: 0;
+}
+
+.fpl-footer-contact,
+.fpl-footer-web { display: flex; flex-direction: column; gap: 2px; }
+
 .fpl-footer-label {
-  font-size: 8.5px;
+  font-family: 'Courier New', monospace;
+  font-size: 7.5px;
   font-weight: 700;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 0.18em;
+  color: #9ca3af;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 .fpl-footer-val {
-  font-size: 12.5px;
-  font-weight: 800;
-  color: rgba(255,255,255,0.85);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #374151;
+  letter-spacing: 0.04em;
 }
 
+.fpl-footer-brand { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+
 .fpl-footer-wordmark {
-  font-size: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
   font-weight: 900;
-  color: rgba(255,255,255,0.16);
-  letter-spacing: -0.04em;
+  color: #080d18;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .fpl-footer-copy {
-  font-size: 8.5px;
-  color: rgba(255,255,255,0.15);
-  letter-spacing: 0.08em;
-  margin-top: 3px;
-  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+  font-size: 7.5px;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: 0.1em;
 }

@@ -1529,3 +1529,240 @@
   background: var(--blue);
   opacity: 0.3;
 }
+
+/* ══════════════════════════════════════════════════
+   2026 UPGRADES — v2026.7
+   1. :has() quiz focus dimming (zero main-thread cost)
+   2. Labour Illusion overlay + analysis track
+   3. PDF Ghost Preview
+   4. Diagnostic Score Badge
+   5. View Transitions API polish
+   6. finder-cta-pdf-wrap for overlay stacking
+   ====================================================== */
+
+/* ── 1. :has() — Context-aware quiz option focus ── */
+/* When any option is hovered, dim the others. Zero JS. */
+.finder-opts:has(.finder-opt:hover) .finder-opt:not(:hover) {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+  scale: 0.985;
+}
+
+.finder-opt {
+  transition: border-color 0.15s, background 0.15s,
+              transform 0.15s, box-shadow 0.15s, color 0.15s,
+              opacity 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+              filter 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+              scale 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  container-type: inline-size;
+}
+
+/* Re-assert hover states so they aren't dimmed by the :has rule */
+.finder-opts:has(.finder-opt:hover) .finder-opt:hover {
+  opacity: 1;
+  filter: none;
+  scale: 1;
+}
+
+/* ── 2. Labour Illusion — PDF CTA wrapper + overlay ── */
+.finder-cta-pdf-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.finder-analysis-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 0 0 0 0;
+}
+
+.finder-analysis-overlay__track {
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.15);
+}
+
+.finder-analysis-overlay__fill {
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  animation: analysisScroll 7.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes analysisScroll {
+  0%   { width: 0%; }
+  30%  { width: 38%; }
+  55%  { width: 62%; }
+  80%  { width: 84%; }
+  100% { width: 98%; }
+}
+
+/* ── 3. PDF Ghost Preview ── */
+.finder-pdf-ghost {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  height: 116px;
+  overflow: hidden;
+  /* Fade bottom to suggest more content below */
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  opacity: 0.72;
+  pointer-events: none;
+  user-select: none;
+  animation: ghostIn 0.5s 0.15s cubic-bezier(0.23, 1, 0.32, 1) both;
+  padding: 14px 16px 0;
+}
+
+@keyframes ghostIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 0.72; transform: translateY(0); }
+}
+
+.finder-pdf-ghost__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.finder-pdf-ghost__logo-bar {
+  width: 24px;
+  height: 24px;
+  background: var(--blue);
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.finder-pdf-ghost__title-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 2px;
+}
+
+.finder-pdf-ghost__line {
+  height: 8px;
+  background: var(--border2);
+  border-radius: 2px;
+  width: 55%;
+}
+.finder-pdf-ghost__line--wide  { width: 75%; background: var(--blue); opacity: 0.25; }
+.finder-pdf-ghost__line--mid   { width: 50%; }
+.finder-pdf-ghost__line--short { width: 35%; }
+
+.finder-pdf-ghost__body {
+  display: flex;
+  gap: 12px;
+}
+
+.finder-pdf-ghost__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.finder-pdf-ghost__bar-block {
+  height: 18px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.finder-pdf-ghost__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue-mid), var(--blue));
+  opacity: 0.35;
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+.finder-pdf-ghost__stamp {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: monospace;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  opacity: 0.5;
+  border: 1px solid var(--blue);
+  padding: 2px 6px;
+}
+
+/* ── 4. Diagnostic Score Badge ── */
+.finder-diag-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 20px;
+  background: var(--dark2);
+  border-top: 2px solid var(--blue);
+  gap: 12px;
+}
+
+.finder-diag-score__label {
+  font-family: monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.finder-diag-score__value {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--blue-mid);
+  letter-spacing: -0.02em;
+  animation: scoreCountUp 0.6s 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes scoreCountUp {
+  from { opacity: 0; transform: translateY(6px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── 5. View Transitions API — smooth quiz↔result swap ── */
+@keyframes vt-slide-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes vt-slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
+
+::view-transition-old(root) {
+  animation: vt-slide-out 0.22s ease both;
+}
+::view-transition-new(root) {
+  animation: vt-slide-in  0.32s 0.1s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* ── 6. Loading step improvements — :has() active highlight ── */
+.finder-loading__steps:has(.finder-loading__step:nth-child(3).finder-loading__step--active) {
+  /* future-proofed hook */
+}
+
+/* ── 7. Reduced motion — override for new animations ── */
+@media (prefers-reduced-motion: reduce) {
+  .finder-analysis-overlay__fill,
+  .finder-pdf-ghost,
+  .finder-diag-score__value,
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+    transition: none !important;
+  }
+}

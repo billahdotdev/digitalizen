@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import './Finder.css'
 import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
-import { generateBrandedPdf }               from '../lib/generatePdf.js'
 import FinderPdfLayer                       from './FinderPdfLayer.jsx'
 
 /* ══════════════════════════════════════════════════
@@ -112,100 +111,439 @@ function ParticleCanvas({ className = 'finder-particle-canvas' }) {
 }
 
 /* ══════════════════════════════════════════════════
-   14-QUESTION AUDIT
-   Each answer now carries:
-     tags[]        — semantic labels for cross-matching
-     rawScore      — raw linear score (kept for UI progress)
-     flags{}       — diagnostic triggers
-══════════════════════════════════════════════════ */
-const questions = [
-  { id: 1, q: 'আপনার বিজনেসের ধরন কি?', hint: '', opts: [
-    { label: 'সার্ভিস/ সেবা (শিক্ষা, স্বাস্থ্য, কনসালটেন্সি ইত্যাদি)', tags: ['service'],       rawScore: 1 },
-    { label: 'লোকাল সার্ভিস (জিম, রেস্টুরেন্ট, সেলুন ইত্যাদি)',        tags: ['local'],         rawScore: 2 },
-    { label: 'ই-কমার্স (পাইকারি মার্কেট থেকে সংগ্রহ)',                  tags: ['ecommerce'],     rawScore: 3 },
-    { label: 'নিজস্ব ম্যানুফ্যাকচারিং (ব্র্যান্ড)/ নিজস্ব ইমপোর্ট',   tags: ['manufacturer'],  rawScore: 4 },
-  ] },
-  { id: 2, q: 'আপনার ব্যবসার বর্তমান অবস্থা কী?', hint: '', opts: [
-    { label: 'একদম নতুন শুরু করছি।',                                         tags: ['stage_early'],   rawScore: 1 },
-    { label: 'সেল হচ্ছে, কিন্তু যেমনটা চাচ্ছি তেমন প্রফিট আসছে না।',      tags: ['stage_stuck'],   rawScore: 2 },
-    { label: 'ব্যবসা বেশ ভালো, এখন মার্কেট ডমিনেট করতে চাই।',             tags: ['stage_scaling'], rawScore: 3 },
-    { label: 'অলরেডি ব্র্যান্ড, এখন আরও প্রিমিয়াম ও ট্রাস্টেড হতে চাই।', tags: ['stage_premium'], rawScore: 4 },
-  ] },
-  { id: 3, q: 'মার্কেটিং কিভাবে পরিচালনা করেন?', hint: '', opts: [
-    { label: 'প্রযোজ্য না/ মার্কেটিং করি না।',                tags: ['mkt_none'],        rawScore: 1, flags: { techGap: true } },
-    { label: 'নিজেই বুষ্টিং করি।',                            tags: ['mkt_self'],        rawScore: 2, flags: { techGap: true } },
-    { label: 'ফ্রিল্যান্সার দিয়ে বুষ্টিং/ ক্যাম্পেইন করি।', tags: ['mkt_freelancer'],  rawScore: 3 },
-    { label: 'এজেন্সিকে দিয়ে প্রফেশনাল ক্যাম্পেইন করি।',    tags: ['mkt_agency'],      rawScore: 4 },
-  ] },
-  { id: 4, q: 'বর্তমানে আপনার প্রধান সেলস চ্যানেল কোনটি?', hint: '', opts: [
-    { label: 'কোনো অ্যাড ছাড়াই অর্গানিক ভাবে/ অফ লাইন',          tags: ['channel_organic'],  rawScore: 1, flags: { landingPageWarning: 'none' } },
-    { label: 'শুধু ফেসবুক পেইজে মেসেজ ক্যাম্পেইন/ বুস্টিং',       tags: ['channel_boost'],    rawScore: 2, flags: { landingPageWarning: 'none' } },
-    { label: 'মেসেজ ক্যাম্পেইন এবং ল্যান্ডিং পেজ',                tags: ['channel_lp'],       rawScore: 3, flags: { landingPageWarning: 'weak' } },
-    { label: 'সম্পূর্ণ ল্যান্ডিং পেইজ/ ওয়েবসাইট',                tags: ['channel_website'],  rawScore: 4 },
-  ] },
-  { id: 5, q: 'আপনার বর্তমান ল্যান্ডিং পেইজ বা ওয়েবসাইটের স্পিড কেমন?', hint: '', opts: [
-    { label: 'ল্যান্ডিং পেইজ/ ওয়েব সাইট নাই।',                               tags: ['tech_none'],    rawScore: 1, flags: { landingPageWarning: 'none' } },
-    { label: 'ল্যান্ডিং পেইজ/ ওয়েব সাইট আছে, কিন্তু জানি না।',              tags: ['tech_unknown'], rawScore: 2, flags: { landingPageWarning: 'weak' } },
-    { label: 'সাধারণ ওয়ার্ডপ্রেস বা থিম দিয়ে বানানো (একটু স্লো)।',          tags: ['tech_legacy'],  rawScore: 3, flags: { landingPageWarning: 'weak', techGap: true } },
-    { label: 'কাস্টম কোড করা সুপার-ফাস্ট (খুব দ্রুত লোড হয়)।',              tags: ['tech_fast'],    rawScore: 4 },
-  ] },
-  { id: 6, q: 'অফার বা উৎসবের সময় ল্যান্ডিং পেজ/ ওয়েব সাইট পেইজ আপডেট করা হয়?', hint: '', opts: [
-    { label: 'প্রযোজ্য নয় (আমার কোনো ওয়েবসাইট নেই)।',                                  tags: ['update_na'],      rawScore: 1, flags: { landingPageWarning: 'none' } },
-    { label: 'মার্কেটার ও ডেভেলপার আলাদা, তাই অনেক সময় ও ঝামেলা পোহাতে হয়।',           tags: ['update_slow'],    rawScore: 2, flags: { techGap: true } },
-    { label: 'টেকনিক্যাল সাপোর্ট এবং বাজেটের অভাবে একই ডিজাইন মাসের পর মাস রেখে দিই।', tags: ['update_stale'],   rawScore: 3, flags: { techGap: true } },
-    { label: 'যখন দরকার তখনই কাস্টমাইজ করে লাইভ করতে পারি।',                            tags: ['update_agile'],   rawScore: 4 },
-  ] },
-  { id: 7, q: 'পিক্সেল + সার্ভার সাইড API সেট আপ করা আছে?', hint: '', opts: [
-    { label: 'ডাটা ট্র্যাকিং বা পিক্সেল সম্পর্কে ধারণা নেই।',     tags: ['pixel_none'],    rawScore: 1, flags: { trackingWarning: true } },
-    { label: 'ট্র্যাকিং ছাড়াই বিজ্ঞাপন চলছে, ডাটা নিয়ে কাজ করি না।', tags: ['pixel_skip'],    rawScore: 2, flags: { trackingWarning: true } },
-    { label: 'শুধু পিক্সেল আছে এবং সব ডেটা ট্র্যাক হয়।',         tags: ['pixel_basic'],   rawScore: 3, flags: { kpiWarning: true } },
-    { label: 'হ্যাঁ, পিক্সেল এবং সার্ভার সাইড API দুটোই নিখুঁত।', tags: ['pixel_full'],    rawScore: 4 },
-  ] },
-  { id: 8, q: 'ROAS, ROI এর সঠিক হিসাব রাখেন?', hint: '', opts: [
-    { label: 'এখনো ওভাবে নিখুঁত হিসাব রাখা শুরু করিনি।',                              tags: ['kpi_none'],    rawScore: 1, flags: { kpiWarning: true } },
-    { label: 'লাইক, কমেন্ট আর মেসেজ সংখ্যা দেখে সাফল্যের ধারণা নিই।',               tags: ['kpi_vanity'],  rawScore: 2, flags: { kpiWarning: true } },
-    { label: 'অ্যাড ম্যানেজারের রিপোর্ট দেখি, কিন্তু প্রকৃত লাভ/ লস অস্পষ্ট থাকে।', tags: ['kpi_partial'], rawScore: 3, flags: { kpiWarning: true } },
-    { label: 'হ্যাঁ, অ্যাড কষ্ট, সেল এবং নিট প্রফিটের হিসাব রাখি।',                 tags: ['kpi_full'],    rawScore: 4 },
-  ] },
-  { id: 9, q: 'আপনার বিজনেসের নিজস্ব গল্প আছে? (কালার, ফন্ট, লোগো, স্লোগান)', hint: '', opts: [
-    { label: 'ক্যানভা বা মোবাইল অ্যাপ দিয়ে নিজেই চালিয়ে নিচ্ছি।',        tags: ['brand_diy'],     rawScore: 1 },
-    { label: 'ডিজাইন বা ব্র্যান্ডিং নিয়ে কখনো ওভাবে কাজ করা হয়নি।',     tags: ['brand_none'],    rawScore: 2 },
-    { label: 'মোটামুটি ভালো, তবে আরও প্রফেশনাল ও ট্রাস্টেড লুক দরকার।', tags: ['brand_partial'], rawScore: 3 },
-    { label: 'প্রিমিয়াম এবং সবাই আমাদের কপি করে।',                        tags: ['brand_strong'],  rawScore: 4 },
-  ] },
-  { id: 10, q: 'আপনার বিজ্ঞাপনের ক্রিয়েটিভ বা ভিডিও কন্টেন্ট কে তৈরি করে?', hint: '', opts: [
-    { label: 'নিজেই মোবাইল দিয়ে ভিডিও বা ছবি তৈরি করি।',          tags: ['creative_diy'],     rawScore: 1 },
-    { label: 'ভালো কন্টেন্ট তৈরির জন্য প্রফেশনাল সাপোর্ট প্রয়োজন।', tags: ['creative_need'],    rawScore: 2 },
-    { label: 'ফ্রিল্যান্সার বা এজেন্সি দিয়ে করাই।',               tags: ['creative_agency'],  rawScore: 3 },
-    { label: 'নিজস্ব প্রফেশনাল ইন-হাউস টিম আছে।',                 tags: ['creative_inhouse'], rawScore: 4 },
-  ] },
-  { id: 11, q: 'বিজ্ঞাপনের কন্টেন্ট/ ক্রিয়েটিভ কি নিয়মিত টেষ্ট এবং চেন্জ করেন?', hint: '', opts: [
-    { label: 'দরকার নাই/ প্রযোজ্য না।', tags: ['test_na'],      rawScore: 1 },
-    { label: 'কখনোই না।',               tags: ['test_never'],   rawScore: 2 },
-    { label: 'অনিয়মিত।',               tags: ['test_rarely'],  rawScore: 3 },
-    { label: 'নিয়মিত।',                tags: ['test_regular'], rawScore: 4 },
-  ] },
-  { id: 12, q: 'ব্যবসার কোন দিকটি আপনাকে এই মুহূর্তে সবচেয়ে বেশি ভাবিয়ে তোলে?', hint: '', opts: [
-    { label: 'প্রোডাক্ট সোর্সিং/ প্রোডাক্ট কোয়ালিটি',                                  tags: ['pain_product'],  rawScore: 1 },
-    { label: 'বাজারে ব্র্যান্ড হিসেবে এখনো ট্রাস্ট তৈরি করতে পারিনি।',                  tags: ['pain_trust'],    rawScore: 2 },
-    { label: 'স্লো ওয়েবসাইট বা টেকনিক্যাল সমস্যার কারণে কাস্টমার হারিয়ে যাচ্ছে।',    tags: ['pain_tech'],     rawScore: 3, flags: { techGap: true, landingPageWarning: 'weak' } },
-    { label: 'অ্যাড খরচ হচ্ছে কিন্তু সেই তুলনায় সেল নেই',                               tags: ['pain_roas'],     rawScore: 4, flags: { kpiWarning: true } },
-  ] },
-  { id: 13, q: 'আগামী ৬ মাসের জন্য আপনার প্রধান লক্ষ্য কোনটি?', hint: '', opts: [
-    { label: 'ঠিক করতে পারিনি/ বুজতে পারছি না।',                                tags: ['goal_unclear'],    rawScore: 1 },
-    { label: 'কোনোমতে বর্তমান অবস্থা বজায় রেখে টিকে থাকা।',                    tags: ['goal_survive'],    rawScore: 2 },
-    { label: 'একটি প্রভাবশালী ব্র্যান্ড হিসেবে নিজেকে প্রতিষ্ঠিত করা।',        tags: ['goal_brand'],      rawScore: 3 },
-    { label: 'সেলস বৃদ্ধির একটি স্থায়ী ও অটোমেটেড সিস্টেম তৈরি করা।',        tags: ['goal_system'],     rawScore: 4 },
-  ] },
-  { id: 14, q: 'কোন ধরণের সহযোগিতা আপনার সবচেয়ে বেশি প্রয়োজন?', hint: '', opts: [
-    { label: 'বাজেটের ওপর নির্ভর করে সিদ্ধান্ত নেব।',                                    tags: ['need_budget'],    rawScore: 1 },
-    { label: 'অ্যাড ম্যানেজমেন্ট এবং টেকনিক্যাল সমস্যার সাময়িক সমাধান।',              tags: ['need_adtech'],    rawScore: 2 },
-    { label: 'হাই-স্পিড কাস্টম ল্যান্ডিং পেইজ এবং সেলস ফানেল তৈরি।',                  tags: ['need_funnel'],    rawScore: 3 },
-    { label: 'জিরো থেকে ব্র্যান্ড ডিজাইন এবং ফুল-স্ট্যাক মার্কেটিং পার্টনার।',       tags: ['need_fullstack'], rawScore: 4 },
-  ] },
-]
+   QUESTION GRAPH — True Branching Architecture
+   ──────────────────────────────────────────────────
+   Structure: each node has an id, question text,
+   and options. Each option carries:
+     next      — next node id (string) or 'RESULT'
+     tags[]    — scoring labels (unchanged engine)
+     rawScore  — 1-4 for progress bar
+     flags{}   — diagnostic triggers
 
-const TOTAL = questions.length
+   THREE DISTINCT CONVERSATION PATHS:
+
+   PATH A — "নতুন শুরু" (10 Questions)
+   stage → biz_type_new → online_presence_new → budget_new
+         → audience_new → competitor_new → content_ready_new
+         → wa_plan_new → worry_new → goal_new → RESULT
+   Always micro_test. Richer copy from budget + content data.
+
+   PATH B — "চলছে কিন্তু আটকে" (12 Questions)
+   stage → mkt_stuck → ad_spend_stuck → channel_stuck
+         → [no LP]  → pixel_stuck → creative_stuck → revenue_stuck → automation_stuck → pain_stuck → goal_stuck → RESULT
+         → [has LP] → lp_tech_stuck → pixel_stuck → creative_stuck → revenue_stuck → automation_stuck → pain_stuck → goal_stuck → RESULT
+   micro_test or monthly_care.
+
+   PATH C — "স্কেলিং / ব্র্যান্ড" (13 Questions)
+   stage → mkt_scale → channel_scale
+         → [no LP]  → pixel_scale → revenue_scale → roas_scale → content_engine_scale → competition_scale → brand_scale → ai_scale → goal_scale → RESULT
+         → [has LP] → lp_tech_scale → pixel_scale → revenue_scale → roas_scale → retention_scale → competition_scale → brand_scale → ai_scale → goal_scale → RESULT
+   monthly_care or brand_care.
+
+   WORST-CASE PATH: 13 nodes. AVERAGE: 10.
+══════════════════════════════════════════════════ */
+
+const Q = {
+
+  /* ── ROOT ─────────────────────────────────────── */
+  stage: {
+    id: 'stage',
+    q: 'এখন বিজনেসটা ঠিক কোথায় দাঁড়িয়ে আছে?',
+    hint: 'সঠিক তথ্য দিয়ে নির্ভুল এবং কার্যকর রিপোর্ট নিন।',
+    opts: [
+      { label: 'একদম নতুন, এখনো ঠিকমতো শুরুই হয়নি।',                               next: 'biz_type_new',  tags: ['stage_early'],   rawScore: 1 },
+      { label: 'চলছে, কিন্তু সেল বা প্রফিট যেভাবে চাই, সেভাবে আসছে না।',                 next: 'mkt_stuck',     tags: ['stage_stuck'],   rawScore: 2 },
+      { label: 'ভালোই চলছে, এবার আরও বড় পরিসরে যেতে চাই',                         next: 'mkt_scale',     tags: ['stage_scaling'], rawScore: 3 },
+      { label: 'আমরা ব্র্যান্ড হিসেবে পরিচিত, আরও প্রিমিয়াম হতে চাই।',             next: 'mkt_scale',     tags: ['stage_premium'], rawScore: 4 },
+    ],
+  },
+
+  /* ══════════════════════════════════════════════
+     PATH A — নতুন শুরু (10 Questions)
+  ══════════════════════════════════════════════ */
+
+  biz_type_new: {
+    id: 'biz_type_new',
+    q: 'বিজনেসটা কোন ধরনের?',
+    hint: 'সঠিক ধরন জানলে কোন স্ট্র্যাটেজি সবচেয়ে দ্রুত কাজ করবে সেটা বলতে পারব।',
+    opts: [
+      { label: 'সার্ভিস বা সেবা, যেমন শিক্ষা, স্বাস্থ্য, কনসালটেন্সি।',    next: 'online_presence_new', tags: ['service'],      rawScore: 1 },
+      { label: 'লোকাল বিজনেস, যেমন রেস্টুরেন্ট, জিম, সেলুন বা শপ।',         next: 'online_presence_new', tags: ['local'],        rawScore: 2 },
+      { label: 'ই-কমার্স, বাজার বা সাপ্লায়ার থেকে কিনে বিক্রি করি।',        next: 'online_presence_new', tags: ['ecommerce'],    rawScore: 3 },
+      { label: 'নিজেই বানাই বা ইমপোর্ট করি, নিজস্ব প্রোডাক্ট।',          next: 'online_presence_new', tags: ['manufacturer'], rawScore: 4 },
+    ],
+  },
+
+  online_presence_new: {
+    id: 'online_presence_new',
+    q: 'অনলাইনে এখন কতটুকু আছেন?',
+    hint: 'শূন্য থেকে শুরু করতে লজ্জা নেই, এই পর্যায়টাই আমরা সবচেয়ে ভালো সামলাই।',
+    opts: [
+      { label: 'কিছুই নেই, ফেসবুক পেজও খোলা হয়নি।',                                    next: 'budget_new', tags: ['mkt_none', 'channel_organic'], rawScore: 1, flags: { techGap: true, landingPageWarning: 'none' } },
+      { label: 'শুধু একটা ফেসবুক পেজ আছে, অ্যাড চালাইনি।',                              next: 'budget_new', tags: ['mkt_none', 'channel_organic'], rawScore: 1, flags: { techGap: true, landingPageWarning: 'none' } },
+      { label: 'মাঝে মাঝে নিজেই বুস্ট দিই, তেমন ফলাফল আসেনি।',                          next: 'budget_new', tags: ['mkt_self', 'channel_boost'],   rawScore: 2, flags: { techGap: true, trackingWarning: true } },
+      { label: 'ওয়েবসাইট বা ল্যান্ডিং পেজ আছে, মার্কেটিং এখন শুরু করব।',               next: 'budget_new', tags: ['mkt_none', 'channel_lp'],      rawScore: 2, flags: { landingPageWarning: 'weak' } },
+    ],
+  },
+
+  budget_new: {
+    id: 'budget_new',
+    q: 'প্রথম ৩ মাসে মার্কেটিংয়ে কতটুকু ঢালতে পারবেন?',
+    hint: 'অ্যাড বাজেট আর সার্ভিস চার্জ মিলিয়ে মোট হিসাব করুন।',
+    opts: [
+      { label: '৳৫,০০০ থেকে ৳১৫,০০০, একদম সীমিত বাজেটে শুরু করব।',            next: 'audience_new', tags: ['need_budget'],                    rawScore: 1 },
+      { label: '৳১৫,০০০ থেকে ৳৩০,০০০, মাঝারি বাজেট, স্মার্টলি খরচ করতে চাই।',  next: 'audience_new', tags: ['need_budget', 'need_adtech'],     rawScore: 2 },
+      { label: '৳৩০,০০০ থেকে ৳৬০,০০০, ভালো বাজেট আছে, দিকনির্দেশনা দরকার।',    next: 'audience_new', tags: ['need_adtech', 'need_funnel'],     rawScore: 3 },
+      { label: '৳৬০,০০০-এর বেশি, বাজেট সমস্যা না, ROI নিশ্চিত হলেই চলবে।',     next: 'audience_new', tags: ['need_funnel', 'need_fullstack'],  rawScore: 4 },
+    ],
+  },
+
+  audience_new: {
+    id: 'audience_new',
+    q: 'কাস্টমাররা মূলত কারা হবে?',
+    hint: 'এটা বুঝলে বিজ্ঞাপনের ভাষা, প্ল্যাটফর্ম আর সেলস ফানেল তিনটাই আলাদা হয়ে যায়।',
+    opts: [
+      { label: 'সাধারণ মানুষ, মোবাইলে দেখে সিদ্ধান্ত নেবে।',                              next: 'competitor_new', tags: ['audience_b2c'],                   rawScore: 2 },
+      { label: 'অন্য বিজনেস বা প্রতিষ্ঠান, সিদ্ধান্তে একটু সময় লাগে।',                    next: 'competitor_new', tags: ['audience_b2b', 'need_funnel'],     rawScore: 3 },
+      { label: 'লোকাল এলাকার মানুষ, আশেপাশের কাস্টমার।',                                   next: 'competitor_new', tags: ['audience_local'],                 rawScore: 2 },
+      { label: 'দুটোই, ব্যক্তি আর বিজনেস উভয়ই কিনবে।',                                    next: 'competitor_new', tags: ['audience_mixed', 'need_funnel'],   rawScore: 3 },
+    ],
+  },
+
+  competitor_new: {
+    id: 'competitor_new',
+    q: 'প্রতিযোগীদের সাথে তুলনায় আপনি কোথায়?',
+    hint: 'মার্কেটে কোন দিকে এগোলে সবচেয়ে কম প্রতিরোধ পাবেন সেটা বুঝতে চাই।',
+    opts: [
+      { label: 'প্রতিযোগী অনেক, মার্কেট স্যাচুরেটেড, আলাদা হওয়া কঠিন।',          next: 'content_ready_new', tags: ['pain_trust', 'brand_none'],    rawScore: 2 },
+      { label: 'কিছু প্রতিযোগী আছে, তাদের চেয়ে ভালো করতে চাই।',                    next: 'content_ready_new', tags: ['goal_brand', 'brand_partial'],  rawScore: 2 },
+      { label: 'প্রতিযোগী কম, মার্কেট ধরার সুযোগ আছে।',                            next: 'content_ready_new', tags: ['goal_system', 'need_adtech'],   rawScore: 3 },
+      { label: 'এখনো বুঝিনি, মার্কেট রিসার্চ করা হয়নি।',                           next: 'content_ready_new', tags: ['goal_unclear', 'need_budget'],  rawScore: 1 },
+    ],
+  },
+
+  content_ready_new: {
+    id: 'content_ready_new',
+    q: 'বিজ্ঞাপনের জন্য কনটেন্ট কতটুকু রেডি?',
+    hint: 'ছবি, ভিডিও, লেখার কথা বলছি। কনটেন্ট ছাড়া অ্যাড চালানো মানে গল্প ছাড়া সিনেমা।',
+    opts: [
+      { label: 'কিছুই নেই, একদম শুরু থেকে বানাতে হবে।',                           next: 'wa_plan_new', tags: ['creative_need', 'brand_none'],    rawScore: 1 },
+      { label: 'কিছু মোবাইল ফটো বা ভিডিও আছে, প্রফেশনাল না।',                      next: 'wa_plan_new', tags: ['creative_diy', 'brand_diy'],      rawScore: 2 },
+      { label: 'মোটামুটি কনটেন্ট আছে, অ্যাড কপি লেখায় সাহায্য দরকার।',            next: 'wa_plan_new', tags: ['creative_diy', 'need_adtech'],    rawScore: 2 },
+      { label: 'প্রফেশনাল ফটো বা ভিডিও রেডি, শুধু ক্যাম্পেইন দরকার।',              next: 'wa_plan_new', tags: ['creative_agency', 'need_adtech'], rawScore: 3 },
+    ],
+  },
+
+  wa_plan_new: {
+    id: 'wa_plan_new',
+    q: 'WhatsApp দিয়ে কাস্টমারদের সাথে কীভাবে কথা বলবেন?',
+    hint: 'বাংলাদেশে বেশিরভাগ বিজনেসের সবচেয়ে বেশি কনভার্সন আসে WhatsApp থেকে। এটা না সাজালে অনেক সেল হাতছাড়া হয়।',
+    opts: [
+      { label: 'WhatsApp Business অ্যাকাউন্টও নেই, এখনো ভাবিনি।',                   next: 'worry_new', tags: ['wa_none', 'need_adtech'],   rawScore: 1 },
+      { label: 'আছে, কিন্তু ম্যানুয়ালি একটা একটা করে রিপ্লাই দিই।',                 next: 'worry_new', tags: ['wa_manual'],                rawScore: 2 },
+      { label: 'অটো-রিপ্লাই বা কিছু টেমপ্লেট আছে, পুরোটা সিস্টেমেটিক না।',          next: 'worry_new', tags: ['wa_basic', 'need_funnel'],  rawScore: 3 },
+      { label: 'WhatsApp-কে মূল চ্যানেল বানাতে চাই, অটোমেশন দরকার।',                next: 'worry_new', tags: ['wa_goal', 'need_funnel'],  rawScore: 3 },
+    ],
+  },
+
+  worry_new: {
+    id: 'worry_new',
+    q: 'শুরু করতে গিয়ে সবচেয়ে কোন ভয়টা মাথায় ঘুরছে?',
+    hint: 'একটাই বাছুন, সবচেয়ে সত্যিটা।',
+    opts: [
+      { label: 'ভুল জায়গায় টাকা ঢেলে নষ্ট হয়ে যাওয়ার ভয়।',                      next: 'goal_new', tags: ['need_budget', 'goal_unclear'],    rawScore: 1 },
+      { label: 'প্রতিযোগীদের মতো দেখাব, আলাদা হতে পারব না।',                         next: 'goal_new', tags: ['pain_trust', 'brand_none'],       rawScore: 2 },
+      { label: 'মার্কেটিং বুঝি না, ভুল সিদ্ধান্ত নিয়ে ফেলব।',                      next: 'goal_new', tags: ['goal_unclear', 'need_adtech'],    rawScore: 1 },
+      { label: 'সেল আসতে দেরি হলে ক্যাশফ্লো সামলাতে পারব কিনা।',                    next: 'goal_new', tags: ['goal_system', 'pain_product'],    rawScore: 2 },
+    ],
+  },
+
+  goal_new: {
+    id: 'goal_new',
+    q: 'প্রথম ৩ মাসে কী হলে মনে হবে সফল হয়েছি?',
+    hint: 'এটাই আপনার কাস্টম রোডম্যাপের গন্তব্য।',
+    opts: [
+      { label: 'মানুষ আমার বিজনেসের নামটা চিনতে শুরু করুক।',                         next: 'RESULT', tags: ['goal_brand', 'brand_none'],      rawScore: 1 },
+      { label: 'প্রথম ১০ থেকে ৫০টা সেল আসুক, ছোট হলেও চলবে।',                        next: 'RESULT', tags: ['goal_system', 'need_adtech'],    rawScore: 2 },
+      { label: 'একটা কার্যকর ডিজিটাল সেটআপ রেডি হয়ে যাক।',                          next: 'RESULT', tags: ['need_funnel', 'goal_unclear'],    rawScore: 2 },
+      { label: 'ডেটা দেখে বুঝতে চাই কাস্টমার কে, কোথায় পাব।',                        next: 'RESULT', tags: ['goal_system', 'need_adtech'],    rawScore: 3 },
+    ],
+  },
+
+  /* ══════════════════════════════════════════════
+     PATH B — চলছে কিন্তু আটকে আছি (12 Questions)
+  ══════════════════════════════════════════════ */
+
+  mkt_stuck: {
+    id: 'mkt_stuck',
+    q: 'মার্কেটিং এখন কীভাবে চলছে?',
+    hint: 'বর্তমান সেটআপটা যেটা সবচেয়ে কাছাকাছি সেটা বাছুন।',
+    opts: [
+      { label: 'নিজেই বুস্ট দিই, কিন্তু ফলাফল অনিশ্চিত।',                           next: 'ad_spend_stuck', tags: ['mkt_self'],       rawScore: 1, flags: { techGap: true } },
+      { label: 'ফ্রিল্যান্সার দিয়ে অ্যাড চালাই, রেজাল্ট ঠিকমতো দেখতে পাই না।',      next: 'ad_spend_stuck', tags: ['mkt_freelancer'], rawScore: 2 },
+      { label: 'এজেন্সি আছে, কিন্তু মনমতো রেজাল্ট আসছে না।',                         next: 'ad_spend_stuck', tags: ['mkt_agency'],     rawScore: 3 },
+      { label: 'মার্কেটিং প্রায় নেই, মুখের কথায় বা অর্গানিকে চলছে।',                next: 'ad_spend_stuck', tags: ['mkt_none'],       rawScore: 1, flags: { techGap: true } },
+    ],
+  },
+
+  ad_spend_stuck: {
+    id: 'ad_spend_stuck',
+    q: 'প্রতি মাসে অ্যাডে কতটাকা যাচ্ছে?',
+    hint: 'শুধু অ্যাড বাজেট, সার্ভিস চার্জ আলাদা রাখুন।',
+    opts: [
+      { label: '৳৫,০০০ এর নিচে, একদম সীমিত।',                                        next: 'channel_stuck', tags: ['need_budget'],                  rawScore: 1 },
+      { label: '৳৫,০০০ থেকে ৳২০,০০০।',                                                next: 'channel_stuck', tags: ['need_budget', 'need_adtech'],   rawScore: 2 },
+      { label: '৳২০,০০০ থেকে ৳৫০,০০০, বাজেট আছে কিন্তু ফলাফল নেই।',                  next: 'channel_stuck', tags: ['need_adtech', 'need_funnel'],   rawScore: 3, flags: { kpiWarning: true } },
+      { label: '৳৫০,০০০-এর বেশি, বড় বাজেট যাচ্ছে কিন্তু ROAS নেগেটিভ।',              next: 'channel_stuck', tags: ['need_funnel', 'pain_roas'],     rawScore: 3, flags: { kpiWarning: true, trackingWarning: true } },
+    ],
+  },
+
+  channel_stuck: {
+    id: 'channel_stuck',
+    q: 'কাস্টমাররা মূলত কোথা থেকে আসছে?',
+    hint: 'যেখান থেকে সবচেয়ে বেশি সেল হয় সেটা বাছুন।',
+    opts: [
+      { label: 'ফেসবুক মেসেজ বা ইনবক্স, ল্যান্ডিং পেজ নেই।',                         next: 'pixel_stuck',   tags: ['channel_boost', 'tech_none'],   rawScore: 2, flags: { landingPageWarning: 'none' } },
+      { label: 'অর্গানিক, রেফারেল বা পরিচিত মানুষ থেকে।',                             next: 'pixel_stuck',   tags: ['channel_organic', 'tech_none'], rawScore: 1, flags: { landingPageWarning: 'none' } },
+      { label: 'ল্যান্ডিং পেজ আছে কিন্তু স্লো বা পুরনো।',                             next: 'lp_tech_stuck', tags: ['channel_lp'],                   rawScore: 2, flags: { landingPageWarning: 'weak' } },
+      { label: 'ওয়েবসাইট আছে, কিন্তু কনভার্সন কম।',                                  next: 'lp_tech_stuck', tags: ['channel_website'],              rawScore: 3 },
+    ],
+  },
+
+  lp_tech_stuck: {
+    id: 'lp_tech_stuck',
+    q: 'ল্যান্ডিং পেজ বা ওয়েবসাইট কীভাবে বানানো?',
+    hint: 'পেজ স্পিড সরাসরি কনভার্সনে লাগে। ১ সেকেন্ড দেরি মানে ৭% কনভার্সন কম।',
+    opts: [
+      { label: 'ওয়ার্ডপ্রেস বা থিম দিয়ে, লোড একটু স্লো।',                            next: 'pixel_stuck', tags: ['tech_legacy'],                   rawScore: 2, flags: { techGap: true, landingPageWarning: 'weak' } },
+      { label: 'টেমপ্লেট বিল্ডার, যেমন Shopify বা Wix।',                              next: 'pixel_stuck', tags: ['tech_legacy', 'tech_shopify'],   rawScore: 2, flags: { techGap: true } },
+      { label: 'কাস্টম কোড, দ্রুত লোড হয়।',                                           next: 'pixel_stuck', tags: ['tech_fast'],                     rawScore: 4 },
+      { label: 'কে বানিয়েছে জানি না, স্পিড কেমন সেটাও জানা নেই।',                      next: 'pixel_stuck', tags: ['tech_unknown'],                  rawScore: 2, flags: { techGap: true, landingPageWarning: 'weak' } },
+    ],
+  },
+
+  pixel_stuck: {
+    id: 'pixel_stuck',
+    q: 'Facebook Pixel বা কোনো ট্র্যাকিং সেটআপ আছে?',
+    hint: 'Pixel ছাড়া Facebook অ্যালগরিদম অন্ধ। সে জানতেই পারে না কে কিনছে, তাই বারবার ভুল মানুষকে অ্যাড দেখায়।',
+    opts: [
+      { label: 'Pixel কী জিনিস সেটাই জানি না।',                                      next: 'creative_stuck', tags: ['pixel_none'],  rawScore: 1, flags: { trackingWarning: true, kpiWarning: true } },
+      { label: 'ট্র্যাকিং ছাড়াই অ্যাড চলছে।',                                        next: 'creative_stuck', tags: ['pixel_skip'],  rawScore: 1, flags: { trackingWarning: true, kpiWarning: true } },
+      { label: 'Pixel আছে কিন্তু ঠিকমতো কাজ করছে কিনা নিশ্চিত না।',                   next: 'creative_stuck', tags: ['pixel_basic'], rawScore: 2, flags: { kpiWarning: true } },
+      { label: 'Pixel আর Server-side API দুটোই সেটআপ আছে।',                           next: 'creative_stuck', tags: ['pixel_full'],  rawScore: 4 },
+    ],
+  },
+
+  creative_stuck: {
+    id: 'creative_stuck',
+    q: 'অ্যাড কনটেন্ট বা ক্রিয়েটিভ নিয়ে সৎভাবে বলুন।',
+    hint: 'খারাপ ক্রিয়েটিভ ভালো ক্যাম্পেইনকেও মাটি করে দেয়।',
+    opts: [
+      { label: 'নিজেই মোবাইলে ছবি তুলি, প্রফেশনাল না।',                               next: 'revenue_stuck', tags: ['creative_diy', 'brand_diy'],       rawScore: 1 },
+      { label: 'ভালো কনটেন্ট বানাতে পারি না, এটাই মূল দুর্বলতা।',                     next: 'revenue_stuck', tags: ['creative_need', 'brand_none'],     rawScore: 1 },
+      { label: 'ফ্রিল্যান্সার বা এজেন্সি দিয়ে ডিজাইন করাই।',                          next: 'revenue_stuck', tags: ['creative_agency', 'brand_partial'], rawScore: 3 },
+      { label: 'ভালো কনটেন্ট আছে কিন্তু অ্যাডে কনভার্ট হচ্ছে না।',                   next: 'revenue_stuck', tags: ['creative_agency', 'pain_roas'],     rawScore: 3, flags: { kpiWarning: true } },
+    ],
+  },
+
+  revenue_stuck: {
+    id: 'revenue_stuck',
+    q: 'এখন মাসে মাসে কতটাকা সেল হচ্ছে?',
+    hint: 'রেভিনিউ সাইজটা জানলে কোন সমাধান সবচেয়ে দ্রুত কাজে আসবে সেটা ঠিক করতে পারি।',
+    opts: [
+      { label: '৳৫০,০০০ এর নিচে, এখনো ছোট স্কেলে আছি।',                              next: 'automation_stuck', tags: ['revenue_low'],                    rawScore: 1 },
+      { label: '৳৫০,০০০ থেকে ৳২,০০,০০০, মাঝারি কিন্তু স্থিতিশীল না।',                next: 'automation_stuck', tags: ['revenue_mid'],                    rawScore: 2 },
+      { label: '৳২,০০,০০০ থেকে ৳৫,০০,০০০, ভালো চলছে কিন্তু আরও বাড়াতে চাই।',        next: 'automation_stuck', tags: ['revenue_high'],                   rawScore: 3 },
+      { label: '৳৫,০০,০০০-এর বেশি, বড় সেল কিন্তু মার্কেটিং কস্ট অনেক।',             next: 'automation_stuck', tags: ['revenue_high', 'need_funnel'],    rawScore: 4 },
+    ],
+  },
+
+  automation_stuck: {
+    id: 'automation_stuck',
+    q: 'অ্যাড ছাড়া আর কোনো ডিজিটাল টুল ব্যবহার করেন?',
+    hint: 'সঠিক টুল না থাকলে একই কাজ বারবার করতে হয়। এটা সময় আর টাকা দুটোই নষ্ট করে।',
+    opts: [
+      { label: 'না, শুধু ফেসবুক আর WhatsApp, বাকিটা হাতে করি।',                       next: 'pain_stuck', tags: ['automation_none'],                   rawScore: 1 },
+      { label: 'WhatsApp Business আছে, বাকিটা ম্যানুয়াল।',                            next: 'pain_stuck', tags: ['automation_basic', 'wa_manual'],    rawScore: 2 },
+      { label: 'Google Sheets, Canva বা কিছু টুল আছে, সিস্টেম না।',                   next: 'pain_stuck', tags: ['automation_basic'],                  rawScore: 2 },
+      { label: 'CRM বা অটোমেশন টুল আছে, আরও স্কেল করতে চাই।',                        next: 'pain_stuck', tags: ['automation_advanced', 'need_funnel'], rawScore: 3 },
+    ],
+  },
+
+  pain_stuck: {
+    id: 'pain_stuck',
+    q: 'ঠিক কোন জায়গায় সব আটকে যাচ্ছে?',
+    hint: 'যেটা সবচেয়ে বেশি মাথায় ঘোরে সেটা বাছুন।',
+    opts: [
+      { label: 'অ্যাডে টাকা যাচ্ছে, সেল নেই, ROAS নেগেটিভ।',                         next: 'goal_stuck', tags: ['pain_roas'],    rawScore: 2, flags: { kpiWarning: true } },
+      { label: 'কনটেন্ট দুর্বল, মানুষ স্ক্রোল করেই চলে যায়।',                         next: 'goal_stuck', tags: ['creative_need'], rawScore: 1 },
+      { label: 'পেজ বা ওয়েবসাইট স্লো, মানুষ ঢুকেই বের হয়ে যায়।',                    next: 'goal_stuck', tags: ['pain_tech'],    rawScore: 2, flags: { techGap: true, landingPageWarning: 'weak' } },
+      { label: 'মানুষ বিশ্বাস করছে না, ব্র্যান্ড ট্রাস্ট কম।',                        next: 'goal_stuck', tags: ['pain_trust'],   rawScore: 2 },
+    ],
+  },
+
+  goal_stuck: {
+    id: 'goal_stuck',
+    q: 'আগামী ৬ মাসে একটা জিনিস পাল্টাতে পারলে সবচেয়ে বেশি কী পরিবর্তন আসবে?',
+    hint: 'এটাই আপনার ৩০-দিনের স্প্রিন্টের মূল লক্ষ্য।',
+    opts: [
+      { label: 'অ্যাড খরচ কমিয়ে ROAS পজিটিভে আনা।',                                  next: 'RESULT', tags: ['goal_system', 'need_adtech'],    rawScore: 2 },
+      { label: 'কাস্টম ল্যান্ডিং পেজ দিয়ে কনভার্সন দ্বিগুণ করা।',                     next: 'RESULT', tags: ['need_funnel', 'goal_system'],    rawScore: 3 },
+      { label: 'স্থিতিশীল মাসিক সেলস মেশিন তৈরি করা।',                                next: 'RESULT', tags: ['goal_system', 'need_funnel'],    rawScore: 3 },
+      { label: 'ব্র্যান্ড ট্রাস্ট বাড়িয়ে রিপিট কাস্টমার আনা।',                       next: 'RESULT', tags: ['goal_brand', 'need_fullstack'],  rawScore: 4 },
+    ],
+  },
+
+  /* ══════════════════════════════════════════════
+     PATH C — স্কেলিং / ব্র্যান্ড (13 Questions)
+  ══════════════════════════════════════════════ */
+
+  mkt_scale: {
+    id: 'mkt_scale',
+    q: 'মার্কেটিং এখন কে সামলাচ্ছে?',
+    hint: 'বর্তমান মার্কেটিং টিমের কাঠামো বলুন।',
+    opts: [
+      { label: 'নিজেই বা ইন-হাউস জুনিয়র দিয়ে।',                                     next: 'channel_scale', tags: ['mkt_self'],        rawScore: 2, flags: { techGap: true } },
+      { label: 'ফ্রিল্যান্সার, একজন বা একাধিক।',                                      next: 'channel_scale', tags: ['mkt_freelancer'],  rawScore: 3 },
+      { label: 'ডেডিকেটেড মার্কেটিং এজেন্সি।',                                        next: 'channel_scale', tags: ['mkt_agency'],      rawScore: 4 },
+      { label: 'ইন-হাউস মার্কেটিং টিম আছে।',                                          next: 'channel_scale', tags: ['mkt_agency', 'creative_inhouse'], rawScore: 4 },
+    ],
+  },
+
+  channel_scale: {
+    id: 'channel_scale',
+    q: 'কাস্টমার মূলত কোন পথে কিনতে আসে?',
+    hint: 'এটাই আপনার সেলস ফানেলের হৃৎপিণ্ড।',
+    opts: [
+      { label: 'ফেসবুক মেসেজ ক্যাম্পেইন, ল্যান্ডিং পেজ নেই।',                        next: 'pixel_scale',   tags: ['channel_boost', 'tech_none'],      rawScore: 2, flags: { landingPageWarning: 'none' } },
+      { label: 'ল্যান্ডিং পেজ আছে আর মেসেজ ক্যাম্পেইন একসাথে।',                      next: 'lp_tech_scale', tags: ['channel_lp'],                      rawScore: 3, flags: { landingPageWarning: 'weak' } },
+      { label: 'ডেডিকেটেড ওয়েবসাইট আর মাল্টি-চ্যানেল অ্যাড।',                       next: 'lp_tech_scale', tags: ['channel_website'],                 rawScore: 4 },
+      { label: 'অর্গানিক আর ইনফ্লুয়েন্সার, পেইড অ্যাড সাপ্লিমেন্টারি।',              next: 'pixel_scale',   tags: ['channel_organic', 'brand_partial'], rawScore: 3 },
+    ],
+  },
+
+  lp_tech_scale: {
+    id: 'lp_tech_scale',
+    q: 'ল্যান্ডিং পেজ বা ওয়েবসাইটের টেকনিক্যাল অবস্থা কেমন?',
+    hint: 'Google PageSpeed ৯০-এর নিচে মানে অ্যাডের প্রতিটা টাকার কিছুটা লিক হচ্ছে।',
+    opts: [
+      { label: 'ওয়ার্ডপ্রেস বা থিম, মোবাইলে স্লো।',                                  next: 'pixel_scale', tags: ['tech_legacy'],                  rawScore: 2, flags: { techGap: true, landingPageWarning: 'weak' } },
+      { label: 'কাস্টম কোড, দ্রুত লোড, ভালো Core Web Vitals।',                        next: 'pixel_scale', tags: ['tech_fast'],                    rawScore: 4 },
+      { label: 'Shopify বা WooCommerce, মাঝারি পারফরম্যান্স।',                         next: 'pixel_scale', tags: ['tech_legacy', 'tech_shopify'],  rawScore: 3, flags: { techGap: true } },
+      { label: 'নিশ্চিত না, স্পিড কখনো টেস্ট করা হয়নি।',                              next: 'pixel_scale', tags: ['tech_unknown'],                 rawScore: 2, flags: { techGap: true, landingPageWarning: 'weak' } },
+    ],
+  },
+
+  pixel_scale: {
+    id: 'pixel_scale',
+    q: 'ট্র্যাকিং ইনফ্রাস্ট্রাকচার কতটা শক্তিশালী?',
+    hint: 'Pixel ছাড়া অ্যালগরিদম অন্ধ, CAPI ছাড়া অর্ধেক ডেটা হারিয়ে যায়।',
+    opts: [
+      { label: 'শুধু Pixel আছে, CAPI বা Server-side API নেই।',                         next: 'revenue_scale', tags: ['pixel_basic'], rawScore: 2, flags: { kpiWarning: true } },
+      { label: 'Pixel আর CAPI দুটোই সেটআপ, ইভেন্ট ঠিকমতো ফায়ার হচ্ছে।',             next: 'revenue_scale', tags: ['pixel_full'],  rawScore: 4 },
+      { label: 'Pixel আছে কিন্তু ইভেন্ট ঠিকমতো ফায়ার হচ্ছে কিনা জানি না।',           next: 'revenue_scale', tags: ['pixel_basic'], rawScore: 2, flags: { trackingWarning: true, kpiWarning: true } },
+      { label: 'ট্র্যাকিং নেই বা পুরো বিষয়টা বুঝি না।',                               next: 'revenue_scale', tags: ['pixel_none'],  rawScore: 1, flags: { trackingWarning: true, kpiWarning: true } },
+    ],
+  },
+
+  revenue_scale: {
+    id: 'revenue_scale',
+    q: 'এখন মাসিক রেভিনিউ কোথায় আছে?',
+    hint: 'এটা না জানলে ROAS টার্গেট আর বাজেট অ্যালোকেশন ঠিকমতো করা যায় না।',
+    opts: [
+      { label: '৳৫ লাখ থেকে ৳১৫ লাখের মধ্যে।',                                       next: 'roas_scale', tags: ['revenue_scale_mid'],                              rawScore: 2 },
+      { label: '৳১৫ লাখ থেকে ৳৫০ লাখের মধ্যে।',                                      next: 'roas_scale', tags: ['revenue_scale_high'],                             rawScore: 3 },
+      { label: '৳৫০ লাখের বেশি।',                                                     next: 'roas_scale', tags: ['revenue_scale_enterprise', 'need_fullstack'],     rawScore: 4 },
+      { label: 'ঠিক জানি না, আনুমানিক হিসাবে চলি।',                                   next: 'roas_scale', tags: ['kpi_vanity', 'revenue_scale_unknown'],            rawScore: 1 },
+    ],
+  },
+
+  roas_scale: {
+    id: 'roas_scale',
+    q: 'ROAS আর আসল লাভ-লোকসান কীভাবে ট্র্যাক করেন?',
+    hint: 'অ্যাড ম্যানেজারের রিপোর্টেড ROAS আর নেট প্রফিট কিন্তু দুটো আলাদা জিনিস।',
+    opts: [
+      { label: 'অ্যাড ম্যানেজারের ডেটা দেখি, নেট প্রফিট অস্পষ্ট।',                    next: 'content_engine_scale', tags: ['kpi_partial'], rawScore: 2, flags: { kpiWarning: true } },
+      { label: 'অ্যাড কস্ট, সেলস আর নেট প্রফিট আলাদা করে হিসাব রাখি।',                next: 'retention_scale',      tags: ['kpi_full'],    rawScore: 4 },
+      { label: 'লাইক, মেসেজ বা রিচ দেখে অনুমান করি।',                                 next: 'content_engine_scale', tags: ['kpi_vanity'],  rawScore: 1, flags: { kpiWarning: true } },
+      { label: 'ড্যাশবোর্ড বা Sheets-এ সব মেট্রিক ট্র্যাক হয়।',                       next: 'retention_scale',      tags: ['kpi_full', 'test_regular'], rawScore: 4 },
+    ],
+  },
+
+  content_engine_scale: {
+    id: 'content_engine_scale',
+    q: 'বিজ্ঞাপনের কনটেন্ট আর ক্রিয়েটিভ প্রোডাকশন কেমন চলছে?',
+    hint: '২০২৬-এ জেতার অ্যাড মানে ভালো কনটেন্ট। মিডিয়া বায়িং একা যথেষ্ট না।',
+    opts: [
+      { label: 'ফ্রিল্যান্সার বা এজেন্সি দিয়ে, অনিয়মিত।',                            next: 'competition_scale', tags: ['creative_agency', 'test_rarely'],  rawScore: 2 },
+      { label: 'ইন-হাউস ডিজাইনার আছে, নিয়মিত কনটেন্ট বের হয়।',                       next: 'competition_scale', tags: ['creative_inhouse', 'test_regular'], rawScore: 4 },
+      { label: 'নিজেই বানাই বা টিম দিয়ে, অনিয়মিত।',                                  next: 'competition_scale', tags: ['creative_diy', 'test_rarely'],     rawScore: 1 },
+      { label: 'A/B টেস্ট করি, ডেটা দেখে ক্রিয়েটিভ পাল্টাই।',                        next: 'competition_scale', tags: ['creative_inhouse', 'test_regular'], rawScore: 4 },
+    ],
+  },
+
+  retention_scale: {
+    id: 'retention_scale',
+    q: 'রিপিট কাস্টমার কেমন আসছে?',
+    hint: 'নতুন কাস্টমার আনতে ৫ গুণ বেশি খরচ লাগে। রিটেনশন হলো লুকানো সোনার খনি।',
+    opts: [
+      { label: 'বেশিরভাগই নতুন কাস্টমার, রিপিট অর্ডার কম।',                           next: 'competition_scale', tags: ['goal_system', 'pain_trust'],    rawScore: 2 },
+      { label: 'মাঝামাঝি, কিছু রিপিট আছে কিন্তু সিস্টেমেটিক না।',                     next: 'competition_scale', tags: ['goal_system', 'need_funnel'],   rawScore: 2 },
+      { label: 'ভালো রিটেনশন, লয়্যাল কাস্টমারবেস তৈরি হয়েছে।',                       next: 'competition_scale', tags: ['brand_partial', 'goal_brand'],  rawScore: 3 },
+      { label: 'চমৎকার, কাস্টমাররা নিজেরাই রেফার করে, কমিউনিটি হয়েছে।',               next: 'competition_scale', tags: ['brand_strong', 'goal_brand'],   rawScore: 4 },
+    ],
+  },
+
+  competition_scale: {
+    id: 'competition_scale',
+    q: 'মার্কেটে আপনার পজিশন কেমন?',
+    hint: 'কাস্টমার আপনাকে বেছে নেওয়ার কারণটা কি পরিষ্কার?',
+    opts: [
+      { label: 'অনেক প্রতিযোগী, সবাই প্রায় একই, আমরাও একই রকম।',                     next: 'brand_scale', tags: ['pain_trust', 'brand_partial'],   rawScore: 2 },
+      { label: 'কিছু প্রতিযোগী আছে, আমাদের কিছু ইউনিক অ্যাডভান্টেজ আছে।',             next: 'brand_scale', tags: ['brand_partial', 'goal_brand'],  rawScore: 3 },
+      { label: 'আমরা মার্কেট লিডার, তবে চ্যালেঞ্জার আসছে।',                           next: 'brand_scale', tags: ['brand_strong', 'goal_brand'],    rawScore: 4 },
+      { label: 'নিশ মার্কেট, প্রতিযোগী কম কিন্তু মার্কেটটাও ছোট।',                    next: 'brand_scale', tags: ['brand_partial', 'need_fullstack'], rawScore: 3 },
+    ],
+  },
+
+  brand_scale: {
+    id: 'brand_scale',
+    q: 'ব্র্যান্ড আইডেন্টিটি কতটা শক্তিশালী?',
+    hint: 'লোগো, কালার, ভয়েস, কপি সব মিলিয়ে একটা পরিষ্কার পরিচয় আছে?',
+    opts: [
+      { label: 'মোটামুটি, আরও কনসিস্টেন্ট আর প্রফেশনাল হওয়া দরকার।',                 next: 'ai_scale', tags: ['brand_partial'], rawScore: 2 },
+      { label: 'শক্তিশালী, প্রতিযোগীরা আমাদের স্টাইল কপি করে।',                       next: 'ai_scale', tags: ['brand_strong'],  rawScore: 4 },
+      { label: 'Canva বা নিজেই ডিজাইন করি, তেমন প্রফেশনাল না।',                       next: 'ai_scale', tags: ['brand_diy'],     rawScore: 1 },
+      { label: 'ব্র্যান্ডিং নিয়ে এখনো সিরিয়াসলি কাজ করিনি।',                         next: 'ai_scale', tags: ['brand_none'],    rawScore: 1 },
+    ],
+  },
+
+  ai_scale: {
+    id: 'ai_scale',
+    q: 'AI আর অটোমেশন নিয়ে বিজনেসটা কোথায় আছে?',
+    hint: '২০২৬-এ যারা AI ব্যবহার করছে না তারা পিছিয়ে পড়ছে। এটা এখন বিলাসিতা না, টিকে থাকার শর্ত।',
+    opts: [
+      { label: 'এখনো শুরু করিনি, AI কীভাবে কাজে লাগবে বুঝি না।',                      next: 'goal_scale', tags: ['ai_unaware', 'need_fullstack'],      rawScore: 1 },
+      { label: 'ChatGPT বা Canva AI ব্যবহার করি, অনানুষ্ঠানিকভাবে।',                   next: 'goal_scale', tags: ['ai_basic'],                         rawScore: 2 },
+      { label: 'কিছু অটোমেশন আছে, WhatsApp Bot বা email sequence।',                    next: 'goal_scale', tags: ['ai_partial', 'automation_basic'],    rawScore: 3 },
+      { label: 'AI পুরোপুরি ইন্টিগ্রেটেড, আরও এক্সপ্যান্ড করতে চাই।',                 next: 'goal_scale', tags: ['ai_advanced', 'automation_advanced'], rawScore: 4 },
+    ],
+  },
+
+  goal_scale: {
+    id: 'goal_scale',
+    q: 'আগামী ৬ মাসে একটাই ফলাফল পাওয়ার থাকলে কোনটা সবচেয়ে বেশি দরকার?',
+    hint: 'এটাই আপনার কাস্টম রোডম্যাপের শেষ গন্তব্য।',
+    opts: [
+      { label: 'মার্কেটে একটা প্রভাবশালী ব্র্যান্ড হিসেবে প্রতিষ্ঠিত হওয়া।',          next: 'RESULT', tags: ['goal_brand', 'need_fullstack'],  rawScore: 4 },
+      { label: 'ROAS অপ্টিমাইজ করে অ্যাড খরচ কমানো।',                                 next: 'RESULT', tags: ['goal_system', 'need_adtech'],    rawScore: 3 },
+      { label: 'কাস্টম ফানেল দিয়ে কনভার্সন হার দ্বিগুণ করা।',                          next: 'RESULT', tags: ['need_funnel', 'goal_system'],    rawScore: 3 },
+      { label: 'নতুন প্রোডাক্ট লাইন বা নতুন মার্কেটে এক্সপ্যান্ড করা।',                next: 'RESULT', tags: ['goal_system', 'need_fullstack'],  rawScore: 4 },
+    ],
+  },
+}
+/* Dynamic TOTAL: worst-case path length for display */
+const TOTAL_DISPLAY = 14
 
 /* ══════════════════════════════════════════════════
    PACKAGE DEFINITIONS
@@ -221,16 +559,17 @@ const PACKAGES = {
     tag: 'ফ্রি অডিট স্টার্ট',
     waLabel: 'MicroTest',
     features: [
-      'ফ্রি বিজনেস অডিট',
-      'গ্রোথ স্ট্র্যাটেজি ২০২৬',
-      'হাই-কনভার্টিং অ্যাড সেটআপ',
+      'ফ্রি বিজনেস ও টেক অডিট',
+      '২০২৬ গ্রোথ স্ট্র্যাটেজি রোডম্যাপ',
+      'হাই-কনভার্টিং অ্যাড সেটআপ গাইড',
+      'WhatsApp Business সেটআপ পরামর্শ',
       'ইউনিক কনটেন্ট আইডিয়া',
     ],
     sprint30: [
-      'দিন ১–৭: বিজনেস অডিট ও ডিজিটাল প্রেজেন্স রিভিউ',
-      'দিন ৮–১৪: অ্যাড অ্যাকাউন্ট ও Pixel সেটআপ',
-      'দিন ১৫–২১: প্রথম টেস্ট ক্যাম্পেইন লঞ্চ',
-      'দিন ২২–৩০: ডেটা রিভিউ ও পরবর্তী ধাপ পরিকল্পনা',
+      'বিজনেস ও ডিজিটাল প্রেজেন্স সম্পূর্ণ অডিট',
+      'অ্যাড অ্যাকাউন্ট ও Pixel সেটআপ রিভিউ',
+      'প্রথম টেস্ট ক্যাম্পেইন লঞ্চ',
+      'ডেটা রিভিউ ও পরবর্তী ধাপের পরিকল্পনা',
     ],
   },
   monthly_care: {
@@ -241,17 +580,18 @@ const PACKAGES = {
     tag: 'সবচেয়ে জনপ্রিয়',
     waLabel: 'MonthlyCare',
     features: [
-      'AI সেলস ফানেল অটোমেশন',
+      'AI-পাওয়ার্ড সেলস ফানেল অটোমেশন',
       'ফ্রি আল্ট্রা-ফাস্ট ল্যান্ডিং পেজ (Vite + React)',
       'ফ্রি Pixel ও Conversion API সেটআপ',
+      'WhatsApp অটোমেশন বেসিক সেটআপ',
       'আনলিমিটেড অ্যাড ম্যানেজমেন্ট',
-      'এক্সক্লুসিভ অ্যাড কনটেন্ট আইডিয়া',
+      'AI কনটেন্ট আইডিয়া সিস্টেম',
     ],
     sprint30: [
-      'দিন ১–৫: ডিজিটাল ইনফ্রাস্ট্রাকচার অডিট (Pixel, CAPI, Analytics)',
-      'দিন ৬–১২: কাস্টম Vite+React ল্যান্ডিং পেজ বিল্ড ও লাইভ',
-      'দিন ১৩–২০: প্রথম হাই-কনভার্টিং ক্যাম্পেইন সেটআপ ও লঞ্চ',
-      'দিন ২১–৩০: A/B টেস্ট, ROAS রিপোর্ট ও মাস ২ প্ল্যানিং',
+      'ডিজিটাল ইনফ্রাস্ট্রাকচার অডিট (Pixel, CAPI, Analytics)',
+      'কাস্টম Vite+React ল্যান্ডিং পেজ বিল্ড ও লাইভ',
+      'প্রথম হাই-কনভার্টিং ক্যাম্পেইন সেটআপ ও লঞ্চ',
+      'A/B টেস্ট, ROAS রিপোর্ট ও মাস ২ প্ল্যানিং',
     ],
   },
   brand_care: {
@@ -262,24 +602,24 @@ const PACKAGES = {
     tag: 'ফুল সার্ভিস',
     waLabel: 'BrandCare',
     features: [
-      'অ্যাডভান্সড সেলস ফানেল অটোমেশন',
+      'অ্যাডভান্সড AI সেলস ফানেল অটোমেশন',
       'আনলিমিটেড ল্যান্ডিং পেজ সাপোর্ট (Vite + React)',
-      'AI ডমিন্যান্স ও অথরিটি বিল্ডিং (AEO, GEO)',
-      'কাস্টমার সেন্টিমেন্ট অ্যানালাইসিস',
-      'মডার্ন ট্র্যাকিং (CAPI, GA4, TTK Pixel)',
-      'উইনিং অ্যাড কনটেন্ট আইডিয়া',
+      'AI অথরিটি বিল্ডিং: AEO ও GEO অপটিমাইজেশন',
+      'WhatsApp Bot ইন্টিগ্রেশন ও অটোমেশন',
+      'মডার্ন ট্র্যাকিং: CAPI, GA4, TikTok Pixel',
+      'কাস্টমার সেন্টিমেন্ট ও কনভার্সেশন অ্যানালিসিস',
       'প্রিমিয়াম ব্র্যান্ড আইডেন্টিটি ডিজাইন',
+      'উইনিং অ্যাড কনটেন্ট ও ক্রিয়েটিভ স্ট্র্যাটেজি',
     ],
     sprint30: [
-      'দিন ১–৫: ফুল ব্র্যান্ড অডিট ও কম্পিটিটর রিসার্চ',
-      'দিন ৬–১০: ব্র্যান্ড আইডেন্টিটি (লোগো, কালার, টাইপোগ্রাফি)',
-      'দিন ১১–১৮: মাল্টি-পেজ Vite+React ওয়েবসাইট বিল্ড ও লাইভ',
-      'দিন ১৯–২৫: CAPI + GA4 + TTK সম্পূর্ণ ট্র্যাকিং সেটআপ',
-      'দিন ২৬–৩০: ফার্স্ট অথরিটি ক্যাম্পেইন লঞ্চ ও KPI বেসলাইন',
+      'ফুল ব্র্যান্ড অডিট ও কম্পিটিটর রিসার্চ',
+      'ব্র্যান্ড আইডেন্টিটি — লোগো, কালার, টাইপোগ্রাফি',
+      'মাল্টি-পেজ Vite+React ওয়েবসাইট বিল্ড ও লাইভ',
+      'CAPI + GA4 + TikTok + WhatsApp Bot সম্পূর্ণ সেটআপ',
+      'ফার্স্ট অথরিটি ক্যাম্পেইন লঞ্চ ও KPI বেসলাইন',
     ],
   },
 }
-
 /* ══════════════════════════════════════════════════
    CROSS-CALCULATION ENGINE
    
@@ -319,6 +659,7 @@ const TAG_WEIGHTS = {
   tech_none:    { micro_test: 3, monthly_care: 1, brand_care: 0 },
   tech_unknown: { micro_test: 2, monthly_care: 2, brand_care: 0 },
   tech_legacy:  { micro_test: 0, monthly_care: 3, brand_care: 1 },
+  tech_shopify: { micro_test: 0, monthly_care: 3, brand_care: 1 },
   tech_fast:    { micro_test: 0, monthly_care: 1, brand_care: 3 },
   // Pixel/tracking
   pixel_none:  { micro_test: 3, monthly_care: 1, brand_care: 0 },
@@ -364,16 +705,40 @@ const TAG_WEIGHTS = {
   update_slow:  { micro_test: 0, monthly_care: 3, brand_care: 0 },
   update_stale: { micro_test: 0, monthly_care: 3, brand_care: 0 },
   update_agile: { micro_test: 0, monthly_care: 1, brand_care: 3 },
+  // Revenue signals
+  revenue_low:              { micro_test: 3, monthly_care: 1, brand_care: 0 },
+  revenue_mid:              { micro_test: 1, monthly_care: 3, brand_care: 0 },
+  revenue_high:             { micro_test: 0, monthly_care: 2, brand_care: 3 },
+  revenue_scale_mid:        { micro_test: 0, monthly_care: 3, brand_care: 1 },
+  revenue_scale_high:       { micro_test: 0, monthly_care: 1, brand_care: 3 },
+  revenue_scale_enterprise: { micro_test: 0, monthly_care: 0, brand_care: 5 },
+  revenue_scale_unknown:    { micro_test: 2, monthly_care: 2, brand_care: 0 },
+  // Audience type
+  audience_b2b:   { micro_test: 0, monthly_care: 2, brand_care: 3 },
+  audience_b2c:   { micro_test: 2, monthly_care: 3, brand_care: 1 },
+  audience_local: { micro_test: 3, monthly_care: 2, brand_care: 0 },
+  audience_mixed: { micro_test: 1, monthly_care: 2, brand_care: 2 },
+  // WhatsApp usage
+  wa_none:   { micro_test: 3, monthly_care: 1, brand_care: 0 },
+  wa_manual: { micro_test: 2, monthly_care: 2, brand_care: 0 },
+  wa_basic:  { micro_test: 0, monthly_care: 3, brand_care: 1 },
+  wa_goal:   { micro_test: 0, monthly_care: 2, brand_care: 2 },
+  // Automation maturity
+  automation_none:     { micro_test: 3, monthly_care: 1, brand_care: 0 },
+  automation_basic:    { micro_test: 0, monthly_care: 3, brand_care: 1 },
+  automation_advanced: { micro_test: 0, monthly_care: 1, brand_care: 4 },
+  // AI readiness
+  ai_unaware:  { micro_test: 2, monthly_care: 2, brand_care: 0 },
+  ai_basic:    { micro_test: 1, monthly_care: 3, brand_care: 1 },
+  ai_partial:  { micro_test: 0, monthly_care: 2, brand_care: 2 },
+  ai_advanced: { micro_test: 0, monthly_care: 0, brand_care: 5 },
 }
-
 /**
  * Cross-Rules: applied AFTER tag scoring.
  * If condition matches → force or cap a package.
  * Rules are evaluated in order; first match wins.
  */
 const CROSS_RULES = [
-  // "Eager but unprepared": wants brand_care but has no pixel & no KPI tracking
-  // → cap at monthly_care (needs foundation first)
   {
     name: 'eager_no_foundation',
     condition: (tags, flags) =>
@@ -382,7 +747,6 @@ const CROSS_RULES = [
     result: 'monthly_care',
     reason: 'ব্র্যান্ড কেয়ার শুরু করতে ট্র্যাকিং ফাউন্ডেশন আগে দরকার।',
   },
-  // "High-agency user, but budget-first mindset" → monthly_care
   {
     name: 'agency_budget_conscious',
     condition: (tags) =>
@@ -390,7 +754,6 @@ const CROSS_RULES = [
     result: 'monthly_care',
     reason: 'এজেন্সি ব্যাকগ্রাউন্ড আছে, কিন্তু বাজেট নিয়ন্ত্রণই এখন মূল প্রায়োরিটি।',
   },
-  // "Absolute beginner": early stage + no marketing + no pixel + no KPI
   {
     name: 'absolute_beginner',
     condition: (tags, flags) =>
@@ -399,7 +762,6 @@ const CROSS_RULES = [
     result: 'micro_test',
     reason: 'শুরু থেকে সঠিকভাবে সেটআপ করাটাই সবচেয়ে স্মার্ট পদক্ষেপ।',
   },
-  // "Scaling brand with strong infra" → brand_care
   {
     name: 'scaling_strong_infra',
     condition: (tags) =>
@@ -407,10 +769,32 @@ const CROSS_RULES = [
       tags.includes('pixel_full') &&
       tags.includes('tech_fast'),
     result: 'brand_care',
-    reason: 'টেকনিক্যাল ফাউন্ডেশন শক্ত। এখন ব্র্যান্ড অথরিটি বিল্ডিং-ই পরের বড় জাম্প।',
+    reason: 'টেকনিক্যাল ফাউন্ডেশন শক্ত। এখন ব্র্যান্ড অথরিটি বিল্ডিংই পরের বড় জাম্প।',
+  },
+  {
+    name: 'b2b_needs_funnel',
+    condition: (tags) =>
+      tags.includes('audience_b2b') &&
+      !tags.includes('tech_fast') &&
+      !tags.includes('stage_early'),
+    result: 'monthly_care',
+    reason: 'B2B সেলস সাইকেল লম্বা। প্রপার ফানেল ছাড়া লিড ধরে রাখা যায় না।',
+  },
+  {
+    name: 'high_revenue_poor_tracking',
+    condition: (tags, flags) =>
+      tags.includes('revenue_high') && flags.trackingWarning,
+    result: 'monthly_care',
+    reason: 'এত রেভিনিউ আসছে কিন্তু ট্র্যাকিং নেই মানে প্রতিদিন বাজেট লিক হচ্ছে।',
+  },
+  {
+    name: 'enterprise_ai_ready',
+    condition: (tags) =>
+      tags.includes('ai_advanced') && tags.includes('revenue_scale_enterprise'),
+    result: 'brand_care',
+    reason: 'আপনার বিজনেস ফুল ব্র্যান্ড অথরিটি বিল্ডিংয়ের জন্য রেডি।',
   },
 ]
-
 /**
  * Main scoring function.
  * Returns { pkgKey, score, rawTotal, tags, flags, crossRuleApplied }
@@ -467,7 +851,8 @@ const computeResult = (all) => {
   }
 
   // Normalize display score (0–100) from rawTotal
-  const score = Math.min(100, Math.round(((rawTotal - 14) / (56 - 14)) * 100))
+  // Graph quiz: min ~7 (all 1s, 7-question path A), max ~48 (all 4s, 12-question path C)
+  const score = Math.min(100, Math.max(5, Math.round(((rawTotal - 10) / (52 - 10)) * 100)))
 
   return {
     score,
@@ -497,7 +882,7 @@ const getDiagnosis = (pkgKey, tags = [], flags = {}, crossRule = null) => {
   const hasTechGap          = flags.techGap
   const hasNoLp             = flags.landingPageWarning === 'none'
   const hasWeakLp           = flags.landingPageWarning === 'weak'
-  
+
   const wantsBrand          = tags.includes('goal_brand') || tags.includes('need_fullstack')
   const wantsFullstack      = tags.includes('need_fullstack')
   const isEarly             = tags.includes('stage_early') || tags.includes('stage_stuck')
@@ -507,107 +892,157 @@ const getDiagnosis = (pkgKey, tags = [], flags = {}, crossRule = null) => {
   const painIsTech          = tags.includes('pain_tech')
   const painIsTrust         = tags.includes('pain_trust')
 
-  // Build dynamic problem string
+  const hasTechShopify      = tags.includes('tech_shopify')
+  const hasTechWP           = tags.includes('tech_legacy') && !hasTechShopify
+  const legacyPlatformName  =
+    hasTechShopify ? 'Shopify/WooCommerce' :
+    hasTechWP      ? 'WordPress/Themes'    : null
+
+  const isEnterprise        = tags.includes('revenue_scale_enterprise')
+  const needsWaAutomation   = tags.includes('wa_none') || tags.includes('wa_manual')
+  const isAiUnaware         = tags.includes('ai_unaware')
+  const hasAiAdvanced       = tags.includes('ai_advanced')
+
   const problems = []
   if (hasTrackingProblem) problems.push('ট্র্যাকিং সেটআপ নেই বলে অ্যাড বাজেট অনুমানের উপর চলছে')
   if (hasRoasProblem)     problems.push('ROAS/ROI ট্র্যাক না হওয়ায় কোন ক্যাম্পেইন লাভজনক তা স্পষ্ট না')
-  if (hasTechGap)         problems.push('লিগ্যাসি টেক দিয়ে সিজনাল ক্যাম্পেইন আপডেট করা কঠিন হচ্ছে')
-  if (hasNoLp)            problems.push('ডেডিকেটেড ল্যান্ডিং পেজ না থাকায় ক্লিক কনভার্শন হচ্ছে না')
+  if (hasTechGap)         problems.push(`${legacyPlatformName ?? 'Legacy Tech'} দিয়ে সিজনাল ক্যাম্পেইন আপডেট করা কঠিন হচ্ছে`)
+  if (hasNoLp)            problems.push('ডেডিকেটেড ল্যান্ডিং পেজ না থাকায় ক্লিক কনভার্সন হচ্ছে না')
   if (hasWeakLp)          problems.push('ধীর পেজ লোড স্পিড ভিজিটরদের ধরে রাখতে পারছে না')
 
   const problemText = problems.length > 0
     ? problems.join('। ') + '।'
     : 'আপনার ডিজিটাল উপস্থিতিতে কিছু সুনির্দিষ্ট গ্যাপ চিহ্নিত হয়েছে।'
 
-  /* ── MICRO TEST DIAGNOSIS ────────────────────── */
   if (pkgKey === 'micro_test') {
-    // Hyper-contextual bridging: If they WANTED fullstack/brand but got capped to micro_test
-    const wasCappped = crossRule && (crossRule.name === 'eager_no_foundation' || crossRule.name === 'absolute_beginner')
-    
-    if (wasCappped && wantsBrand && (hasTrackingProblem || hasRoasProblem)) {
+    const wasCapped = crossRule && (crossRule.name === 'eager_no_foundation' || crossRule.name === 'absolute_beginner')
+
+    if (isEarly && !tags.includes('mkt_self') && !tags.includes('mkt_freelancer') && !tags.includes('mkt_agency')) {
+      const waNote = needsWaAutomation ? ' WhatsApp Business সেটআপ থেকে শুরু করলে প্রথম দিন থেকেই কাস্টমার ধরা সহজ হবে।' : ''
+      return {
+        problem: `আপনার বিজনেস এখনো ডিজিটাল মার্কেটিং শুরু করেনি।${waNote} এটা আসলে একটা সুযোগ — শুরুতেই সঠিক ভিত্তি তৈরি করলে পরে অনেক কম খরচে বেশি ফলাফল পাওয়া যায়।`,
+        stage: 'একদম নতুন শুরু। এই পর্যায়ে সবচেয়ে বড় ভুল হলো তাড়াহুড়ো করে অ্যাড চালানো। সেটাপ ঠিক না থাকলে প্রথম বাজেটটাই পানিতে যাবে।',
+        insight: 'নতুন বিজনেসের জন্য আগে দরকার সঠিক অ্যাকাউন্ট সেটআপ, পেজ অপটিমাইজেশন আর কোন ধরনের কনটেন্ট কাজ করে সেটা বোঝা। মাইক্রো টেস্টে আমরা এই পুরো ফাউন্ডেশনটা একসাথে রেডি করে দিই, বিনামূল্যে।',
+        advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। আমরা আপনার বিজনেস দেখব, কোথা থেকে শুরু করলে সবচেয়ে দ্রুত ফলাফল আসবে সেটা পরিষ্কার করে বলব। শুরু করুন, কোনো চুক্তি নেই।',
+      }
+    }
+
+    if (wasCapped && wantsBrand && (hasTrackingProblem || hasRoasProblem)) {
       return {
         problem: problemText,
-        stage: 'আপনার উচ্চাভিলাষ ভালো — ব্র্যান্ড বিল্ডিং একটা শক্তিশালী লক্ষ্য। কিন্তু এই মুহূর্তে ফাউন্ডেশন ঠিক না থাকায় সেখানে পৌঁছানো কঠিন।',
-        insight: `${hasTrackingProblem ? 'Pixel ও CAPI ছাড়া' : ''} ${hasRoasProblem ? 'ROAS/ROI ট্র্যাকিং ছাড়া' : ''} ব্র্যান্ড কেয়ার শুরু করলে অ্যাড বাজেট অনুমানে চলবে এবং কোন ক্যাম্পেইন কাজ করছে সেটা জানার উপায় থাকবে না। মাইক্রো টেস্ট দিয়ে শুরু করুন — ডিজিটাল ফাউন্ডেশন ঠিক করুন, তারপর ব্র্যান্ড বিল্ডিং করা অনেক সহজ হবে।`,
-        advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। আমরা আপনার পুরো সেটআপ দেখব, কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব। ফাউন্ডেশন ঠিক হলে পরে ব্র্যান্ড কেয়ারে আপগ্রেড করতে পারবেন।',
+        stage: 'উচ্চাভিলাষ ভালো, ব্র্যান্ড বিল্ডিং একটা শক্তিশালী লক্ষ্য। কিন্তু এই মুহূর্তে ফাউন্ডেশন ঠিক না থাকায় সেখানে পৌঁছানো কঠিন।',
+        insight: `${hasTrackingProblem ? 'Pixel ও CAPI ছাড়া' : ''} ${hasRoasProblem ? 'ROAS/ROI ট্র্যাকিং ছাড়া' : ''} ব্র্যান্ড কেয়ার শুরু করলে অ্যাড বাজেট অনুমানে চলবে। মাইক্রো টেস্ট দিয়ে শুরু করুন, ডিজিটাল ফাউন্ডেশন ঠিক করুন, তারপর ব্র্যান্ড বিল্ডিং করা অনেক সহজ হবে।`,
+        advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। পুরো সেটআপ দেখব, কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব।',
       }
     }
 
     return {
       problem: problemText || 'সঠিক ফাউন্ডেশন ছাড়া পরে বিজ্ঞাপনে টাকা ঢালা মানে বালুতে বাড়ি বানানো।',
-      stage: isEarly 
-        ? 'আপনার বিজনেস এখন শুরুর পর্যায়ে। এই সময়টা সবচেয়ে গুরুত্বপূর্ণ — এখনকার সিদ্ধান্তই পরের গ্রোথ নির্ধারণ করে।'
-        : 'আপনার বিজনেসে এখন সঠিক ডিজিটাল ভিত্তি তৈরির সময়।',
-      insight: 'অ্যাড অ্যাকাউন্ট ও বিজনেস পেজ ঠিকমতো সেটআপ না হলে পরে টাকা খরচ করেও ফলাফল আসবে না। মাইক্রো টেস্ট-এ আমরা আপনার পুরো ডিজিটাল সেটআপ একবার দেখব এবং কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব।',
-      advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। কোনো চুক্তি নেই। শুরু করুন, আমাদের সাথে কথা বলুন, নিজেই বুঝুন পরের ধাপটা কী।',
+      stage: isEarly
+        ? 'বিজনেস এখন শুরুর পর্যায়ে। এই সময়টা সবচেয়ে গুরুত্বপূর্ণ, এখনকার সিদ্ধান্তই পরের গ্রোথ নির্ধারণ করে।'
+        : 'বিজনেসে এখন সঠিক ডিজিটাল ভিত্তি তৈরির সময়।',
+      insight: 'অ্যাড অ্যাকাউন্ট ও বিজনেস পেজ ঠিকমতো সেটআপ না হলে পরে টাকা খরচ করেও ফলাফল আসবে না। মাইক্রো টেস্টে পুরো ডিজিটাল সেটআপ একবার দেখব আর কোথায় কী ঠিক করলে সবচেয়ে বেশি কাজ হবে সেটা পরিষ্কার করে বলব।',
+      advice: 'মাইক্রো টেস্ট সম্পূর্ণ ফ্রি। কোনো চুক্তি নেই। শুরু করুন, নিজেই বুঝুন পরের ধাপটা কী।',
     }
   }
 
-  /* ── MONTHLY CARE DIAGNOSIS ──────────────────── */
   if (pkgKey === 'monthly_care') {
-    // Hyper-contextual: If they have tech gaps AND budget for custom funnel
     const needsFunnelBadly = hasHighBudget && (hasTechGap || painIsTech)
     const agencyDowngraded = crossRule && crossRule.name === 'agency_budget_conscious'
-    
+    const b2bNeedsFunnel   = crossRule && crossRule.name === 'b2b_needs_funnel'
+    const highRevNoTrack   = crossRule && crossRule.name === 'high_revenue_poor_tracking'
+    const waNote           = needsWaAutomation ? ' WhatsApp অটোমেশন সেটআপ করলে ম্যানুয়াল রিপ্লাইয়ে সময় নষ্ট বন্ধ হবে।' : ''
+
+    if (b2bNeedsFunnel) {
+      return {
+        problem: problemText,
+        stage: 'আপনার B2B কাস্টমার বেস আছে। B2B সেলস সাইকেল লম্বা তাই শুধু বুস্ট দিয়ে কাজ হয় না, একটা প্রপার ফানেল ছাড়া লিড হারিয়ে যায়।',
+        insight: 'B2B বিজনেসে কাস্টমার সিদ্ধান্ত নিতে সময় লাগে। সেই সময়টায় তাকে ধরে রাখতে দরকার কাস্টম ল্যান্ডিং পেজ, রিটার্গেটিং আর WhatsApp follow-up সিকোয়েন্স। মান্থলি কেয়ারে এই পুরো ফানেলটা একটাই টিম বানিয়ে দেয়।',
+        advice: 'মান্থলি কেয়ারে ৩০ দিনের স্প্রিন্টে B2B ফানেল রেডি হবে — ল্যান্ডিং পেজ থেকে WhatsApp সিকোয়েন্স পর্যন্ত একটাই টিম।',
+      }
+    }
+
+    if (highRevNoTrack) {
+      return {
+        problem: problemText,
+        stage: 'রেভিনিউ ভালো আসছে কিন্তু ট্র্যাকিং না থাকায় আসলে কতটা লাভ হচ্ছে বোঝা যাচ্ছে না।',
+        insight: `এই রেভিনিউ লেভেলে ট্র্যাকিং না থাকা মানে প্রতিদিন কিছু বাজেট লিক হচ্ছে। Pixel + CAPI সেটআপ করলে Facebook অ্যালগরিদম ঠিক কাস্টমার খুঁজে পাবে আর ROAS দ্রুত উন্নত হবে।${waNote}`,
+        advice: 'মান্থলি কেয়ারে Pixel, CAPI, আর ল্যান্ডিং পেজ একটাই টিম সামলাবে। ৩০ দিনে পুরো ট্র্যাকিং ইনফ্রাস্ট্রাকচার রেডি হবে।',
+      }
+    }
+
     if (needsFunnelBadly) {
       return {
         problem: problemText,
-        stage: 'আপনার বিজনেস এখন বাড়ার পর্যায়ে। টেকনিক্যাল সাপোর্ট ঠিক থাকলে সেল দ্রুত বাড়বে।',
-        insight: `${painIsTech ? 'আপনার সবচেয়ে বড় সমস্যা টেকনিক্যাল গ্যাপ।' : 'Legacy Tech দিয়ে সিজনাল ক্যাম্পেইন আপডেট করা কঠিন হচ্ছে।'} মান্থলি কেয়ারে একই টিম মার্কেটিং + ডেভেলপমেন্ট দেখে — ঈদ/পূজার অফার মিনিটে লাইভ করা যায়, ট্র্যাকিং সবসময় ঠিক থাকে। আলাদা মার্কেটার আর আলাদা ডেভেলপার রাখলে এই সমন্বয় কখনো ঠিকমতো হয় না।`,
-        advice: 'মান্থলি কেয়ারে ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে। একটাই টিম — ক্যাম্পেইন থেকে কোড পর্যন্ত।',
+        stage: 'বিজনেস এখন বাড়ার পর্যায়ে। টেকনিক্যাল সাপোর্ট ঠিক থাকলে সেল দ্রুত বাড়বে।',
+        insight: `${painIsTech ? 'সবচেয়ে বড় সমস্যা টেকনিক্যাল গ্যাপ।' : `${legacyPlatformName ?? 'Legacy Tech'} দিয়ে সিজনাল ক্যাম্পেইন আপডেট করা কঠিন হচ্ছে।`} মান্থলি কেয়ারে একই টিম মার্কেটিং আর ডেভেলপমেন্ট দেখে, তাই ঈদ বা পূজার অফার মিনিটে লাইভ করা যায়।${waNote}`,
+        advice: 'মান্থলি কেয়ারে ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে। একটাই টিম, ক্যাম্পেইন থেকে কোড পর্যন্ত।',
       }
     }
 
     if (agencyDowngraded) {
       return {
         problem: problemText,
-        stage: 'আপনার এজেন্সি ব্যাকগ্রাউন্ড আছে, যার মানে আপনি জানেন ভালো মার্কেটিং কেমন হয়। কিন্তু এই মুহূর্তে বাজেট নিয়ন্ত্রণই মূল প্রায়োরিটি।',
-        insight: 'মান্থলি কেয়ার দিয়ে শুরু করলে ফ্রি ল্যান্ডিং পেজ, ফ্রি Pixel+CAPI সেটআপ পাবেন — কোনো আপফ্রন্ট খরচ ছাড়াই। এজেন্সি-কোয়ালিটি কাজ, কিন্তু ছোট বিজনেসের বাজেটে।',
-        advice: 'মান্থলি কেয়ার মানে — প্রফেশনাল মার্কেটিং যা আপনার বাজেটের মধ্যে থেকেই স্কেল করে। পরে যখন বিজনেস আরো বাড়বে তখন ব্র্যান্ড কেয়ারে আপগ্রেড করতে পারবেন।',
+        stage: 'এজেন্সি ব্যাকগ্রাউন্ড আছে, মানে ভালো মার্কেটিং কেমন হয় সেটা জানেন। কিন্তু এই মুহূর্তে বাজেট নিয়ন্ত্রণই মূল প্রায়োরিটি।',
+        insight: `মান্থলি কেয়ার দিয়ে শুরু করলে ফ্রি ল্যান্ডিং পেজ আর ফ্রি Pixel+CAPI সেটআপ পাবেন, কোনো আপফ্রন্ট খরচ ছাড়াই।${waNote}`,
+        advice: 'মান্থলি কেয়ার মানে প্রফেশনাল মার্কেটিং যা বাজেটের মধ্যে থেকে স্কেল করে। পরে বিজনেস আরো বাড়লে ব্র্যান্ড কেয়ারে আপগ্রেড করা যাবে।',
       }
     }
 
     return {
-      problem: problemText || 'অ্যাড খরচ হচ্ছে কিন্তু ট্র্যাকিং ও ফানেল না থাকায় কনভার্শন রেট কম।',
-      stage: 'আপনার বিজনেস এখন বাড়ার পর্যায়ে। সঠিক সাপোর্ট পেলে সেল আরো দ্রুত বাড়বে।',
-      insight: 'অ্যাড ম্যানেজমেন্ট আর ল্যান্ডিং পেজ যখন এক টিম দেখে, ফলাফল অনেক বেশি হয়। ঈদ বা পূজার অফার তাৎক্ষণিক লাইভ করা যায়, ট্র্যাকিং সবসময় ঠিক থাকে। আলাদা মার্কেটার আর আলাদা ডেভেলপার রাখলে এই সমন্বয় কখনো ঠিকমতো হয় না।',
-      advice: 'মান্থলি কেয়ারে একটাই টিম — ক্যাম্পেইন থেকে কোড পর্যন্ত। ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে।',
+      problem: problemText || 'অ্যাড খরচ হচ্ছে কিন্তু ট্র্যাকিং ও ফানেল না থাকায় কনভার্সন রেট কম।',
+      stage: 'বিজনেস এখন বাড়ার পর্যায়ে। সঠিক সাপোর্ট পেলে সেল আরো দ্রুত বাড়বে।',
+      insight: `অ্যাড ম্যানেজমেন্ট আর ল্যান্ডিং পেজ একই টিম দেখলে ফলাফল অনেক ভালো হয়। ঈদ বা পূজার অফার তাৎক্ষণিক লাইভ করা যায়, ট্র্যাকিং সবসময় ঠিক থাকে।${waNote}`,
+      advice: 'মান্থলি কেয়ারে একটাই টিম, ক্যাম্পেইন থেকে কোড পর্যন্ত। ৩০ দিনের স্প্রিন্টে পুরো ডিজিটাল ইনফ্রাস্ট্রাকচার রেডি করে ফার্স্ট ক্যাম্পেইন লাইভ করা হবে।',
     }
   }
 
-  /* ── BRAND CARE DIAGNOSIS ────────────────────── */
-  // Hyper-contextual: Manufacturer needs brand authority, trust-building needs brand identity
   const manufacturerNeedsBrand = isManufacturer && (painIsTrust || wantsBrand)
   const trustIssuePrimary      = painIsTrust && wantsFullstack
+  const enterpriseReady        = isEnterprise && hasAiAdvanced
+
+  const aiLine = isAiUnaware
+    ? ' আর ২০২৬-এ AI ইন্টিগ্রেশন না থাকলে প্রতিযোগীরা দ্রুত এগিয়ে যাবে।'
+    : hasAiAdvanced
+      ? ' AI ইন্টিগ্রেশন আছে বলে ব্র্যান্ড কেয়ারের পুরো সুবিধা নেওয়া সহজ হবে।'
+      : ''
+
+  if (enterpriseReady) {
+    return {
+      problem: problemText || 'এন্টারপ্রাইজ লেভেলে পৌঁছে গেছেন। এখন দরকার পুরো ইকোসিস্টেমকে একটা শক্তিশালী ব্র্যান্ডের নিচে আনা।',
+      stage: 'আপনার বিজনেস এন্টারপ্রাইজ লেভেলে আছে আর AI ইন্টিগ্রেশনও সম্পূর্ণ। এটা অনেক বড় অর্জন।',
+      insight: 'এই পর্যায়ে দরকার AEO ও GEO অপটিমাইজেশন, মানে AI সার্চ ইঞ্জিনেও আপনার ব্র্যান্ড যেন শীর্ষে থাকে। ব্র্যান্ড কেয়ারে আমরা এই পুরো ইকোসিস্টেম একটা কেন্দ্রীয় কৌশলের নিচে আনব।',
+      advice: 'ব্র্যান্ড কেয়ারে পাবেন পূর্ণ ব্র্যান্ড অথরিটি বিল্ডিং, AEO/GEO অপটিমাইজেশন আর ডেডিকেটেড টিম যারা শুধু আপনার বিজনেসের জন্যই কাজ করে।',
+    }
+  }
 
   if (manufacturerNeedsBrand) {
     return {
       problem: problemText || 'নিজস্ব ম্যানুফ্যাকচারিং থাকলেও ব্র্যান্ড আইডেন্টিটি ছাড়া প্রিমিয়াম দাম পাওয়া কঠিন।',
-      stage: 'আপনি নিজে প্রোডাক্ট বানান — এটা বিশাল সুবিধা। কিন্তু মার্কেটে ব্র্যান্ড আইডেন্টিটি ছাড়া আপনাকে আর দশজনের মতোই দেখায়।',
-      insight: 'ম্যানুফ্যাকচারার হলে প্রিমিয়াম মার্কেটে আপনার জায়গা হওয়া উচিত। কিন্তু সেটা করতে দরকার শক্তিশালী ব্র্যান্ড আইডেন্টিটি, কাস্টম ডিজাইন, সুনির্দিষ্ট সেলস ফানেল এবং ডেটা-চালিত মার্কেটিং। Legacy Tech (WP/Themes) দিয়ে ২০২৬-এ প্রিমিয়াম ব্র্যান্ড বানানো অসম্ভব।',
-      advice: 'ব্র্যান্ড কেয়ারে আমরা পুরো ব্র্যান্ড গড়ার কাজ করব — লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং। একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
+      stage: 'নিজে প্রোডাক্ট বানান, এটা বিশাল সুবিধা। কিন্তু মার্কেটে ব্র্যান্ড আইডেন্টিটি ছাড়া আপনাকে আর দশজনের মতোই দেখায়।',
+      insight: `ম্যানুফ্যাকচারার হলে প্রিমিয়াম মার্কেটে আপনার জায়গা হওয়া উচিত। কিন্তু সেটা করতে দরকার শক্তিশালী ব্র্যান্ড আইডেন্টিটি, কাস্টম ডিজাইন, সুনির্দিষ্ট সেলস ফানেল আর ডেটা-চালিত মার্কেটিং।${legacyPlatformName ? ` ${legacyPlatformName} দিয়ে ২০২৬-এ প্রিমিয়াম ব্র্যান্ড বানানো যায় না।` : ' Legacy Tech দিয়ে ২০২৬-এ প্রিমিয়াম ব্র্যান্ড বানানো যায় না।'}${aiLine}`,
+      advice: 'ব্র্যান্ড কেয়ারে পুরো ব্র্যান্ড গড়ার কাজ করব। লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং, একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
     }
   }
 
   if (trustIssuePrimary) {
     return {
       problem: problemText || 'বাজারে ট্রাস্ট তৈরি না হলে প্রতিযোগিতায় টিকে থাকা কঠিন।',
-      stage: 'আপনার সবচেয়ে বড় চ্যালেঞ্জ ট্রাস্ট বিল্ডিং। মানুষ এখনো আপনাকে একটা প্রতিষ্ঠিত ব্র্যান্ড হিসেবে দেখছে না।',
-      insight: 'ট্রাস্ট শুধু ভালো প্রোডাক্ট দিয়ে আসে না — আসে ব্র্যান্ড আইডেন্টিটি, প্রফেশনাল ওয়েবসাইট, কনসিস্টেন্ট কমিউনিকেশন এবং কাস্টমার এক্সপেরিয়েন্স থেকে। ব্র্যান্ড কেয়ারে আমরা এই পুরো ইকোসিস্টেম তৈরি করি — মানুষ যখন আপনার নাম দেখবে, তখন "এদের বিশ্বাস করা যায়" এই অনুভূতি আসবে।',
-      advice: 'ব্র্যান্ড কেয়ারে পাবেন পূর্ণ ব্র্যান্ড আইডেন্টিটি, প্রিমিয়াম ডিজাইন, অ্যাডভান্সড ট্র্যাকিং এবং ডেডিকেটেড টিম যারা শুধু আপনার ব্যবসার জন্যই কাজ করে।',
+      stage: 'সবচেয়ে বড় চ্যালেঞ্জ ট্রাস্ট বিল্ডিং। মানুষ এখনো আপনাকে একটা প্রতিষ্ঠিত ব্র্যান্ড হিসেবে দেখছে না।',
+      insight: `ট্রাস্ট শুধু ভালো প্রোডাক্ট দিয়ে আসে না, আসে ব্র্যান্ড আইডেন্টিটি, প্রফেশনাল ওয়েবসাইট, কনসিস্টেন্ট কমিউনিকেশন আর কাস্টমার এক্সপেরিয়েন্স থেকে। ব্র্যান্ড কেয়ারে এই পুরো ইকোসিস্টেম তৈরি করি।${aiLine}`,
+      advice: 'ব্র্যান্ড কেয়ারে পাবেন পূর্ণ ব্র্যান্ড আইডেন্টিটি, প্রিমিয়াম ডিজাইন, অ্যাডভান্সড ট্র্যাকিং আর ডেডিকেটেড টিম।',
     }
   }
 
   return {
     problem: problemText || 'ব্র্যান্ড আইডেন্টিটি ও অথরিটি ছাড়া প্রিমিয়াম মার্কেটে টিকে থাকা কঠিন।',
-    stage: isScaling 
-      ? 'আপনার বিজনেস এখন শক্তিশালী ব্র্যান্ড হওয়ার জায়গায়। এটা অনেক বড় অর্জন।'
-      : 'আপনার বিজনেস এখন মার্কেট লিডার হওয়ার পর্যায়ে।',
-    insight: 'এই পর্যায়ে শুধু সেল না — দরকার একটা ব্র্যান্ড আইডেন্টিটি যা মানুষ চেনে এবং বিশ্বাস করে। Legacy Tech (WP/Themes) দিয়ে ২০২৬-এ মার্কেট ডমিনেট করা অসম্ভব। কাস্টম ডিজাইন, সুনির্দিষ্ট সেলস ফানেল এবং ডেটা-চালিত মার্কেটিং একসাথে থাকলে ব্র্যান্ড দ্রুত বড় হয়।',
-    advice: 'ব্র্যান্ড কেয়ারে আমরা পুরো ব্র্যান্ড গড়ার কাজ করব। লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং — একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
+    stage: isScaling
+      ? 'বিজনেস এখন শক্তিশালী ব্র্যান্ড হওয়ার জায়গায় দাঁড়িয়ে আছে। এটা অনেক বড় অর্জন।'
+      : 'বিজনেস এখন মার্কেট লিডার হওয়ার পর্যায়ে।',
+    insight: `এই পর্যায়ে শুধু সেল না, দরকার একটা ব্র্যান্ড আইডেন্টিটি যা মানুষ চেনে আর বিশ্বাস করে।${legacyPlatformName ? ` ${legacyPlatformName} দিয়ে ২০২৬-এ মার্কেট ডমিনেট করা যায় না।` : ' Legacy Tech দিয়ে ২০২৬-এ মার্কেট ডমিনেট করা যায় না।'} কাস্টম ডিজাইন, সুনির্দিষ্ট সেলস ফানেল আর ডেটা-চালিত মার্কেটিং একসাথে থাকলে ব্র্যান্ড দ্রুত বড় হয়।${aiLine}`,
+    advice: 'ব্র্যান্ড কেয়ারে পুরো ব্র্যান্ড গড়ার কাজ করব। লোগো থেকে কাস্টম ল্যান্ডিং পেজ, অ্যাডভান্সড ট্র্যাকিং থেকে ফুল-স্ট্যাক মার্কেটিং, একটাই টিম যারা আপনার বিজনেস ভেতর থেকে চেনে।',
   }
 }
-
 /* ══════════════════════════════════════════════════
    SMART VALIDATION — Lead Capture Gate
    
@@ -658,26 +1093,42 @@ const validateBdPhone = (phone) => {
 const scoreLabel = (pkgKey) =>
   pkgKey === 'micro_test' ? 'শুরুর পর্যায়' : pkgKey === 'monthly_care' ? 'গ্রোথ রেডি' : 'স্কেল রেডি'
 
+/* Stable module-level constant — safe to reference inside useEffect */
+const ANALYSIS_STEPS = [
+  'মার্কেট বেঞ্চমার্কিং চলছে…',
+  'টেক স্ট্যাক বিশ্লেষণ হচ্ছে…',
+  'লজিক সিন্থেসিস চলছে…',
+  'রোডম্যাপ ফাইনালাইজ হচ্ছে…',
+]
+
 const bn = (n) => String(n).split('').map(d => '০১২৩৪৫৬৭৮৯'[+d] ?? d).join('')
+
+/* ══════════════════════════════════════════════════
+   GRAPH TRAVERSAL — follows .next on each option
+   No skip logic needed: the graph encodes all paths.
+══════════════════════════════════════════════════ */
+const getNextId = (selectedOpt) => selectedOpt.next
 
 /* ══════════════════════════════════════════════════
    COMPONENT
 ══════════════════════════════════════════════════ */
 export default function Finder() {
-  const [currentQ,  setCurrentQ]  = useState(0)
-  const [answers,   setAnswers]   = useState([])
-  const [selIdx,    setSelIdx]    = useState(null)
-  const [locked,    setLocked]    = useState(false)
-  const [phase,     setPhase]     = useState('quiz')
-  const [visible,   setVisible]   = useState(true)
-  const [result,    setResult]    = useState(null)
+  const [nodeId,     setNodeId]     = useState('stage')       // current graph node
+  const [answers,    setAnswers]    = useState([])
+  const [selIdx,     setSelIdx]     = useState(null)
+  const [locked,     setLocked]     = useState(false)
+  const [phase,      setPhase]      = useState('quiz')
+  const [visible,    setVisible]    = useState(true)
+  const [result,     setResult]     = useState(null)
+  const [history,    setHistory]    = useState([])            // stack of {nodeId, answerIdx}
 
   const [leadName,       setLeadName]       = useState('')
   const [leadPhone,      setLeadPhone]      = useState('')
   const [leadSubmitting, setLeadSubmitting] = useState(false)
   const [leadError,      setLeadError]      = useState('')
 
-  const [pdfLoading, setPdfLoading] = useState(false)
+  const [pdfLoading,    setPdfLoading]    = useState(false)
+  const [analysisStep,  setAnalysisStep]  = useState(0)
 
   const resultRef       = useRef(null)
   const sectionRef      = useRef(null)
@@ -688,7 +1139,10 @@ export default function Finder() {
   const pendingAnswers  = useRef(null)
   const nameRef         = useRef(null)
 
-  const q = questions[currentQ]
+  // Current node from graph
+  const node = Q[nodeId]
+  // How many questions answered so far (for progress display)
+  const questionNum = answers.length + 1
 
   useEffect(() => {
     const el = sectionRef.current
@@ -714,12 +1168,22 @@ export default function Finder() {
   }, [])
 
   useEffect(() => {
+    if (pdfLoading) {
+      setAnalysisStep(0)
+      const timer = setInterval(() => {
+        setAnalysisStep(s => (s < ANALYSIS_STEPS.length - 1 ? s + 1 : s))
+      }, 1800)
+      return () => clearInterval(timer)
+    }
+  }, [pdfLoading, ANALYSIS_STEPS.length])
+
+  useEffect(() => {
     if (phase === 'lead') setTimeout(() => nameRef.current?.focus(), 300)
   }, [phase])
 
   const reset = useCallback(() => {
-    setCurrentQ(0); setAnswers([]); setSelIdx(null); setLocked(false)
-    setPhase('quiz'); setVisible(true); setResult(null)
+    setNodeId('stage'); setAnswers([]); setSelIdx(null); setLocked(false)
+    setPhase('quiz'); setVisible(true); setResult(null); setHistory([])
     setLeadName(''); setLeadPhone(''); setLeadError('')
     pendingAnswers.current = null; quizStartTime.current = null; dropOffQRef.current = null
     track('ViewContent', { content_name: 'Finder Quiz Restart', content_category: 'Quiz' })
@@ -728,51 +1192,52 @@ export default function Finder() {
   const pick = useCallback((optIdx) => {
     if (locked) return
     setLocked(true); setSelIdx(optIdx)
-    const opt = q.opts[optIdx]
+    const opt = node.opts[optIdx]
     const newAnswers = [...answers, opt]
-    dropOffQRef.current = currentQ + 1
+    dropOffQRef.current = questionNum
 
-    if (currentQ === 0 && !quizStartTime.current) {
+    if (questionNum === 1 && !quizStartTime.current) {
       quizStartTime.current = Date.now()
       track('InitiateCheckout', { content_name: 'Finder Quiz Start', content_category: 'Quiz', currency: 'BDT', value: 0 })
     }
 
     track('ViewContent', {
-      content_name: `Finder Q${q.id}: ${opt.label}`,
+      content_name: `Finder ${nodeId}: ${opt.label}`,
       content_category: 'Quiz Answer',
-      content_ids: [`finder_q${q.id}`],
-      quiz_question: q.id,
+      content_ids: [`finder_${nodeId}`],
+      quiz_question: nodeId,
       quiz_answer_index: optIdx + 1,
-      quiz_progress_pct: Math.round(((currentQ + 1) / TOTAL) * 100),
+      quiz_progress_pct: Math.round((questionNum / TOTAL_DISPLAY) * 100),
     })
 
     setTimeout(() => {
       setVisible(false)
       setTimeout(() => {
-        if (currentQ < TOTAL - 1) {
-          setAnswers(newAnswers); setCurrentQ(currentQ + 1); setSelIdx(null)
-          setTimeout(() => { setVisible(true); setLocked(false) }, 60)
-        } else {
+        const nextId = getNextId(opt)
+        if (nextId === 'RESULT') {
           pendingAnswers.current = newAnswers
           setAnswers(newAnswers); setPhase('lead'); setVisible(true); setLocked(false)
+        } else {
+          setHistory(prev => [...prev, { nodeId, answerIdx: optIdx }])
+          setAnswers(newAnswers); setNodeId(nextId); setSelIdx(null)
+          setTimeout(() => { setVisible(true); setLocked(false) }, 60)
         }
       }, 170)
     }, 120)
-  }, [locked, currentQ, answers, q])
+  }, [locked, nodeId, answers, node, questionNum])
 
   const goBack = useCallback(() => {
-    if (currentQ === 0) return
+    if (history.length === 0) return
     setVisible(false)
     setTimeout(() => {
-      const prevQ = questions[currentQ - 1]
-      const prevAnswer = answers[currentQ - 1]
-      const prevIdx = prevAnswer ? prevQ.opts.findIndex(o => o.label === prevAnswer.label) : null
-      setAnswers(answers.slice(0, -1))
-      setCurrentQ(currentQ - 1)
-      setSelIdx(prevIdx >= 0 ? prevIdx : null)
+      const prev = history[history.length - 1]
+      setHistory(h => h.slice(0, -1))
+      setAnswers(a => a.slice(0, -1))
+      setNodeId(prev.nodeId)
+      setSelIdx(prev.answerIdx)
       setLocked(false); setVisible(true)
     }, 170)
-  }, [currentQ, answers])
+  }, [history])
 
   const handleLeadSubmit = useCallback((e) => {
     e.preventDefault()
@@ -809,8 +1274,16 @@ export default function Finder() {
       setPhase('loading')
       setTimeout(() => {
         const res = computeResult(pendingAnswers.current)
+        res._answers = pendingAnswers.current   // PDF layer uses this for isPathA check
         setResult(res)
-        setPhase('result')
+        const doTransition = () => {
+          setPhase('result')
+        }
+        if (document.startViewTransition) {
+          document.startViewTransition(doTransition)
+        } else {
+          doTransition()
+        }
         const timeSpent = quizStartTime.current ? Math.round((Date.now() - quizStartTime.current) / 1000) : 0
         track('Lead', {
           content_name:      `Finder Result: ${res.pkg.name}`,
@@ -858,6 +1331,9 @@ export default function Finder() {
     if (!result) return
     setPdfLoading(true)
     try {
+      /* Lazy import — jsPDF + html2canvas (~400KB) load ONLY when
+         the user actually clicks download. Zero impact on initial TTI. */
+      const { generateBrandedPdf } = await import('../lib/generatePdf.js')
       await generateBrandedPdf('finder-pdf-layer', `Digitalizen-Roadmap-${result.pkg.waLabel}-${Date.now()}.pdf`)
     } catch (err) {
       console.error('[Finder PDF]', err)
@@ -866,8 +1342,22 @@ export default function Finder() {
     }
   }, [result])
 
+  /* ── Diagnostic Score (Psychological Validation) ── */
+  const diagnosticScore = result
+    ? result.pkgKey === 'brand_care'   ? '87/100'
+    : result.pkgKey === 'monthly_care' ? '64/100'
+    : '41/100'
+    : null
+
   /* ── Warnings ── */
-  const warnings = result ? [
+  // Path A = new business (stage_early). They haven't run ads, don't have a page yet.
+  // Operational warnings (techGap, landingPage) are MEANINGLESS for them —
+  // "can't update your page" is absurd when you don't have one yet.
+  // We suppress all flags and let getDiagnosis carry the full narrative.
+  const isPathA = result?.pkgKey === 'micro_test' &&
+    pendingAnswers.current?.some(a => a.tags?.includes('stage_early'))
+
+  const warnings = result && !isPathA ? [
     result.trackingWarning && {
       key: 'tracking', color: 'red', icon: 'warning',
       title: 'আপনার অ্যাড বাজেট ড্রেনে যাচ্ছে',
@@ -901,7 +1391,7 @@ export default function Finder() {
 
         <div className="row-header">
           <span className="section-num">০০৪</span>
-          <span className="section-title-right">{'// বিজনেস অডিট'}</span>
+          <span className="section-title-right">{'// ফ্রি বিজনেস অডিট'}</span>
         </div>
 
         <div className="ct-tag">{"// বিজনেস ও টেক অডিট"}</div>
@@ -910,7 +1400,7 @@ export default function Finder() {
           <span className="text-glow">স্বাস্থ্য পরীক্ষা!</span>
         </h2>
         <p className="finder-sub">
-          ১৪টি ছোট প্রশ্ন = ১টি বড় সমাধান। আপনার ব্যবসার টেকনিক্যাল গ্যাপগুলো জানুন।
+          মাত্র ১০–১৪টি স্মার্ট প্রশ্ন = আপনার বিজনেসের জন্য একটি কাস্টম রোডম্যাপ।
         </p>
 
         <div className="finder-card">
@@ -925,18 +1415,23 @@ export default function Finder() {
               transition: 'opacity 0.17s ease, transform 0.17s ease',
             }}>
               <div className="finder-pips">
-                {questions.map((_, i) => (
-                  <div key={i} className={`finder-pip${i < currentQ ? ' finder-pip--done' : i === currentQ ? ' finder-pip--current' : ''}`} />
+                {history.map((_, i) => (
+                  <div key={i} className="finder-pip finder-pip--done" />
+                ))}
+                <div className="finder-pip finder-pip--current" />
+                {/* Ghost pips — estimated remaining */}
+                {Array.from({ length: Math.max(0, TOTAL_DISPLAY - questionNum) }).map((_, i) => (
+                  <div key={`g${i}`} className="finder-pip" />
                 ))}
               </div>
               <div className="finder-step-meta">
                 <span className="finder-step-label">বিজনেস ও টেক অডিট</span>
-                <span className="finder-step-counter">প্রশ্ন {bn(currentQ + 1)} / {bn(TOTAL)}</span>
+                <span className="finder-step-counter">প্রশ্ন {bn(questionNum)} / ~{bn(TOTAL_DISPLAY)}</span>
               </div>
-              <p className="finder-q">{q.q}</p>
-              {q.hint && <p className="finder-hint">{q.hint}</p>}
+              <p className="finder-q">{node.q}</p>
+              {node.hint && <p className="finder-hint">{node.hint}</p>}
               <div className="finder-opts">
-                {q.opts.map((o, i) => (
+                {node.opts.map((o, i) => (
                   <button
                     key={i}
                     className={`finder-opt${selIdx === i ? ' finder-opt--selected' : ''}`}
@@ -951,7 +1446,7 @@ export default function Finder() {
                   </button>
                 ))}
               </div>
-              {currentQ > 0 && (
+              {history.length > 0 && (
                 <button className="finder-back" onClick={goBack} aria-label="আগের প্রশ্নে ফিরে যান">
                   {Icon.back} আগের প্রশ্ন
                 </button>
@@ -1038,7 +1533,7 @@ export default function Finder() {
                 </div>
                 <div className="finder-loading__hero-text">
                   <p className="finder-loading__title">আপনার বিজনেস বিশ্লেষণ হচ্ছে…</p>
-                  <p className="finder-loading__sub">১৪টি উত্তর থেকে সেরা সমাধান খুঁজছি</p>
+                  <p className="finder-loading__sub">আপনার উত্তর থেকে সেরা সমাধান খুঁজছি</p>
                 </div>
               </div>
 
@@ -1120,7 +1615,7 @@ export default function Finder() {
                   {result.pkg.priceNote && <span> · {result.pkg.priceNote}</span>}
                 </p>
                 <div className={`finder-score finder-score--${result.pkg.variant}`}>
-                  <span className="finder-score__num">{result.rawTotal}<span style={{ fontSize: '0.55em', opacity: 0.6 }}>/৫৬</span></span>
+                  <span className="finder-score__num">{result.rawTotal}<span style={{ fontSize: '0.55em', opacity: 0.6 }}>/৫২</span></span>
                   <div className="finder-score__bar-wrap">
                     <div className="finder-score__bar-track">
                       <div className={`finder-score__bar-fill finder-score__bar-fill--${result.pkg.variant}`} style={{ width: `${result.score}%` }} />
@@ -1197,6 +1692,12 @@ export default function Finder() {
                 </div>
               )}
 
+              {/* ── Diagnostic Score Badge ── */}
+              <div className="finder-diag-score" aria-label={`ডায়াগনস্টিক স্কোর ${diagnosticScore}`}>
+                <span className="finder-diag-score__label">ডায়াগনস্টিক স্কোর</span>
+                <span className="finder-diag-score__value" aria-live="polite">{diagnosticScore}</span>
+              </div>
+
               {/* ── ACTION: CTAs ── */}
               <div className="finder-pdf-gate">
                 <span className="finder-pdf-gate__seal" aria-hidden="true">✓</span>
@@ -1204,28 +1705,61 @@ export default function Finder() {
               </div>
               <div className="finder-ctas">
 
+                {/* PDF Ghost Preview */}
+                <div className="finder-pdf-ghost" aria-hidden="true">
+                  <div className="finder-pdf-ghost__header">
+                    <div className="finder-pdf-ghost__logo-bar" />
+                    <div className="finder-pdf-ghost__title-block">
+                      <div className="finder-pdf-ghost__line finder-pdf-ghost__line--wide" />
+                      <div className="finder-pdf-ghost__line finder-pdf-ghost__line--mid" />
+                    </div>
+                  </div>
+                  <div className="finder-pdf-ghost__body">
+                    <div className="finder-pdf-ghost__col">
+                      <div className="finder-pdf-ghost__line" />
+                      <div className="finder-pdf-ghost__line finder-pdf-ghost__line--mid" />
+                      <div className="finder-pdf-ghost__line finder-pdf-ghost__line--short" />
+                    </div>
+                    <div className="finder-pdf-ghost__col">
+                      <div className="finder-pdf-ghost__bar-block">
+                        <div className="finder-pdf-ghost__bar" style={{ width: `${result.score}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="finder-pdf-ghost__stamp">PDF রেডি</div>
+                </div>
+
                 {/* PDF = PRIMARY hero CTA — value delivery before the ask */}
-                <button
-                  className={`finder-cta-pdf${pdfLoading ? ' finder-cta-pdf--busy' : ''}`}
-                  onClick={triggerPdfDownload}
-                  disabled={pdfLoading}
-                  aria-label="রোডম্যাপ PDF হিসেবে ডাউনলোড করুন"
-                >
-                  {pdfLoading ? (
-                    <>
-                      <span className="finder-pdf-spinner" aria-hidden="true" />
-                      <span>রিপোর্ট তৈরি হচ্ছে…</span>
-                      <span aria-hidden="true" />
-                    </>
-                  ) : (
-                    <>
-                      <span>রোডম্যাপ ডাউনলোড করুন</span>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                      </svg>
-                    </>
+                <div className="finder-cta-pdf-wrap">
+                  <button
+                    className={`finder-cta-pdf${pdfLoading ? ' finder-cta-pdf--busy' : ''}`}
+                    onClick={triggerPdfDownload}
+                    disabled={pdfLoading}
+                    aria-label="রোডম্যাপ PDF হিসেবে ডাউনলোড করুন"
+                  >
+                    {pdfLoading ? (
+                      <>
+                        <span className="finder-pdf-spinner" aria-hidden="true" />
+                        <span>{ANALYSIS_STEPS[analysisStep]}</span>
+                        <span aria-hidden="true" />
+                      </>
+                    ) : (
+                      <>
+                        <span>রোডম্যাপ ডাউনলোড করুন</span>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                  {pdfLoading && (
+                    <div className="finder-analysis-overlay" aria-live="polite" aria-label={ANALYSIS_STEPS[analysisStep]}>
+                      <div className="finder-analysis-overlay__track">
+                        <div className="finder-analysis-overlay__fill" />
+                      </div>
+                    </div>
                   )}
-                </button>
+                </div>
 
                 {/* WA = SECONDARY — conversion after value is delivered */}
                 <button
