@@ -1175,7 +1175,7 @@ export default function Finder() {
       }, 1800)
       return () => clearInterval(timer)
     }
-  }, [pdfLoading, ANALYSIS_STEPS.length])
+  }, [pdfLoading])
 
   useEffect(() => {
     if (phase === 'lead') setTimeout(() => nameRef.current?.focus(), 300)
