@@ -1391,10 +1391,9 @@ export default function Finder() {
 
         <div className="row-header">
           <span className="section-num">০০৪</span>
-          <span className="section-title-right">{'// ফ্রি বিজনেস অডিট'}</span>
+          <span className="section-title-right">{'// ফ্রি বিজনেস ও টেক অডিট'}</span>
         </div>
 
-        <div className="ct-tag">{"// বিজনেস ও টেক অডিট"}</div>
         <h2 className="finder-heading">
           আপনার ব্যবসার<br />
           <span className="text-glow">স্বাস্থ্য পরীক্ষা!</span>
@@ -1471,7 +1470,7 @@ export default function Finder() {
                     type="text" autoComplete="organization"
                     value={leadName}
                     onChange={e => setLeadName(e.target.value)}
-                    placeholder="যেমন: Rahman Traders"
+                    placeholder="যেমন: Digitalizen Agency PLC."
                     className="finder-lead__input"
                   />
                 </div>

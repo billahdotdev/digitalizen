@@ -329,3 +329,8 @@
     .gl-hud-btn { transform: none !important; }
   }
 }
+
+.finder-sub span {
+  color: #ef4444; /* Modern Red */
+  font-weight: 900; /* Bold */
+}

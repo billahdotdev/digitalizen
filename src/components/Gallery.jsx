@@ -36,7 +36,7 @@ export default function Gallery() {
         </div>
         <h2 className="finder-heading">ল্যান্ডিং পেজ কি আপনার ব্যবসার গল্প বলে?</h2>
         <p className="finder-sub">১ সেকেন্ড দেরি = ২০% কনভার্সন লস, ৩ সেকেন্ড = ৪৭% কাস্টমার চিরতরে হারিয়ে যায়, ৫ সেকেন্ড = ৯০% বাউন্স ও গুগল র‍্যাঙ্কিং কমে যাওয়া।</p>
-        <p className="finder-sub">মনে রাখবেন: ২০২৬ সালে স্লো, সাধারণ ল্যান্ডিং পেজ মানে হচ্ছে কাস্টমারের মুখের সামনে দরজা বন্ধ করে দেওয়া। আপনি কি এই ঝুঁকি নিতে প্রস্তুত?</p>
+        <p className="finder-sub"><span>*</span> মনে রাখবেন: ২০২৬ সালে স্লো, সাধারণ ল্যান্ডিং পেজ মানে হচ্ছে কাস্টমারের মুখের সামনে দরজা বন্ধ করে দেওয়া। আপনি কি এই ঝুঁকি নিতে প্রস্তুত?</p>
         <div className="gl-stack">
 
           {/* ── Cards 001–006 ── */}
@@ -91,8 +91,14 @@ export default function Gallery() {
               {/* Same window dimensions, dark fill, no image */}
               <div className="gl-window gl-window--ask" aria-hidden="true">
                 <p className="gl-ask__headline">
-                  আপনার 24/7 সেলস মেশিন<br />
-                  <em>কখন<br />বানাবেন?</em>
+                  আপনার<br />
+                  24/7<br /> 
+                  সেলস<br />
+                  মেশিন.<br /><br />
+                  <em>
+                    কখন<br />
+                  বানাবেন?
+                  </em>
                 </p>
               </div>
 
