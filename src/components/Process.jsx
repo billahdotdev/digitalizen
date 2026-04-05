@@ -355,7 +355,7 @@ function PillarPanel({ pillar, onCta }) {
       {/* Insight */}
       <div className="cs-insight" role="note">
         <div className="cs-insight-bar" aria-hidden="true" />
-        <p className="cs-insight-text">"{pillar.insight}"</p>
+        <p className="cs-insight-text">{pillar.insight}</p>
       </div>
 
       {/* WhatsApp CTA */}
@@ -615,7 +615,7 @@ export default function Process() {
           </div>
 
           <div className="cs-cta-content">
-            <p className="cs-cta-tag">// এখনই শুরু করুন</p>
+            <p className="cs-cta-tag">{'//এখনই শুরু করুন'}</p>
             <h2 className="cs-cta-q">
               আপনার ব্যবসাও কি ভুল ডাটা আর
               <br />ব্যাকডেটেড সিস্টেমে আটকে আছে?
