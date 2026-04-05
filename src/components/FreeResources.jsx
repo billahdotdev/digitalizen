@@ -4,7 +4,7 @@ import './FreeResources.css'
 import { track, pushEngagement, makeEventId } from '../lib/analytics.js'
 
 /* ── Constants ───────────────────────────────────────── */
-const EBOOK_FILENAME       = 'one.pdf'
+const EBOOK_FILENAME       = 'onlineMonline.pdf'
 const EBOOK_PATH           = '/eBook/' + EBOOK_FILENAME
 const EBOOK_COVER          = '/eBook/cover.png'
 const EBOOK_FORM_ACTION    = 'https://docs.google.com/forms/d/e/1FAIpQLSc4az9GfiP2YaonvtjY_ACnkNes7XxnMuPih2520KbT4JC87A/formResponse'
@@ -287,13 +287,13 @@ export default function FreeResources() {
           <div className="fr-tag">{"// EXCLUSIVE RESOURCE"}</div>
 
           <h1 className="fr-hero-text">
-            মার্কেটিং এ<br/>
-            <span className="text-glow">বিপ্লব আনুন।</span>
+            মনলাইন vs অনলাইন:<br/>
+            <span className="text-glow">বিজনেস ব্লুপ্রিন্ট ২০২৬</span>
           </h1>
 
           <p className="fr-hero-sub">
-            শুধুমাত্র ২০২৬ সালের জন্য আপডেটেড মেটা অ্যাডস স্ট্র্যাটেজি।
-            এআই এবং অটোমেশন ব্যবহার করে কস্ট কমিয়ে সেলস বাড়ানো সম্ভব।
+            ২০২৬ সালে এসে এই মনলাইন পদ্ধতিতে টিকে থাকা অসম্ভব। 
+            এই গাইডে আমি আপনাদের শেখাবো কীভাবে মনলাইন থেকে বেরিয়ে এসে একটি প্রফেশনাল অনলাইন ব্র্যান্ড গড়বেন।
           </p>
 
           <div className="fr-ebook-preview">
@@ -351,7 +351,7 @@ export default function FreeResources() {
                 <div className="fr-form-header">
                   <div className="fr-tag">{"// GET ACCESS"}</div>
                   <h2>এক্সেস নিন</h2>
-                  <p>নিচের ফর্মটি পূরণ করে ইবুকটি বুঝে নিন</p>
+                  <p>নাম এবং WhatsApp নাম্বার দিয়ে ইবুকটি বুঝে নিন</p>
                 </div>
 
                 <form onSubmit={handleSubmit} noValidate>

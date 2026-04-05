@@ -75,17 +75,17 @@ export default function Hero() {
       <div className="container hero__inner">
         <div className="hero__badge">
           <span className="badge-dot"></span>
-          ডিজিটাল অ্যাড ও অটোমেশন স্পেশালিস্ট এজেন্সি
+          AI অটোমেশন ও অ্যাড স্পেশালিস্ট এজেন্সি
         </div>
 
         <h1 className="hero__headline">
-          মেটা অ্যাডে<br />
-          <span className="hero__blue">রিয়েল রেজাল্ট</span>
+          ১ সেকেন্ডে সাইট লোড<br />
+          <span className="hero__blue">সেল করবে স্মার্ট AI</span>
         </h1>
 
         <p className="hero__sub">
-          আমরা টেস্ট করি, অপ্টিমাইজ করি এবং স্কেল করি।<br />
-          শো-অফ মেট্রিক্স নয়, কনভার্শন আর একচুয়াল গ্রোথ।
+          সুপারফাস্ট ল্যান্ডিং পেজ, CPA ট্র্যাকিং, AI অটোমেশন,<br />
+          আপনার বিজনেসের জন্য অটোমেটেড সেলস সিস্টেম।
         </p>
 
         <div className="hero__actions">

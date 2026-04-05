@@ -20,14 +20,16 @@ import SEO  from './seo/SEO'
 const Finder        = lazy(() => import('./components/Finder'))
 const Process       = lazy(() => import('./components/Process'))
 const Packages      = lazy(() => import('./components/Packages'))
-const About         = lazy(() => import('./components/About'))
+const SocialProof   = lazy(() => import('./components/SocialProof'))
 const BookCall      = lazy(() => import('./components/BookCall'))
 const Faq           = lazy(() => import('./components/Faq'))
 const Contact       = lazy(() => import('./components/Contact'))
 const Footer        = lazy(() => import('./components/Footer'))
 const Gallery       = lazy(() => import('./components/Gallery'))
 const FreeResources = lazy(() => import('./components/FreeResources'))
-const Access        = lazy(() => import('./components/Access'))
+const Access        = lazy(() => import('./components/access/Access'))
+
+
 
 /* ── WhatsApp number ── */
 const WA_NUMBER = '8801711992558'
@@ -163,7 +165,7 @@ function MainLayout() {
       <main id="main-content">
         <Hero />
         <Suspense fallback={null}>
-          <About />
+          <SocialProof />
           <Process />
           <Gallery />
           <Finder />
@@ -223,6 +225,7 @@ export default function App() {
          
           <Route path="/access"    element={<Suspense fallback={null}><Access /></Suspense>} />
           <Route path="/gallery"   element={<Suspense fallback={null}><Gallery /></Suspense>} />
+          
           <Route path="*"          element={<NotFound />} />
         </Routes>
       </BrowserRouter>
