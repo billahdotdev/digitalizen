@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════
-   PACKAGES.CSS — Pricing Stack v2026.2
+   PACKAGES.CSS — Pricing Stack v2026.3
    Mobile-first · Sticky Stack · Scroll-Driven
-   Three tiers: plain · electric · obsidian-premium
+   Grid background added to match Hero.
    ═══════════════════════════════════════════════ */
 
 @property --border-angle {
@@ -14,7 +14,24 @@
 .pk-section {
   padding: 72px 0 100px;
   background: var(--bg);
+  position: relative;   /* required for grid overlay */
+  overflow: hidden;
 }
+
+/* ── Grid overlay — identical to .hero__bg-grid ── */
+.pk-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Container floats above grid */
+.pk-section > .container { position: relative; z-index: 1; }
 
 /* ── Stack container ───────────────────────────── */
 .pk-stack {
@@ -152,7 +169,6 @@
   overflow: hidden;
 }
 
-/* Shimmer sweep on hover */
 .pk-btn::after {
   content: '';
   position: absolute;
@@ -163,14 +179,12 @@
   transition: background-position 0.5s ease;
 }
 
-.pk-btn:hover  {
+.pk-btn:hover {
   background: var(--blue);
   gap: 20px;
   transform: translateY(-1px);
 }
-.pk-btn:hover::after {
-  background-position: -200% 0;
-}
+.pk-btn:hover::after { background-position: -200% 0; }
 .pk-btn:active { opacity: 0.85; transform: translateY(0); }
 .pk-btn:focus-visible {
   outline: 3px solid var(--blue);
@@ -240,16 +254,12 @@
 
 
 /* ══════════════════════════════════════════════════
-   TIER 1 — FROSTED (plain bg)
+   TIER 1 — FROSTED
    ══════════════════════════════════════════════════ */
 
 .pk-card--frosted .pk-card-inner {
   background: #fff;
   border: 1px solid var(--border2);
-}
-
-/* Hover: subtle lift */
-.pk-card--frosted .pk-card-inner {
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 .pk-card--frosted:hover .pk-card-inner {
@@ -260,7 +270,6 @@
 
 /* ══════════════════════════════════════════════════
    TIER 2 — ELECTRIC
-   Body: plain var(--bg). Border: spinning conic gradient.
    ══════════════════════════════════════════════════ */
 
 .pk-card--electric .pk-card-inner {
@@ -307,10 +316,7 @@
 
 
 /* ══════════════════════════════════════════════════
-   TIER 3 — OBSIDIAN PREMIUM 2026
-   Concept: "Neon Playground" — dark canvas, vivid
-   blue-electric neon grid + floating orbs that pop.
-   Playful energy, premium execution.
+   TIER 3 — OBSIDIAN PREMIUM
    ══════════════════════════════════════════════════ */
 
 .pk-card--obsidian .pk-card-inner {
@@ -332,24 +338,16 @@
   animation-range: exit 0% exit 100%, auto;
 }
 
-/* Card border pulses electric blue */
 @keyframes obsidian-card-glow {
   0%,100% { box-shadow: 0 0 0 1px rgba(31,75,255,0.15), inset 0 0 60px rgba(31,75,255,0.04), 0 32px 80px -12px rgba(0,0,0,0.85); }
   50%     { box-shadow: 0 0 0 1px rgba(31,75,255,0.45), inset 0 0 60px rgba(31,75,255,0.08), 0 32px 80px -12px rgba(0,0,0,0.85), 0 0 28px rgba(31,75,255,0.18); }
 }
 
-/* ── Neon dot-grid overlay (::before) ──
-   A CSS dot grid that gives a "circuit board" vibe.
-   Dots are tiny — felt, not seen. */
 .pk-card--obsidian .pk-card-inner::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(
-    circle,
-    rgba(31, 75, 255, 0.28) 1px,
-    transparent 1px
-  );
+  background-image: radial-gradient(circle, rgba(31, 75, 255, 0.28) 1px, transparent 1px);
   background-size: 28px 28px;
   animation: grid-drift 20s linear infinite;
   pointer-events: none;
@@ -363,8 +361,6 @@
   to   { background-position: 28px 28px; }
 }
 
-/* ── Two neon orbs (::after) ──
-   Vivid blue blobs that orbit slowly — playful, alive. */
 .pk-card--obsidian .pk-card-inner::after {
   content: '';
   position: absolute;
@@ -401,7 +397,6 @@
   }
 }
 
-/* Particle canvas — re-enabled, blue neon style */
 .pk-obsidian-canvas {
   position: absolute;
   inset: 0;
@@ -412,11 +407,7 @@
   opacity: 0.6;
 }
 
-/* Content grid floats above everything */
-.pk-card--obsidian .pk-content-grid {
-  position: relative;
-  z-index: 2;
-}
+.pk-card--obsidian .pk-content-grid { position: relative; z-index: 2; }
 
 .pk-card--obsidian .pk-badge {
   z-index: 3;
@@ -438,9 +429,8 @@
   border-color: rgba(31,75,255,0.25);
 }
 .pk-card--obsidian .pk-ad-chip::before { background: rgba(31,75,255,0.8); }
-.pk-card--obsidian .pk-dot     { background: rgba(31, 120, 255, 0.9); box-shadow: 0 0 6px rgba(31,75,255,0.7); }
+.pk-card--obsidian .pk-dot { background: rgba(31, 120, 255, 0.9); box-shadow: 0 0 6px rgba(31,75,255,0.7); }
 
-/* ── CTA button — original style, white on dark ── */
 .pk-card--obsidian .pk-btn {
   background: #fff;
   color: var(--dark);
@@ -461,7 +451,6 @@
   .pk-card       { top: 70px; }
   .pk-card-inner { padding: 28px 18px; }
 
-  /* Explicit white on mobile — belt + suspenders */
   .pk-card--frosted .pk-card-inner {
     background: #ffffff !important;
   }

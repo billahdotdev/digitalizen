@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════
    FOOTER — 2026 MODERN DESIGN (Mobile-First)
-   Glassmorphism • Depth • Clean • Professional
+   Grid background added to match Hero.
    ====================================================== */
 
 .footer {
@@ -11,7 +11,19 @@
   overflow: hidden;
 }
 
-/* Subtle top glow */
+/* ── Grid overlay — identical to .hero__bg-grid ── */
+.footer__bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Subtle top glow — sits above grid */
 .footer__glow-top {
   position: absolute;
   top: -100px;
@@ -27,6 +39,9 @@
   pointer-events: none;
   filter: blur(40px);
 }
+
+/* Container floats above grid */
+.footer > .container { position: relative; z-index: 1; }
 
 /* ── Main Grid Layout ── */
 .footer__main {
@@ -88,7 +103,7 @@
   max-width: 420px;
 }
 
-/* ── WhatsApp Button (Modern Glass Card) ── */
+/* ── WhatsApp Button ── */
 .footer__wa-btn {
   display: flex;
   align-items: center;
@@ -108,32 +123,29 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(37, 211, 102, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  min-height: 44px;   /* touch target */
 }
 
 .footer__wa-btn:hover {
   background: rgba(37, 211, 102, 0.12);
   border-color: rgba(37, 211, 102, 0.35);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 20px rgba(37, 211, 102, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.footer__wa-btn:active {
-  transform: translateY(0);
-}
+.footer__wa-btn:active { transform: translateY(0); }
 
 .footer__wa-btn:focus-visible {
   outline: 2px solid rgba(37, 211, 102, 0.5);
   outline-offset: 4px;
 }
 
-.footer__wa-btn svg {
-  flex-shrink: 0;
-}
+.footer__wa-btn svg { flex-shrink: 0; }
 
 /* ── Social Icons Grid ── */
 .footer__socials {
@@ -145,9 +157,7 @@
   margin: 0;
 }
 
-.footer__socials li {
-  display: flex;
-}
+.footer__socials li { display: flex; }
 
 .social-icon {
   display: flex;
@@ -160,14 +170,13 @@
   border-radius: 12px;
   color: var(--muted);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
+  box-shadow:
     0 2px 6px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
 }
 
-/* Hover gradient background */
 .social-icon::before {
   content: '';
   position: absolute;
@@ -177,28 +186,19 @@
   transition: opacity 0.3s ease;
 }
 
-.social-icon svg {
-  position: relative;
-  z-index: 1;
-}
+.social-icon svg { position: relative; z-index: 1; }
 
 .social-icon:hover {
   border-color: var(--blue);
   color: #fff;
   transform: translateY(-4px);
-  box-shadow: 
+  box-shadow:
     0 12px 24px rgba(31, 75, 255, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.social-icon:hover::before {
-  opacity: 1;
-}
-
-.social-icon:active {
-  transform: translateY(-2px);
-}
-
+.social-icon:hover::before { opacity: 1; }
+.social-icon:active { transform: translateY(-2px); }
 .social-icon:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 3px;
@@ -234,9 +234,11 @@
   position: relative;
   width: fit-content;
   -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
-/* Arrow indicator */
 .footer__link::before {
   content: '→';
   position: absolute;
@@ -253,10 +255,7 @@
   padding-left: 20px;
 }
 
-.footer__link:hover::before {
-  opacity: 1;
-  transform: translateX(0);
-}
+.footer__link:hover::before { opacity: 1; transform: translateX(0); }
 
 .footer__link:focus-visible {
   outline: 2px solid var(--blue);
@@ -307,17 +306,19 @@
   font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  padding: 0;
+  padding: 4px 0;
   transition: all 0.25s ease;
   -webkit-tap-highlight-color: transparent;
   position: relative;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* Underline effect */
 .footer__legal-btn::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: 2px;
   left: 0;
   width: 0;
   height: 1.5px;
@@ -326,13 +327,8 @@
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.footer__legal-btn:hover {
-  color: var(--blue);
-}
-
-.footer__legal-btn:hover::after {
-  width: 100%;
-}
+.footer__legal-btn:hover { color: var(--blue); }
+.footer__legal-btn:hover::after { width: 100%; }
 
 .footer__legal-btn:focus-visible {
   outline: 2px solid var(--blue);
@@ -341,7 +337,7 @@
 }
 
 /* ══════════════════════════════════════════════════════
-   LEGAL MODALS — Modern Glassmorphism Design
+   LEGAL MODALS
    ====================================================== */
 .legal-overlay {
   position: fixed;
@@ -359,7 +355,7 @@
 
 @keyframes overlayFadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @media (min-width: 560px) {
@@ -381,7 +377,7 @@
   flex-direction: column;
   overflow: hidden;
   animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 
+  box-shadow:
     0 -4px 24px rgba(15, 23, 42, 0.08),
     0 -2px 8px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -393,7 +389,7 @@
   .legal-modal {
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 
+    box-shadow:
       0 24px 64px rgba(15, 23, 42, 0.15),
       0 8px 24px rgba(15, 23, 42, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -402,25 +398,13 @@
 }
 
 @keyframes modalSlideUp {
-  from { 
-    transform: translateY(100%); 
-    opacity: 0.8; 
-  }
-  to { 
-    transform: translateY(0); 
-    opacity: 1; 
-  }
+  from { transform: translateY(100%); opacity: 0.8; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 @keyframes modalScaleIn {
-  from { 
-    transform: scale(0.94) translateY(20px); 
-    opacity: 0; 
-  }
-  to { 
-    transform: scale(1) translateY(0); 
-    opacity: 1; 
-  }
+  from { transform: scale(0.94) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);       opacity: 1; }
 }
 
 /* Modal Header */
@@ -432,14 +416,9 @@
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   position: relative;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
 }
 
-/* Mobile drag handle */
 .legal-modal__header::before {
   content: '';
   position: absolute;
@@ -453,12 +432,8 @@
 }
 
 @media (min-width: 560px) {
-  .legal-modal__header::before {
-    display: none;
-  }
-  .legal-modal__header {
-    padding-top: 28px;
-  }
+  .legal-modal__header::before { display: none; }
+  .legal-modal__header { padding-top: 28px; }
 }
 
 .legal-modal__title {
@@ -482,7 +457,7 @@
   transition: all 0.25s ease;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 
+  box-shadow:
     0 2px 6px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -491,15 +466,9 @@
   background: var(--border);
   color: var(--text);
   transform: rotate(90deg) scale(1.05);
-  box-shadow: 
-    0 4px 12px rgba(15, 23, 42, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.legal-modal__close:active {
-  transform: rotate(90deg) scale(0.95);
-}
-
+.legal-modal__close:active { transform: rotate(90deg) scale(0.95); }
 .legal-modal__close:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
@@ -516,8 +485,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.legal-modal__section {}
-
 .legal-modal__section-title {
   font-size: 0.92rem;
   font-weight: 800;
@@ -529,7 +496,6 @@
   gap: 10px;
 }
 
-/* Blue accent bar */
 .legal-modal__section-title::before {
   content: '';
   display: inline-block;
@@ -553,11 +519,7 @@
   padding: 20px 24px 28px;
   border-top: 1px solid var(--border);
   flex-shrink: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(0deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
 }
 
 .legal-modal__done {
@@ -573,24 +535,19 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(31, 75, 255, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  min-height: 52px;
 }
 
-/* Shine effect on hover */
 .legal-modal__done::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
@@ -598,37 +555,37 @@
 .legal-modal__done:hover {
   background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 100%);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 28px rgba(31, 75, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.legal-modal__done:hover::before {
-  transform: translateX(100%);
-}
-
-.legal-modal__done:active {
-  transform: translateY(0);
-}
-
+.legal-modal__done:hover::before { transform: translateX(100%); }
+.legal-modal__done:active { transform: translateY(0); }
 .legal-modal__done:focus-visible {
   outline: 3px solid rgba(31, 75, 255, 0.4);
   outline-offset: 2px;
 }
 
-/* ── Tablet & Desktop Enhancements ── */
+/* ── Tablet & Desktop ── */
 @media (min-width: 768px) {
-  .footer__wa-btn {
-    font-size: 0.94rem;
-    padding: 15px 24px;
-  }
+  .footer__wa-btn { font-size: 0.94rem; padding: 15px 24px; }
+  .social-icon    { width: 52px; height: 52px; }
+  .footer__link   { font-size: 0.96rem; }
+}
 
-  .social-icon {
-    width: 52px;
-    height: 52px;
-  }
-
-  .footer__link {
-    font-size: 0.96rem;
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .footer__logo-dot,
+  .social-icon,
+  .footer__wa-btn,
+  .footer__link,
+  .footer__legal-btn,
+  .legal-modal,
+  .legal-overlay,
+  .legal-modal__close,
+  .legal-modal__done {
+    animation: none !important;
+    transition: none !important;
   }
 }

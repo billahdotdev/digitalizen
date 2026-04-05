@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════
-   SOCIAL PROOF (About) — v5 · MINIMAL 2026
-   Philosophy: var(--bg) canvas · industrial grid ·
-   alive through micro-motion · zero dark waste
+   SOCIAL PROOF (About) — v7 · MINIMAL 2026
+   Grid background now matches Hero exactly:
+   40px line grid at 0.4 opacity (was: dot radial grid).
    Mobile-first · WCAG 4.5:1 · Zero CLS
    ══════════════════════════════════════════════════ */
 
@@ -14,13 +14,15 @@
   overflow: hidden;
 }
 
-/* Subtle dot-grid — consistent with Process texture */
-.sp-grid-overlay {
+/* ── Grid overlay — identical to .hero__bg-grid ── */
+.sp-bg-grid {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, var(--border2) 1px, transparent 1px);
-  background-size: 28px 28px;
-  opacity: 0.6;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -85,22 +87,24 @@
   text-transform: uppercase;
   margin-bottom: 28px;
   text-wrap: balance;
+  position: relative;
+  z-index: 1;
 }
 
-.sp-heading-em {
-  color: var(--blue);
-}
+.sp-heading-em { color: var(--blue); }
 
 .sp-desc {
   font-size: 0.88rem;
   color: var(--muted);
   line-height: 1.78;
   margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
 }
 
 .sp-desc strong { color: var(--text2); font-weight: 700; }
 
-/* ── Service list — sharp industrial grid ── */
+/* ── Service list ── */
 .sp-services {
   list-style: none;
   display: grid;
@@ -109,6 +113,8 @@
   background: var(--border);
   border: 1px solid var(--border);
   margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 420px) {
@@ -129,7 +135,8 @@
 
 .sp-service-tick {
   flex-shrink: 0;
-  width: 18px; height: 18px;
+  width: 18px;
+  height: 18px;
   background: var(--blue);
   display: flex;
   align-items: center;
@@ -157,30 +164,32 @@
 
 /* ══ FOUNDER CARD ══ */
 .sp-founder-card {
-  display: grid;
-  grid-template-columns: auto 1fr;
   background: var(--white);
   border: 1px solid var(--border2);
   margin-bottom: 32px;
   position: relative;
   z-index: 1;
+  overflow: hidden;
+  display: block;
 }
 
 .sp-portrait-col {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  border-right: 1px solid var(--border);
-  padding: 24px 20px;
+  gap: 16px;
+  padding: 20px 20px 18px;
+  border-bottom: 1px solid var(--border);
   background: var(--bg2);
 }
 
 .sp-portrait-frame {
   position: relative;
-  width: 80px; height: 80px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
   overflow: hidden;
-  border: 1px solid var(--border2);
+  border: 2px solid var(--border2);
+  flex-shrink: 0;
 }
 
 .sp-portrait-frame img {
@@ -190,34 +199,38 @@
   display: block;
 }
 
+.sp-portrait-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
 
+.sp-portrait-name {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
 
+.sp-portrait-role {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
 
 .sp-founder-info {
   padding: 20px 20px 22px;
   min-width: 0;
 }
 
-.sp-founder-tag {
-  font-family: 'Courier New', monospace;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--blue);
-  display: block;
-  margin-bottom: 6px;
-}
-
-.sp-founder-name {
-  font-size: clamp(1.2rem, 4vw, 1.6rem);
-  font-weight: 900;
-  color: var(--text);
-  letter-spacing: -0.04em;
-  margin-bottom: 8px;
-  line-height: 1.0;
-  text-transform: uppercase;
-}
+.sp-founder-tag  { display: none; }
+.sp-founder-name { display: none; }
 
 .sp-founder-bio {
   font-size: 0.78rem;
@@ -277,6 +290,7 @@
   background: var(--bg);
   transition: border-color 0.18s, color 0.18s, background 0.18s;
   letter-spacing: 0.02em;
+  min-height: 44px;
 }
 
 .sp-founder-link:hover {
@@ -285,10 +299,7 @@
   background: var(--blue-light);
 }
 
-/* ══ CTA BAND — light, bordered, alive ══
-   Swapped dark panel for a clean white card.
-   Rings provide the playfulness; no dark canvas needed.
-══ */
+/* ══ CTA BAND ══ */
 .sp-cta-band {
   position: relative;
   background: var(--white);
@@ -298,11 +309,12 @@
   z-index: 1;
 }
 
-/* Pulsing concentric rings — top right decoration */
 .sp-cta-ring {
   position: absolute;
-  top: -55px; right: -55px;
-  width: 220px; height: 220px;
+  top: -55px;
+  right: -55px;
+  width: 220px;
+  height: 220px;
   pointer-events: none;
 }
 
@@ -343,10 +355,8 @@
 }
 
 .sp-roi:hover { background: var(--blue-light); }
-
 .sp-roi + .sp-roi { border-left: 1px solid var(--border); }
 
-/* Outlined stroke numbers */
 .sp-roi-val {
   font-size: clamp(1.85rem, 7.5vw, 2.8rem);
   font-weight: 900;
@@ -369,13 +379,7 @@
   text-transform: uppercase;
 }
 
-.sp-band-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 0 0 28px;
-  position: relative;
-  z-index: 1;
-}
+.sp-band-hr { display: none; }
 
 .sp-cta-mono {
   font-family: 'Courier New', monospace;
@@ -410,7 +414,6 @@
   z-index: 1;
 }
 
-/* CTA button — Packages parity, no clip-path */
 .sp-cta-btn {
   width: 100%;
   height: 56px;
@@ -435,23 +438,23 @@
   overflow: hidden;
 }
 
-/* Shimmer */
 .sp-cta-btn::after {
   content: '';
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
   background-size: 200% 100%;
   background-position: 200% 0;
   transition: background-position 0.5s ease;
 }
 
-.sp-cta-btn:hover {
-  background: var(--blue);
-  transform: translateY(-1px);
-}
-
+.sp-cta-btn:hover { background: var(--blue); transform: translateY(-1px); }
 .sp-cta-btn:hover::after { background-position: -200% 0; }
 .sp-cta-btn:active { transform: translateY(0); opacity: 0.88; }
+.sp-cta-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
 
 .sp-cta-btn-inner {
   display: flex;
@@ -469,18 +472,6 @@
   z-index: 1;
 }
 
-/* ── Mobile refinements ── */
-@media (max-width: 480px) {
-  .sp-founder-card { grid-template-columns: 1fr; }
-  .sp-portrait-col {
-    flex-direction: row;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    padding: 16px 20px;
-    gap: 16px;
-  }
-}
-
 /* ══ REDUCED MOTION ══ */
 @media (prefers-reduced-motion: reduce) {
   .sp-r,
@@ -491,7 +482,6 @@
     transition: none !important;
     animation: none !important;
   }
-
   .sp-pulse-ring::after,
   .sp-ring { animation: none !important; }
 }

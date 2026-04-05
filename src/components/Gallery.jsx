@@ -29,14 +29,18 @@ export default function Gallery() {
 
   return (
     <section className="gl-archive" id="gallery">
+      {/* Grid background — matches Hero exactly */}
+      <div className="gl-bg-grid" aria-hidden="true" />
+
       <div className="container">
         <div className="row-header">
           <span className="section-num">০০৩</span>
           <span className="section-title-right">{'// আপনার ডিজিটাল দোকান'}</span>
         </div>
         <h2 className="finder-heading">ল্যান্ডিং পেজ কি আপনার ব্যবসার গল্প বলে?</h2>
-        <p className="finder-sub">১ সেকেন্ড দেরি = ২০% কনভার্সন লস, ৩ সেকেন্ড = ৪৭% কাস্টমার চিরতরে হারিয়ে যায়, ৫ সেকেন্ড = ৯০% বাউন্স ও গুগল র‍্যাঙ্কিং কমে যাওয়া।</p>
-        <p className="finder-sub"><span>*</span> মনে রাখবেন: ২০২৬ সালে স্লো, সাধারণ ল্যান্ডিং পেজ মানে হচ্ছে কাস্টমারের মুখের সামনে দরজা বন্ধ করে দেওয়া। আপনি কি এই ঝুঁকি নিতে প্রস্তুত?</p>
+        <p className="finder-sub">১ সেকেন্ড দেরি = ২০% কনভার্সন লস, ৩ সেকেন্ড = ৪৭% কাস্টমার চিরতরে হারিয়ে যায়, ৫ সেকেন্ড = ৯০% বাউন্স ও গুগল র‍্যাঙ্কিং কমে যাওয়া।</p>
+        <p className="finder-sub"><span>*</span> মনে রাখবেন: ২০২৬ সালে স্লো, সাধারণ ল্যান্ডিং পেজ মানে হচ্ছে কাস্টমারের মুখের সামনে দরজা বন্ধ করে দেওয়া। আপনি কি এই ঝুঁকি নিতে প্রস্তুত?</p>
+
         <div className="gl-stack">
 
           {/* ── Cards 001–006 ── */}
@@ -87,17 +91,15 @@ export default function Gallery() {
           {/* ── Card 007 — the ask ── */}
           <div className="gl-frame-wrapper" style={{ '--index': 6 }}>
             <article className="gl-frame gl-frame--ask">
-
-              {/* Same window dimensions, dark fill, no image */}
               <div className="gl-window gl-window--ask" aria-hidden="true">
                 <p className="gl-ask__headline">
                   আপনার<br />
-                  24/7<br /> 
+                  24/7<br />
                   সেলস<br />
                   মেশিন.<br /><br />
                   <em>
                     কখন<br />
-                  বানাবেন?
+                    বানাবেন?
                   </em>
                 </p>
               </div>
@@ -107,7 +109,6 @@ export default function Gallery() {
                   <span className="gl-id">007</span>
                   <h3 className="gl-name">আপনার ব্র্যান্ড</h3>
                 </div>
-                {/* WA button replaces pulse dot */}
                 <button
                   className="gl-ask__btn"
                   onClick={handleWa}
@@ -119,7 +120,6 @@ export default function Gallery() {
                   <span>আজই শুরু করি</span>
                 </button>
               </div>
-
             </article>
           </div>
 

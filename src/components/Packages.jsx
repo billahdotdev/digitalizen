@@ -4,8 +4,6 @@ import './Packages.css'
 
 /* ─────────────────────────────────────────────
    Particle constellation — canvas renderer
-   Lightweight: ~40 nodes, no lib, RAF loop.
-   Draws connected dots that drift slowly.
 ───────────────────────────────────────────── */
 function ParticleCanvas() {
   const canvasRef = useRef(null)
@@ -16,13 +14,12 @@ function ParticleCanvas() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
 
-    // Respect reduced-motion preference
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reducedMotion) return
 
-    const COUNT    = 42
-    const CONNECT  = 80   // max px to draw edge
-    const SPEED    = 0.28
+    const COUNT   = 42
+    const CONNECT = 80
+    const SPEED   = 0.28
 
     let W, H, particles
 
@@ -43,7 +40,6 @@ function ParticleCanvas() {
     const draw = () => {
       ctx.clearRect(0, 0, W, H)
 
-      // Update positions
       for (const p of particles) {
         p.x += p.vx
         p.y += p.vy
@@ -51,7 +47,6 @@ function ParticleCanvas() {
         if (p.y < 0 || p.y > H) p.vy *= -1
       }
 
-      // Draw edges
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx   = particles[i].x - particles[j].x
@@ -69,7 +64,6 @@ function ParticleCanvas() {
         }
       }
 
-      // Draw nodes
       for (const p of particles) {
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
@@ -154,7 +148,7 @@ const packages = [
       'আনলিমিটেড ল্যান্ডিং পেজ সাপোর্ট (Vite + React)',
       'AI ডমিন্যান্স ও অথরিটি বিল্ডিং (AEO, GEO)',
       'কাস্টমার সেন্টিমেন্ট অ্যানালাইসিস',
-      'মডার্ন ট্র্যাকিং (CAPI, GA4, TTK পিক্সেল), ',
+      'মডার্ন ট্র্যাকিং (CAPI, GA4, TTK পিক্সেল)',
       'উইনিং অ্যাড কনটেন্ট আইডিয়া',
       'প্রিমিয়াম ব্র্যান্ড আইডেন্টিটি ডিজাইন',
     ],
@@ -179,6 +173,9 @@ export default function Packages() {
 
   return (
     <section className="pk-section" id="pricing">
+      {/* Grid background — matches Hero exactly */}
+      <div className="pk-bg-grid" aria-hidden="true" />
+
       <div className="container">
 
         <div className="row-header">
@@ -204,10 +201,8 @@ export default function Packages() {
             >
               <div className="pk-card-inner">
 
-                {/* Particle canvas — obsidian only */}
                 {pkg.type === 'obsidian' && <ParticleCanvas />}
 
-                {/* Popular badge */}
                 {pkg.popular && (
                   <div className="pk-badge" aria-label="সবচেয়ে জনপ্রিয় প্যাকেজ">
                     BEST ROI
@@ -216,25 +211,21 @@ export default function Packages() {
 
                 <div className="pk-content-grid">
 
-                  {/* Left: identity + price */}
                   <div className="pk-main-info">
                     <span className="pk-serial">{pkg.serial}</span>
                     <h3 className="pk-title">{pkg.name}</h3>
 
-                    {/* Price with /মাস */}
                     <div className="pk-price">
                       <span className="pk-unit" aria-hidden="true">৳</span>
                       <span className="pk-amount">{pkg.price}</span>
                       <span className="pk-period">{pkg.period}</span>
                     </div>
 
-                    {/* Ad cost chip */}
                     <div className="pk-ad-chip" aria-label="বিজ্ঞাপনের খরচ আলাদা">
                       {pkg.adChip}
                     </div>
                   </div>
 
-                  {/* Right: features + CTA */}
                   <div className="pk-details">
                     <ul className="pk-feat-list" role="list">
                       {pkg.features.map((f, j) => (

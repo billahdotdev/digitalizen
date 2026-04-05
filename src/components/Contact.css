@@ -6,14 +6,15 @@
   border-top: 1px solid var(--border);
 }
 
+/* ── Grid overlay — identical to .hero__bg-grid ── */
 .ct-grid-overlay {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(var(--border) 1px, transparent 1px),
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.35;
+  background-size: 40px 40px;
+  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -64,6 +65,7 @@
   background: #22c55e;
   border-radius: 50%;
   position: relative;
+  flex-shrink: 0;
 }
 
 .pulse-ring::after {
@@ -75,7 +77,10 @@
   animation: ring-pulse 2.5s infinite;
 }
 
-@keyframes ring-pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(4); opacity: 0; } }
+@keyframes ring-pulse {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(4); opacity: 0; }
+}
 
 /* ── Ghost Fields ── */
 .ct-ghost-field {
@@ -137,7 +142,12 @@
   height: 2px;
 }
 
-/* ── The Industrial Button (Desktop & Mobile) ── */
+/* ── Focus states for accessibility ── */
+.ct-ghost-field input:focus-visible {
+  outline: none;   /* handled by .ct-bar highlight above */
+}
+
+/* ── The Industrial Button ── */
 .ct-industrial-btn {
   width: 100%;
   height: 80px;
@@ -150,8 +160,8 @@
   padding: 0 40px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  /* Same Big Cut for all views */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 65%);
+  min-height: 44px;
 }
 
 .ct-btn-label {
@@ -165,21 +175,35 @@
   transform: translateY(-5px);
 }
 
-.ct-industrial-btn:active {
-  transform: scale(0.98);
+.ct-industrial-btn:active { transform: scale(0.98); }
+
+.ct-industrial-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
 }
 
 /* ── Mobile Optimization ── */
 @media (max-width: 992px) {
-  .ct-main-grid { 
-    grid-template-columns: 1fr; 
-    gap: 60px; 
-    padding: 0 24px; 
+  .ct-main-grid {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    padding: 0 24px;
   }
   .ct-num { display: none; }
   .ct-industrial-btn {
-    height: 72px; /* Slightly shorter for mobile but same cut */
+    height: 72px;
     padding: 0 30px;
   }
   .ct-btn-label { font-size: 0.9rem; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring::after,
+  .ct-floating-label,
+  .ct-bar,
+  .ct-industrial-btn {
+    animation: none !important;
+    transition: none !important;
+  }
 }

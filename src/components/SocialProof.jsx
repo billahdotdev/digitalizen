@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
+import { track, pushEngagement, trackAboutCta, trackFounderLink, WA_NUMBER } from '../lib/analytics.js'
 import { CS_CTA } from '../lib/caseStudyData.js'
 import './SocialProof.css'
 
@@ -47,12 +47,6 @@ const CREDS = [
   { cls: 'sp-cred--web',  label: 'Web Mastery',      sub: 'Univ. Helsinki' },
 ]
 
-const ROI = [
-  { val: '৩০০', unit: '%', label: 'সেলস বৃদ্ধি' },
-  { val: '৪.৮', unit: '×', label: 'ROAS' },
-  { val: '৫০',  unit: '%', label: 'বাজেট সাশ্রয়' },
-]
-
 /* ══ ROOT ══ */
 export default function SocialProof() {
   const sectionRef   = useRef(null)
@@ -69,7 +63,11 @@ export default function SocialProof() {
         firedRef.current     = true
         enterTimeRef.current = Date.now()
         setEntered(true)
-        track('ViewContent', { content_name: 'About Section', content_category: 'Section' }, 'social_proof')
+        /* Centralized track() — event_id generated inside, deduplication handled */
+        track('ViewContent', {
+          content_name:     'About Section',
+          content_category: 'Section',
+        }, 'social_proof')
         window.dataLayer = window.dataLayer || []
         window.dataLayer.push({ event: 'section_view', section: 'about' })
       }
@@ -88,18 +86,25 @@ export default function SocialProof() {
     }
   }, [])
 
+  /*
+   * MERGED FROM v3 inline:
+   * Previously this handler called window.fbq() and window.dataLayer.push()
+   * directly, generating its own event_id with no deduplication against the
+   * Meta CAPI server tag. Now routed through trackAboutCta() which calls
+   * track() — same event_id reaches both browser pixel and server container.
+   */
   const handleCta = useCallback(() => {
-    const event_id = `sp_cta_${Date.now()}`
-    window.fbq?.('track', 'Lead', { content_name: 'About CTA', currency: 'BDT', value: 0 }, { eventID: event_id })
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({ event: 'cta_click', cta_location: 'about', cta_label: 'free_roadmap', meta_event_id: event_id })
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(CS_CTA.waText)}`, '_blank', 'noreferrer')
+    trackAboutCta(CS_CTA.btnLabel)
+    window.open(
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(CS_CTA.waText)}`,
+      '_blank',
+      'noreferrer'
+    )
   }, [])
 
+  /* trackFounderLink now centralised in analytics.js — no direct dataLayer push here */
   const handleFounderLink = useCallback((label) => {
-    track('ViewContent', { content_name: `Founder: ${label}`, content_category: 'Founder' }, 'social_proof')
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({ event: 'founder_link_click', link_label: label })
+    trackFounderLink(label)
   }, [])
 
   return (
@@ -109,7 +114,8 @@ export default function SocialProof() {
       className={`sp${entered ? ' sp--entered' : ''}`}
       aria-label="আমাদের সম্পর্কে"
     >
-      <div className="sp-grid-overlay" aria-hidden="true" />
+      {/* Grid background — matches Hero exactly */}
+      <div className="sp-bg-grid" aria-hidden="true" />
 
       <div className="container">
 
@@ -128,9 +134,8 @@ export default function SocialProof() {
         {/* ── Hero heading block ── */}
         <div className="sp-r sp-r--2">
           <h2 className="sp-heading">
-            আমরা শুধু অ্যাড চালাই না, 
+            আমরা শুধু অ্যাড চালাই না,{' '}
             <span className="sp-heading-em">সেলস মেশিন তৈরি করি</span>
-           
           </h2>
 
           <p className="sp-desc">
@@ -157,19 +162,21 @@ export default function SocialProof() {
         {/* ══ FOUNDER CARD ══ */}
         <div className="sp-founder-card sp-r sp-r--3" aria-label="ফাউন্ডার">
 
-          {/* Portrait panel */}
           <div className="sp-portrait-col">
             <div className="sp-portrait-frame">
               <img
                 src="https://avatars.githubusercontent.com/u/112099343?s=294&v=4"
                 alt="Masum Billah — Digitalizen Founder"
-                width="80" height="80"
+                width="72" height="72"
                 loading="lazy" decoding="async"
               />
             </div>
+            <div className="sp-portrait-meta">
+              <span className="sp-portrait-role">ফাউন্ডার ও রেইনমেকার</span>
+              <span className="sp-portrait-name">Masum Billah</span>
             </div>
+          </div>
 
-          {/* Info panel */}
           <div className="sp-founder-info">
             <span className="sp-founder-tag">ফাউন্ডার ও রেইনমেকার</span>
             <h3 className="sp-founder-name">Masum Billah</h3>
@@ -212,28 +219,14 @@ export default function SocialProof() {
 
         {/* ══ CTA BAND ══ */}
         <div className="sp-cta-band sp-r sp-r--4">
-          {/* Animated rings — playful, not loud */}
           <div className="sp-cta-ring" aria-hidden="true">
             <div className="sp-ring sp-ring--1" />
             <div className="sp-ring sp-ring--2" />
             <div className="sp-ring sp-ring--3" />
           </div>
 
-          {/* ROI metrics */}
-          <div className="sp-roi-row" aria-label="ফলাফল">
-            {ROI.map((r, i) => (
-              <div key={i} className="sp-roi">
-                <span className="sp-roi-val">
-                  {r.val}<span className="sp-roi-unit">{r.unit}</span>
-                </span>
-                <span className="sp-roi-label">{r.label}</span>
-              </div>
-            ))}
-          </div>
-
           <hr className="sp-band-hr" />
 
-          <span className="sp-cta-mono">{'// এখনই শুরু করুন'}</span>
           <p className="sp-cta-q">{CS_CTA.question}</p>
           <p className="sp-cta-body">{CS_CTA.body}</p>
 

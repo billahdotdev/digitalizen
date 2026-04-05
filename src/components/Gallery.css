@@ -1,12 +1,30 @@
 /* ═══════════════════════════════════════════════
    GALLERY.CSS
    Mobile-first · Scroll-Driven Stack · Parallax
+   Grid background added to match Hero.
    ═══════════════════════════════════════════════ */
 
 .gl-archive {
   padding: 72px 0 100px;
   background: var(--bg);
+  position: relative;   /* required for grid overlay */
+  overflow: hidden;
 }
+
+/* ── Grid overlay — identical to .hero__bg-grid ── */
+.gl-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* container sits above grid */
+.gl-archive > .container { position: relative; z-index: 1; }
 
 .gl-stack {
   display: flex;
@@ -247,8 +265,6 @@
 
 /* ══════════════════════════════════════════════
    CARD 007 — THE ASK
-   Same shell. Dark window. Giant question.
-   Surprise lands because the format is identical.
    ══════════════════════════════════════════════ */
 
 .gl-window--ask {
@@ -287,7 +303,10 @@
   animation: shimmer 3s linear infinite;
 }
 
-/* WA button sits in the name bar where the pulse dot lives */
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
 .gl-ask__btn {
   display: inline-flex;
   align-items: center;
@@ -304,14 +323,20 @@
   white-space: nowrap;
   transition: background 0.2s, transform 0.15s;
   flex-shrink: 0;
+  min-height: 44px;
 }
 
-.gl-ask__btn:hover {
-  background: #1ebe59;
-  transform: translateY(-1px);
-}
-
+.gl-ask__btn:hover  { background: #1ebe59; transform: translateY(-1px); }
 .gl-ask__btn:active { transform: translateY(0); }
+.gl-ask__btn:focus-visible {
+  outline: 3px solid #1ebe59;
+  outline-offset: 3px;
+}
+
+.finder-sub span {
+  color: #ef4444;
+  font-weight: 900;
+}
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
@@ -328,9 +353,4 @@
   @media (min-width: 600px) {
     .gl-hud-btn { transform: none !important; }
   }
-}
-
-.finder-sub span {
-  color: #ef4444; /* Modern Red */
-  font-weight: 900; /* Bold */
 }

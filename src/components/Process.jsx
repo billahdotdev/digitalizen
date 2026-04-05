@@ -467,19 +467,16 @@ export default function Process() {
         </div>
 
         {/* ══ CAMPAIGN PROOF ══ */}
-        
-
+        <div className="cs-proof cs-r cs-r--3">
           <div className="cs-proof-meta">
             <div>
               <p className="cs-proof-label">Ads Manager থেকে সরাসরি</p>
-              
             </div>
             <span className="cs-live" aria-label="চলমান ডাটা">
               <span className="cs-live-dot" aria-hidden="true" />
               Real Results
             </span>
           </div>
-
           <ProofGallery />
         </div>
 
@@ -611,7 +608,7 @@ export default function Process() {
           </div>
         </div>
 
-      
+      </div>{/* /.container */}
     </section>
   )
 }
