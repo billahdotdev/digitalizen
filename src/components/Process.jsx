@@ -3,12 +3,10 @@ import './Process.css'
 import { track, WA_NUMBER } from '../lib/analytics.js'
 import { CS_META, CS_TABLE, CS_PROCESS } from '../lib/caseStudyData.js'
 
-/* ══════════════════════════════════════════════════
-   ICONS — zero-dep inline SVG
-══════════════════════════════════════════════════ */
+/* ══ ICONS — zero-dep inline SVG ══ */
 const Icon = {
   arrowR: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M5 12h14M12 5l7 7-7 7" />
     </svg>
   ),
@@ -18,13 +16,8 @@ const Icon = {
     </svg>
   ),
   wa: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-    </svg>
-  ),
-  check: (
-    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   play: (
@@ -50,9 +43,7 @@ const Icon = {
   ),
 }
 
-/* ══════════════════════════════════════════════════
-   DATA
-══════════════════════════════════════════════════ */
+/* ── Data ── */
 const STATS = [
   { num: '৩০০%', label: 'সেলস বৃদ্ধি' },
   { num: '৫০%',  label: 'বাজেট সাশ্রয়' },
@@ -185,9 +176,7 @@ const GALLERY = [
   { src: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80', caption: 'A/B টেস্ট রেজাল্ট' },
 ]
 
-/* ══════════════════════════════════════════════════
-   GALLERY
-══════════════════════════════════════════════════ */
+/* ══ GALLERY ══ */
 function ProofGallery() {
   const [active, setActive] = useState(null)
   const [fading, setFading] = useState(false)
@@ -238,7 +227,6 @@ function ProofGallery() {
         ))}
       </ul>
 
-      {/* Expanded viewer */}
       <div
         className={`pg-viewer${cur ? ' pg-viewer--open' : ''}`}
         aria-live="polite"
@@ -267,21 +255,20 @@ function ProofGallery() {
   )
 }
 
-/* ══════════════════════════════════════════════════
-   PILLAR PANEL — shown when tab is active
-══════════════════════════════════════════════════ */
+/* ══ PILLAR PANEL ══ */
 function PillarPanel({ pillar, onCta }) {
   const [videoOn, setVideoOn] = useState(false)
-
-  /* Reset video when pillar changes */
   useEffect(() => { setVideoOn(false) }, [pillar.id])
 
   return (
-    <div className="cs-panel" role="tabpanel" id={`tab-panel-${pillar.id}`} aria-labelledby={`tab-${pillar.id}`}>
-
-      {/* Before / After compare */}
+    <div
+      className="cs-panel"
+      role="tabpanel"
+      id={`tab-panel-${pillar.id}`}
+      aria-labelledby={`tab-${pillar.id}`}
+    >
+      {/* Before / After */}
       <div className="cs-compare">
-        {/* Before */}
         <div className="cs-card cs-card--before">
           <span className="cs-era cs-era--before">{pillar.before.era}</span>
           <div className="cs-card-img">
@@ -289,7 +276,7 @@ function PillarPanel({ pillar, onCta }) {
             <span className="cs-badge cs-badge--before" aria-hidden="true">আগে</span>
           </div>
           <div className="cs-card-body">
-            <p className="cs-hook cs-hook--before">{pillar.before.hook}</p>
+            <p className="cs-hook-text cs-hook-text--before">{pillar.before.hook}</p>
             <p className="cs-copy">{pillar.before.body}</p>
             <div className="cs-stat cs-stat--bad">
               <strong>{pillar.before.stat}</strong>
@@ -298,13 +285,11 @@ function PillarPanel({ pillar, onCta }) {
           </div>
         </div>
 
-        {/* Arrow */}
         <div className="cs-arrow" aria-hidden="true">
           <span className="cs-arr-h">{Icon.arrowR}</span>
           <span className="cs-arr-v">{Icon.arrowD}</span>
         </div>
 
-        {/* After */}
         <div className="cs-card cs-card--after">
           <span className="cs-era cs-era--after">{pillar.after.era}</span>
           <div className="cs-card-img">
@@ -312,7 +297,7 @@ function PillarPanel({ pillar, onCta }) {
             <span className="cs-badge cs-badge--after" aria-hidden="true">এখন</span>
           </div>
           <div className="cs-card-body">
-            <p className="cs-hook cs-hook--after">{pillar.after.hook}</p>
+            <p className="cs-hook-text cs-hook-text--after">{pillar.after.hook}</p>
             <p className="cs-copy">{pillar.after.body}</p>
             <div className="cs-stat cs-stat--good">
               <strong>{pillar.after.stat}</strong>
@@ -358,14 +343,17 @@ function PillarPanel({ pillar, onCta }) {
         <p className="cs-insight-text">{pillar.insight}</p>
       </div>
 
-      {/* WhatsApp CTA */}
+      {/* Pillar CTA — clean button, Packages parity */}
       <button
+        type="button"
         className="cs-pillar-cta"
         onClick={() => onCta(pillar)}
         aria-label={`WhatsApp-এ — ${pillar.cta}`}
       >
-        {Icon.wa}
-        <span>{pillar.cta}</span>
+        <span className="cs-pillar-inner">
+          {Icon.wa}
+          <span>{pillar.cta}</span>
+        </span>
         {Icon.arrowR}
       </button>
       <p className="cs-pillar-fine">কোনো বাধ্যবাধকতা নেই · পরামর্শ বিনামূল্যে</p>
@@ -373,17 +361,14 @@ function PillarPanel({ pillar, onCta }) {
   )
 }
 
-/* ══════════════════════════════════════════════════
-   ROOT
-══════════════════════════════════════════════════ */
+/* ══ ROOT ══ */
 export default function Process() {
-  const sectionRef  = useRef(null)
-  const firedRef    = useRef(false)
-  const [entered, setEntered]   = useState(false)
+  const sectionRef    = useRef(null)
+  const firedRef      = useRef(false)
+  const tabListRef    = useRef(null)
+  const [entered, setEntered]     = useState(false)
   const [activeTab, setActiveTab] = useState(0)
-  const tabListRef  = useRef(null)
 
-  /* IO — enter detection */
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
@@ -400,7 +385,6 @@ export default function Process() {
     return () => io.disconnect()
   }, [])
 
-  /* Track tab changes */
   const handleTab = useCallback((i) => {
     setActiveTab(i)
     track('ViewContent', { content_name: `Pillar Tab: ${PILLARS[i].titleBn}`, content_category: 'Tab' }, 'case_study')
@@ -408,7 +392,6 @@ export default function Process() {
     window.dataLayer.push({ event: 'tab_view', tab_label: PILLARS[i].titleEn })
   }, [])
 
-  /* Keyboard nav on tab list */
   const handleTabKey = useCallback((e, i) => {
     if (e.key === 'ArrowRight') {
       e.preventDefault()
@@ -438,7 +421,10 @@ export default function Process() {
     window.fbq?.('track', 'Lead', { content_name: 'Case Study Final CTA', currency: 'BDT', value: 0 }, { eventID: event_id })
     window.dataLayer = window.dataLayer || []
     window.dataLayer.push({ event: 'cta_click', cta_location: 'case_study_final', cta_label: 'free_roadmap', meta_event_id: event_id })
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen, আমি ফ্রি রোডম্যাপ চাই।')}`, '_blank', 'noreferrer')
+    window.open(
+      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো Digitalizen, আমি ফ্রি রোডম্যাপ চাই।')}`,
+      '_blank', 'noreferrer'
+    )
   }, [])
 
   return (
@@ -448,7 +434,6 @@ export default function Process() {
       className={`cs${entered ? ' cs--entered' : ''}`}
       aria-label="কেস স্টাডি — রিয়েল ট্রান্সফরমেশন"
     >
-      {/* Cross-hatch texture */}
       <div className="cs-texture" aria-hidden="true" />
 
       <div className="container">
@@ -460,19 +445,17 @@ export default function Process() {
         </div>
 
         {/* ══ HOOK ══ */}
-        <div className="cs-hook cs-r cs-r--2">
-          <p className="cs-tag-mono" aria-hidden="true">{CS_META.tag}</p>
-
+        <div className="cs-section-hook cs-r cs-r--2">
+    
           <h2 className="cs-headline">
             মার্কেটিং বাজেট{' '}
             <span className="cs-hl cs-hl--green">৫০% সাশ্রয়,</span>
             <br />
             সেলস <span className="cs-hl cs-hl--blue">৩০০% বৃদ্ধি।</span>
           </h2>
-
           <p className="cs-subhead">{CS_META.subhead}</p>
 
-          {/* Stats chips */}
+          {/* Stats grid — light, no dark bg */}
           <div className="cs-stats" role="list" aria-label="মূল ফলাফল">
             {STATS.map((s, i) => (
               <div key={i} className="cs-stat-chip" role="listitem">
@@ -484,21 +467,12 @@ export default function Process() {
         </div>
 
         {/* ══ CAMPAIGN PROOF ══ */}
-        <div className="cs-proof cs-r cs-r--3">
-          <div className="cs-rule" role="separator" aria-hidden="true">
-            <span>ক্যাম্পেইন প্রমাণ</span>
-          </div>
+        
 
           <div className="cs-proof-meta">
             <div>
               <p className="cs-proof-label">Ads Manager থেকে সরাসরি</p>
-              <div className="cs-proof-pills" aria-label="প্রমাণের ধরন">
-                {['ক্যাম্পেইন ড্যাশবোর্ড','ROAS রিপোর্ট','অডিয়েন্স ইনসাইট','কনভার্সন ট্র্যাকিং','A/B টেস্ট'].map((p, i) => (
-                  <span key={i} className="cs-proof-pill">
-                    <span className="cs-pill-dot" aria-hidden="true" />{p}
-                  </span>
-                ))}
-              </div>
+              
             </div>
             <span className="cs-live" aria-label="চলমান ডাটা">
               <span className="cs-live-dot" aria-hidden="true" />
@@ -515,14 +489,12 @@ export default function Process() {
             <span>৪-লেয়ার ট্রান্সফরমেশন</span>
           </div>
 
-          {/* Tab list — horizontal scroll, thumb-friendly */}
           <div
             className="cs-tabs"
             role="tablist"
             aria-label="ট্রান্সফরমেশন পিলার"
             ref={tabListRef}
           >
-            {/* Active indicator bar */}
             <div
               className="cs-tab-indicator"
               style={{ '--tab-i': activeTab, '--tab-count': PILLARS.length }}
@@ -547,7 +519,6 @@ export default function Process() {
             ))}
           </div>
 
-          {/* Panel */}
           <PillarPanel pillar={PILLARS[activeTab]} onCta={handlePillarCta} />
         </div>
 
@@ -603,11 +574,9 @@ export default function Process() {
           </ol>
         </div>
 
-        {/* ══ FINAL CTA — distinct diagonal dark panel ══ */}
+        {/* ══ FINAL CTA — white card, alive rings, no clip-path ══ */}
         <div className="cs-final-cta cs-r cs-r--7">
-          {/* Grid texture inside dark panel */}
           <div className="cs-cta-texture" aria-hidden="true" />
-          {/* Pulsing ring decorative */}
           <div className="cs-cta-ring" aria-hidden="true">
             <div className="cs-ring cs-ring--1" />
             <div className="cs-ring cs-ring--2" />
@@ -615,7 +584,7 @@ export default function Process() {
           </div>
 
           <div className="cs-cta-content">
-            <p className="cs-cta-tag">{'//এখনই শুরু করুন'}</p>
+           
             <h2 className="cs-cta-q">
               আপনার ব্যবসাও কি ভুল ডাটা আর
               <br />ব্যাকডেটেড সিস্টেমে আটকে আছে?
@@ -631,8 +600,10 @@ export default function Process() {
               onClick={handleFinalCta}
               aria-label="WhatsApp-এ ফ্রি রোডম্যাপ নিন"
             >
-              {Icon.wa}
-              <span>গেট মাই ফ্রি রোডম্যাপ — আজই সংগ্রহ করুন</span>
+              <span className="cs-cta-btn-inner">
+                {Icon.wa}
+                <span>গেট মাই ফ্রি রোডম্যাপ</span>
+              </span>
               {Icon.arrowR}
             </button>
 
@@ -640,7 +611,7 @@ export default function Process() {
           </div>
         </div>
 
-      </div>
+      
     </section>
   )
 }
