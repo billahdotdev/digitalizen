@@ -1,7 +1,24 @@
 .bookcall-section {
   padding: 72px 0;
   border-top: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
 }
+
+/* ── Grid overlay — identical to other sections ── */
+.bookcall-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Container floats above grid */
+.bookcall-section > .container { position: relative; z-index: 1; }
 
 .bookcall-card {
   background: var(--white);

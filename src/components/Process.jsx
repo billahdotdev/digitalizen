@@ -434,7 +434,8 @@ export default function Process() {
       className={`cs${entered ? ' cs--entered' : ''}`}
       aria-label="কেস স্টাডি — রিয়েল ট্রান্সফরমেশন"
     >
-      <div className="cs-texture" aria-hidden="true" />
+      {/* Grid background — matches other sections exactly */}
+      <div className="cs-bg-grid" aria-hidden="true" />
 
       <div className="container">
 

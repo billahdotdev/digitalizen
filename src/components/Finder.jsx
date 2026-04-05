@@ -1387,6 +1387,9 @@ export default function Finder() {
   ═════════════════════════════════════════════ */
   return (
     <section id="finder" className="finder-section" ref={sectionRef} aria-label="প্যাকেজ ফাইন্ডার — আপনার বিজনেসের জন্য সঠিক প্ল্যান খুঁজুন">
+      {/* Grid background — matches other sections exactly */}
+      <div className="finder-bg-grid" aria-hidden="true" />
+
       <div className="container">
 
         <div className="row-header">

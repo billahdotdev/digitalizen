@@ -144,6 +144,9 @@ export default function Faq() {
 
   return (
     <section id="faq" className="faq-section" aria-label="সাধারণ প্রশ্নোত্তর" ref={sectionRef}>
+      {/* Grid background — matches other sections exactly */}
+      <div className="faq-bg-grid" aria-hidden="true" />
+
       <div className="container">
 
         <div className="row-header">
