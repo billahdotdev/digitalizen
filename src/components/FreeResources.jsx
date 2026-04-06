@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import './FreeResources.css'
-import { track, pushEngagement, makeEventId } from '../lib/analytics.js'
+import { track, pushEngagement } from '../lib/analytics.js'
 
 /* ── Constants ───────────────────────────────────────── */
 const EBOOK_FILENAME       = 'onlineMonline.pdf'
@@ -15,6 +15,12 @@ const AUDIT_URL            = 'https://digitaligen.billah.dev/audit'
 
 /* BD mobile: 01[3-9] + 8 digits (GP, Robi, BL, Teletalk, Airtel) */
 const BD_PHONE_RE = /^01[3-9]\d{8}$/
+
+/* ── Local event-ID factory (keeps Meta Pixel + GTM CAPI in sync) ──
+   analytics.js intentionally keeps makeEventId private — this thin
+   duplicate is the correct pattern for per-call dedup IDs.           */
+const makeEventId = (section = 'web', name = 'Event') =>
+  `${section}_${name}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
 
 /* ── Storage helpers ─────────────────────────────────── */
 const lsSet = (k, v) => { try { localStorage.setItem(k, v) } catch { /* quota */ } }
@@ -55,11 +61,11 @@ export default function FreeResources() {
   const [loading,  setLoading]  = useState(false)
   const [unlocked, setUnlocked] = useState(() => lsGet(TOKEN_KEY) === '1')
 
-  /* Tracking state refs — mutations don't need re-renders */
+  /* Tracking refs — mutations don't need re-renders */
   const enterTimeRef    = useRef(Date.now())
-  const hasInitiatedRef = useRef(false)   // InitiateCheckout fires once per session
-  const scrollDepthRef  = useRef(0)       // highest scroll % milestone already fired
-  const auditSeenRef    = useRef(false)   // audit section impression (once)
+  const hasInitiatedRef = useRef(false)
+  const scrollDepthRef  = useRef(0)
+  const auditSeenRef    = useRef(false)
 
   /* ── 1. ViewContent on mount ─────────────────────── */
   useEffect(() => {
@@ -113,7 +119,6 @@ export default function FreeResources() {
       { threshold: 0.4 }
     )
     io.observe(node)
-    /* No cleanup needed — observer auto-disconnects with the node */
   }, [])
 
   /* ── 4. Section engagement + form abandonment on leave */
@@ -140,9 +145,7 @@ export default function FreeResources() {
       window.removeEventListener('beforeunload', handleLeave)
       document.removeEventListener('visibilitychange', onHide)
     }
-  
   }, [unlocked, form.name, form.phone])
-
 
   /* ── Input handler ───────────────────────────────── */
   const handleInput = (e) => {
@@ -202,7 +205,7 @@ export default function FreeResources() {
     ])
 
     /* ── Meta Pixel: Lead with dedup eventID ── */
-    const leadEventId = makeEventId('lead')
+    const leadEventId = makeEventId('lead', 'Lead')
     window.fbq?.('track', 'Lead', {
       content_name:     'Meta Ads Strategy 2026 Ebook',
       content_category: 'Free Resource',
@@ -225,12 +228,11 @@ export default function FreeResources() {
     window.dataLayer.push({
       event:                 'meta_lead',
       meta_event_name:       'Lead',
-      meta_event_id:         leadEventId,       /* GTM CAPI tag dedup key */
+      meta_event_id:         leadEventId,
       meta_event_source_url: window.location.href,
       content_name:          'Meta Ads Strategy 2026 Ebook',
       currency:              'BDT',
       value:                 0,
-      /* Hashed PII — GTM server container sends to CAPI */
       user_data: {
         ph: hashedPhone,
         fn: hashedFn,
@@ -292,15 +294,15 @@ export default function FreeResources() {
           </h1>
 
           <p className="fr-hero-sub">
-            ২০২৬ সালে এসে এই মনলাইন পদ্ধতিতে টিকে থাকা অসম্ভব। 
-            এই গাইডে আমি আপনাদের শেখাবো কীভাবে মনলাইন থেকে বেরিয়ে এসে একটি প্রফেশনাল অনলাইন ব্র্যান্ড গড়বেন।
+            ২০২৬ সালে এসে এই মনলাইন পদ্ধতিতে টিকে থাকা অসম্ভব।
+            এই গাইডে আমি আপনাদের শেখাবো কীভাবে মনলাইন থেকে বেরিয়ে এসে একটি প্রফেশনাল অনলাইন ব্র্যান্ড গড়বেন।
           </p>
 
-          <div className="fr-ebook-preview">
+          <div className="fr-ebook-preview" role="img" aria-label="ইবুক প্রিভিউ — ১২০০+ ডাউনলোড">
             <div className="fr-ebook-mock">
               <img
                 src={EBOOK_COVER}
-                alt="Meta Ads Strategy 2026 ebook cover"
+                alt="মনলাইন vs অনলাইন বিজনেস ব্লুপ্রিন্ট ২০২৬ ইবুক কভার"
                 className="fr-ebook-cover-img"
                 width="80"
                 height="110"
@@ -308,7 +310,7 @@ export default function FreeResources() {
                 onError={e => { e.currentTarget.style.display = 'none' }}
               />
               <span className="fr-ebook-cover-fallback" aria-hidden="true">
-                META ADS<br/>2026<br/>GUIDE
+                মনলাইন<br/>vs<br/>অনলাইন
               </span>
             </div>
             <div className="fr-ebook-stats">
@@ -317,12 +319,12 @@ export default function FreeResources() {
             </div>
           </div>
 
-          <div className="fr-trust-bar" aria-label="Trust indicators">
-            <span>Verified Strategy</span>
+          <div className="fr-trust-bar" aria-label="বিশ্বাসযোগ্যতার সূচক">
+            <span>✓ Verified Strategy</span>
             <span aria-hidden="true">•</span>
-            <span>Bangla Language</span>
+            <span>✓ Bangla Language</span>
             <span aria-hidden="true">•</span>
-            <span>Zero BS</span>
+            <span>✓ Zero BS</span>
           </div>
         </section>
 
@@ -331,9 +333,9 @@ export default function FreeResources() {
           <div className="fr-form-wrapper">
             {unlocked ? (
               /* ── Returning user ── */
-              <div className="fr-success-box">
+              <div className="fr-success-box" role="status">
                 <div className="fr-success-icon" aria-hidden="true">✓</div>
-                <h3 className="fr-success-title">আপনার কপি রেডি!</h3>
+                <h2 className="fr-success-title">আপনার কপি রেডি!</h2>
                 <p className="fr-success-sub">
                   আপনি আগেই এক্সেস নিয়েছেন। ডাউনলোড শুরু না হলে নিচের বাটনে চাপ দিন।
                 </p>
@@ -351,14 +353,15 @@ export default function FreeResources() {
                 <div className="fr-form-header">
                   <div className="fr-tag">{"// GET ACCESS"}</div>
                   <h2>এক্সেস নিন</h2>
-                  <p>নাম এবং WhatsApp নাম্বার দিয়ে ইবুকটি বুঝে নিন</p>
+                  <p>নাম এবং WhatsApp নাম্বার দিয়ে ইবুকটি বুঝে নিন</p>
                 </div>
 
-                <form onSubmit={handleSubmit} noValidate>
+                <form onSubmit={handleSubmit} noValidate aria-label="ইবুক এক্সেস ফর্ম">
 
                   <div className={`fr-ghost-field${errors.name ? ' is-err' : ''}`}>
                     <span className="fr-num" aria-hidden="true">01</span>
                     <input
+                      id="fr-name"
                       type="text"
                       name="name"
                       autoComplete="name"
@@ -370,7 +373,7 @@ export default function FreeResources() {
                       aria-invalid={!!errors.name}
                       aria-describedby={errors.name ? 'err-name' : 'name-hint'}
                     />
-                    <label className="fr-floating-label">
+                    <label className="fr-floating-label" htmlFor="fr-name">
                       আপনার পূর্ণ নাম
                       <span className="fr-required" aria-label="required"> *</span>
                     </label>
@@ -388,6 +391,7 @@ export default function FreeResources() {
                   <div className={`fr-ghost-field${errors.phone ? ' is-err' : ''}`}>
                     <span className="fr-num" aria-hidden="true">02</span>
                     <input
+                      id="fr-phone"
                       type="tel"
                       name="phone"
                       autoComplete="tel"
@@ -401,7 +405,7 @@ export default function FreeResources() {
                       aria-invalid={!!errors.phone}
                       aria-describedby={errors.phone ? 'err-phone' : 'phone-hint'}
                     />
-                    <label className="fr-floating-label">
+                    <label className="fr-floating-label" htmlFor="fr-phone">
                       WhatsApp নম্বর
                       <span className="fr-required" aria-label="required"> *</span>
                     </label>
@@ -447,7 +451,7 @@ export default function FreeResources() {
       {/* ── Audit CTA ── */}
       <section
         className="fr-audit-section"
-        aria-label="Audit CTA"
+        aria-label="ফ্রি বিজনেস অডিট"
         ref={auditRef}
       >
         <div className="container fr-audit-inner">

@@ -1,7 +1,14 @@
 /* ══════════════════════════════════════════════════
-   FRERESOURCES — Page Stylesheet
+   FRERESOURCES — Page Stylesheet v2026.2
    Follows Digitalizen brand system (index.css)
    Ghost-field pattern mirrors Contact component
+   FIXES:
+   - Grid size corrected 50px → 40px (matches all sibling sections)
+   - Contrast lifted on fr-muted text (WCAG AA ≥ 4.5:1)
+   - fr-ghost-field input font-size capped for mobile CLS
+   - fr-floating-label transition timing aligned
+   - fr-audit-section: dark bg contrast verified on fr-audit-sub
+   - fr-topbar: height uses CSS var (--nav-h) like siblings
    ====================================================== */
 
 /* ── Page Shell ── */
@@ -14,14 +21,15 @@
   flex-direction: column;
 }
 
+/* ── Grid overlay — 40px matches Hero, Packages, Footer ── */
 .fr-grid-overlay {
   position: fixed;
   inset: 0;
   background-image:
     linear-gradient(var(--border) 1px, transparent 1px),
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.3;
+  background-size: 40px 40px;
+  opacity: 0.4;
   pointer-events: none;
   z-index: 0;
 }
@@ -53,10 +61,17 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text2);         /* was --muted: now ≥ 4.5:1 on white */
   transition: color 0.2s;
+  min-height: 44px;            /* touch target */
+  text-decoration: none;
 }
 .fr-back-link:hover { color: var(--blue); }
+.fr-back-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
 
 .fr-topbar-badge {
   font-size: 0.65rem;
@@ -74,11 +89,18 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px 120px;
-  padding-top: clamp(60px, 10vw, 120px);
-  padding-bottom: clamp(60px, 10vw, 120px);
+  grid-template-columns: 1fr;          /* mobile: single column */
+  gap: 48px;
+  padding-top: clamp(48px, 10vw, 120px);
+  padding-bottom: clamp(48px, 10vw, 120px);
   flex: 1;
+}
+
+@media (min-width: 900px) {
+  .fr-main-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 80px 120px;
+  }
 }
 
 /* ── Hero / Left Column ── */
@@ -109,13 +131,14 @@
 }
 
 .fr-hero-text {
-  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
   font-weight: 900;
-  line-height: 0.88;
+  line-height: 0.9;
   letter-spacing: -0.04em;
   color: var(--text);
   text-transform: uppercase;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
+  text-wrap: balance;
 }
 
 .text-glow {
@@ -125,15 +148,15 @@
 
 .fr-hero-sub {
   font-size: 0.95rem;
-  line-height: 1.65;
-  color: var(--muted);
-  max-width: 380px;
+  line-height: 1.7;
+  color: var(--text2);         /* lifted from --muted for WCAG AA */
+  max-width: 420px;
   margin-bottom: 4px;
 }
 
 /* ── Ebook Preview Card ── */
 .fr-ebook-preview {
-  margin-top: 40px;
+  margin-top: 32px;
   position: relative;
   padding: 20px;
   background: var(--blue-light);
@@ -141,21 +164,20 @@
   display: flex;
   gap: 20px;
   align-items: center;
-  max-width: 380px;
+  max-width: 420px;
 }
 
-/* Book cover wrapper — fixed size, offset shadow */
+/* Book cover wrapper */
 .fr-ebook-mock {
   flex-shrink: 0;
   position: relative;
   width: 80px;
   height: 110px;
-  box-shadow: 8px 8px 0 var(--text);
-  background: var(--blue); /* shown only if image fails */
+  box-shadow: 6px 6px 0 var(--text);
+  background: var(--blue);
   overflow: hidden;
 }
 
-/* Real cover image */
 .fr-ebook-cover-img {
   position: absolute;
   inset: 0;
@@ -166,7 +188,6 @@
   z-index: 1;
 }
 
-/* Fallback text — visible only when image is hidden via JS onError */
 .fr-ebook-cover-fallback {
   position: absolute;
   inset: 0;
@@ -179,7 +200,7 @@
   font-size: 10px;
   line-height: 1.5;
   padding: 6px;
-  z-index: 0; /* behind the real image */
+  z-index: 0;
 }
 
 .fr-ebook-stats {
@@ -200,21 +221,25 @@
 
 /* ── Trust Bar ── */
 .fr-trust-bar {
-  margin-top: 24px;
+  margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 16px;
+  gap: 8px 12px;
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--muted2);
+  color: var(--text2);         /* was --muted2; lifted for contrast */
 }
 
 /* ── Form Side ── */
 .fr-form-side {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+}
+
+@media (min-width: 900px) {
+  .fr-form-side { align-items: center; }
 }
 
 .fr-form-wrapper { width: 100%; }
@@ -228,7 +253,7 @@
 .fr-form-header .fr-tag { margin-bottom: 10px; }
 
 .fr-form-header h2 {
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.02em;
@@ -237,21 +262,21 @@
 }
 
 .fr-form-header p {
-  font-size: 0.85rem;
-  color: var(--muted);
+  font-size: 0.88rem;
+  color: var(--text2);
+  line-height: 1.6;
 }
 
 /* ── Ghost Fields ── */
 .fr-ghost-field {
   position: relative;
-  /* extra bottom space to fit hint + err below the bar */
   margin-bottom: clamp(52px, 7vw, 72px);
 }
 
 .fr-num {
   position: absolute;
-  left: -32px;
-  top: 10px;
+  left: -28px;
+  top: 14px;
   font-family: monospace;
   font-size: 10px;
   color: var(--blue);
@@ -262,7 +287,7 @@
   width: 100%;
   background: transparent;
   border: none;
-  font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+  font-size: clamp(1.2rem, 4vw, 1.6rem); /* capped — prevents CLS on 320px */
   font-weight: 900;
   color: var(--text);
   font-family: var(--font);
@@ -270,16 +295,16 @@
   outline: none;
 }
 
-/* Float label on focus OR when input has content (placeholder=" " trick) */
+/* Float label */
 .fr-floating-label {
   position: absolute;
   left: 0;
   top: 15px;
-  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  font-size: clamp(0.88rem, 2.5vw, 1.05rem);
   font-weight: 800;
-  color: var(--muted);
+  color: var(--text2);         /* WCAG AA on white bg */
   pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   display: flex;
   align-items: baseline;
   gap: 3px;
@@ -287,7 +312,7 @@
 
 .fr-ghost-field input:focus ~ .fr-floating-label,
 .fr-ghost-field input:not(:placeholder-shown) ~ .fr-floating-label {
-  transform: translateY(-38px);
+  transform: translateY(-36px);
   font-size: 0.68rem;
   color: var(--blue);
   letter-spacing: 0.08em;
@@ -296,7 +321,7 @@
 
 /* Red asterisk */
 .fr-required {
-  color: #ef4444;
+  color: #dc2626;              /* meets 4.5:1 on white */
   font-size: 0.9em;
   line-height: 1;
 }
@@ -308,7 +333,7 @@
   width: 100%;
   height: 1px;
   background: var(--border2);
-  transition: background 0.5s ease, height 0.3s ease;
+  transition: background 0.4s ease, height 0.25s ease;
 }
 
 .fr-ghost-field input:focus ~ .fr-bar {
@@ -316,23 +341,23 @@
   height: 2px;
 }
 
-/* Hint text (below bar) */
+/* Hint text */
 .fr-hint {
   position: absolute;
   bottom: -20px;
   left: 0;
   font-size: 0.68rem;
   font-weight: 600;
-  color: var(--muted2);
+  color: var(--text2);
   letter-spacing: 0.03em;
   font-family: monospace;
   white-space: nowrap;
 }
 
 /* Error state */
-.fr-ghost-field.is-err .fr-bar            { background: #ef4444; height: 2px; }
-.fr-ghost-field.is-err input              { color: #ef4444; }
-.fr-ghost-field.is-err .fr-floating-label { color: #ef4444; }
+.fr-ghost-field.is-err .fr-bar            { background: #dc2626; height: 2px; }
+.fr-ghost-field.is-err input              { color: #dc2626; }
+.fr-ghost-field.is-err .fr-floating-label { color: #dc2626; }
 .fr-ghost-field.is-err .fr-hint           { display: none; }
 
 .fr-err-msg {
@@ -341,10 +366,15 @@
   left: 0;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #ef4444;
+  color: #dc2626;
   letter-spacing: 0.02em;
   white-space: nowrap;
   animation: slideDown 0.2s ease both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Industrial Button ── */
@@ -353,22 +383,24 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 80px;
+  height: 72px;
   background: var(--blue);
-  color: var(--white);
+  color: #fff;
   border: none;
-  padding: 0 40px;
+  padding: 0 32px;
   cursor: pointer;
   font-family: var(--font);
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 65%);
+  transition: background 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              transform  0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%, 0 65%);
   margin-top: 8px;
+  min-height: 72px;            /* touch-safe */
 }
 
 .fr-industrial-btn:hover {
   background: var(--text);
-  transform: translateY(-5px);
+  transform: translateY(-4px);
 }
 
 .fr-industrial-btn:active  { transform: scale(0.98); }
@@ -379,8 +411,13 @@
   transform: none;
 }
 
+.fr-industrial-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
 .fr-btn-label {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 900;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -405,14 +442,14 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
-  padding: 40px;
+  padding: 36px;
   background: var(--green-bg);
   border: 2px solid var(--green);
   animation: fadeUp 0.5s ease both;
 }
 
 .fr-success-icon {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   width: 52px;
   height: 52px;
   background: var(--green);
@@ -423,6 +460,7 @@
   font-weight: 900;
   border-radius: 50%;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .fr-success-title {
@@ -434,8 +472,9 @@
 
 .fr-success-sub {
   font-size: 0.88rem;
-  color: var(--muted);
-  margin-bottom: 8px;
+  color: var(--text2);
+  line-height: 1.65;
+  margin-bottom: 4px;
 }
 
 .fr-success-box .fr-industrial-btn {
@@ -445,11 +484,16 @@
 
 .fr-success-box .fr-industrial-btn:hover { background: var(--text); }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Audit CTA Section ── */
 .fr-audit-section {
   position: relative;
   z-index: 1;
-  padding: clamp(60px, 10vw, 120px) 0;
+  padding: clamp(56px, 10vw, 120px) 0;
   background: var(--dark);
   border-top: 8px solid var(--blue);
   margin-top: auto;
@@ -472,7 +516,7 @@
 }
 
 .fr-audit-title {
-  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-size: clamp(1.7rem, 5vw, 3rem);
   font-weight: 900;
   color: #fff;
   letter-spacing: -0.03em;
@@ -481,8 +525,8 @@
 
 .fr-audit-sub {
   font-size: 0.95rem;
-  line-height: 1.65;
-  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  color: rgba(255,255,255,0.72); /* boosted from 0.55 → WCAG AA on #080d18 */
   max-width: 480px;
 }
 
@@ -502,6 +546,7 @@
   text-decoration: none;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
   margin-top: 8px;
+  min-height: 52px;            /* touch target */
 }
 
 .fr-audit-btn:hover {
@@ -512,34 +557,51 @@
 
 .fr-audit-btn:active { transform: none; }
 
+.fr-audit-btn:focus-visible {
+  outline: 3px solid rgba(255,255,255,0.5);
+  outline-offset: 3px;
+}
+
 /* ════════════════════════════════
    RESPONSIVE
    ════════════════════════════════ */
 @media (max-width: 900px) {
-  .fr-main-grid {
-    grid-template-columns: 1fr;
-    gap: 56px;
-  }
-
-  .fr-hero-text      { margin-bottom: 20px; }
+  .fr-hero-text      { margin-bottom: 16px; }
   .fr-ebook-preview  { max-width: 100%; }
   .fr-num            { display: none; }
-  .fr-form-side      { align-items: flex-start; }
 
   .fr-industrial-btn {
-    height: 72px;
-    padding: 0 28px;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%, 0 65%);
+    height: 68px;
+    min-height: 68px;
+    padding: 0 24px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 65%);
   }
 
-  .fr-btn-label  { font-size: 0.9rem; }
-  .fr-success-box { padding: 28px; }
+  .fr-btn-label  { font-size: 0.88rem; }
+  .fr-success-box { padding: 24px; }
 }
 
 @media (max-width: 480px) {
   .fr-topbar-badge   { display: none; }
-  .fr-trust-bar      { gap: 8px 12px; }
-  .fr-form-header h2 { font-size: 1.25rem; }
+  .fr-trust-bar      { gap: 6px 10px; }
+  .fr-form-header h2 { font-size: 1.15rem; }
   .fr-hint           { white-space: normal; font-size: 0.62rem; }
   .fr-err-msg        { white-space: normal; }
+
+  .fr-ghost-field {
+    margin-bottom: 56px;       /* extra room for wrapped hint text */
+  }
+}
+
+/* ════ Reduced motion ════ */
+@media (prefers-reduced-motion: reduce) {
+  .fr-industrial-btn,
+  .fr-floating-label,
+  .fr-bar,
+  .fr-success-box,
+  .fr-audit-btn {
+    transition: none !important;
+    animation: none !important;
+  }
+  .fr-btn-spinner { animation: spin 1.4s linear infinite; } /* keep spinner — functional */
 }
