@@ -164,6 +164,28 @@ export default function SocialProof() {
 
           <div className="sp-portrait-col">
             <div className="sp-portrait-frame">
+              {/*
+               * RENDER SITE — Founder Portrait
+               * ─────────────────────────────────────────────────────────
+               * SLOT        : .sp-portrait-frame  (72 × 72 px circle)
+               * DIMENSIONS  : Upload at 144 × 144 px  (2× for HiDPI/OLED)
+               *               Hard minimum: 72 × 72 px
+               * ASPECT RATIO: 1:1 (square — CSS clips to circle via border-radius)
+               * FORMAT      : WebP  ·  max 20 KB  ·  sRGB
+               * SUBJECT     : Face must be centered — CSS object-fit:cover will
+               *               crop edges; do NOT rely on sides of the image.
+               *
+               * SERVER-SIDE SAFETY NET (Cloudflare Images / Workers)
+               * ┌─ Auto-resize  : cf.image.width=144&height=144&fit=cover&gravity=face
+               * ├─ Auto-format  : cf.image.format=webp
+               * ├─ Quality gate : cf.image.quality=85
+               * └─ Size cap     : Worker rejects originals > 2 MB
+               *
+               * Currently served from GitHub avatars CDN (external).
+               * Swap to self-hosted WebP in /images/founder.webp for
+               * full Cloudflare edge caching control and zero CORS risk.
+               * ─────────────────────────────────────────────────────────
+               */}
               <img
                 src="https://avatars.githubusercontent.com/u/112099343?s=294&v=4"
                 alt="Masum Billah — Digitalizen Founder"

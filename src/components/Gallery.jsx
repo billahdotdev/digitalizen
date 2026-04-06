@@ -2,6 +2,29 @@ import { useCallback } from 'react'
 import { track, WA_NUMBER } from '../lib/analytics.js'
 import './Gallery.css'
 
+/* ─────────────────────────────────────────────────────────────────
+   IMAGE SPEC — Gallery Project Cards (001–006)
+   ─────────────────────────────────────────────────────────────────
+   SLOT        : .gl-parallax-box > .gl-img
+   ASPECT RATIO: 4:5 (mobile) · 16:9 (≥600 px) — enforced via CSS
+   DIMENSIONS  : 900 × 506 px  (covers both breakpoints at 1×)
+                 Upload at 1800 × 1012 px for HiDPI / retina screens
+   FORMAT      : WebP  (AVIF optional as <picture> source)
+   MAX SIZE    : 120 KB per image  (target ≤ 80 KB after compression)
+   COLOR SPACE : sRGB
+   NAMING      : 1.webp … 6.webp  →  ./images/1.webp … ./images/6.webp
+
+   SERVER-SIDE SAFETY NET (Cloudflare Images / Workers)
+   ┌─ Auto-resize  : cf.image.width=900&fit=cover&gravity=auto
+   ├─ Auto-format  : cf.image.format=webp  (falls back to JPEG)
+   ├─ Quality gate : cf.image.quality=80  (strips any EXIF bloat)
+   └─ Size cap     : Worker returns 400 if original > 5 MB
+      → Add to wrangler.toml: [images] max_upload_size_mb = 5
+
+   WHY: .gl-parallax-box overflows 130 % of card height and animates
+   vertically ±15 %. Undersized images will pixelate. Oversized ones
+   waste bandwidth on Dhaka 4G (avg RTT ~80 ms, ~10 Mbps downlink).
+   ───────────────────────────────────────────────────────────────── */
 const projects = [
   { id: 1, number: '001', title: 'DhakaTeez',    image: './images/1.jpg', url: 'https://billahdotdev.github.io/dhakateez/' },
   { id: 2, number: '002', title: 'Auora',         image: './images/2.jpg', url: 'https://billahdotdev.github.io/velore_bangla/' },
@@ -56,7 +79,16 @@ export default function Gallery() {
                   onTouchMove={handleTouch}
                 >
                   <div className="gl-parallax-box">
-                    <img
+                    {/*
+                   * RENDER SITE — .gl-img
+                   * Intrinsic  : width="900" height="600"  (locks layout → zero CLS)
+                   * Display    : 100vw mobile → scales with container on desktop
+                   * Format     : WebP · max 120 KB · sRGB
+                   * LCP note   : Card 001 (i=0) is the above-fold LCP candidate —
+                   *              keep its WebP ≤ 60 KB for sub-LCP-2.5s on 4G.
+                   * Cards 002–006 lazy-load; browser fetches during idle scroll.
+                   */}
+                  <img
                       src={project.image}
                       alt={project.title}
                       className="gl-img"

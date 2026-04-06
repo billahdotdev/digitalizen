@@ -51,6 +51,38 @@ const STATS = [
   { num: '১২%+', label: 'Conv. Rate' },
 ]
 
+/* ─────────────────────────────────────────────────────────────────
+   IMAGE SPEC — Pillar Before / After Cards  (cs-card-img > img)
+   ─────────────────────────────────────────────────────────────────
+   SLOT        : .cs-card-img > img  — 8 images total (4 pillars × before/after)
+   DIMENSIONS  : 800 × 450 px  (16:9) — matches .cs-card-img CSS aspect-ratio
+                 Upload at 1600 × 900 px for retina. Minimum: 400 × 225 px.
+   ASPECT RATIO: 16:9 — strictly required. Portrait images will be cropped
+                 aggressively by object-fit:cover; horizontal composition only.
+   FORMAT      : WebP  ·  max 80 KB per image  ·  sRGB
+   CONTENT     : "Before" cards use muted/error-toned visuals (reinforce pain).
+                 "After" cards use clean/bright visuals (reinforce success).
+
+   IMAGE SPEC — Video Thumbnail  (cs-video-thumb > img)
+   ─────────────────────────────────────────────────────────────────
+   SLOT        : .cs-video-thumb > img  (Pillar 01 only)
+   DIMENSIONS  : 1280 × 720 px  (16:9 — YouTube/Loom standard)
+                 Minimum: 640 × 360 px
+   FORMAT      : WebP  ·  max 120 KB  ·  sRGB
+   NOTE        : Replace thumb Unsplash URL with a real Loom thumbnail once
+                 YOUR_LOOM_VIDEO_ID is set. Loom provides auto-generated
+                 thumbnails at: https://cdn.loom.com/sessions/thumbnails/{id}-with-play.gif
+                 Use the static /00001.jpg variant for zero-motion CWV compliance.
+
+   SERVER-SIDE SAFETY NET — applies to ALL Pillar images
+   ┌─ Auto-resize  : cf.image.width=800&height=450&fit=cover&gravity=auto
+   ├─ Auto-format  : cf.image.format=webp
+   ├─ Quality gate : cf.image.quality=80
+   └─ Size cap     : Worker returns 400 if original > 8 MB
+
+   Currently using Unsplash placeholders (w=800&q=75 in URL).
+   Replace each img URL with /images/pillar-{id}-{before|after}.webp
+   ───────────────────────────────────────────────────────────────── */
 const PILLARS = [
   {
     id: '01',
@@ -168,6 +200,27 @@ const PILLARS = [
   },
 ]
 
+/* ─────────────────────────────────────────────────────────────────
+   IMAGE SPEC — ProofGallery Screenshot Strip
+   ─────────────────────────────────────────────────────────────────
+   SLOT        : .pg-thumb-img > img  (thumbnail) + .pg-viewer img (lightbox)
+   DIMENSIONS  : 800 × 500 px  (16:10 landscape — matches analytics dashboard ratio)
+                 Upload at 1600 × 1000 px for retina lightbox view
+   ASPECT RATIO: 16:10 or 16:9 — both work; avoid portrait
+   FORMAT      : WebP  ·  max 80 KB per thumb  ·  sRGB
+   CONTENT     : Real Ads Manager / Meta Analytics screenshots.
+                 Blur sensitive spend figures if needed before upload.
+
+   SERVER-SIDE SAFETY NET (Cloudflare Images / Workers)
+   ┌─ Auto-resize  : cf.image.width=800&fit=scale-down
+   ├─ Auto-format  : cf.image.format=webp
+   ├─ Quality gate : cf.image.quality=82
+   └─ Size cap     : Worker returns 400 if original > 5 MB
+      → Strips EXIF metadata automatically (privacy + ~15 KB saving)
+
+   Currently using Unsplash placeholders. Replace each src with
+   real client screenshots hosted at /images/proof-{n}.webp
+   ───────────────────────────────────────────────────────────────── */
 const GALLERY = [
   { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', caption: 'ক্যাম্পেইন ড্যাশবোর্ড' },
   { src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80', caption: 'ROAS রিপোর্ট' },
@@ -218,6 +271,7 @@ function ProofGallery() {
               aria-label={`${item.caption} — ${active === i ? 'বন্ধ' : 'দেখুন'}`}
             >
               <div className="pg-thumb-img">
+                {/* RENDER SITE — Proof strip thumb · 800×500 px WebP · max 80 KB */}
                 <img src={item.src} alt="" loading="lazy" decoding="async" aria-hidden="true" />
                 <div className="pg-expand" aria-hidden="true">{Icon.expand}</div>
               </div>
@@ -240,6 +294,7 @@ function ProofGallery() {
       >
         {cur && (
           <div className="pg-viewer-inner">
+            {/* RENDER SITE — Proof lightbox · same src · 1600×1000 px upload recommended */}
             <img key={active} src={cur.src} alt={cur.caption} className={fading ? 'pg-img--fade' : ''} />
             <button className="pg-nav pg-nav--l" onClick={() => nav(-1)} aria-label="আগের ছবি">{Icon.prev}</button>
             <button className="pg-nav pg-nav--r" onClick={() => nav(1)}  aria-label="পরের ছবি">{Icon.next}</button>
@@ -272,6 +327,7 @@ function PillarPanel({ pillar, onCta }) {
         <div className="cs-card cs-card--before">
           <span className="cs-era cs-era--before">{pillar.before.era}</span>
           <div className="cs-card-img">
+            {/* RENDER SITE — Before card · 800×450 px WebP · max 80 KB · 16:9 */}
             <img src={pillar.before.img} alt={pillar.before.imgAlt} loading="lazy" decoding="async" />
             <span className="cs-badge cs-badge--before" aria-hidden="true">আগে</span>
           </div>
@@ -293,6 +349,7 @@ function PillarPanel({ pillar, onCta }) {
         <div className="cs-card cs-card--after">
           <span className="cs-era cs-era--after">{pillar.after.era}</span>
           <div className="cs-card-img">
+            {/* RENDER SITE — After card · 800×450 px WebP · max 80 KB · 16:9 */}
             <img src={pillar.after.img} alt={pillar.after.imgAlt} loading="lazy" decoding="async" />
             <span className="cs-badge cs-badge--after" aria-hidden="true">এখন</span>
           </div>
@@ -316,6 +373,7 @@ function PillarPanel({ pillar, onCta }) {
               onClick={() => setVideoOn(true)}
               aria-label={`ভিডিও চালান — ${pillar.video.label}`}
             >
+              {/* RENDER SITE — Video thumb · 1280×720 px WebP · max 120 KB · 16:9 */}
               <img src={pillar.video.thumb} alt={pillar.video.label} loading="lazy" decoding="async" />
               <div className="cs-video-overlay">
                 <div className="cs-play-ring" aria-hidden="true">{Icon.play}</div>
