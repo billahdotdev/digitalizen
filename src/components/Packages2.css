@@ -1,11 +1,7 @@
 /* ═══════════════════════════════════════════════
-   PACKAGES.CSS — Pricing Stack v2026.4
+   PACKAGES.CSS — Pricing Stack v2026.3
    Mobile-first · Sticky Stack · Scroll-Driven
-   v2026.4 changes:
-   - Electric: border-spin killed on mobile → solid white + blue border (zero CPU)
-   - Obsidian: canvas/rAF removed → pure CSS box-shadow particle constellation
-   - Mobile bg: frosted + electric guaranteed #fff at ≤768px
-   - Contrast: pk-feat-item lifted to var(--text) on frosted/electric for WCAG AA
+   Grid background added to match Hero.
    ═══════════════════════════════════════════════ */
 
 @property --border-angle {
@@ -18,7 +14,7 @@
 .pk-section {
   padding: 72px 0 100px;
   background: var(--bg);
-  position: relative;
+  position: relative;   /* required for grid overlay */
   overflow: hidden;
 }
 
@@ -56,7 +52,7 @@
 }
 
 @media (min-width: 768px) {
-  .pk-card  { top: 100px; }
+  .pk-card { top: 100px; }
   .pk-stack { gap: 60px; }
 }
 
@@ -111,9 +107,9 @@
   flex-wrap: wrap;
 }
 
-.pk-unit   { font-size: 1.15rem; font-weight: 700; }
-.pk-amount { font-size: 3rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
-.pk-period { font-size: 0.85rem; font-weight: 600; opacity: 0.55; align-self: flex-end; padding-bottom: 4px; }
+.pk-unit        { font-size: 1.15rem; font-weight: 700; }
+.pk-amount      { font-size: 3rem;   font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+.pk-period      { font-size: 0.85rem; font-weight: 600; opacity: 0.55; align-self: flex-end; padding-bottom: 4px; }
 
 @media (min-width: 768px) {
   .pk-amount { font-size: 3.5rem; }
@@ -183,10 +179,17 @@
   transition: background-position 0.5s ease;
 }
 
-.pk-btn:hover            { background: var(--blue); gap: 20px; transform: translateY(-1px); }
-.pk-btn:hover::after     { background-position: -200% 0; }
-.pk-btn:active           { opacity: 0.85; transform: translateY(0); }
-.pk-btn:focus-visible    { outline: 3px solid var(--blue); outline-offset: 3px; }
+.pk-btn:hover {
+  background: var(--blue);
+  gap: 20px;
+  transform: translateY(-1px);
+}
+.pk-btn:hover::after { background-position: -200% 0; }
+.pk-btn:active { opacity: 0.85; transform: translateY(0); }
+.pk-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
 
 /* ── Typography ───────────────────────────────── */
 .pk-serial {
@@ -223,8 +226,7 @@
   font-weight: 600;
   line-height: 1.4;
   margin-bottom: 14px;
-  /* Lifted from var(--text2) → var(--text) for WCAG AA on white cards */
-  color: var(--text);
+  color: var(--text2);
 }
 
 .pk-dot {
@@ -260,7 +262,6 @@
   border: 1px solid var(--border2);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
-
 .pk-card--frosted:hover .pk-card-inner {
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px) scale(0.998);
@@ -306,11 +307,11 @@
   to { --border-angle: 360deg; }
 }
 
-.pk-card--electric .pk-btn       { background: var(--blue); }
-.pk-card--electric .pk-btn:hover { background: var(--blue-dark); }
-.pk-card--electric .pk-ad-chip   {
-  background: rgba(31, 75, 255, 0.06);
-  border-color: rgba(31, 75, 255, 0.22);
+.pk-card--electric .pk-btn        { background: var(--blue); }
+.pk-card--electric .pk-btn:hover  { background: var(--blue-dark); }
+.pk-card--electric .pk-ad-chip    {
+  background: rgba(31,75,255,0.06);
+  border-color: rgba(31,75,255,0.22);
 }
 
 
@@ -338,22 +339,10 @@
 }
 
 @keyframes obsidian-card-glow {
-  0%, 100% {
-    box-shadow:
-      0 0 0 1px rgba(31, 75, 255, 0.15),
-      inset 0 0 60px rgba(31, 75, 255, 0.04),
-      0 32px 80px -12px rgba(0, 0, 0, 0.85);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1px rgba(31, 75, 255, 0.45),
-      inset 0 0 60px rgba(31, 75, 255, 0.08),
-      0 32px 80px -12px rgba(0, 0, 0, 0.85),
-      0 0 28px rgba(31, 75, 255, 0.18);
-  }
+  0%,100% { box-shadow: 0 0 0 1px rgba(31,75,255,0.15), inset 0 0 60px rgba(31,75,255,0.04), 0 32px 80px -12px rgba(0,0,0,0.85); }
+  50%     { box-shadow: 0 0 0 1px rgba(31,75,255,0.45), inset 0 0 60px rgba(31,75,255,0.08), 0 32px 80px -12px rgba(0,0,0,0.85), 0 0 28px rgba(31,75,255,0.18); }
 }
 
-/* ── Drifting dot grid (existing) ── */
 .pk-card--obsidian .pk-card-inner::before {
   content: '';
   position: absolute;
@@ -372,14 +361,13 @@
   to   { background-position: 28px 28px; }
 }
 
-/* ── Floating orb glows (existing) ── */
 .pk-card--obsidian .pk-card-inner::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle 160px at 15% 20%, rgba(31, 75, 255, 0.30) 0%, transparent 70%),
-    radial-gradient(circle 120px at 85% 75%, rgba(80, 130, 255, 0.22) 0%, transparent 65%);
+    radial-gradient(circle 160px at 15% 20%,  rgba(31, 75, 255, 0.30) 0%, transparent 70%),
+    radial-gradient(circle 120px at 85% 75%,  rgba(80, 130, 255, 0.22) 0%, transparent 65%);
   animation: orbs-float 8s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
@@ -387,147 +375,61 @@
 }
 
 @keyframes orbs-float {
-  0%, 100% {
+  0%,100% {
     background:
-      radial-gradient(circle 160px at 15% 20%, rgba(31, 75, 255, 0.30) 0%, transparent 70%),
-      radial-gradient(circle 120px at 85% 75%, rgba(80, 130, 255, 0.22) 0%, transparent 65%);
+      radial-gradient(circle 160px at 15% 20%,  rgba(31, 75, 255, 0.30) 0%, transparent 70%),
+      radial-gradient(circle 120px at 85% 75%,  rgba(80, 130, 255, 0.22) 0%, transparent 65%);
   }
   25% {
     background:
-      radial-gradient(circle 180px at 25% 35%, rgba(31, 75, 255, 0.35) 0%, transparent 70%),
-      radial-gradient(circle 100px at 75% 60%, rgba(80, 130, 255, 0.18) 0%, transparent 65%);
+      radial-gradient(circle 180px at 25% 35%,  rgba(31, 75, 255, 0.35) 0%, transparent 70%),
+      radial-gradient(circle 100px at 75% 60%,  rgba(80, 130, 255, 0.18) 0%, transparent 65%);
   }
   50% {
     background:
-      radial-gradient(circle 140px at 20% 55%, rgba(31, 75, 255, 0.28) 0%, transparent 70%),
-      radial-gradient(circle 140px at 80% 30%, rgba(80, 130, 255, 0.26) 0%, transparent 65%);
+      radial-gradient(circle 140px at 20% 55%,  rgba(31, 75, 255, 0.28) 0%, transparent 70%),
+      radial-gradient(circle 140px at 80% 30%,  rgba(80, 130, 255, 0.26) 0%, transparent 65%);
   }
   75% {
     background:
-      radial-gradient(circle 170px at 10% 30%, rgba(31, 75, 255, 0.32) 0%, transparent 70%),
-      radial-gradient(circle 110px at 90% 65%, rgba(80, 130, 255, 0.20) 0%, transparent 65%);
+      radial-gradient(circle 170px at 10% 30%,  rgba(31, 75, 255, 0.32) 0%, transparent 70%),
+      radial-gradient(circle 110px at 90% 65%,  rgba(80, 130, 255, 0.20) 0%, transparent 65%);
   }
 }
 
-/* ══════════════════════════════════════════════════
-   OBSIDIAN — CSS Particle Constellation
-   Zero JS · Zero rAF · Pure box-shadow + keyframe
-   Two pseudo-elements:
-     ::before — particle dots (box-shadow constellation)
-     ::after  — diagonal mesh lines (background-image drift)
-   ══════════════════════════════════════════════════ */
-
-.pk-obsidian-particles {
+.pk-obsidian-canvas {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
   z-index: 1;
-  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.6;
 }
 
-/* ── Particle dots via box-shadow ── */
-.pk-obsidian-particles::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: rgba(80, 160, 255, 0.9);
-  /* 28 hand-placed particles across the card canvas */
-  box-shadow:
-    /* Bright tier */
-     42px  68px rgba(80, 160, 255, 0.90),
-    182px  34px rgba(80, 160, 255, 0.75),
-    322px  88px rgba(80, 160, 255, 0.85),
-    484px  52px rgba(80, 160, 255, 0.70),
-    562px 142px rgba(80, 160, 255, 0.80),
-     88px 182px rgba(80, 160, 255, 0.65),
-    242px 202px rgba(80, 160, 255, 0.90),
-    402px 172px rgba(80, 160, 255, 0.75),
-    522px 222px rgba(80, 160, 255, 0.85),
-    142px 282px rgba(80, 160, 255, 0.70),
-    362px 302px rgba(80, 160, 255, 0.95),
-    502px 262px rgba(80, 160, 255, 0.60),
-     62px 342px rgba(80, 160, 255, 0.80),
-    282px 362px rgba(80, 160, 255, 0.75),
-    442px 342px rgba(80, 160, 255, 0.90),
-    /* Mid tier */
-    112px 112px rgba(80, 160, 255, 0.45),
-    222px 152px rgba(80, 160, 255, 0.40),
-    352px 202px rgba(80, 160, 255, 0.50),
-    472px  92px rgba(80, 160, 255, 0.35),
-     32px 252px rgba(80, 160, 255, 0.45),
-    202px 322px rgba(80, 160, 255, 0.40),
-    422px 272px rgba(80, 160, 255, 0.50),
-    552px 312px rgba(80, 160, 255, 0.35),
-    162px 382px rgba(80, 160, 255, 0.45),
-    382px 402px rgba(80, 160, 255, 0.40),
-    /* Dim accent tier */
-    300px 140px rgba(120, 200, 255, 0.30),
-    460px 320px rgba(120, 200, 255, 0.25),
-    200px 440px rgba(120, 200, 255, 0.28);
-  animation: pk-particles-drift 18s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-/* ── Mesh / constellation lines ── */
-.pk-obsidian-particles::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(80, 160, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(80, 160, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(45deg,  rgba(80, 160, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(135deg, rgba(80, 160, 255, 0.04) 1px, transparent 1px);
-  background-size: 62px 62px, 62px 62px, 88px 88px, 88px 88px;
-  animation: pk-mesh-drift 28s linear infinite;
-  will-change: background-position;
-}
-
-/* Gentle organic drift — particles breathe, not jitter */
-@keyframes pk-particles-drift {
-  0%   { transform: translate( 0px,  0px) scale(1.00); }
-  20%  { transform: translate( 3px, -5px) scale(1.01); }
-  40%  { transform: translate(-4px,  3px) scale(0.99); }
-  60%  { transform: translate( 5px,  2px) scale(1.01); }
-  80%  { transform: translate(-2px, -4px) scale(1.00); }
-  100% { transform: translate( 4px, -2px) scale(1.01); }
-}
-
-/* Mesh lines drift across the card */
-@keyframes pk-mesh-drift {
-  from { background-position: 0 0, 0 0, 0 0, 0 0; }
-  to   { background-position: 62px 62px, 62px 62px, 88px 88px, 88px 88px; }
-}
-
-/* ── Obsidian z-stack corrections ── */
 .pk-card--obsidian .pk-content-grid { position: relative; z-index: 2; }
 
 .pk-card--obsidian .pk-badge {
   z-index: 3;
   background: var(--blue);
   letter-spacing: 0.16em;
-  box-shadow: 0 0 16px rgba(31, 75, 255, 0.6);
+  box-shadow: 0 0 16px rgba(31,75,255,0.6);
 }
 
 /* ── Obsidian text overrides ── */
-.pk-card--obsidian .pk-serial    { color: rgba(31, 150, 255, 0.7); letter-spacing: 0.16em; }
-.pk-card--obsidian .pk-title     { color: #fff; text-shadow: 0 0 40px rgba(31, 75, 255, 0.4); }
+.pk-card--obsidian .pk-serial  { color: rgba(31,150,255,0.7); letter-spacing: 0.16em; }
+.pk-card--obsidian .pk-title   { color: #fff; text-shadow: 0 0 40px rgba(31,75,255,0.4); }
 .pk-card--obsidian .pk-unit,
-.pk-card--obsidian .pk-amount    { color: #fff; }
-.pk-card--obsidian .pk-period    { color: rgba(255, 255, 255, 0.40); }
-/* WCAG AA on #080d18: rgba(200,220,255,0.95) → contrast ≥ 7:1 */
-.pk-card--obsidian .pk-feat-item { color: rgba(200, 220, 255, 0.95); font-weight: 500; }
+.pk-card--obsidian .pk-amount  { color: #fff; }
+.pk-card--obsidian .pk-period  { color: rgba(255,255,255,0.40); }
+.pk-card--obsidian .pk-feat-item { color: rgba(200, 220, 255, 0.85); font-weight: 500; }
 .pk-card--obsidian .pk-ad-chip {
-  background: rgba(31, 75, 255, 0.10);
-  color: rgba(120, 170, 255, 0.85);
-  border-color: rgba(31, 75, 255, 0.25);
+  background: rgba(31,75,255,0.10);
+  color: rgba(120,170,255,0.85);
+  border-color: rgba(31,75,255,0.25);
 }
-.pk-card--obsidian .pk-ad-chip::before { background: rgba(31, 75, 255, 0.8); }
-.pk-card--obsidian .pk-dot { background: rgba(31, 120, 255, 0.9); box-shadow: 0 0 6px rgba(31, 75, 255, 0.7); }
+.pk-card--obsidian .pk-ad-chip::before { background: rgba(31,75,255,0.8); }
+.pk-card--obsidian .pk-dot { background: rgba(31, 120, 255, 0.9); box-shadow: 0 0 6px rgba(31,75,255,0.7); }
 
 .pk-card--obsidian .pk-btn {
   background: #fff;
@@ -538,35 +440,36 @@
 .pk-card--obsidian .pk-btn:hover {
   background: var(--blue);
   color: #fff;
-  box-shadow: 0 0 24px rgba(31, 75, 255, 0.5);
+  box-shadow: 0 0 24px rgba(31,75,255,0.5);
 }
 
 
-/* ══ Mobile — guaranteed white backgrounds ════════
-   At ≤768px:
-   • Frosted  → #fff (already set at base, enforced)
-   • Electric → kill border-spin (zero rAF budget),
-                revert to solid #fff + 2px blue border
-   ══════════════════════════════════════════════════ */
-@media (max-width: 768px) {
+/* ══ Mobile Responsive ═══════════════════════════ */
+@media (max-width: 480px) {
+  .pk-amount     { font-size: 2.6rem; }
+  .pk-title      { font-size: 1.45rem; }
+  .pk-card       { top: 70px; }
+  .pk-card-inner { padding: 28px 18px; }
 
-  /* Frosted: explicit white in case of inheritance drift */
   .pk-card--frosted .pk-card-inner {
-    background: #fff !important;
+    background: #ffffff !important;
   }
-
-  /* Electric: ditch the animated conic border — flat white + blue stroke */
   .pk-card--electric .pk-card-inner {
-    background: #fff !important;
-    background-image: none !important;
-    border: 2px solid var(--blue) !important;
-    /* Kill the rAF-equivalent CSS animation — real zero runtime */
-    animation: card-stack-effect linear both !important;
-    animation-timeline: --card-stack !important;
-    animation-range: exit 0% exit 100% !important;
-    box-shadow:
-      0 0 20px rgba(31, 75, 255, 0.12),
-      0 12px 32px -8px rgba(31, 75, 255, 0.16) !important;
+    background-image:
+      linear-gradient(#ffffff, #ffffff),
+      conic-gradient(
+        from var(--border-angle) at 50% 50%,
+        var(--blue)    0%,
+        #7eb3ff       20%,
+        #ffffff       25%,
+        #7eb3ff       30%,
+        var(--blue)   50%,
+        transparent   58%,
+        transparent   92%,
+        var(--blue)  100%
+      ) !important;
+    background-origin: padding-box, border-box !important;
+    background-clip:   padding-box, border-box !important;
   }
 }
 
@@ -585,11 +488,10 @@
 
   .pk-card--obsidian .pk-card-inner {
     animation: none !important;
-    box-shadow: 0 32px 80px -12px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 32px 80px -12px rgba(0,0,0,0.85);
   }
   .pk-card--obsidian .pk-card-inner::before,
-  .pk-card--obsidian .pk-card-inner::after { animation: none !important; }
-
-  .pk-obsidian-particles::before,
-  .pk-obsidian-particles::after  { animation: none !important; }
+  .pk-card--obsidian .pk-card-inner::after {
+    animation: none !important;
+  }
 }

@@ -9,7 +9,7 @@
 .cs {
   padding: clamp(72px, 10vw, 120px) 0;
   border-top: 1px solid var(--border);
-  background: var(--bg2);
+  background: var(--bg);
   position: relative;
   overflow: hidden;
 }
@@ -62,7 +62,7 @@
   letter-spacing: 0.12em;
   color: var(--blue);
   text-transform: uppercase;
-  background: var(--bg2);
+  background: var(--bg);
   padding-right: 12px;
 }
 

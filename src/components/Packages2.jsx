@@ -1,6 +1,99 @@
-import { useCallback } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { track, WA_NUMBER } from '../lib/analytics.js'
 import './Packages.css'
+
+/* ─────────────────────────────────────────────
+   Particle constellation — canvas renderer
+───────────────────────────────────────────── */
+function ParticleCanvas() {
+  const canvasRef = useRef(null)
+  const rafRef    = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reducedMotion) return
+
+    const COUNT   = 42
+    const CONNECT = 80
+    const SPEED   = 0.28
+
+    let W, H, particles
+
+    const init = () => {
+      const rect = canvas.getBoundingClientRect()
+      W = canvas.width  = rect.width
+      H = canvas.height = rect.height
+
+      particles = Array.from({ length: COUNT }, () => ({
+        x:  Math.random() * W,
+        y:  Math.random() * H,
+        vx: (Math.random() - 0.5) * SPEED,
+        vy: (Math.random() - 0.5) * SPEED,
+        r:  Math.random() * 1.4 + 0.5,
+      }))
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H)
+
+      for (const p of particles) {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < 0 || p.x > W) p.vx *= -1
+        if (p.y < 0 || p.y > H) p.vy *= -1
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx   = particles[i].x - particles[j].x
+          const dy   = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < CONNECT) {
+            const alpha = (1 - dist / CONNECT) * 0.5
+            ctx.strokeStyle = `rgba(60, 120, 255, ${alpha})`
+            ctx.lineWidth   = 0.8
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+
+      for (const p of particles) {
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(80, 160, 255, 0.75)'
+        ctx.fill()
+      }
+
+      rafRef.current = requestAnimationFrame(draw)
+    }
+
+    init()
+    draw()
+
+    const ro = new ResizeObserver(init)
+    ro.observe(canvas)
+
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      ro.disconnect()
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pk-obsidian-canvas"
+      aria-hidden="true"
+    />
+  )
+}
 
 /* ─────────────────────────────────────────────
    Package data
@@ -108,14 +201,7 @@ export default function Packages() {
             >
               <div className="pk-card-inner">
 
-                {/*
-                  Zero-runtime particle constellation.
-                  Pure CSS box-shadow dots + mesh lines on ::before / ::after.
-                  No canvas, no requestAnimationFrame, no JS overhead.
-                */}
-                {pkg.type === 'obsidian' && (
-                  <div className="pk-obsidian-particles" aria-hidden="true" />
-                )}
+                {pkg.type === 'obsidian' && <ParticleCanvas />}
 
                 {pkg.popular && (
                   <div className="pk-badge" aria-label="সবচেয়ে জনপ্রিয় প্যাকেজ">
