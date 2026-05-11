@@ -15,7 +15,7 @@ export default function Works() {
       <div className="section-inner">
         <div className="section-tag">// ০০৩ — আমাদের কাজ</div>
         <h2 id="works-h2" className="section-h2">
-          ল্যান্ডিং পেজ<br /><em>যেগুলো বিক্রি করে</em>
+          ল্যান্ডিং পেজ<br /><em>আপনার ২৪/৭ সেলস ইঞ্জিন</em>
         </h2>
         <p className="section-sub">
           ১ সেকেন্ড দেরি = ২০% কনভার্সন হারানো।
