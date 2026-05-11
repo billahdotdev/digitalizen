@@ -1,0 +1,94 @@
+# ════════════════════════════════════════════════════════════════════
+# DIGITALIZEN — GitHub Pages auto-deploy
+# ────────────────────────────────────────────────────────────────────
+# Triggers a fresh build + Pages deploy every time you push to main.
+#
+# ── ONE-TIME SETUP (in your GitHub repo): ─────────────────────────
+#   1. Settings → Pages → "Build and deployment"
+#        Source: GitHub Actions   (NOT "Deploy from a branch")
+#
+#   2. Settings → Secrets and variables → Actions → New repository secret
+#        Name:  PSI_API_KEY
+#        Value: AIzaSy...your-PageSpeed-Insights-key
+#      (Optional — site works without it, but anonymous PSI quota is tiny.
+#       See .env for how to obtain + restrict the key.)
+#
+#   3. Custom domain (digitalizen.com.bd):
+#      The CNAME file lives at public/CNAME and is auto-copied into
+#      the build output, so the custom domain persists across deploys.
+#
+# ── DEPLOY FLOW: ──────────────────────────────────────────────────
+#   git push origin main   →   Actions runs:
+#     1. Checkout
+#     2. Install Node + npm dependencies
+#     3. Build (VITE_PSI_API_KEY injected from secret)
+#     4. Upload dist/ as a Pages artifact
+#     5. Deploy artifact to https://digitalizen.com.bd
+#
+#   First deploy: ~90 seconds.  Subsequent (cached): ~30 seconds.
+# ════════════════════════════════════════════════════════════════════
+
+name: Deploy to GitHub Pages
+
+on:
+  # Auto-deploy on every push to main
+  push:
+    branches: [main]
+  # Manual trigger button in the Actions tab
+  workflow_dispatch:
+
+# Grant the workflow the right scopes for the official Pages actions
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent overlapping deploys; queue them instead
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # ── BUILD ─────────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --no-progress
+
+      - name: Build site
+        env:
+          # Injects your PSI key into the Vite build.
+          # If the secret doesn't exist, the var is empty — site still
+          # works, SpeedTest falls back to anonymous PSI quota.
+          VITE_PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
+        run: npm run build
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload built artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  # ── DEPLOY ────────────────────────────────────────────────
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

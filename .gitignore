@@ -1,0 +1,50 @@
+# ─── DEPENDENCIES ────────────────────────────────────────────
+node_modules/
+.pnp/
+.pnp.js
+
+# ─── BUILD OUTPUT ────────────────────────────────────────────
+dist/
+dist-ssr/
+*.local
+
+# ─── ENVIRONMENT (SECRETS) ───────────────────────────────────
+# Never commit these — they hold API keys.
+# Use GitHub Actions Secrets for CI/CD (see .github/workflows/deploy.yml)
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.staging.local
+
+# ─── LOGS ────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ─── EDITORS / IDE ───────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─── COVERAGE / TESTS ────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── MISC ────────────────────────────────────────────────────
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
