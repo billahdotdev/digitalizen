@@ -4,7 +4,6 @@ import { trackCTA, trackSectionView } from '../utils/tracking.js';
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const PROOF = [
-  { val: '৫০', em: '+', label: 'ক্লায়েন্ট'     },
   { val: '৯',  em: '+', label: 'বছরের\nঅভিজ্ঞতা' },
   { val: '৩',  em: 'x', label: 'গড় ROAS'        },
   { val: '১',  em: 's', label: 'পেজ লোড'         },
@@ -60,15 +59,15 @@ export default function Hero() {
       <div className="hero-content">
         <div className="badge fade-up" style={{ '--d': '0ms' }}>
           <span className="badge-dot" aria-hidden />
-          ঢাকা থেকে · AI-Powered · Server-side Infra
+          AI-Powered · Server-side Infra
         </div>
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
-          আমরা অ্যাড চালাই না।
+          আমরা শুধু অ্যাড চালাই না,
           <br />
-          <em>সেলস মেশিন</em>
+          <em>আপনার ব্যবসার জন্য</em>
           <br />
-          তৈরি করি।
+          সেলস মেশিন তৈরি করি।
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
