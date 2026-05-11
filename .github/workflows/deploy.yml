@@ -31,25 +31,20 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Auto-deploy on every push to main
   push:
     branches: [main]
-  # Manual trigger button in the Actions tab
   workflow_dispatch:
 
-# Grant the workflow the right scopes for the official Pages actions
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Prevent overlapping deploys; queue them instead
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  # ── BUILD ─────────────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
     steps:
@@ -63,13 +58,13 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --no-progress
+        run: npm ci --legacy-peer-deps
+
+      - name: Fix vite permission
+        run: chmod +x node_modules/.bin/vite
 
       - name: Build site
         env:
-          # Injects your PSI key into the Vite build.
-          # If the secret doesn't exist, the var is empty — site still
-          # works, SpeedTest falls back to anonymous PSI quota.
           VITE_PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
         run: npm run build
 
@@ -81,7 +76,6 @@ jobs:
         with:
           path: ./dist
 
-  # ── DEPLOY ────────────────────────────────────────────────
   deploy:
     needs: build
     runs-on: ubuntu-latest
