@@ -214,7 +214,7 @@ export default function BotLanding() {
         <a href="/" className="bl-logo" aria-label="Digitalizen — homepage">
           DIGITALIZEN | ডিজিটালাইজেন<em>.</em>
         </a>
-        <span className="bl-topbar-tag">AI সেলস ইঞ্জিন আর্কিটেকচার • ক্লাউড ইনফ্রাস্ট্রাকচার</span>
+        <span className="bl-topbar-tag">// AI সেলস ইঞ্জিন আর্কিটেকচার</span>
       </header>
 
       <main id="bl-main" tabIndex={-1}>
