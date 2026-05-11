@@ -72,7 +72,7 @@ export default function Hero() {
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
           বেশিরভাগ এজেন্সি শুধু বুস্ট দেয়। আমরা পুরো ডিজিটাল
-          ইনফ্রাস্ট্রাকচার বানাই — যাতে প্রতিটি টাকার হিসাব থাকে।
+          ইনফ্রাস্ট্রাকচার বানাই, যাতে প্রতিটি টাকার হিসাব থাকে।
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
@@ -98,7 +98,7 @@ export default function Hero() {
 
         <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
           <span className="trust-dot" aria-hidden />
-          কোনো লক-ইন নেই — রেজাল্ট দেখে সিদ্ধান্ত নিন
+          কোনো লক-ইন নেই রেজাল্ট দেখে সিদ্ধান্ত নিন
         </div>
 
         {/* Proof stats bar */}
