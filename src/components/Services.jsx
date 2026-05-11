@@ -15,7 +15,7 @@ const FOUNDER = {
   initials: 'MB',
   role:     'Founder & Rainmaker',
   name:     'Masum Billah',
-  bio:      '৯+ বছর ধরে BD-র ব্র্যান্ডগুলোকে ডিজিটালে রেজাল্ট দিয়ে আসছি। Meta Ads থেকে শুরু করে পুরো Server-side Infrastructure — সব নিজেই করি।',
+  bio:      '৯+ বছর ধরে ব্র্যান্ডগুলোকে ডিজিটালে রেজাল্ট দিয়ে আসছি। Meta Ads থেকে শুরু করে পুরো Server-side Infrastructure — সব নিজেই করি।',
   creds:    [
     'AI & Automation, NINA-Korea',
     'Full Stack Dev, IAC-BUET Certified',

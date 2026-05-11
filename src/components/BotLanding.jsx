@@ -62,7 +62,7 @@ const REALITY_CHECK = [
     val: 'মানুষ অজুহাত দেয়,\n AI শুধু সেল ক্লোজ করে।',
     lbl: 'বোনাস বা ওভারটাইম ছাড়াই আপনার ইনবক্স সামলাবে এই নিখুঁত সেলস অপারেটর।',
 },
-];
+];  
 
 /* ── Industrial Strength: aligned to real infrastructure ─────────────── */
 const CAPABILITIES = [
@@ -107,7 +107,7 @@ const FOUNDER = {
   role:     'Founder & Rainmaker',
   name:     'Masum Billah',
   imageSrc: '/images/masum.webp',
-  bio:      'BUET alumnus। ৯+ বছর ধরে BD-র ব্র্যান্ডগুলোকে ডিজিটালে রেজাল্ট দিয়ে আসছি। Meta Ads থেকে শুরু করে পুরো Server-side Infrastructure — সব নিজেই করি।',
+  bio:      '৯+ বছর ধরে BD-র ব্র্যান্ডগুলোকে ডিজিটালে রেজাল্ট দিয়ে আসছি। Meta Ads থেকে শুরু করে পুরো Server-side Infrastructure — সব নিজেই করি।',
   creds: [
     'AI & Automation, NINA-Korea',
     'Full Stack Dev, IAC-BUET Certified',
