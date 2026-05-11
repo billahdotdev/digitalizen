@@ -212,9 +212,9 @@ export default function BotLanding() {
       {/* ─── Topbar ─────────────────────────────────────────────── */}
       <header className="bl-topbar">
         <a href="/" className="bl-logo" aria-label="Digitalizen — homepage">
-          digitalizen<em>.</em>
+          DIGITALIZEN | ডিজিটালাইজেন<em>.</em>
         </a>
-        <span className="bl-topbar-tag">// AI Sales Engine</span>
+        <span className="bl-topbar-tag">// AI সেলস মেশিন</span>
       </header>
 
       <main id="bl-main" tabIndex={-1}>
@@ -228,17 +228,16 @@ export default function BotLanding() {
           <div className="bl-hero-inner">
             <div className="bl-badge fade-up" style={{ '--d': '0ms' }}>
               <span className="bl-badge-dot" aria-hidden />
-              Live · WhatsApp · বাংলায় instant reply
+              24/7 লাইভ • WhatsApp • বাংলায় ইনস্ট্যান্ট রিপ্লাই
             </div>
 
             <h1 id="bl-hero-h" className="bl-h1 fade-up" style={{ '--d': '90ms' }}>
               ১ ঘণ্টা পর "জি ভাইয়া" রিপ্লাই দেওয়ার আগেই<br />
-              কাস্টমার <em>অন্য পেজ</em> থেকে কিনে ফেলেছে।
+              কাস্টমার <em>অন্য পেজ</em> থেকে কিনে ফেলেছে?
             </h1>
 
             <p className="bl-hero-quote fade-up" style={{ '--d': '170ms' }}>
-              এটি কোনো সাধারণ রোবট নয় — আপনার বিজনেসের সবচেয়ে শার্প সেলসম্যান।
-              বিশ্বাস হচ্ছে না? এখনই চ্যাট শুরু করুন এবং ওকে আটকানোর চেষ্টা করুন।
+              এটি সাধারণ কোনো রোবট নয়, আপনার ব্যবসার সবচেয়ে বুদ্ধিমান সেলসম্যান। এখনই পরীক্ষা করে দেখুন।
             </p>
 
             <div className="bl-avatar-wrap fade-up" style={{ '--d': '230ms' }}>
@@ -571,7 +570,7 @@ export default function BotLanding() {
             </h2>
             <p className="bl-closer-sub">
               উপরের বটের পারফরম্যান্সে ইমপ্রেসড?
-              আপনার ব্যবসার জন্যও একই 'মানি মেকিং মেশিন' বানিয়ে দিতে পারি।
+              আপনার ব্যবসার জন্যও এমন 'মানি মেকিং মেশিন' বানিয়ে দিতে পারি।
             </p>
 
             <div className="bl-cta-dual">
@@ -607,7 +606,7 @@ export default function BotLanding() {
 
             <p className="bl-closer-trust">
               <span className="bl-live-dot" aria-hidden />
-              এখন online · গড় reply ২ সেকেন্ডে
+              24/7 অনলাইন · ২ সেকেন্ডে রিপ্লাই
             </p>
           </div>
         </section>
@@ -620,9 +619,9 @@ export default function BotLanding() {
       {/* ─── Footer ─────────────────────────────────────────────── */}
       <footer className="bl-footer">
         <div className="bl-footer-inner">
-          <span>© 2026 Digitalizen · Dhaka, Bangladesh</span>
+          <span>© 2026 Digitalizen · Dhaka, Manila</span>
           <span className="bl-footer-sep" aria-hidden>·</span>
-          <a href="/" className="bl-footer-link">পূর্ণ ওয়েবসাইট →</a>
+          <a href="/" className="bl-footer-link">Digitalizen ওয়েবসাইট →</a>
         </div>
       </footer>
     </div>
@@ -670,7 +669,7 @@ function StickyBotCta({ onClick }) {
       tabIndex={visible ? 0 : -1}
     >
       <IconWhatsApp width={18} height={18} />
-      <span>Bot ট্রাই করুন</span>
+      <span>WatsApp ChatBot ট্রাই করুন</span>
       <span className="bl-sticky-arrow" aria-hidden>→</span>
     </a>
   );
