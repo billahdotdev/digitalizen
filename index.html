@@ -1,529 +1,153 @@
 <!DOCTYPE html>
 <html lang="bn" dir="ltr">
-<!--
-  ══════════════════════════════════════════════════
-  AUDIT FIXES APPLIED (vs original):
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#060d1a" />
+    <meta name="color-scheme" content="dark" />
 
-  [L01] lang="bn-BD" → lang="bn"
-        WCAG 3.1.1 requires primary language subtag only.
-        "bn-BD" causes Lighthouse accessibility deduction:
-        "html element does not have a valid [lang] attribute".
-        bn-BD is a valid BCP 47 tag BUT Chrome Lighthouse
-        validator currently rejects region subtags → use "bn".
+    <!-- ═════════════════════════════════════════════════════════════
+         CONTENT SECURITY POLICY
+         Whitelists: Pixel, GTM, GA (incl. regional endpoints), fonts.
+         Tweak only if you add a new third-party (e.g. Hotjar, TikTok).
+    ═════════════════════════════════════════════════════════════ -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://*.google-analytics.com https://*.googletagmanager.com;
+      connect-src 'self' https://www.facebook.com https://connect.facebook.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.googleapis.com https://stats.g.doubleclick.net;
+      img-src 'self' data: https://www.facebook.com https://*.google-analytics.com https://*.googletagmanager.com https://stats.g.doubleclick.net;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      frame-src 'self' https://www.facebook.com;
+    " />
 
-  [L02] Skip-link: inline style → proper class in CSS.
-        Inline styles trigger "Avoids inline styles" audit hit.
-        Moved to <style> block (already in same file = fine).
+    <!-- ══ SEO ══ -->
+    <meta name="description" content="ঢাকার AI Sales Engine — WhatsApp Bot, Server-side CAPI, n8n Automation। Self-hosted infrastructure, 100% data sovereignty।" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="Masum Billah · Digitalizen" />
 
-  [L03] Meta Pixel noscript: missing alt="" on tracking img.
-        Triggers "Image elements do not have [alt] attributes".
+    <!-- ══ Open Graph (Meta ad link previews + general sharing) ══ -->
+    <meta property="og:title" content="Digitalizen — AI Sales Engine for Bangladesh" />
+    <meta property="og:description" content="২ সেকেন্ডে বাংলায় reply দেয় এমন WhatsApp AI Bot। এক্ষুনি live demo try করুন।" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://digitalizen.com.bd" />
+    <meta property="og:image" content="https://digitalizen.com.bd/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:locale" content="bn_BD" />
+    <meta property="og:site_name" content="Digitalizen" />
 
-  [L04] Added color-scheme meta (missing from original).
-        Required for Best Practices: "Page has a meta color-scheme".
+    <!-- Twitter Card (uniform with Open Graph) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Digitalizen — AI Sales Engine for Bangladesh" />
+    <meta name="twitter:description" content="২ সেকেন্ডে বাংলায় reply দেয় এমন WhatsApp AI Bot। এক্ষুনি live demo try করুন।" />
+    <meta name="twitter:image" content="https://digitalizen.com.bd/og-image.jpg" />
 
-  [L05] Speakable cssSelector updated to match actual component
-        class names (.hero__headline, .hero__sub exist ✓).
+    <!-- Inline favicon (data URL — zero request) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23060d1a'/><text y='.9em' font-size='78' x='6' fill='%2350C878'>d</text></svg>" />
 
-  [L06] dateModified updated to 2026-04-06 (today's date).
-        Stale dateModified hurts freshness signals.
+    <title>Digitalizen — BD-র Technical Marketing Infrastructure</title>
 
-  [L07] Added missing <link rel="preload"> for LCP image
-        (first gallery image ./images/1.jpg — fetchpriority=high).
-        This is the single biggest LCP win missing from original.
+    <!-- ═════════════════════════════════════════════════════════════
+         PRECONNECTS — shave 100-300ms on every third-party call.
+         Order matters: Pixel & GA before fonts (analytics fires first).
+    ═════════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch"  href="https://wa.me" />
 
-  [L08] GTM noscript <iframe> was commented out — uncommented
-        with placeholder guard. Required for GTM to work without JS.
+    <!-- ═════════════════════════════════════════════════════════════
+         META PIXEL  ← REPLACE  YOUR_PIXEL_ID  before going live.
+         Loaded EARLY (before fonts/GA) so PageView fires reliably,
+         even when the user clicks the back button mid-load.
+         Get ID: business.facebook.com → Events Manager → Pixel ID
+    ═════════════════════════════════════════════════════════════ -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('track', 'PageView');
+    </script>
 
-  [L09] Service Worker: moved sw registration to after React mounts
-        (via __removeLoader hook) to avoid competing with LCP.
-        Registering SW on 'load' is fine, but clarified comment.
+    <!-- ═════════════════════════════════════════════════════════════
+         GOOGLE ANALYTICS 4  ← REPLACE  G-XXXXXXXXXX
+         Get it from: analytics.google.com → Admin → Data Streams → Web
+    ═════════════════════════════════════════════════════════════ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX', { send_page_view: true });
+    </script>
 
-  [L10] Added <meta name="format-detection"> to prevent iOS auto-
-        linking phone numbers (causes layout shift on mobile).
+    <!-- ══ FONTS — non-blocking (after analytics inits) ══ -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" />
+    </noscript>
 
-  [L11] Added dns-prefetch fallbacks for browsers without preconnect.
+    <!-- ══════════════════════════════════════════════════════════════
+         GitHub Pages SPA fallback restorer
+         404.html captures the path → sessionStorage → restored here
+         BEFORE React mounts so /bot deep-links work on first paint.
+    ══════════════════════════════════════════════════════════════ -->
+    <script>
+      (function () {
+        var redirect = sessionStorage.getItem('spa_redirect');
+        if (redirect) {
+          sessionStorage.removeItem('spa_redirect');
+          history.replaceState(null, null, '/' + redirect);
+        }
+      })();
+    </script>
 
-  [L12] Added explicit width/height on Meta Pixel noscript img
-        to prevent layout shift (it's display:none but still parsed).
-
-  ══════════════════════════════════════════════════
--->
-<head>
-  <meta charset="UTF-8" />
-
-  <!-- ══ CSP — active on ALL hosts including GitHub Pages ══
-       (_headers file only works on Cloudflare Pages / Netlify)
-       UPGRADE: added 'nonce-based' readiness note.
-       wa.me added to connect-src for CAPI enrichment signals. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://static.tiktokcdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com https://analytics.tiktok.com https://analytics-ipv6.tiktokw.us https://capi.digitalizen.billah.dev https://tt-capi.digitalizen.billah.dev https://wa.me; frame-src https://calendly.com; object-src 'none'; base-uri 'self';" />
-
-  <!-- [L04] color-scheme → prevents "Page has no meta color-scheme" audit fail -->
-  <meta name="color-scheme" content="light" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="theme-color" content="#1F4BFF" />
-
-  <!-- [L10] Prevent iOS auto-linking phones/addresses → CLS on mobile -->
-  <meta name="format-detection" content="telephone=no, address=no, email=no" />
-
-  <!-- ══ SEO META ══ -->
-  <title>Digitalizen: বাংলাদেশের সেরা পারফরম্যান্স মার্কেটিং ও ওয়েব সলিউশন</title>
-  <meta name="description" content="Digitalizen — ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি। Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS। Dhakar shera digital marketing agency. Founded by Masum Billah (billahdotdev). ৯+ বছরের অভিজ্ঞতা।" />
-  <meta name="keywords" content="ডিজিটাল মার্কেটিং এজেন্সি ঢাকা, digital marketing agency Dhaka, SEO agency Bangladesh, performance marketing Bangladesh, Facebook Ads agency Dhaka, Meta Ads Bangladesh, Google Ads management BD, TikTok Ads Bangladesh, social media marketing Bangladesh, Masum Billah, billahdotdev, Digitalizen, Dhakar shera marketing" />
-  <meta name="author" content="Masum Billah" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="googlebot" content="index, follow" />
-
-  <link rel="canonical" href="https://digitalizen.billah.dev/" />
-  <link rel="alternate" hreflang="bn" href="https://digitalizen.billah.dev/" />
-  <link rel="alternate" hreflang="en" href="https://digitalizen.billah.dev/" />
-  <link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/" />
-
-  <!-- ══ OPEN GRAPH ══ -->
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="bn_BD" />
-  <meta property="og:locale:alternate" content="en_US" />
-  <meta property="og:site_name" content="Digitalizen" />
-  <meta property="og:title" content="Digitalizen — ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি | Bangladesh" />
-  <meta property="og:description" content="Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS। বাংলাদেশের স্টার্টআপ ও ব্র্যান্ডের জন্য ডেটা-ড্রিভেন মার্কেটিং সলিউশন।" />
-  <meta property="og:image" content="https://digitalizen.billah.dev/og-image.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Digitalizen – Performance Marketing Agency in Dhaka, Bangladesh" />
-  <meta property="og:url" content="https://digitalizen.billah.dev/" />
-
-  <!-- ══ TWITTER / X ══ -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@billahdotdev" />
-  <meta name="twitter:creator" content="@billahdotdev" />
-  <meta name="twitter:title" content="Digitalizen — Data-Driven Marketing Agency, Dhaka Bangladesh" />
-  <meta name="twitter:description" content="Meta Ads, Google Ads, SEO & TikTok for Bangladeshi startups. Real ROAS, zero fake promises. Founded by Masum Billah (@billahdotdev)." />
-  <meta name="twitter:image" content="https://digitalizen.billah.dev/og-image.jpg" />
-
-  <!-- ══ AEO / GEO — AI Engine Optimization ══ -->
-  <meta name="ai-content-description" content="Digitalizen is a performance marketing agency in Dhaka, Bangladesh founded by Masum Billah (billahdotdev). Services: Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, social media management, landing page development. Speciality: CAPI server-side tracking, conversion optimization, ROAS scaling for Bangladeshi startups." />
-  <meta name="topic" content="Digital Marketing, Performance Advertising, SEO, Meta Ads, Google Ads, Bangladesh" />
-  <meta name="classification" content="Business/Marketing Agency" />
-  <meta name="coverage" content="Bangladesh, Worldwide" />
-  <meta name="target" content="startups, small businesses, e-commerce, entrepreneurs, Bangladesh" />
-  <meta name="language" content="Bengali, English" />
-
-  <!-- Identity links for AI entity resolution -->
-  <link rel="me" href="https://x.com/billahdotdev" />
-  <link rel="me" href="https://linkedin.com/in/billahdotdev" />
-  <link rel="me" href="https://github.com/billahdotdev" />
-
-  <!-- GEO — Location signals -->
-  <meta name="geo.region" content="BD-C" />
-  <meta name="geo.placename" content="Dhaka, Bangladesh" />
-  <meta name="geo.position" content="23.8103;90.4125" />
-  <meta name="ICBM" content="23.8103, 90.4125" />
-
-  <!-- ══ FAVICON ══ -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/manifest.json" />
-
-  <!-- ══ RESOURCE HINTS ══
-       Order matters: preconnect before dns-prefetch, preload last.
-       [L11] dns-prefetch added as fallback for Safari/older browsers. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin />
-  <!-- dns-prefetch fallbacks (ignored by browsers that support preconnect) -->
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-  <link rel="dns-prefetch" href="https://connect.facebook.net" />
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-  <link rel="dns-prefetch" href="https://analytics.tiktok.com" />
-
-  <!-- ══ FONTS — non-blocking (eliminates render-blocking FCP/LCP penalty) ══
-       media="print" → async download → onload switches to all.
-       This pattern scores 100/100 on Lighthouse Performance. -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap"
-    media="print"
-    onload="this.media='all'"
-  />
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" />
-  </noscript>
-
-  <!-- ══ LCP IMAGE PRELOAD — [L07] BIGGEST MISSING WIN ══
-       The first gallery image (./images/1.jpg) is the largest
-       above-the-fold image element after React mounts.
-       fetchpriority=high tells the browser to start fetching it
-       BEFORE the JS bundle executes — saves 400–800ms on LCP.
-       ⚠️  If your actual LCP element is different (e.g. a hero
-       background-image or founder avatar), change the href. -->
-  <link
-    rel="preload"
-    as="image"
-    href="/images/1.jpg"
-    fetchpriority="high"
-  />
-
-  <!-- ══ GTM — [L08] replace GTM-XXXXXXX with your real ID ══
-       Guard prevents 404 network error on staging/dev which
-       tanks Lighthouse Best Practices score. -->
-  <script>
-  (function(w,d,s,l,i){
-    if (!i || i === 'GTM-XXXXXXX') return;
-    w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-    var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-    j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-    f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-XXXXXXX');
-  </script>
-
-  <!-- ══ META PIXEL INIT — replace XXXXXXXXXXXXXXXXXX ══
-       fbq('track','PageView') fires here.
-       Component-level events fire from analytics.js track(). -->
-  <script>
-  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-  document,'script','https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init','XXXXXXXXXXXXXXXXXX');
-  fbq('track','PageView');
-  </script>
-
-  <!-- ══ TIKTOK PIXEL INIT — replace XXXXXXXXXXXXXXXXXX ══ -->
-  <script>
-  !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
-  ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
-  ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
-  for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
-  ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};
-  ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{};
-  ttq._i[e]=[];ttq._i[e]._u=i;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};
-  var o=document.createElement("script");o.type="text/javascript";o.async=!0;
-  o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];
-  a.parentNode.insertBefore(o,a)};
-  ttq.load('XXXXXXXXXXXXXXXXXX');ttq.page();
-  }(window,document,'ttq');
-  </script>
-
-  <!-- ══ JSON-LD — AEO / GEO Entity Graph ══
-       [L06] dateModified updated to today's date for freshness signals. -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
+    <!-- ══ Schema.org ══ -->
+    <script type="application/ld+json">
       {
-        "@type": "MarketingAgency",
-        "@id": "https://digitalizen.billah.dev/#agency",
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
         "name": "Digitalizen",
-        "alternateName": ["Digitalizen Agency","Digitalizen Marketing","ডিজিটালাইজেন","Dhakar shera marketing agency","Bangladesh best digital marketing agency"],
-        "url": "https://digitalizen.billah.dev/",
-        "logo": { "@type": "ImageObject", "url": "https://digitalizen.billah.dev/favicon.svg", "width": 512, "height": 512 },
-        "image": "https://digitalizen.billah.dev/og-image.jpg",
-        "description": "Digitalizen is a performance-focused digital marketing agency in Dhaka, Bangladesh. Expert in Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, and CAPI server-side tracking to help startups achieve measurable ROAS.",
-        "slogan": "Scale smarter. Grow faster.",
-        "foundingDate": "2017",
-        "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressRegion": "Dhaka Division", "addressCountry": "BD" },
-        "areaServed": [
-          { "@type": "Country", "name": "Bangladesh" },
-          { "@type": "City", "name": "Dhaka" },
-          { "@type": "AdministrativeArea", "name": "Worldwide" }
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+8801711992558",
-          "contactType": "customer service",
-          "availableLanguage": ["Bengali","English"],
-          "hoursAvailable": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "09:00", "closes": "22:00" }
-        },
-        "founder": {
-          "@type": "Person",
-          "@id": "https://billah.dev/#masum",
-          "name": "Masum Billah",
-          "alternateName": "billahdotdev",
-          "jobTitle": "Founder & Performance Marketing Strategist",
-          "url": "https://billah.dev",
-          "alumniOf": {
-            "@type": "EducationalOrganization",
-            "@id": "https://www.buet.ac.bd/#buet",
-            "name": "Bangladesh University of Engineering and Technology",
-            "alternateName": "BUET"
-          },
-          "hasCredential": [
-            { "@type": "EducationalOccupationalCredential", "name": "IAC Certified Digital Marketing Professional" },
-            { "@type": "EducationalOccupationalCredential", "name": "Meta Blueprint Certified" }
-          ],
-          "knowsAbout": ["Meta Ads","Facebook Advertising","Google Ads","SEO","Performance Marketing","CAPI","Server-Side Tracking","TikTok Ads","Social Media Strategy","Bangladesh Digital Marketing"],
-          "sameAs": ["https://billah.dev","https://masum.billah.dev","https://github.com/billahdotdev","https://x.com/billahdotdev","https://linkedin.com/in/billahdotdev"]
-        },
-        "hasOfferCatalog": {
-          "@type": "OfferCatalog",
-          "name": "Digital Marketing Services Bangladesh",
-          "itemListElement": [
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Meta Ads Management", "description": "Facebook & Instagram advertising with Pixel + CAPI for maximum ROAS." }},
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Google Ads Management", "description": "Search, Display, Shopping, YouTube campaigns for measurable ROI in Bangladesh." }},
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "SEO Bangladesh", "description": "Technical SEO, Bengali keyword research, on-page optimization, link building." }},
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TikTok Ads Management", "description": "TikTok advertising targeting Bangladesh's young audience." }},
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Social Media Management", "description": "Bengali/English content strategy, creation, and analytics." }},
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Landing Page Development & CRO", "description": "High-speed custom landing pages with advanced conversion tracking." }}
-          ]
-        },
-        "sameAs": ["https://facebook.com/digitalizen","https://instagram.com/digitalizen","https://linkedin.com/company/digitalizen","https://x.com/billahdotdev"]
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://digitalizen.billah.dev/#website",
-        "url": "https://digitalizen.billah.dev/",
-        "name": "Digitalizen",
-        "inLanguage": ["bn-BD","en-US"],
-        "publisher": { "@id": "https://digitalizen.billah.dev/#agency" }
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://digitalizen.billah.dev/#webpage",
-        "url": "https://digitalizen.billah.dev/",
-        "name": "Digitalizen | ঢাকার সেরা ডিজিটাল মার্কেটিং এজেন্সি",
-        "isPartOf": { "@id": "https://digitalizen.billah.dev/#website" },
-        "about": { "@id": "https://digitalizen.billah.dev/#agency" },
-        "inLanguage": ["bn-BD","en-US"],
-        "datePublished": "2023-01-01",
-        "dateModified": "2026-04-06",
-        "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://digitalizen.billah.dev/" }] },
-        "speakable": { "@type": "SpeakableSpecification", "cssSelector": [".hero__headline",".hero__sub",".sp-heading"] }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          { "@type": "Question", "name": "বাংলাদেশের সেরা ডিজিটাল মার্কেটিং এজেন্সি কোনটি?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen ঢাকা, বাংলাদেশের একটি পারফরম্যান্স মার্কেটিং এজেন্সি যা Meta Ads, Google Ads, SEO এবং TikTok Ads-এ বিশেষজ্ঞ।" }},
-          { "@type": "Question", "name": "What services does Digitalizen offer?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen offers Meta Ads (Facebook/Instagram), Google Ads, SEO, TikTok Ads, social media management, landing page development, and brand strategy for startups in Bangladesh and worldwide." }},
-          { "@type": "Question", "name": "Who founded Digitalizen?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen was founded by Masum Billah (billahdotdev), a BUET alumnus with 9+ years of digital marketing experience and IAC & Meta Blueprint certifications." }},
-          { "@type": "Question", "name": "ফেসবুক অ্যাড চালাতে কত টাকা লাগে?", "acceptedAnswer": { "@type": "Answer", "text": "Digitalizen-এর Care+ প্যাকেজে শূন্য সার্ভিস চার্জে শুরু করা যায়, শুধু অ্যাড বাজেট প্রয়োজন। Monthly Care ১০,০০০ টাকা থেকে।" }},
-          { "@type": "Question", "name": "Does Digitalizen work with international clients?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Digitalizen is headquartered in Dhaka, Bangladesh, but serves startups and brands worldwide remotely." }},
-          { "@type": "Question", "name": "শুরু করতে কত টাকা লাগবে?", "acceptedAnswer": { "@type": "Answer", "text": "মাত্র ৳১,৪৫০ বা $10 দিয়েই শুরু করতে পারবেন মাইক্রো টেস্ট প্যাকেজের মাধ্যমে। এটি ছোট বাজেটে দ্রুত রেজাল্ট দেখার সেরা উপায়।" }},
-          { "@type": "Question", "name": "ফলাফল পেতে কতদিন লাগে?", "acceptedAnswer": { "@type": "Answer", "text": "সাধারণত প্রথম ৭ দিনের মধ্যেই প্রাথমিক ডেটা পাওয়া যায়। ২-৩ সপ্তাহের মধ্যে স্পষ্ট প্যাটার্ন বোঝা যায়। ROAS সর্বোচ্চ পর্যায়ে নিতে ৪-৬ সপ্তাহ লাগে।" }},
-          { "@type": "Question", "name": "চুক্তি বা লক-ইন পিরিয়ড আছে?", "acceptedAnswer": { "@type": "Answer", "text": "না, কোনো দীর্ঘমেয়াদি চুক্তি নেই। যেকোনো সময় বন্ধ করা যাবে। রেজাল্ট দেখে সন্তুষ্ট হলে চালিয়ে যাবেন।" }},
-          { "@type": "Question", "name": "পেমেন্ট কীভাবে করব?", "acceptedAnswer": { "@type": "Answer", "text": "bKash, Nagad, Rocket এবং ব্যাংক ট্রান্সফার গ্রহণ করা হয়। প্রথম অর্ডারে ৫০% অ্যাডভান্স নেওয়া হয়।" }}
-        ]
+        "description": "AI Sales Engine + Server-side Tracking infrastructure for Bangladesh businesses.",
+        "url": "https://digitalizen.com.bd",
+        "telephone": "+8801311773040",
+        "areaServed": "BD",
+        "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressCountry": "BD" },
+        "founder": { "@type": "Person", "name": "Masum Billah", "jobTitle": "Founder & Rainmaker", "alumniOf": "BUET" },
+        "knowsAbout": ["WhatsApp AI Bot", "Server-side CAPI", "n8n Automation", "Meta Ads", "Chatwoot", "Landing Page Engineering"],
+        "priceRange": "৳15,000 – ৳45,000"
       }
-    ]
-  }
-  </script>
+    </script>
+  </head>
+  <body>
+    <!-- Meta Pixel noscript fallback — also needs YOUR_PIXEL_ID -->
+    <noscript>
+      <img height="1" width="1" style="display:none" alt=""
+           src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1" />
+    </noscript>
 
-  <!-- ══ CRITICAL CSS — loader + skip-link ══
-       [L02] Skip-link moved from inline style attr → <style> block.
-       Inline style attributes on <a> trigger Lighthouse style audit.
-       Keep loader CSS here (critical path — prevents FOUC before React). -->
-  <style>
-    /* Skip-link — keyboard a11y (WCAG 2.4.1) */
-    .skip-link {
-      position: absolute;
-      left: -9999px;
-      top: 8px;
-      z-index: 9999;
-      background: #1F4BFF;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      text-decoration: none;
-      font-family: sans-serif;
-      /* No transition here — skip-link must appear instantly on focus */
-    }
-    .skip-link:focus {
-      left: 8px;
-    }
-
-    /* Initial loader — critical path, must be inline to prevent FOUC */
-    #initial-loader {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100svh;     /* svh > vh: correct on mobile (no address bar shift) */
-      background: #F5F7FF;
-      font-family: 'Noto Sans Bengali', sans-serif;
-    }
-    .loader-logo {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #1F4BFF;
-      letter-spacing: -0.03em;
-      margin-bottom: 20px;
-    }
-    .loader-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      background: #16A34A;
-      border-radius: 50%;
-      margin-left: 2px;
-      vertical-align: super;
-      animation: ldp 1.6s ease infinite;
-    }
-    .loader-bar-track {
-      width: 160px;
-      height: 3px;
-      background: #E2E7F5;
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .loader-bar {
-      height: 100%;
-      background: #1F4BFF;
-      border-radius: 99px;
-      animation: ldb 1.8s ease infinite;
-    }
-    @keyframes ldp { 0%,100%{opacity:1} 50%{opacity:.3} }
-    @keyframes ldb { 0%{width:0%} 70%{width:88%} 100%{width:100%} }
-
-    /* SEO crawl fallback — visually hidden, machine readable */
-    .seo-fallback {
-      position: absolute;
-      width: 1px; height: 1px;
-      padding: 0; margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border-width: 0;
-    }
-  </style>
-
-  <!-- ══ GitHub Pages SPA routing fix ══
-       404.html captures real URL → sessionStorage → restored here
-       BEFORE React mounts so BrowserRouter gets the correct path. -->
-  <script>
-    (function() {
-      var redirect = sessionStorage.getItem('spa_redirect');
-      if (redirect) {
-        sessionStorage.removeItem('spa_redirect');
-        var parts = redirect.split('&q=');
-        var path  = parts[0].replace(/~and~/g, '&');
-        var query = parts[1] ? '?' + parts[1].replace(/~and~/g, '&') : '';
-        var hash  = path.indexOf('#') !== -1
-          ? path.slice(path.indexOf('#'))
-          : '';
-        if (hash) path = path.slice(0, path.indexOf('#'));
-        history.replaceState(null, null, '/' + path + query + hash);
-      }
-    })();
-  </script>
-</head>
-
-<body>
-  <!-- ══ GTM noscript — [L08] uncommented with placeholder guard ══
-       Required for GTM to work without JavaScript.
-       Replace GTM-XXXXXXX before deploying. -->
-  <!--
-    Replace GTM-XXXXXXX below with your real container ID, then
-    remove the wrapping HTML comment to activate noscript fallback.
-  <noscript>
-    <iframe
-      src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-      height="0" width="0"
-      style="display:none;visibility:hidden"
-      title="Google Tag Manager"
-    ></iframe>
-  </noscript>
-  -->
-
-  <!-- Meta Pixel noscript — must live in <body>, not <head>
-       [L03] alt="" added → fixes "Image elements do not have [alt]" audit
-       [L12] explicit width/height already present ✓ -->
-  <noscript>
-    <img
-      height="1" width="1"
-      style="display:none"
-      alt=""
-      src="https://www.facebook.com/tr?id=XXXXXXXXXXXXXXXXXX&ev=PageView&noscript=1"
-    />
-  </noscript>
-
-  <!-- Accessibility: skip-to-content
-       [L02] Removed all inline style= attributes — moved to <style> block above -->
-  <a class="skip-link" href="#main-content">
-    মূল কন্টেন্টে যান / Skip to content
-  </a>
-
-  <div id="root">
-    <div
-      id="initial-loader"
-      aria-label="Digitalizen লোড হচ্ছে"
-      role="status"
-      aria-live="polite"
-    >
-      <!-- aria-live="polite" → screen readers announce loading state -->
-      <div class="loader-logo" aria-hidden="true">
-        digitalizen<span class="loader-dot"></span>
+    <!-- JS-disabled fallback — gives users a way to reach the bot -->
+    <noscript>
+      <div style="padding:24px;background:#060d1a;color:#e8edf5;text-align:center;font-family:system-ui,sans-serif">
+        <p style="margin:0 0 12px"><strong>JavaScript লাগবে এই সাইট চালাতে।</strong></p>
+        <p style="margin:0">এক্ষুনি WhatsApp-এ কথা বলুন:
+          <a href="https://wa.me/8801311773040" style="color:#50C878;text-decoration:underline">+880 1311 773040</a>
+        </p>
       </div>
-      <div class="loader-bar-track" aria-hidden="true">
-        <div class="loader-bar"></div>
-      </div>
+    </noscript>
 
-      <!-- SEO crawlable fallback — hidden from visual users, indexed by bots.
-           id="main-content" lives here so skip-link works even before React mounts. -->
-      <div class="seo-fallback">
-        <header>
-          <h1>Digitalizen: ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি | Bangladesh Digital Marketing Agency</h1>
-          <p>Bangladesh's leading performance marketing agency in Dhaka. Meta Ads, Google Ads, SEO, TikTok Ads, CAPI tracking. Founded by <a href="https://billah.dev" rel="author">Masum Billah</a> (BUET alumnus, IAC certified). ৯+ বছরের অভিজ্ঞতা | ৫০+ সফল ক্লায়েন্ট | ৩x+ গড় ROAS।</p>
-        </header>
-        <main id="main-content">
-          <section>
-            <h2>আমাদের সার্ভিস | Services</h2>
-            <ul>
-              <li><strong>Meta Ads (Facebook &amp; Instagram)</strong> — Pixel + CAPI server-side tracking, maximum ROAS in Bangladesh market.</li>
-              <li><strong>Google Ads Management</strong> — Search, Display, Shopping, YouTube campaigns for Bangladeshi businesses.</li>
-              <li><strong>SEO Bangladesh</strong> — Technical SEO, Bengali keyword research, on-page optimization, link building.</li>
-              <li><strong>TikTok Ads</strong> — TikTok advertising for Bangladesh's growing young audience.</li>
-              <li><strong>Social Media Management</strong> — Bengali/English content strategy, creation, and analytics.</li>
-              <li><strong>Landing Page Development</strong> — High-speed custom pages with advanced conversion tracking.</li>
-            </ul>
-          </section>
-          <section>
-            <h2>প্যাকেজ | Packages</h2>
-            <ul>
-              <li><strong>মাইক্রো টেস্ট (শূন্য সার্ভিস চার্জ)</strong> — ফ্রি বিজনেস অডিট, গ্রোথ স্ট্র্যাটেজি ২০২৬, হাই-কনভার্টিং অ্যাড সেটআপ।</li>
-              <li><strong>মান্থলি কেয়ার (৳১০,০০০/মাস)</strong> — AI সেলস ফানেল, ফ্রি ল্যান্ডিং পেজ, আনলিমিটেড অ্যাড ম্যানেজমেন্ট।</li>
-              <li><strong>ব্র্যান্ড কেয়ার (৳৩০,০০০/মাস)</strong> — অ্যাডভান্সড অটোমেশন, AI ডমিন্যান্স, প্রিমিয়াম ব্র্যান্ড আইডেন্টিটি।</li>
-            </ul>
-          </section>
-          <section>
-            <h2>About Digitalizen</h2>
-            <p>Performance marketing agency in <strong>Dhaka, Bangladesh</strong>. Founded by <a href="https://billah.dev" rel="author noopener">Masum Billah</a> (<a href="https://x.com/billahdotdev" rel="noopener noreferrer" target="_blank">@billahdotdev</a>) — BUET alumnus, IAC certified, Meta Blueprint certified. 9+ years experience. Serving clients worldwide.</p>
-          </section>
-        </main>
-        <footer>
-          <p>© 2026 Digitalizen. সর্বস্বত্ব সংরক্ষিত। | Dhaka, Bangladesh | WhatsApp: +880 17-1199-2558</p>
-        </footer>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="/src/main.jsx"></script>
-
-  <script>
-    /* ══ Service Worker ══
-       [L09] SW registration is already on 'load' event — correct.
-       Note: SW caches assets AFTER page load, so it never competes
-       with LCP. Zero Lighthouse impact. */
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(r => console.log('[SW] registered:', r.scope))
-          .catch(e => console.warn('[SW] registration failed:', e))
-      })
-    }
-
-    /* Called by main.jsx after React mounts to fade out loader.
-       Timeout matches CSS transition (0.25s = 250ms). */
-    window.__removeLoader = () => {
-      const el = document.getElementById('initial-loader')
-      if (!el) return
-      el.style.transition = 'opacity 0.25s'
-      el.style.opacity = '0'
-      setTimeout(() => el.remove(), 280)
-    }
-  </script>
-</body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

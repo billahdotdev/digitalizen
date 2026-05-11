@@ -1,183 +1,109 @@
-import { useCallback } from 'react'
-import { track, WA_NUMBER } from '../lib/analytics.js'
-import './Packages.css'
+import React, { useEffect } from 'react';
+import { trackPricingCTA, trackSectionView } from '../utils/tracking.js';
 
-/* ─────────────────────────────────────────────
-   Package data
-───────────────────────────────────────────── */
-const packages = [
+/* ── Data (previously in src/data/content.js) ─────────────────── */
+const PACKAGES = [
   {
-    id: '01',
-    name: 'মাইক্রো টেস্ট',
-    price: 'ফ্রি',
-    tagline: '১০০% রিস্ক-ফ্রি এন্ট্রি',
-    serial: '01. // গাইডলাইন আমাদের; সিদ্ধান্ত আপনার',
-    period: '/লাইফটাইম',
-    adChip: 'অ্যাড কস্ট আলাদা',
+    variant: 'frosted',
+    serial:  '01',
+    tag:     'ফ্রি শুরু',
+    name:    'মাইক্রো টেস্ট',
+    unit: '', amount: 'ফ্রি', period: ' · একবার',
+    value: 0,
     features: [
       'ফ্রি বিজনেস অডিট',
-      'গ্রোথ স্ট্র্যাটেজি ২০২৬',
-      'হাই-কনভার্টিং অ্যাড সেটআপ',
-      'ইউনিক কনটেন্ট আইডিয়া',
+      'গ্রোথ রোডম্যাপ ২০২৬',
+      'হাই-কনভার্টিং অ্যাড স্ট্র্যাটেজি',
+      'কনটেন্ট আইডিয়া',
     ],
-    cta: 'কুইক স্টার্ট',
-    type: 'frosted',
+    cta: 'শুরু করুন',
   },
   {
-    id: '02',
-    name: 'মান্থলি কেয়ার',
-    price: '১০,০০০',
-    tagline: 'সবচেয়ে জনপ্রিয় চয়েস',
-    serial: '02. // মার্কেটিং + ওয়েব ডেভ একসাথে',
-    period: '/মাস',
-    adChip: 'অ্যাড কস্ট আলাদা',
+    variant: 'electric',
+    badge:   'BEST ROI',
+    serial:  '02',
+    tag:     'মার্কেটিং + ওয়েব',
+    name:    'মান্থলি কেয়ার',
+    unit: '৳', amount: '১০,০০০', period: '/মাস',
+    value: 10000,
     features: [
       'AI সেলস ফানেল অটোমেশন',
-      'ফ্রি আল্ট্রা-ফাস্ট ল্যান্ডিং পেজ (Vite + React)',
-      'ফ্রি পিক্সেল ও কনভার্শন সেটআপ',
+      'ফ্রি আল্ট্রা-ফাস্ট ল্যান্ডিং পেজ',
+      'CAPI + Pixel সেটআপ',
       'আনলিমিটেড অ্যাড ম্যানেজমেন্ট',
-      'এক্সক্লুসিভ অ্যাড কনটেন্ট আইডিয়া',
+      'n8n Lead Automation',
     ],
-    cta: 'আনলক প্রফিট',
-    type: 'electric',
-    popular: true,
+    cta: 'প্রফিট আনলক করুন',
   },
   {
-    id: '03',
-    name: 'ব্র্যান্ড কেয়ার',
-    price: '৩০,০০০',
-    tagline: 'বিজনেসের পূর্ণাঙ্গ সল্যুশন',
-    serial: '03. // মার্কেটে ডমিন্যান্স',
-    period: '/মাস',
-    adChip: 'অ্যাড কস্ট আলাদা',
+    variant: 'obsidian',
+    serial:  '03',
+    tag:     'মার্কেটে ডমিন্যান্স',
+    name:    'ব্র্যান্ড কেয়ার',
+    unit: '৳', amount: '৩০,০০০', period: '/মাস',
+    value: 30000,
     features: [
-      'অ্যাডভান্সড সেলস ফানেল অটোমেশন',
-      'আনলিমিটেড ল্যান্ডিং পেজ সাপোর্ট (Vite + React)',
-      'AI ডমিন্যান্স ও অথরিটি বিল্ডিং (AEO, GEO)',
-      'কাস্টমার সেন্টিমেন্ট অ্যানালাইসিস',
-      'মডার্ন ট্র্যাকিং (CAPI, GA4, TTK পিক্সেল)',
-      'উইনিং অ্যাড কনটেন্ট আইডিয়া',
-      'প্রিমিয়াম ব্র্যান্ড আইডেন্টিটি ডিজাইন',
+      'Advanced Funnel + AI Chatbot',
+      'Grafana Dashboard + Real-time Monitor',
+      'AI Dominance · AEO · GEO',
+      'CAPI + GA4 + TikTok Premium',
+      'প্রিমিয়াম ব্র্যান্ড আইডেন্টিটি',
     ],
-    cta: 'বি দ্য অথরিটি',
-    type: 'obsidian',
+    cta: 'Authority হন',
   },
-]
+];
 
-/* ─────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────── */
 export default function Packages() {
-  const handleCta = useCallback((pkg) => {
-    const text = `Hi Digitalizen, I'm interested in the ${pkg.name} package.`
-    track('Contact', { content_name: pkg.name, value: pkg.price })
-    window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`,
-      '_blank',
-      'noopener,noreferrer'
-    )
-  }, [])
+  useEffect(() => trackSectionView('pricing', { content_category: 'pricing' }), []);
+
+  const go = (plan) => {
+    trackPricingCTA(plan.name, plan.value || 0);
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <section className="pk-section" id="pricing">
-      {/* Grid background — matches Hero exactly */}
-      <div className="pk-bg-grid" aria-hidden="true" />
-
-      <div className="container">
-
-        <div className="row-header">
-          <span className="section-num">০০৫</span>
-          <span className="section-title-right">{'// প্যাকেজ'}</span>
-        </div>
-
-        <h2 className="finder-heading">
-          সবার জন্য এক সলিউশন নয়; আপনার চাই ইউনিক গ্রোথ প্ল্যান!
+    <section className="section" id="pricing" aria-labelledby="pricing-h2">
+      <div className="section-inner">
+        <div className="section-tag">// ০০৬ — প্যাকেজ</div>
+        <h2 id="pricing-h2" className="section-h2">
+          আপনার জন্য<br /><em>সঠিক প্ল্যান</em>
         </h2>
+        <p className="section-sub">শুরু থেকে পূর্ণ মার্কেট ডমিন্যান্স পর্যন্ত।</p>
 
-        <p className="finder-sub">
-          প্রতিটি ব্যবসার চ্যালেঞ্জ আলাদা। আপনার বর্তমান প্রয়োজন এবং ভবিষ্যৎ পরিকল্পনা
-          মাথায় রেখে আমাদের ৩টি প্ল্যান থেকে বেছে নিন।
-        </p>
-
-        <div className="pk-stack">
-          {packages.map((pkg, i) => (
-            <div
-              key={pkg.id}
-              className={`pk-card pk-card--${pkg.type}`}
-              style={{ '--index': i + 1 }}
+        <div className="pk-grid">
+          {PACKAGES.map((p) => (
+            <article
+              key={p.name}
+              className={`pk-card pk-${p.variant}`}
+              aria-label={`${p.name} — ${p.amount}${p.period}`}
             >
-              <div className="pk-card-inner">
-
-                {/*
-                  Zero-runtime particle constellation.
-                  Pure CSS box-shadow dots + mesh lines on ::before / ::after.
-                  No canvas, no requestAnimationFrame, no JS overhead.
-                */}
-                {pkg.type === 'obsidian' && (
-                  <div className="pk-obsidian-particles" aria-hidden="true" />
-                )}
-
-                {pkg.popular && (
-                  <div className="pk-badge" aria-label="সবচেয়ে জনপ্রিয় প্যাকেজ">
-                    BEST ROI
-                  </div>
-                )}
-
-                <div className="pk-content-grid">
-
-                  <div className="pk-main-info">
-                    <span className="pk-serial">{pkg.serial}</span>
-                    <h3 className="pk-title">{pkg.name}</h3>
-
-                    <div className="pk-price">
-                      <span className="pk-unit" aria-hidden="true">৳</span>
-                      <span className="pk-amount">{pkg.price}</span>
-                      <span className="pk-period">{pkg.period}</span>
-                    </div>
-
-                    <div className="pk-ad-chip" aria-label="বিজ্ঞাপনের খরচ আলাদা">
-                      {pkg.adChip}
-                    </div>
-                  </div>
-
-                  <div className="pk-details">
-                    <ul className="pk-feat-list" role="list">
-                      {pkg.features.map((f, j) => (
-                        <li key={j} className="pk-feat-item">
-                          <span className="pk-dot" aria-hidden="true" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button
-                      type="button"
-                      className="pk-btn"
-                      onClick={() => handleCta(pkg)}
-                      aria-label={`${pkg.cta} — ${pkg.name}`}
-                    >
-                      <span>{pkg.cta}</span>
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        aria-hidden="true"
-                      >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
-
-                </div>
+              {p.badge && <div className="pk-badge">{p.badge}</div>}
+              <div className="pk-serial-row">
+                <span className="pk-serial">{p.serial}</span>
+                <span className="pk-tag">{p.tag}</span>
               </div>
-            </div>
+              <div className="pk-name">{p.name}</div>
+              <div className="pk-price-row">
+                {p.unit && <span className="pk-unit">{p.unit}</span>}
+                <span className="pk-amount">{p.amount}</span>
+                <span className="pk-period">{p.period}</span>
+              </div>
+              <ul className="pk-features">
+                {p.features.map((f) => (
+                  <li key={f}>
+                    <span className="pk-dot" aria-hidden />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <button className="pk-btn" onClick={() => go(p)}>
+                <span>{p.cta}</span>
+                <span aria-hidden>→</span>
+              </button>
+            </article>
           ))}
         </div>
-
       </div>
     </section>
-  )
+  );
 }

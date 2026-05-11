@@ -1,230 +1,74 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
-import './Faq.css'
+import React, { useState } from 'react';
 
-
-/* ══════════════════════════════════════════════════
-   DATA
-══════════════════════════════════════════════════ */
-const faqs = [
+/* ── Data (previously in src/data/content.js) ─────────────────── */
+const FAQS = [
   {
     q: 'শুরু করতে কত টাকা লাগবে?',
-    a: 'মাত্র ৳১,৪৫০ বা $10 দিয়েই শুরু করতে পারবেন আমাদের মাইক্রো টেস্ট প্যাকেজের মাধ্যমে। এটি ছোট বাজেটে দ্রুত রেজাল্ট দেখার সেরা উপায়। বাজেট বেশি হলে সাপ্তাহিক বা মাসিক প্যাকেজও আছে।',
-    cat: 'মূল্য',
-    catColor: { bg: '#fef9c3', fg: '#854d0e' },
+    a: 'একদম ফ্রিতে শুরু করতে পারেন মাইক্রো টেস্ট দিয়ে। মান্থলি কেয়ার শুরু হয় মাত্র ৳১০,০০০ থেকে — কোনো আপফ্রন্ট নেই।',
   },
   {
     q: 'ফলাফল পেতে কতদিন লাগে?',
-    a: 'সাধারণত প্রথম ৭ দিনের মধ্যেই প্রাথমিক ডেটা পাওয়া যায়। ২ থেকে ৩ সপ্তাহের মধ্যে স্পষ্ট প্যাটার্ন বোঝা যায়। ROAS সর্বোচ্চ পর্যায়ে নিতে সাধারণত ৪ থেকে ৬ সপ্তাহ লাগে, কারণ প্রতিটি ডেটা পয়েন্ট অনুযায়ী অপ্টিমাইজেশন করা হয়।',
-    cat: 'ফলাফল',
-    catColor: { bg: '#dcfce7', fg: '#166534' },
+    a: 'প্রথম ৭ দিনে প্রাথমিক ডেটা দেখা যায়। ৪–৬ সপ্তাহে ROAS সর্বোচ্চ পর্যায়ে পৌঁছায়।',
   },
   {
-    q: 'কনটেন্ট না থাকলে কী হবে?',
-    a: 'কোনো সমস্যা নেই। আমাদের কাস্টম সলিউশন প্যাকেজে ছবি ও ভিডিও কনটেন্ট প্রোডাকশনের সুবিধা আছে। আপনাকে শুধু পণ্য বা সেবার বিবরণ দিতে হবে, বাকিটা আমরা করব।',
-    cat: 'কনটেন্ট',
-    catColor: { bg: '#f3e8ff', fg: '#6b21a8' },
+    q: 'চুক্তি বা লক-ইন আছে কি?',
+    a: 'না। কোনো দীর্ঘমেয়াদি চুক্তি নেই। রেজাল্ট দেখে সন্তুষ্ট হলে চালিয়ে যাবেন, না হলে যাবেন।',
   },
   {
-    q: 'মেটা অ্যাডস ছাড়া অন্য প্ল্যাটফর্মে কাজ করেন?',
-    a: 'অবশ্যই। Facebook ও Instagram-এর পাশাপাশি Google, TikTok এবং YouTube-এ ফুল-স্কেল অ্যাড ক্যাম্পেইন পরিচালনা করি। আপনার ব্র্যান্ডের পূর্ণাঙ্গ গ্রোথ এবং প্রতিটি প্ল্যাটফর্মে সম্ভাব্য কাস্টমারের কাছে পৌঁছে দিতে আমরা কাজ করি।',
-    cat: 'সার্ভিস',
-    catColor: { bg: '#e0f2fe', fg: '#075985' },
+    q: 'CAPI আর সাধারণ Pixel-এর পার্থক্য কী?',
+    a: 'Browser Pixel iOS-এ block হয়। Server-side CAPI সরাসরি Meta সার্ভারে ডেটা পাঠায় — কোনো ডেটা হারায় না, targeting আরও ভালো হয়।',
   },
   {
-    q: 'রিপোর্ট কীভাবে পাব?',
-    a: 'প্যাকেজ ভেদে সাপ্তাহিক বা মাসিক রিপোর্ট WhatsApp ও ইমেইলে পাঠানো হয়। রিপোর্টে থাকবে Reach, Impressions, CTR, CPC, ROAS এবং কনভার্শন ডেটা। সব কিছু সহজ বাংলায় ব্যাখ্যা করা থাকবে।',
-    cat: 'রিপোর্টিং',
-    catColor: { bg: '#fff7ed', fg: '#9a3412' },
+    q: 'বিকাশ বা নগদে পেমেন্ট হয় কি?',
+    a: 'হ্যাঁ। বিকাশ, নগদ, ব্যাংক ট্রান্সফার — সব পদ্ধতিতে পেমেন্ট করা যায়।',
   },
-  {
-    q: 'চুক্তি বা লক-ইন পিরিয়ড আছে?',
-    a: 'না, কোনো দীর্ঘমেয়াদি চুক্তি নেই। মাইক্রো টেস্ট একবারের পেমেন্ট। সাপ্তাহিক ও মাসিক প্যাকেজ যেকোনো সময় বন্ধ করা যাবে। রেজাল্ট দেখে সন্তুষ্ট হলে চালিয়ে যাবেন, এটাই আমাদের মডেল।',
-    cat: 'চুক্তি',
-    catColor: { bg: '#fce7f3', fg: '#9d174d' },
-  },
-  {
-    q: 'পেমেন্ট কীভাবে করব?',
-    a: 'bKash, Nagad, Rocket এবং ব্যাংক ট্রান্সফার গ্রহণ করা হয়। প্রথম অর্ডারে ৫০% অ্যাডভান্স নেওয়া হয়, বাকি ৫০% কাজ শুরু হওয়ার পর। বিস্তারিত WhatsApp-এ জানানো হবে।',
-    cat: 'পেমেন্ট',
-    catColor: { bg: '#e8eeff', fg: '#1e3a8a' },
-  },
-  {
-    q: 'বিজ্ঞাপনে কত টাকা বরাদ্দ রাখব?',
-    a: 'অ্যাড বাজেট মূলত আপনার ব্যবসার লক্ষ্য এবং ক্যাটাগরির ওপর নির্ভর করে। শুরুতে একটি টেস্ট বাজেট দিয়ে ক্যাম্পেইন শুরু করার পরামর্শ দিই। ভালো ফলাফল আসতে শুরু করলে ধীরে ধীরে বাজেট বাড়িয়ে স্কেল করা হয়। এতে ঝুঁকি কম থাকে এবং মুনাফার হার বাড়ে।',
-    cat: 'বাজেট',
-    catColor: { bg: '#ecfdf5', fg: '#065f46' },
-  },
-]
+];
 
-/* ── WhatsApp icon ── */
-const WaIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-)
-
-/* ══════════════════════════════════════════════════
-   COMPONENT
-══════════════════════════════════════════════════ */
-export default function Faq() {
-  const [open, setOpen]       = useState(null)
-  const [entered, setEntered] = useState(false)
-  const sectionRef            = useRef(null)
-  const bodyRefs              = useRef({})
-  const enterTimeRef          = useRef(null)
-  const sectionFiredRef       = useRef(false)
-  const openedCountRef        = useRef(0)
-
-  /* ── Section view + stagger entrance ── */
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !sectionFiredRef.current) {
-          sectionFiredRef.current = true
-          enterTimeRef.current    = Date.now()
-          setEntered(true)
-          track('ViewContent', {
-            content_name:     'FAQ Section',
-            content_category: 'Section',
-          })
-          io.unobserve(el)
-        }
-      },
-      { threshold: 0.15 }
-    )
-    io.observe(el)
-
-    /* time-on-section engagement */
-    const pushEng = () => pushEngagement('faq', enterTimeRef, { faqs_opened: openedCountRef.current })
-
-    const onVis = () => { if (document.visibilityState === 'hidden') pushEng() }
-    document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', pushEng)
-
-    return () => {
-      io.disconnect()
-      document.removeEventListener('visibilitychange', onVis)
-      window.removeEventListener('beforeunload', pushEngagement)
-    }
-  }, [])
-
-  /* ── Toggle ── */
-  const toggle = useCallback((i) => {
-    setOpen(prev => {
-      const opening = prev !== i
-      if (opening) {
-        openedCountRef.current += 1
-        track('ViewContent', {
-          content_name:     'FAQ: ' + faqs[i].q,
-          content_category: 'FAQ Item',
-          content_ids:      [`faq_${i + 1}`],
-          faq_index:        i + 1,
-          faq_category:     faqs[i].cat,
-        })
-      }
-      return opening ? i : null
-    })
-  }, [])
-
-  /* ── WhatsApp CTA ── */
-  const handleWa = useCallback(() => {
-    track('Contact', {
-      content_name:     'FAQ WhatsApp CTA',
-      content_category: 'CTA',
-    })
-    window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, একটি প্রশ্ন ছিল।')}`,
-      '_blank'
-    )
-  }, [])
+export default function FAQ() {
+  const [open, setOpen] = useState(-1);
 
   return (
-    <section id="faq" className="faq-section" aria-label="সাধারণ প্রশ্নোত্তর" ref={sectionRef}>
-      {/* Grid background — matches other sections exactly */}
-      <div className="faq-bg-grid" aria-hidden="true" />
+    <section className="section" id="faq" aria-labelledby="faq-h2">
+      <div className="section-inner">
+        <div className="section-tag">// ০০৭ — সাধারণ প্রশ্ন</div>
+        <h2 id="faq-h2" className="section-h2">যা জানতে চান</h2>
 
-      <div className="container">
-
-        <div className="row-header">
-          <span className="section-num">০০৭</span>
-          <span className="section-title-right">{"// সাধারণ প্রশ্নোত্তর"}</span>
-        </div>
-
-        <h2 className="faq-heading">সাধারণ প্রশ্নোত্তর</h2>
-        <p className="faq-sub">সবচেয়ে বেশি জিজ্ঞেস করা প্রশ্নগুলোর উত্তর এখানে পাবেন।</p>
-
-        <div className="faq-list">
-          {faqs.map((item, i) => {
-            const isOpen = open === i
+        <div className="faq-list" role="list">
+          {FAQS.map((f, i) => {
+            const isOpen = open === i;
             return (
-              <div
-                key={i}
-                className={[
-                  'faq-item',
-                  isOpen  ? 'faq-item--open'   : '',
-                  entered ? 'faq-item--visible' : '',
-                ].filter(Boolean).join(' ')}
-                style={{ '--stagger': `${i * 55}ms` }}
-              >
+              <div key={i} className={`faq-item${isOpen ? ' faq-item--open' : ''}`} role="listitem">
                 <button
-                  className="faq-trigger"
-                  onClick={() => toggle(i)}
+                  className="faq-btn"
                   aria-expanded={isOpen}
-                  aria-controls={`faq-body-${i}`}
+                  aria-controls={`faq-panel-${i}`}
                   id={`faq-btn-${i}`}
+                  onClick={() => setOpen(isOpen ? -1 : i)}
                 >
-                  <div className="faq-trigger-left">
-                    <span
-                      className="faq-cat"
-                      style={{ background: item.catColor.bg, color: item.catColor.fg }}
-                    >
-                      {item.cat}
-                    </span>
-                    <span className="faq-q">{item.q}</span>
-                  </div>
-                  <span
-                    className={`faq-chevron${isOpen ? ' faq-chevron--open' : ''}`}
-                    aria-hidden="true"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.8"
-                        strokeLinecap="round" strokeLinejoin="round"/>
+                  <span className="faq-q">{f.q}</span>
+                  <span className="faq-icon" aria-hidden>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path
+                        d={isOpen ? 'M2 7h10' : 'M7 2v10M2 7h10'}
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                      />
                     </svg>
                   </span>
                 </button>
-
-                {/* Always in DOM — CSS max-height drives smooth open/close */}
                 <div
-                  id={`faq-body-${i}`}
+                  id={`faq-panel-${i}`}
                   role="region"
                   aria-labelledby={`faq-btn-${i}`}
-                  className="faq-body"
-                  ref={el => { bodyRefs.current[i] = el }}
-                  style={{
-                    maxHeight: isOpen
-                      ? (bodyRefs.current[i]?.scrollHeight ?? 400) + 'px'
-                      : '0px',
-                  }}
+                  className={`faq-body${isOpen ? ' faq-body--open' : ''}`}
+                  aria-hidden={!isOpen}
                 >
-                  <p className="faq-answer">{item.a}</p>
+                  <div className="faq-body-inner">{f.a}</div>
                 </div>
               </div>
-            )
+            );
           })}
-        </div>
-
-        <div className="faq-cta">
-          <p className="faq-cta-text">আপনার প্রশ্নের উত্তর এখানে পাননি?</p>
-          <button className="faq-cta-btn" onClick={handleWa}>
-            <WaIcon />
-            WhatsApp-এ জিজ্ঞেস করুন
-          </button>
         </div>
       </div>
     </section>
-  )
+  );
 }

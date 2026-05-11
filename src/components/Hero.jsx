@@ -1,120 +1,122 @@
-import { useEffect, useRef, useCallback } from 'react'
-import { Smile } from 'lucide-react'
-import { track, pushEngagement, WA_NUMBER } from '../lib/analytics.js'
-import './Hero.css'
+import React, { useEffect, useRef } from 'react';
+import { IconWhatsApp } from './Icons.jsx';
+import { trackCTA, trackSectionView } from '../utils/tracking.js';
+
+/* ── Data ─────────────────────────────────────────────────────── */
+const PROOF = [
+  { val: '৫০', em: '+', label: 'ক্লায়েন্ট'     },
+  { val: '৯',  em: '+', label: 'বছরের\nঅভিজ্ঞতা' },
+  { val: '৩',  em: 'x', label: 'গড় ROAS'        },
+  { val: '১',  em: 's', label: 'পেজ লোড'         },
+];
+
+const WA_NUMBER  = '8801311773040';
+const WA_MESSAGE = encodeURIComponent('হ্যালো! আমি ফ্রি অডিট বুক করতে চাই।');
+const WA_HREF    = `https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`;
 
 export default function Hero() {
-  const heroRef      = useRef(null)
-  const enterTimeRef = useRef(null)
-  const firedRef     = useRef(false)
-  const ctaClicksRef = useRef(0)
+  const gridRef = useRef(null);
 
-  /* ── Section ViewContent + time-on-hero ── */
+  useEffect(() => trackSectionView('top', { content_category: 'hero' }), []);
+
   useEffect(() => {
-    const el = heroRef.current
-    if (!el) return
+    const el = gridRef.current;
+    if (!el) return;
 
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !firedRef.current) {
-        firedRef.current     = true
-        enterTimeRef.current = Date.now()
-        track('ViewContent', { content_name: 'Hero Section', content_category: 'Section', content_ids: ['hero'] }, 'hero')
-      }
-    }, { threshold: 0.3 })
-    io.observe(el)
+    /* Skip parallax on touch devices entirely — battery + jank cost
+       outweighs decorative value on phones. matchMedia returns true
+       on tablets/phones so they get static grid.                   */
+    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
 
-    /* time-on-hero + scroll-off signal */
-    const push = () => pushEngagement('hero', enterTimeRef, { cta_clicks: ctaClicksRef.current })
+    /* RAF throttle: read clientX/Y eagerly, write transform once
+       per animation frame. Prevents layout-thrashing on rapid moves. */
+    let rafId = null;
+    let nextX = 0, nextY = 0;
 
-    const scrollIo = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting && firedRef.current) push()
-    }, { threshold: 0 })
-    scrollIo.observe(el)
+    const apply = () => {
+      el.style.transform = `translate(${nextX}px, ${nextY}px)`;
+      rafId = null;
+    };
+    const onMove = (e) => {
+      nextX = (e.clientX / window.innerWidth  - 0.5) * 14;
+      nextY = (e.clientY / window.innerHeight - 0.5) * 14;
+      if (rafId === null) rafId = requestAnimationFrame(apply);
+    };
 
-    const onVis = () => { if (document.visibilityState === 'hidden') push() }
-    document.addEventListener('visibilitychange', onVis)
-    window.addEventListener('beforeunload', push)
-
+    window.addEventListener('mousemove', onMove, { passive: true });
     return () => {
-      io.disconnect()
-      scrollIo.disconnect()
-      document.removeEventListener('visibilitychange', onVis)
-      window.removeEventListener('beforeunload', push)
-    }
-  }, [])
+      window.removeEventListener('mousemove', onMove);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
-  /* ── Primary CTA — WhatsApp ── */
-  const handleMainCta = useCallback(() => {
-    ctaClicksRef.current += 1
-    track('InitiateCheckout', {
-      content_name:     'Hero WhatsApp CTA',
-      content_category: 'CTA',
-      content_ids:      ['hero_wa_cta'],
-      currency:         'BDT',
-      value:            0,
-    }, 'hero')
-    window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('হ্যালো, ফ্রি কনসালটেশন কল বুক করতে চাই। ব্যবসা সম্পর্কে কথা বলতে চাই।')}`,
-      '_blank'
-    )
-  }, [])
-
-  /* ── Secondary CTA — scroll to About ── */
-  const handleSecondaryCta = useCallback(() => {
-    ctaClicksRef.current += 1
-    window.dataLayer = window.dataLayer || []
-    window.dataLayer.push({ event: 'hero_secondary_cta', scroll_target: 'gallery' })
-    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section className="hero" id="home" aria-label="Digitalizen পারফরম্যান্স মার্কেটিং" ref={heroRef}>
-      <div className="hero__bg-grid" aria-hidden="true"></div>
-      <div className="hero__bg-glow" aria-hidden="true"></div>
+    <section className="hero" id="top" aria-labelledby="hero-h1">
+      <div className="hero-grid" ref={gridRef} aria-hidden="true" />
+      <div className="hero-orb" aria-hidden="true" />
 
-      <div className="container hero__inner">
-        <div className="hero__badge">
-          <span className="badge-dot"></span>
-          AI অটোমেশন ও অ্যাড স্পেশালিস্ট এজেন্সি
+      <div className="hero-content">
+        <div className="badge fade-up" style={{ '--d': '0ms' }}>
+          <span className="badge-dot" aria-hidden />
+          ঢাকা থেকে · AI-Powered · Server-side Infra
         </div>
 
-        <h1 className="hero__headline">
-          ১ সেকেন্ডে সাইট লোড<br />
-          <span className="hero__blue">সেল করবে স্মার্ট AI</span>
+        <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
+          আমরা অ্যাড চালাই না।
+          <br />
+          <em>সেলস মেশিন</em>
+          <br />
+          তৈরি করি।
         </h1>
 
-        <p className="hero__sub">
-          সুপারফাস্ট ল্যান্ডিং পেজ, CPA ট্র্যাকিং, AI অটোমেশন,<br />
-          আপনার বিজনেসের জন্য অটোমেটেড সেলস সিস্টেম।
+        <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
+          বেশিরভাগ এজেন্সি শুধু বুস্ট দেয়। আমরা পুরো ডিজিটাল
+          ইনফ্রাস্ট্রাকচার বানাই — যাতে প্রতিটি টাকার হিসাব থাকে।
         </p>
 
-        <div className="hero__actions">
-          <button className="btn-primary hero__btn-main" onClick={handleMainCta}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            ফ্রি কনসালটেশন কল বুক করুন
-          </button>
-          <button className="btn-ghost" onClick={handleSecondaryCta}>
-            আরো জানতে চাই ↓
+        <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
+          <a
+            className="btn-primary"
+            href={WA_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackCTA('ফ্রি অডিট', 'hero')}
+            aria-label="WhatsApp-এ ফ্রি অডিট বুক করুন"
+            style={{ textDecoration: 'none' }}
+          >
+            <IconWhatsApp width={16} height={16} />
+            ফ্রি অডিট বুক করুন
+          </a>
+          <button
+            className="btn-ghost"
+            onClick={() => { trackCTA('AI Bot দেখুন', 'hero'); scrollTo('chatbot'); }}
+          >
+            🤖 AI Bot লাইভ দেখুন ↓
           </button>
         </div>
 
-        <div className="hero__trust">
-          <span className="trust-icon">🔒</span>
-          <span>আমরা সার্ভিস বিক্রি করি না, বিজনেস স্কেল করি। আগে পারফরম্যান্স দেখুন, সিদ্ধান্ত পরে নিন।</span>
+        <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
+          <span className="trust-dot" aria-hidden />
+          কোনো লক-ইন নেই — রেজাল্ট দেখে সিদ্ধান্ত নিন
         </div>
 
-        <button
-          className="hero__salesperson"
-          onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
-          aria-label="আমাদের কাজ দেখুন"
-        >
-          <Smile className="hero__salesperson-face" size={22} strokeWidth={2} aria-hidden="true" />
-          <span className="hero__salesperson-text">সেলস পারসন; যে কখনো ঘুমায় না</span>
-        </button>
-
+        {/* Proof stats bar */}
+        <div className="hero-proof fade-up" style={{ '--d': '400ms' }} role="list" aria-label="Key stats">
+          {PROOF.map((p, i) => (
+            <React.Fragment key={p.label}>
+              {i > 0 && <div className="hero-proof-sep" aria-hidden />}
+              <div className="hero-proof-item" role="listitem">
+                <div className="hero-proof-val">
+                  {p.val}<em>{p.em}</em>
+                </div>
+                <div className="hero-proof-lbl">{p.label.replace('\n', ' ')}</div>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     </section>
-  )
+  );
 }
