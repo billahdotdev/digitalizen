@@ -40,11 +40,11 @@ export default function Services() {
       <div className="section-inner">
         <div className="section-tag">// ০০১ — আমরা কী করি</div>
         <h2 id="services-h2" className="section-h2">
-          BD-র একমাত্র<br />
+          বাংলাদেশের একমাত্র ওয়ান-টু-ওয়ান পার্সোনালাইজড<br />
           <em>Technical Marketing Agency</em>
         </h2>
         <p className="section-sub">
-          সাধারণ এজেন্সি শুধু বুস্ট দেয়। আমরা পুরো ইনফ্রাস্ট্রাকচার বানাই —
+          সাধারণ এজেন্সি শুধু বুস্ট দেয়। আমরা পুরো ইনফ্রাস্ট্রাকচার বানাই 
           যেন আপনার বিজ্ঞাপনের প্রতিটি টাকা ট্র্যাক হয়, কাজ হয়।
         </p>
 
@@ -106,7 +106,7 @@ export default function Services() {
           style={{ textDecoration: 'none', justifyContent: 'center', marginTop: 8 }}
         >
           <IconWhatsApp width={16} height={16} />
-          WhatsApp-এ ফ্রি অডিট বুক করুন
+           ফ্রি অডিট বুক করুন
           <span aria-hidden>→</span>
         </a>
       </div>
