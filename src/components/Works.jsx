@@ -19,7 +19,7 @@ export default function Works() {
         </h2>
         <p className="section-sub">
           ১ সেকেন্ড দেরি = ২০% কনভার্সন হারানো।
-          আমাদের প্রতিটি পেজ sub-1s লোড হয়।
+          আমাদের প্রতিটি পেজ ১ সেকেন্ডে লোড হয়।
         </p>
 
         <div className="works-grid">
