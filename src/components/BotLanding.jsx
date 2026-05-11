@@ -212,9 +212,9 @@ export default function BotLanding() {
       {/* ─── Topbar ─────────────────────────────────────────────── */}
       <header className="bl-topbar">
         <a href="/" className="bl-logo" aria-label="Digitalizen — homepage">
-          DIGITALIZEN | ডিজিটালাইজেন<em>.</em>
+          Digitalizen<em>.</em>
         </a>
-        <span className="bl-topbar-tag">// AI সেলস ইঞ্জিন আর্কিটেকচার</span>
+        <span className="bl-topbar-tag">// WhatsApp AI সেলস মেশিন </span>
       </header>
 
       <main id="bl-main" tabIndex={-1}>
@@ -232,23 +232,19 @@ export default function BotLanding() {
             </div>
 
             <h1 id="bl-hero-h" className="bl-h1 fade-up" style={{ '--d': '90ms' }}>
-              ১ ঘণ্টা পর "জি ভাইয়া" রিপ্লাই দেওয়ার আগেই<br />
-              কাস্টমার <em>অন্য পেজ</em> থেকে কিনে ফেলেছে?
+              রিপ্লাই দিতে দেরি হলে<br />
+              <em>কাস্টমার</em> অন্য পেজ থেকে কিনে ফেলে?
             </h1>
 
             <p className="bl-hero-quote fade-up" style={{ '--d': '170ms' }}>
-              এটি সাধারণ কোনো রোবট নয়, আপনার ব্যবসার সবচেয়ে বুদ্ধিমান সেলসম্যান। এখনই পরীক্ষা করে দেখুন।
+              AI সেলস মেশিন! কাস্টমারের মুড বুঝে বাংলায় রিপ্লাই দেয়। <br />
+              বিশ্বাস হচ্ছে না? চ্যাট করে দেখুন!
             </p>
 
             <div className="bl-avatar-wrap fade-up" style={{ '--d': '230ms' }}>
               <span className="cb-splash-ring" aria-hidden />
               <span className="cb-splash-ring" aria-hidden />
               <div className="bl-avatar">AI</div>
-            </div>
-
-            <div className="bl-live-pill fade-up" style={{ '--d': '290ms' }}>
-              <span className="bl-live-dot" aria-hidden />
-              এখন online · ২ সেকেন্ডে reply
             </div>
 
             <a
@@ -261,7 +257,7 @@ export default function BotLanding() {
               aria-label="WhatsApp-এ AI bot try করুন"
             >
               <IconWhatsApp width={20} height={20} />
-              এখনই Bot ট্রাই করুন
+              AI অ্যাসিস্ট্যান্ট। ট্রাই করুন!
             </a>
 
             <p className="bl-cta-fine fade-up" style={{ '--d': '410ms' }}>
