@@ -1,0 +1,84 @@
+# ════════════════════════════════════════════════════════════
+# _headers — Cloudflare Pages / Netlify HTTP response headers
+#
+# CRITICAL PERFORMANCE FIX:
+# Vite hashes every asset filename on build (e.g. vendor-react-Yiz_IqnQ.js).
+# A new hash = new URL = safe to cache forever.
+# Without this file, Cloudflare defaults to ~2hr / 10min TTL,
+# causing 241 KiB re-download on every repeat visit (Lighthouse warning).
+#
+# Deploy notes:
+#   Cloudflare Pages: place this in your project root (same level as index.html)
+#   Netlify:          same location
+#   Cloudflare Workers Sites: configure via wrangler.toml cache rules instead
+# ════════════════════════════════════════════════════════════
+
+# ── Hashed JS / CSS chunks — cache 1 year (immutable) ──────
+# Safe because Vite content-hashes every filename.
+# New deploy = new hash = new URL = cache miss (correct behaviour).
+/assets/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# ── Hashed images / fonts in /assets ───────────────────────
+/assets/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.avif
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+# ── App shell HTML — must revalidate (no hash) ─────────────
+# Browser must check for updates, but can serve stale while validating.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# ── Static public assets — moderate cache ──────────────────
+/favicon.svg
+  Cache-Control: public, max-age=86400
+
+/og-image.jpg
+  Cache-Control: public, max-age=86400
+
+/appletouchicon.png
+  Cache-Control: public, max-age=86400
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+
+# ── Service worker — never cache (must always be fresh) ────
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# ── Security headers — applied globally ────────────────────
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups

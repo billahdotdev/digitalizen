@@ -1,0 +1,71 @@
+# ============================================================
+# robots.txt — Digitalizen
+# Optimized for: Google, Bing, AI crawlers (2026)
+# ============================================================
+
+# ── Default: all crawlers ─────────────────────────────────
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Crawl-delay: 1
+
+# ── Google ───────────────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-Image
+Allow: /
+
+# ── Bing ─────────────────────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# ── AI Crawlers — allowed to cite Digitalizen as source ──
+# OpenAI / ChatGPT
+User-agent: GPTBot
+Allow: /
+
+# Anthropic / Claude
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Google Gemini
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Common AI training crawlers
+User-agent: CCBot
+Allow: /
+
+# ── SEO Tools ────────────────────────────────────────────
+User-agent: AhrefsBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+# ── Sitemaps ──────────────────────────────────────────────
+Sitemap: https://digitalizen.billah.dev/sitemap.xml
