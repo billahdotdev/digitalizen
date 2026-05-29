@@ -1,101 +1,49 @@
-# Digitalizen — `/bot` Landing Page Build
+# Digitalizen
 
-> Vite + React 18 + Pure CSS. Glassmorphism · sharp geometry · `#060d1a` + `#50C878`.
+Vite + React single-page site. Zero-runtime CSS, hand-rolled path router, mobile-first.
 
-## What's in this build
-
-```
-src/
-├── App.jsx                         (★ modified — adds /bot route)
-├── app.css                         (★ extended — appends .bl-* landing styles)
-├── main.jsx
-├── components/
-│   ├── BotLanding.jsx              (✨ NEW — Meta-ad destination)
-│   ├── Nav · Hero · Services · Process · Works · ChatBot · SpeedTest
-│   ├── Packages · FAQ · Contact · Footer · WhatsAppFloat · Icons
-└── utils/
-    └── tracking.js                 (★ extended — Bot landing event helpers)
-
-public/
-└── 404.html                        (✨ NEW — GitHub Pages SPA fallback)
-
-index.html                          (★ rewritten — Pixel + GA4 + SPA restore)
-```
-
-## Quick start
+## Run
 
 ```bash
 npm install
-npm run dev          # http://localhost:5173
-npm run dev /bot     # /bot route works in dev (SPA)
-npm run build        # → dist/
-npm run preview      # serves dist/
+npm run dev      # local dev
+npm run build    # production build → dist/
+npm run preview  # serve the build
 ```
 
-## Routes
+Routes: `/` (main site) · `/bot` (Meta-ad landing). Deep links survive on static hosts via `public/404.html`.
 
-| URL | Renders | Used for |
-|---|---|---|
-| `/`     | Full marketing site (current setup) | Organic, branded traffic |
-| `/bot`  | BotLanding (single-purpose ad page)  | Meta ads → live AI bot demo |
+## What changed in this pass
 
-Routing is path-based via `window.location.pathname` — **no router lib added**.
-Add a new route by editing `pathToView()` in `src/App.jsx`.
+Brand palette, copy, routing and component logic are untouched. The work was a
+**width + alignment refactor** of `src/App.css`, from a scattered desktop-first
+set of breakpoints to one consistent **mobile-first ladder**:
 
-## Before going live with ads — checklist
+| Step | Width | Behaviour |
+|------|-------|-----------|
+| base | `< 600px`  | every grid single-column · hamburger nav · full-width CTAs |
+| sm   | `≥ 600px`  | 2-up content grids · inline hero CTAs · ROI / footer columns |
+| lg   | `≥ 1000px` | full desktop · 4-up process · 3-up pricing · inline nav |
 
-### 1. Replace `YOUR_PIXEL_ID` (×4 in `index.html`)
-- Path: `business.facebook.com` → Events Manager → Pixels → copy ID
-- Spots: `fbq('init', ...)`, plus `<noscript>` fallback
+Tokens `--bp-sm` / `--bp-lg` document the two lines. Because **every** section
+reflows on the same two widths, nothing drifts out of rhythm between
+breakpoints anymore.
 
-### 2. Replace `G-XXXXXXXXXX` (×3 in `index.html`)
-- Path: `analytics.google.com` → Admin → Data Streams → Web → Measurement ID
+Specific fixes:
 
-### 3. Generate `og-image.jpg` (1200×630, < 100 KB)
-- Place at `public/og-image.jpg` so Facebook ad previews look sharp.
+- Pricing cards no longer collapse into a lopsided "2 + 1 centred" block in the
+  tablet range — they go cleanly 1-up → 3-up and share equal height with their
+  CTAs aligned.
+- Process, Works, Services and ROI now switch columns at the same points
+  instead of at `540 / 768 / 900 / 1024` independently.
+- Container width (`--max-w` 1140px, centred `.section-inner`) is applied
+  uniformly; no horizontal overflow at any width.
+- Image paths fixed: assets now live in `public/images/` under the names the
+  components request, and the three mislabelled JPEGs were re-encoded as real
+  WebP (≈40% smaller). Manifest icon / OG names aligned too.
 
-### 4. Confirm WhatsApp number in `BotLanding.jsx`
-- Currently: `8801311773040` (live AI bot — Meta Cloud API). Change if you swap numbers.
+## Layout primitives
 
-### 5. GitHub Pages SPA setup
-- Repo → Settings → Pages → Source: GitHub Actions (or "Deploy from branch" if your workflow targets it).
-- Add custom domain. With `public/404.html`, deep links to `/bot` survive a hard refresh.
-
-## Meta ad tracking — what fires from `/bot`
-
-| Pixel event       | When                                          | Source label                           |
-|-------------------|------------------------------------------------|------------------------------------------|
-| `PageView`        | Page load (auto, from Pixel init)              | —                                        |
-| `ViewContent`     | BotLanding component mounts                    | content_ids: `bot_landing`               |
-| `Lead`            | Any "Try the bot" WhatsApp click               | source: `hero_primary` / `how_section` / `final_try` |
-| `InitiateCheckout`| "Get this bot for my business" click           | source: `final_inquiry`, value: 15000 BDT |
-
-Every Pixel event includes a unique `event_id` — drop in CAPI later and
-deduplication works automatically.
-
-## Design tokens you can riff on
-
-```
---bg          #060d1a        Page background
---surface     #0d1b2e        Card surface
---surface-2   #112035        Elevated surface
---accent      #50C878        Emerald accent
---accent-soft rgba(80,200,120,.08)   Tinted bg
---glass       rgba(6,13,26,.78)       Nav/topbar
---mono        JetBrains Mono
---sans        Inter + Noto Sans Bengali
---r           0px            Sharp everywhere
-```
-
-## Edit landing copy
-
-All landing strings live at the top of `src/components/BotLanding.jsx`:
-
-```js
-const CAPABILITIES = [...]   // What the bot does (6 chips)
-const HOW          = [...]   // 3-step demo flow
-const USE_CASES    = [...]   // Industry-specific proofs
-const PRICING_HIGHLIGHTS = [...] // Tease before final CTA
-```
-
-No CSS edits needed — just the data arrays.
+- `.section > .section-inner` — the one centred container. Wrap new sections in it.
+- Grid column counts live **only** in the responsive ladder near the bottom of
+  `App.css`. Add a new grid there and it inherits the same rhythm for free.
