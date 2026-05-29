@@ -143,12 +143,12 @@ const PRICING_TIERS = [
     period:  ' setup + ৳৫,০০০/মাস',
     value:   15000,
     features: [
-      'WhatsApp AI auto-reply',
-      'Chatwoot HITL handoff',
-      'Bangla NLU + Voice (Whisper)',
-      'Custom-trained on your business',
-      'Self-hosted Oracle infrastructure',
-      'ফ্রি ল্যান্ডিং পেজ',
+      '২৪/৭ ইনস্ট্যান্ট রিপ্লাই — মানুষের সাহায্য ছাড়াই',
+      'Click-to-WhatsApp অ্যাডের সাথে সরাসরি ইন্টিগ্রেশন',
+      'প্রোডাক্ট ক্যাটালগ, অর্ডার ও বুকিং — বটের ভেতরেই',
+      'লিড ট্র্যাকিং ও কাস্টমার ডাটাবেজ অটোমেশন',
+      'Bangla voice note সাপোর্ট (Whisper STT)',
+      'Self-hosted — আপনার data আপনার সার্ভারে',
     ],
     cta:    'Lead Reactor চাই',
     waMsg:  'হ্যালো! Lead Reactor package নিয়ে কথা বলতে চাই।',
@@ -495,8 +495,8 @@ export default function BotLanding() {
               দুটো প্যাকেজ —<br /><em>আপনার fit বেছে নিন</em>
             </h2>
             <p className="bl-section-sub">
-              ৭-১৪ দিনে ডেলিভারি। কোনো hidden cost নেই।
-              আপফ্রন্ট সব বলি — bKash, Nagad, ব্যাংক ট্রান্সফার সব accept।
+              ৳৫,০০০/মাস থেকে শুরু · ৭-১৪ দিনে ডেলিভারি · কোনো hidden cost নেই।
+              bKash, Nagad, ব্যাংক ট্রান্সফার সব accept।
             </p>
 
             <div className="bl-pricing-grid">

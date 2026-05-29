@@ -35,11 +35,7 @@ export default function ChatBot() {
       <div className="section-inner">
         <div className="section-tag">// ০০৪ — AI Sales Engine</div>
 
-        <div style={{
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', textAlign: 'center',
-          gap: 'clamp(24px, 4vw, 40px)',
-        }}>
+        <div className="chatbot-frame">
           <h2 id="chatbot-h2" className="section-h2" style={{ marginBottom: 0 }}>
             আপনার কাস্টমার<br />
             <em>সেল ক্লোজ করুক</em><br />

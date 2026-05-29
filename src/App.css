@@ -39,7 +39,10 @@
   --nav-h:        62px;
   --max-w:        1140px;
   --pad-x:        clamp(20px, 5vw, 48px);
-  --pad-s:        clamp(56px, 8vw, 96px);
+  --pad-s:        clamp(44px, 8vw, 96px);
+  /* Responsive breakpoints — one consistent ladder, used everywhere */
+  --bp-sm:        600px;   /* phone → 2-up grids        */
+  --bp-lg:        1000px;  /* tablet → full desktop view */
 
   /* Typography */
   --mono:  'JetBrains Mono', monospace;
@@ -160,7 +163,7 @@ nav.nav.nav--scrolled {
 .nav-logo em { color: var(--accent); font-style: normal; }
 
 .nav-links {
-  display: flex; align-items: center; gap: 6px;
+  display: none; align-items: center; gap: 6px;
 }
 .nav-link {
   font-size: 11px; color: var(--muted); letter-spacing: .08em;
@@ -174,14 +177,14 @@ nav.nav.nav--scrolled {
   background: var(--accent); color: #060d1a;
   padding: 8px 20px; font-size: 11px; font-weight: 700;
   letter-spacing: .06em; text-transform: uppercase;
-  display: inline-flex; align-items: center; min-height: 44px;
+  display: none; align-items: center; min-height: 44px;
   transition: box-shadow .2s, transform .2s;
 }
 .nav-cta:hover { box-shadow: var(--glow-btn); transform: translateY(-1px); }
 .nav-cta:active { transform: none; }
 
 .nav-menu-btn {
-  display: none;
+  display: flex;
   color: var(--text); padding: 4px;
   align-items: center; justify-content: center;
   min-height: 44px; min-width: 44px;
@@ -261,7 +264,41 @@ nav.nav.nav--scrolled {
   border-bottom: 1px solid var(--border);
   contain: layout style;
 }
-.section--dark { background: var(--bg-2); }
+/* Sections share ONE consistent surface — no random shade jumps.
+   (kept as a no-op so existing markup/classes stay valid) */
+.section--dark { background: transparent; }
+
+/* Closing banner (Packages) — sharp corners, on-theme surface, full-width */
+.bottom-banner {
+  margin-top: clamp(40px, 6vw, 64px);
+  padding: clamp(28px, 5vw, 48px) clamp(20px, 4vw, 40px);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  text-align: center;
+}
+.bottom-banner-title {
+  font-size: clamp(20px, 3.4vw, 30px);
+  font-weight: 800; letter-spacing: -.02em;
+  line-height: 1.4; color: var(--text);
+  margin-bottom: 16px; text-wrap: balance;
+}
+.bottom-banner-sub {
+  font-size: 15px; color: var(--muted);
+  max-width: 60ch; margin: 0 auto 28px; line-height: 1.7;
+  text-wrap: pretty;
+}
+.bottom-banner-btn { margin: 0 auto; }
+
+/* Chatbot demo — full container-width frame, centred content inside.
+   Lines ChatBot up with every other section's content width. */
+.chatbot-frame {
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+  gap: clamp(24px, 4vw, 40px);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  padding: clamp(32px, 5vw, 56px) clamp(20px, 4vw, 40px);
+}
 .section-inner {
   max-width: var(--max-w);
   margin: 0 auto;
@@ -280,12 +317,14 @@ nav.nav.nav--scrolled {
   letter-spacing: -.04em; margin: 0 auto 12px;
   text-align: center;
   max-width: 720px;
+  text-wrap: balance;
 }
 .section-h2 em { color: var(--accent); font-style: normal; }
 .section-sub {
   font-size: 14px; color: var(--muted);
   line-height: 1.85; margin: 0 auto 40px; max-width: 560px;
   text-align: center;
+  text-wrap: pretty;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -371,6 +410,7 @@ nav.nav.nav--scrolled {
   font-weight: 800; line-height: 1.05;
   letter-spacing: -.04em;
   max-width: 680px; margin: 0 auto 24px;
+  text-wrap: balance;
 }
 .hero-h1 em { color: var(--accent); font-style: normal; }
 
@@ -380,9 +420,11 @@ nav.nav.nav--scrolled {
 }
 
 .hero-actions {
-  display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px;
-  justify-content: center;
+  display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;
+  justify-content: center; width: 100%;
 }
+.hero-actions .btn-primary,
+.hero-actions .btn-ghost { width: 100%; justify-content: center; }
 
 .trust-strip {
   display: inline-flex; align-items: center; gap: 10px;
@@ -445,7 +487,7 @@ nav.nav.nav--scrolled {
    SERVICES
 ══════════════════════════════════════════════════════════════ */
 .services-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: 1fr;
   gap: 10px; margin-bottom: 24px;
 }
 .service-card {
@@ -500,14 +542,14 @@ nav.nav.nav--scrolled {
 
 /* ROI band */
 .roi-band {
-  display: grid; grid-template-columns: repeat(3, 1fr);
+  display: grid; grid-template-columns: 1fr;
   border: 1px solid var(--border-2); overflow: hidden; margin: 20px 0;
 }
 .roi-cell {
   padding: 24px 12px; display: flex; flex-direction: column;
   align-items: center; gap: 6px; background: var(--surface);
 }
-.roi-cell + .roi-cell { border-left: 1px solid var(--border-2); }
+.roi-cell + .roi-cell { border-top: 1px solid var(--border-2); }
 .roi-val  { font-size: 32px; font-weight: 800; color: var(--accent); line-height: 1; letter-spacing: -.04em; }
 .roi-lbl  { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-family: var(--mono); text-align: center; }
 
@@ -545,7 +587,7 @@ nav.nav.nav--scrolled {
    WORKS
 ══════════════════════════════════════════════════════════════ */
 .works-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  display: grid; grid-template-columns: 1fr; gap: 10px;
 }
 .work-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -601,10 +643,11 @@ nav.nav.nav--scrolled {
 }
 
 .work-cta-card {
-  grid-column: span 2;
+  grid-column: span 1;
   background: var(--surface-2); border: 1px solid var(--border-a);
   padding: clamp(24px, 4vw, 40px);
-  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  justify-content: space-between; gap: 20px;
 }
 .work-cta-label {
   font-size: 10px; color: var(--accent); font-family: var(--mono);
@@ -768,7 +811,7 @@ nav.nav.nav--scrolled {
    PACKAGES
 ══════════════════════════════════════════════════════════════ */
 .pk-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  display: grid; grid-template-columns: 1fr; gap: 12px;
 }
 .pk-card {
   position: relative; display: flex; flex-direction: column;
@@ -866,7 +909,7 @@ nav.nav.nav--scrolled {
 /* ══════════════════════════════════════════════════════════════
    CONTACT
 ══════════════════════════════════════════════════════════════ */
-.contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: start; }
+.contact-grid { display: grid; grid-template-columns: 1fr; gap: 56px; align-items: start; }
 .contact-h {
   font-size: clamp(28px, 5vw, 38px); font-weight: 800;
   line-height: 1.12; letter-spacing: -.03em; margin-bottom: 20px;
@@ -956,7 +999,7 @@ footer.footer::before {
   padding: 56px var(--pad-x) max(28px, env(safe-area-inset-bottom));
 }
 .footer-grid {
-  display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; margin-bottom: 40px;
+  display: grid; grid-template-columns: 1fr; gap: 40px; margin-bottom: 40px;
 }
 .footer-logo {
   font-size: 18px; font-weight: 800; letter-spacing: -.025em;
@@ -1016,94 +1059,74 @@ footer.footer::before {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RESPONSIVE — mobile-first
+   RESPONSIVE LADDER — mobile-first · single source of truth
+   ─ Base styles (above) = phone: every grid is one column,
+     nav is a hamburger, hero CTAs are full-width stacked.
+   ─ Each grid reflows at the SAME two lines, so no section
+     ever falls out of rhythm with its neighbours.
+       base    (<600px)   → single column
+       ≥600px  (--bp-sm)  → 2-up content grids, inline CTAs
+       ≥1000px (--bp-lg)  → full desktop layout + inline nav
 ══════════════════════════════════════════════════════════════ */
 
-/* ── Desktop: kill drawer ── */
-@media (min-width: 769px) {
-  /* Kill drawer on desktop */
-  .nav-drawer  { visibility: hidden !important; pointer-events: none !important; transform: translateX(100%) !important; }
-  .nav-overlay { display: none !important; }
-}
-
-/* ── Tablet: 769 – 1024px ── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  /* Packages: 2-col on tablet so cards don't get too squished */
-  .pk-grid { grid-template-columns: 1fr 1fr; }
-  .pk-card:last-child { grid-column: span 2; max-width: 480px; margin: 0 auto; }
-
-  /* Contact: stack on tablet */
-  .contact-grid { grid-template-columns: 1fr; gap: 32px; }
-
-  /* Works: keep 2-col but CTA card full */
-  .work-cta-card { padding: 28px 24px; }
-}
-
-/* ── Mobile: ≤ 768px ── */
-@media (max-width: 768px) {
-  :root { --pad-s: 44px; }
-
-  /* Nav */
-  .nav-links    { display: none; }
-  .nav-cta      { display: none; }
-  .nav-menu-btn { display: flex; }
-
-  /* Hero */
-  .hero-h1  { font-size: clamp(30px, 10vw, 42px); }
-  .hero-sub { font-size: 14px; }
-  .hero-actions { flex-direction: column; gap: 10px; }
-  .hero-actions .btn-primary,
-  .hero-actions .btn-ghost { width: 100%; justify-content: center; }
-
-  /* Hero proof bar — wrap to two rows, hide separators */
-  .hero-proof      { flex-wrap: wrap; width: 100%; gap: 18px 28px; justify-content: center; }
+/* ── Phone-only fine-tuning (≤599px) ── */
+@media (max-width: 599px) {
+  .hero-h1         { font-size: clamp(30px, 10vw, 42px); }
+  .hero-sub        { font-size: 14px; }
+  .hero-proof      { width: 100%; gap: 18px 28px; }
   .hero-proof-sep  { display: none; }
   .hero-proof-val  { font-size: clamp(22px, 6vw, 28px); }
   .hero-proof-item { min-width: 70px; }
 
-  /* Services */
-  .services-grid { grid-template-columns: 1fr; }
-  .roi-band { grid-template-columns: 1fr; }
-  .roi-cell + .roi-cell { border-left: none; border-top: 1px solid var(--border-2); }
+  .speed-card      { padding: 20px 16px; }
+  .speed-metrics   { gap: 6px; }
+  .metric-val      { font-size: 18px; }
+  .metric-cell     { padding: 14px 8px; }
 
-  /* Process — handled by its own breakpoint at .process-gl-grid */
-
-  /* Works */
-  .works-grid { grid-template-columns: 1fr; }
-  .work-cta-card {
-    grid-column: span 1;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-  .gl-ask-btn { width: 100%; justify-content: center; }
-
-  /* Speed */
-  .speed-card    { padding: 20px 16px; }
-  .speed-url-row { flex-direction: column; gap: 0; }
-  .speed-input   { border-right: 1px solid var(--border); border-bottom: none; width: 100%; }
-  .speed-run-btn { width: 100%; justify-content: center; border-top: none; }
-  .speed-metrics { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .metric-val    { font-size: 18px; }
-  .metric-cell   { padding: 14px 8px; }
-
-  /* Packages */
-  .pk-grid { grid-template-columns: 1fr; }
-  .pk-card { max-width: 100%; }
-
-  /* Contact */
-  .contact-grid      { grid-template-columns: 1fr; gap: 28px; }
   .contact-form-wrap { padding: 20px; }
-  .contact-h         { font-size: clamp(26px, 8vw, 34px); }
+  .contact-h       { font-size: clamp(26px, 8vw, 34px); }
 
-  /* Footer */
-  .footer-grid   { grid-template-columns: 1fr; gap: 28px; }
-  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .footer-inner  { padding-top: 40px; }
+  .footer-bottom   { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .footer-inner    { padding-top: 40px; }
+  .section-sub     { margin-bottom: 28px; }
+}
 
-  /* Section headings */
-  .section-h2  { font-size: clamp(22px, 7vw, 30px); }
-  .section-sub { margin-bottom: 28px; }
+/* Works CTA + ask button stay full-width until sm */
+.gl-ask-btn { width: 100%; justify-content: center; }
+
+/* ── ≥600px — two-up grids ── */
+@media (min-width: 600px) {
+  .services-grid   { grid-template-columns: 1fr 1fr; }
+  .works-grid      { grid-template-columns: 1fr 1fr; }
+  .process-gl-grid { grid-template-columns: 1fr 1fr; }
+
+  .roi-band             { grid-template-columns: repeat(3, 1fr); }
+  .roi-cell + .roi-cell { border-top: none; border-left: 1px solid var(--border-2); }
+
+  .footer-grid     { grid-template-columns: 1.6fr 1fr 1fr; }
+
+  /* hero CTAs sit inline once there's room */
+  .hero-actions    { flex-direction: row; flex-wrap: wrap; width: auto; }
+  .hero-actions .btn-primary,
+  .hero-actions .btn-ghost { width: auto; }
+
+  /* Works closing card becomes a full-bleed banner again */
+  .work-cta-card   { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 24px; }
+  .gl-ask-btn      { width: auto; }
+}
+
+/* ── ≥1000px — full desktop ── */
+@media (min-width: 1000px) {
+  .process-gl-grid { grid-template-columns: repeat(4, 1fr); }
+  .pk-grid         { grid-template-columns: repeat(3, 1fr); }
+  .contact-grid    { grid-template-columns: 1fr 1.1fr; }
+
+  /* swap hamburger → inline nav */
+  .nav-links    { display: flex; }
+  .nav-cta      { display: inline-flex; }
+  .nav-menu-btn { display: none; }
+  .nav-drawer   { visibility: hidden !important; pointer-events: none !important; transform: translateX(100%) !important; }
+  .nav-overlay  { display: none !important; }
 }
 
 /* ── Safe area ── */
@@ -1160,7 +1183,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 ══════════════════════════════════════════════════════════════ */
 .process-gl-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px;
   margin-top: 8px;
 }
@@ -1314,14 +1337,9 @@ html, body { max-width: 100%; overflow-x: hidden; }
   background: linear-gradient(90deg, var(--border-a), var(--border));
 }
 
-/* ── Mobile / tablet ── */
-@media (max-width: 900px) {
-  .process-gl-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 540px) {
-  .process-gl-grid { grid-template-columns: 1fr; }
+/* ── Phone: 1-up process means no horizontal connector, descriptions open ── */
+@media (max-width: 599px) {
   .process-gl-connector { display: none; }
-  /* On mobile, desc always visible */
   .process-gl-desc { grid-template-rows: 1fr; margin-top: 12px; }
 }
 
@@ -1368,8 +1386,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .speed-run-btn:hover   { opacity: .9; }
 .speed-run-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-/* Mobile — stack vertically, both full-width, correct borders */
-@media (max-width: 768px) {
+/* Phone — stack vertically, both full-width, correct borders */
+@media (max-width: 599px) {
   .speed-url-row {
     flex-direction: column;
     gap: 0;
@@ -1726,9 +1744,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
   position: relative;
 }
 .bl-section--alt {
-  background:
-    linear-gradient(180deg, rgba(13, 27, 46, .6) 0%, transparent 100%),
-    var(--surface);
+  background: transparent;
 }
 .bl-section-inner { max-width: var(--max-w); margin: 0 auto; }
 

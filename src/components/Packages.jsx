@@ -6,58 +6,67 @@ const PACKAGES = [
   {
     variant: 'frosted',
     serial:  '01',
-    tag:     'AI & WhatsApp Bot',
-    name:    'AI & WhatsApp Chatbot Development',
-    unit: '', amount: '২৪/৭ সাপোর্ট', period: ' · অটোমেটেড সেলস',
-    value: 0,
+    tag:     'AI Sales Assistant',
+    name:    'AI & WhatsApp Sales Bot',
+    unit: '৳', amount: '৫,০০০', period: '/মাস থেকে শুরু',
+    setupNote: '*সেটআপ চার্জ আলোচনা সাপেক্ষে',
+    value: 5000,
+    route: '/bot',
     features: [
-      'মানুষের সাহায্য ছাড়াই ২৪/৭ ইনস্ট্যান্ট রিপ্লাই।',
-      'Click-to-WhatsApp বিজ্ঞাপনের সরাসরি ইন্টিগ্রেশন।',
-      'বটের ভেতরেই ক্যাটালগ, অর্ডার এবং বুকিং সিস্টেম।',
-      'শর্ট ডেসক্রিপশন: ইন্টেলিজেন্ট চ্যাটবট সলিউশন।',
+      'মানুষের সাহায্য ছাড়াই ২৪/৭ কাস্টমারদের ইনস্ট্যান্ট রিপ্লাই ও গাইডেন্স।',
+      'Click-to-WhatsApp বিজ্ঞাপনের সাথে সরাসরি ও নিরবচ্ছিন্ন ইন্টিগ্রেশন।',
+      'চ্যাটবটের ভেতরেই প্রোডাক্ট ক্যাটালগ প্রদর্শন, অর্ডার এবং বুকিং সিস্টেম।',
+      'কাস্টমার ডাটাবেজ অটোমেশন এবং লিড জেনারেশন ট্র্যাকিং সুবিধা।',
     ],
-    cta: 'ডেমো দেখুন 🚀',
+    cta: 'লাইভ বট try করুন →',
   },
   {
     variant: 'electric',
-    badge:   'BEST ROI',
+    badge:   'HIGH CONVERSION',
     serial:  '02',
     tag:     'Web Development',
-    name:    'Super-Fast Web & Landing Page',
-    unit: '৳', amount: '১০,০০০', period: '/মাস',
-    setupNote: '*সেটআপ চার্জ আলোচনা সাপেক্ষে (আপনার রিকোয়ারমেন্ট অনুযায়ী)',
-    value: 10000,
+    name:    'Super-Fast Landing Page & Website',
+    unit: '৳', amount: '৫,০০০', period: '/মাস থেকে শুরু',
+    setupNote: '*সেটআপ চার্জ আলোচনা সাপেক্ষে',
+    value: 5000,
     features: [
-      'সুপার-ফাস্ট লোডিং স্পিড এবং মোবাইল-ফ্রেন্ডলি ডিজাইন।',
-      'আধুনিক UX/UI যা কাস্টমারের বিশ্বাস বাড়ায়।',
-      'Oracle ক্লাউড বা সিকিউরড সার্ভারে লাইফটাইম হোস্টিং সাপোর্ট।',
-      'শর্ট ডেসক্রিপশন: হাই-কনভার্টিং এবং সুপার-ফাস্ট ওয়েবসাইট।',
+      'সুপার-ফাস্ট লোডিং স্পিড এবং ১০০% মোবাইল-রেসপন্সিভ ইউনিক ডিজাইন।',
+      'আধুনিক UI/UX ফানেল যা কাস্টমারের ট্রাস্ট ও সেলস বহুগুণ বাড়িয়ে দেয়।',
+      'প্রোডাক্ট অর্ডার ফর্ম, বিকাশ/নগদ পেমেন্ট গেটওয়ে ইন্টিগ্রেশন সুবিধা।',
+      'এসইও ফ্রেন্ডলি কোডিং এবং সিকিউরড সার্ভার সেটআপ সাপোর্ট।',
     ],
-    cta: 'পোর্টফোলিও দেখুন 🌐',
+    cta: 'পোর্টফোলিও দেখুন',
   },
   {
     variant: 'obsidian',
+    badge:   'BEST ROI',
     serial:  '03',
-    tag:     'Data Tracking & Paid Ads',
-    name:    'Advance Data Tracking & Paid Ads',
-    unit: '৳', amount: '৩০,০০০', period: '/মাস',
-    setupNote: '*সেটআপ চার্জ আলোচনা সাপেক্ষে (কাস্টম ট্র্যাকিং ও ফানেল)',
-    value: 30000,
+    tag:     'Data Tracking & Ads',
+    name:    'Advanced Data Tracking & Paid Ads',
+    unit: '৳', amount: '৫,০০০', period: '/মাস থেকে শুরু',
+    setupNote: '*সেটআপ চার্জ আলোচনা সাপেক্ষে',
+    value: 5000,
     features: [
-      'Facebook Pixel এবং Google Analytics (GA4) ফুল সেটআপ।',
-      'iOS 14+ এর জন্য অ্যাডভান্সড সার্ভার-সাইড ট্র্যাকিং (CAPI)।',
-      'ফেসবুক, ইনস্টাগ্রাম এবং গুগলে সঠিক অডিয়েন্স টার্গেটেড অ্যাড।',
-      'কম খরচে (Low CPA) বেশি লিড ও ডাটা-ড্রিভেন A/B টেস্টিং।',
+      'Meta Pixel এবং Google Analytics (GA4) এর নিখুঁত ফুল সেটআপ।',
+      'iOS 14+ আপডেটের জন্য অ্যাডভান্সড সার্ভার-সাইড ট্র্যাকিং (CAPI)।',
+      'ফেসবুক, ইনস্টাগ্রাম ও গুগলে সঠিক অডিয়েন্স টার্গেটেড ডাটা-ড্রিভেন অ্যাডস।',
+      'কম খরচে সর্বোচ্চ কোয়ালিটি লিড এবং কন্টিনিউয়াস A/B টেস্টিং।',
     ],
-    cta: 'ক্যাম্পেইন শুরু করুন 🎯',
+    cta: 'ক্যাম্পেইন শুরু করুন',
   },
 ];
 
 export default function Packages() {
-  useEffect(() => trackSectionView('pricing', { content_category: 'pricing' }), []);
+  useEffect(() => {
+    trackSectionView('pricing', { content_category: 'pricing' });
+  }, []);
 
   const go = (plan) => {
     trackPricingCTA(plan.name, plan.value || 0);
+    if (plan.route) {
+      window.location.assign(plan.route);
+      return;
+    }
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -66,9 +75,11 @@ export default function Packages() {
       <div className="section-inner">
         <div className="section-tag">// ০০৬ — প্যাকেজ ও সার্ভিস</div>
         <h2 id="pricing-h2" className="section-h2">
-          আমাদের প্রিমিয়াম<br /><em>সার্ভিস ও প্ল্যান</em>
+          আমাদের প্রিমিয়াম<br /><em>সার্ভিস ও প্ল্যান</em>
         </h2>
-        <p className="section-sub">আমরা আপনার ব্যবসাকে অটোমেট করতে এবং সেলস বহুগুণ বাড়িয়ে দিতে ওয়ান-স্টপ সリューション প্রদান করি।</p>
+        <p className="section-sub">
+          আমরা আপনার ব্যবসাকে অটোমেট করতে এবং সেলস বহুগুণ বাড়িয়ে দিতে ওয়ান-স্টপ সলিউশন প্রদান করি।
+        </p>
 
         {/* --- Service & Pricing Grid --- */}
         <div className="pk-grid">
@@ -118,19 +129,19 @@ export default function Packages() {
         </div>
 
         {/* --- Bottom Banner / Closing Section --- */}
-        <div className="bottom-banner" style={{ marginTop: '60px', padding: '40px 20px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-          <h3 style={{ fontSize: '2rem', marginBottom: '15px', color: '#fff' }}>
-            "আপনার কি শুধু একটি ওয়েবসাইট দরকার, নাকি পুরো সেলস মেশিন?"
+        <div className="bottom-banner">
+          <h3 className="bottom-banner-title">
+            "আপনার কি শুধু একটি ওয়েবসাইট দরকার, নাকি পুরো সেলস মেশিন?"
           </h3>
-          <p style={{ fontSize: '1.1rem', color: '#ccc', maxWidth: '800px', margin: '0 auto 25px auto', lineHeight: '1.6' }}>
+          <p className="bottom-banner-sub">
             আমরা শুধু অ্যাড রান করি না বা চ্যাটবট বানাই না; আমরা আপনার পুরো বিজনেসকে অটোমেট করি, যাতে আপনি ঘুমালেও আপনার ব্যবসা সচল থাকে।
           </p>
           <button 
-            className="pk-btn" 
+            className="pk-btn bottom-banner-btn" 
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ padding: '12px 30px', fontSize: '1.1rem', margin: '0 auto' }}
           >
-            📞 ফ্রি কনসালটেশন বুক করুন
+            <span>ফ্রি কনসালটেশন বুক করুন</span>
+            <span aria-hidden>→</span>
           </button>
         </div>
 
