@@ -408,14 +408,14 @@ nav.nav.nav--scrolled {
   font-size: clamp(36px, 9vw, 66px);
   font-weight: 800; line-height: 1.05;
   letter-spacing: -.04em;
-  max-width: 680px; margin: 0 auto 24px;
+  margin: 0 auto 24px;
   text-wrap: balance;
 }
 .hero-h1 em { color: var(--accent); font-style: normal; }
 
 .hero-sub {
   font-size: clamp(14px, 1.8vw, 16px); color: var(--muted);
-  line-height: 1.8; max-width: 500px; margin: 0 auto 40px;
+  line-height: 1.8; margin: 0 auto 40px;
 }
 
 .hero-actions {
@@ -1691,6 +1691,116 @@ html, body { max-width: 100%; overflow-x: hidden; }
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, .08),
     0 8px 32px rgba(80, 200, 120, .25);
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   LIVE CHAT PREVIEW — hero showcase
+   Replaces the static avatar with a sample Bangla exchange so a paid-
+   ad visitor sees the bot doing real work within 3 seconds.
+   Sharp geometry on purpose: WhatsApp-inspired layout, brand-consistent.
+─────────────────────────────────────────────────────────────────── */
+.bl-chat-preview {
+  width: 100%; max-width: 460px;
+  margin: 0 auto;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  display: flex; flex-direction: column;
+  text-align: left;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .35);
+}
+
+.bl-chat-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  background: var(--surface);
+  border-block-end: 1px solid var(--border-2);
+}
+.bl-chat-head-icon {
+  position: relative;
+  inline-size: 36px; block-size: 36px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border-a2);
+  color: var(--accent);
+  font-family: var(--mono); font-weight: 800; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.bl-chat-head-dot {
+  position: absolute; inset-block-end: -2px; inset-inline-end: -2px;
+  inline-size: 9px; block-size: 9px;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+}
+.bl-chat-head-meta {
+  display: flex; flex-direction: column; gap: 1px; min-inline-size: 0;
+  font-size: 11px; color: var(--muted);
+}
+.bl-chat-head-meta strong {
+  font-size: 13px; color: var(--text);
+  font-weight: 700; letter-spacing: -.01em;
+}
+.bl-chat-live {
+  display: inline-block;
+  inline-size: 6px; block-size: 6px;
+  background: var(--accent); border-radius: 50%;
+  margin-inline-end: 6px;
+  vertical-align: middle;
+  animation: blink 2s ease-in-out infinite;
+}
+
+.bl-chat-body {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 14px;
+  background: var(--bg);
+  background-image:
+    linear-gradient(rgba(80, 200, 120, .02) 1px, transparent 1px);
+  background-size: 100% 8px;
+}
+.bl-chat-msg {
+  max-inline-size: 84%;
+  padding: 8px 11px;
+  font-size: 13px; line-height: 1.55;
+  display: flex; flex-direction: column; gap: 3px;
+  border: 1px solid var(--border-2);
+  color: var(--text);
+}
+.bl-chat-msg--user {
+  align-self: flex-end;
+  background: var(--surface);
+}
+.bl-chat-msg--bot {
+  align-self: flex-start;
+  background: var(--accent-soft);
+  border-color: var(--border-a);
+}
+.bl-chat-time {
+  font-size: 9px; color: var(--muted-2);
+  font-family: var(--mono); letter-spacing: .04em;
+  align-self: flex-end;
+}
+
+.bl-chat-typing {
+  display: flex; gap: 5px; align-items: center;
+  padding: 0 18px 14px;
+  background: var(--bg);
+}
+.bl-chat-typing-dot {
+  inline-size: 6px; block-size: 6px;
+  background: var(--accent); border-radius: 50%;
+  opacity: .35;
+  animation: chatTyping 1.4s ease-in-out infinite;
+}
+.bl-chat-typing-dot:nth-child(2) { animation-delay: .18s; }
+.bl-chat-typing-dot:nth-child(3) { animation-delay: .36s; }
+
+@keyframes chatTyping {
+  0%, 70%, 100% { opacity: .3; transform: scale(1); }
+  35%           { opacity: 1;  transform: scale(1.35); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bl-chat-typing-dot,
+  .bl-chat-live { animation: none; }
 }
 
 .bl-live-pill {

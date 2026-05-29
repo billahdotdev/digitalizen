@@ -241,10 +241,47 @@ export default function BotLanding() {
               বিশ্বাস হচ্ছে না? চ্যাট করে দেখুন!
             </p>
 
-            <div className="bl-avatar-wrap fade-up" style={{ '--d': '230ms' }}>
-              <span className="cb-splash-ring" aria-hidden />
-              <span className="cb-splash-ring" aria-hidden />
-              <div className="bl-avatar">AI</div>
+            <div
+              className="bl-chat-preview fade-up"
+              style={{ '--d': '230ms' }}
+              role="img"
+              aria-label="বটের লাইভ চ্যাট প্রিভিউ — কাস্টমারের প্রশ্নের বাংলায় ইনস্ট্যান্ট উত্তর দিয়ে সেল ক্লোজ করছে"
+            >
+              <div className="bl-chat-head">
+                <div className="bl-chat-head-icon" aria-hidden>
+                  AI
+                  <span className="bl-chat-head-dot" />
+                </div>
+                <div className="bl-chat-head-meta">
+                  <strong>Digitalizen AI</strong>
+                  <span><span className="bl-chat-live" aria-hidden /> অনলাইন · বাংলায় রিপ্লাই দিচ্ছে</span>
+                </div>
+              </div>
+
+              <div className="bl-chat-body" aria-hidden>
+                <div className="bl-chat-msg bl-chat-msg--user">
+                  <span>২৪/৭ ডেলিভারি দেন?</span>
+                  <span className="bl-chat-time">2:14 PM</span>
+                </div>
+                <div className="bl-chat-msg bl-chat-msg--bot">
+                  <span>হ্যাঁ। ঢাকায় ৩ ঘণ্টায়, ঢাকার বাইরে পরদিন। Cash on Delivery + bKash দুটোই চলে। আপনার এরিয়াটা জানালে কনফার্ম করি।</span>
+                  <span className="bl-chat-time">2:14 PM ✓✓</span>
+                </div>
+                <div className="bl-chat-msg bl-chat-msg--user">
+                  <span>মিরপুর-১০</span>
+                  <span className="bl-chat-time">2:15 PM</span>
+                </div>
+                <div className="bl-chat-msg bl-chat-msg--bot">
+                  <span>মিরপুর-এ আজই ৩ ঘণ্টায় পৌঁছে দিচ্ছি। অর্ডার করতে নাম + ফোন নাম্বার দিন, আমি confirm করে দিচ্ছি।</span>
+                  <span className="bl-chat-time">2:15 PM ✓✓</span>
+                </div>
+              </div>
+
+              <div className="bl-chat-typing" aria-hidden>
+                <span className="bl-chat-typing-dot" />
+                <span className="bl-chat-typing-dot" />
+                <span className="bl-chat-typing-dot" />
+              </div>
             </div>
 
             <a
@@ -261,7 +298,7 @@ export default function BotLanding() {
             </a>
 
             <p className="bl-cta-fine fade-up" style={{ '--d': '410ms' }}>
-              WhatsApp খুলবে · কোনো signup নেই · সম্পূর্ণ ফ্রি
+              WhatsApp খুলবে · ২ সেকেন্ডে রিপ্লাই · কোনো signup নেই
             </p>
           </div>
         </section>
