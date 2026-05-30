@@ -1693,52 +1693,58 @@ html, body { max-width: 100%; overflow-x: hidden; }
     0 8px 32px rgba(80, 200, 120, .25);
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   LIVE CHAT PREVIEW — hero showcase
-   Replaces the static avatar with a sample Bangla exchange so a paid-
-   ad visitor sees the bot doing real work within 3 seconds.
-   Sharp geometry on purpose: WhatsApp-inspired layout, brand-consistent.
-─────────────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   LIVE CHAT PREVIEW — WhatsApp-authentic + simulated live texting
+   ─ Messages cascade in (one-time on page load) like real-time typing.
+   ─ Authentic WhatsApp dark-mode colours so the visitor's brain
+     instantly recognises "this IS WhatsApp."
+   ─ Pure CSS — no JS, no bundle cost.
+═══════════════════════════════════════════════════════════════════ */
 .bl-chat-preview {
   width: 100%; max-width: 460px;
   margin: 0 auto;
-  background: var(--surface-2);
-  border: 1px solid var(--border-2);
+  background: #111b21;                          /* WhatsApp dark frame */
+  border: 1px solid rgba(255, 255, 255, .06);
   display: flex; flex-direction: column;
   text-align: left;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, .35);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, .03) inset,
+    0 22px 60px rgba(0, 0, 0, .45);
+  overflow: hidden;
 }
 
+/* ── Header — WhatsApp app-bar feel ───────────────────────────── */
 .bl-chat-head {
   display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px;
-  background: var(--surface);
-  border-block-end: 1px solid var(--border-2);
+  padding: 10px 14px;
+  background: #1f2c33;                          /* WhatsApp top-bar */
+  border-block-end: 1px solid rgba(255, 255, 255, .04);
 }
 .bl-chat-head-icon {
   position: relative;
-  inline-size: 36px; block-size: 36px;
+  inline-size: 38px; block-size: 38px;
   background: var(--accent-soft);
   border: 1px solid var(--border-a2);
+  border-radius: 50%;                           /* circular avatar */
   color: var(--accent);
   font-family: var(--mono); font-weight: 800; font-size: 12px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 .bl-chat-head-dot {
-  position: absolute; inset-block-end: -2px; inset-inline-end: -2px;
-  inline-size: 9px; block-size: 9px;
+  position: absolute; inset-block-end: -1px; inset-inline-end: -1px;
+  inline-size: 11px; block-size: 11px;
   background: var(--accent);
-  border: 2px solid var(--surface);
+  border: 2px solid #1f2c33;
   border-radius: 50%;
 }
 .bl-chat-head-meta {
-  display: flex; flex-direction: column; gap: 1px; min-inline-size: 0;
-  font-size: 11px; color: var(--muted);
+  display: flex; flex-direction: column; gap: 2px; min-inline-size: 0;
+  font-size: 12px; color: rgba(233, 237, 239, .55);
 }
 .bl-chat-head-meta strong {
-  font-size: 13px; color: var(--text);
-  font-weight: 700; letter-spacing: -.01em;
+  font-size: 14px; color: #e9edef;
+  font-weight: 600; letter-spacing: -.005em;
 }
 .bl-chat-live {
   display: inline-block;
@@ -1749,99 +1755,117 @@ html, body { max-width: 100%; overflow-x: hidden; }
   animation: blink 2s ease-in-out infinite;
 }
 
+/* ── Chat body — WhatsApp dark wallpaper feel ─────────────────── */
 .bl-chat-body {
-  display: flex; flex-direction: column; gap: 8px;
-  padding: 14px;
-  background: var(--bg);
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 16px 12px;
+  min-block-size: 280px;
+  background: #0b141a;                          /* WhatsApp chat bg */
   background-image:
-    linear-gradient(rgba(80, 200, 120, .02) 1px, transparent 1px);
-  background-size: 100% 8px;
-}
-.bl-chat-msg {
-  max-inline-size: 84%;
-  padding: 8px 11px;
-  font-size: 13px; line-height: 1.55;
-  display: flex; flex-direction: column; gap: 3px;
-  border: 1px solid var(--border-2);
-  color: var(--text);
-}
-.bl-chat-msg--user {
-  align-self: flex-end;
-  background: var(--surface);
-}
-.bl-chat-msg--bot {
-  align-self: flex-start;
-  background: var(--accent-soft);
-  border-color: var(--border-a);
-}
-.bl-chat-time {
-  font-size: 9px; color: var(--muted-2);
-  font-family: var(--mono); letter-spacing: .04em;
-  align-self: flex-end;
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, .018) 1px, transparent 0);
+  background-size: 22px 22px;
 }
 
+/* ── Each bubble — WhatsApp shape + simulated reveal animation ── */
+.bl-chat-msg {
+  position: relative;
+  max-inline-size: 80%;
+  padding: 6px 9px 5px;
+  font-size: 13.5px; line-height: 1.45;
+  color: #e9edef;
+  display: flex; flex-direction: column;
+  border: none;
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, .18);
+
+  /* hidden until its turn to "be typed" */
+  opacity: 0;
+  transform: translateY(8px) scale(.96);
+  animation: chatMsgIn .5s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+/* Staggered reveal — feels like a real WhatsApp conversation unfolding */
+.bl-chat-msg:nth-child(1) { animation-delay: .6s; transform-origin: 100% 100%; }
+.bl-chat-msg:nth-child(2) { animation-delay: 1.8s; transform-origin: 0 100%;   }
+.bl-chat-msg:nth-child(3) { animation-delay: 3.0s; transform-origin: 100% 100%; }
+.bl-chat-msg:nth-child(4) { animation-delay: 4.2s; transform-origin: 0 100%;   }
+@keyframes chatMsgIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* User bubble — WhatsApp dark-mode green, right-aligned, tail top-right */
+.bl-chat-msg--user {
+  align-self: flex-end;
+  background: #005c4b;                          /* WhatsApp dark green */
+  border-radius: 8px 0 8px 8px;
+  margin-inline-end: 7px;
+}
+.bl-chat-msg--user::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 0; inset-inline-end: -7px;
+  inline-size: 8px; block-size: 13px;
+  background: #005c4b;
+  clip-path: polygon(0 0, 0 100%, 100% 0);
+}
+
+/* Bot bubble — WhatsApp dark gray, left-aligned, tail top-left */
+.bl-chat-msg--bot {
+  align-self: flex-start;
+  background: #202c33;                          /* WhatsApp dark surface */
+  border-radius: 0 8px 8px 8px;
+  margin-inline-start: 7px;
+}
+.bl-chat-msg--bot::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0; inset-inline-start: -7px;
+  inline-size: 8px; block-size: 13px;
+  background: #202c33;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+/* Time + read-receipts — WhatsApp-style at bubble bottom-right */
+.bl-chat-time {
+  font-size: 10.5px;
+  color: rgba(233, 237, 239, .55);
+  font-family: var(--sans);
+  align-self: flex-end;
+  margin-block-start: 2px; line-height: 1;
+}
+.bl-chat-msg--user .bl-chat-time { color: rgba(255, 255, 255, .62); }
+
+/* ── Typing indicator — appears AFTER all 4 msgs are revealed ── */
 .bl-chat-typing {
-  display: flex; gap: 5px; align-items: center;
-  padding: 0 18px 14px;
-  background: var(--bg);
+  display: flex; gap: 4px; align-items: center;
+  padding: 10px 14px 16px;
+  background: #0b141a;
+  opacity: 0;
+  animation: typingShow .45s ease-out 5.2s forwards;
 }
 .bl-chat-typing-dot {
-  inline-size: 6px; block-size: 6px;
+  inline-size: 7px; block-size: 7px;
   background: var(--accent); border-radius: 50%;
-  opacity: .35;
+  opacity: .4;
   animation: chatTyping 1.4s ease-in-out infinite;
 }
 .bl-chat-typing-dot:nth-child(2) { animation-delay: .18s; }
 .bl-chat-typing-dot:nth-child(3) { animation-delay: .36s; }
 
-@keyframes chatTyping {
+@keyframes typingShow  { to { opacity: 1; } }
+@keyframes chatTyping  {
   0%, 70%, 100% { opacity: .3; transform: scale(1); }
   35%           { opacity: 1;  transform: scale(1.35); }
 }
+
+/* Respect users who disable motion — show everything immediately */
 @media (prefers-reduced-motion: reduce) {
+  .bl-chat-msg,
+  .bl-chat-typing {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
   .bl-chat-typing-dot,
   .bl-chat-live { animation: none; }
-}
-
-.bl-live-pill {
-  display: inline-flex; align-items: center; gap: 9px;
-  background: var(--accent-soft);
-  border: 1px solid var(--border-a);
-  padding: 8px 18px;
-  font-size: 11px; font-family: var(--mono);
-  color: var(--accent); letter-spacing: .1em;
-  text-transform: uppercase;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.bl-live-dot {
-  width: 7px; height: 7px;
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent);
-  animation: pulse-g 2s ease-in-out infinite;
-  flex-shrink: 0;
-}
-
-.bl-cta-primary {
-  font-size: clamp(15px, 3.6vw, 18px);
-  padding: clamp(18px, 3.2vw, 24px) clamp(36px, 7vw, 64px);
-  letter-spacing: .04em;
-  display: inline-flex; align-items: center; gap: 12px;
-  min-height: 64px;
-  width: min(440px, 100%);
-  justify-content: center;
-  font-weight: 700;
-  /* Premium shadow stack */
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, .15) inset,
-    0 8px 24px rgba(80, 200, 120, .35),
-    0 2px 6px rgba(80, 200, 120, .22);
-}
-
-.bl-cta-fine {
-  font-size: 11px; color: var(--muted-2);
-  font-family: var(--mono); letter-spacing: .06em;
-  text-transform: uppercase;
 }
 
 /* ════════════════════════════════════════════════════════════
