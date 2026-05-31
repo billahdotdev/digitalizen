@@ -6,7 +6,7 @@ import { trackCTA, trackSectionView } from '../utils/tracking.js';
 const PROOF = [
   { val: '৯',  em: '+', label: 'বছরের\nঅভিজ্ঞতা' },
   { val: '৩',  em: 'x', label: 'গড় ROAS'        },
-  { val: '১',  em: 's', label: 'পেজ লোড'         },
+  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড'         },
 ];
 
 const WA_NUMBER  = '8801311773040';
@@ -59,7 +59,7 @@ export default function Hero() {
       <div className="hero-content">
         <div className="badge fade-up" style={{ '--d': '0ms' }}>
           <span className="badge-dot" aria-hidden />
-          AI-Powered · Engineering-led
+          Architecting Tomorrow’s AI Sales Systems
         </div>
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
@@ -71,8 +71,7 @@ export default function Hero() {
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
-          বেশিরভাগ এজেন্সি শুধু অ্যাড চালায়। আমরা আপনার ব্যবসাকে এমন একটা
-          সেলস ইঞ্জিনে পরিণত করি — যা ঘুমালেও কাস্টমার আনে, কথা বলে, সেল করে।
+          আমরা আপনার ব্যবসাকে এমন একটা সেলস ইঞ্জিনে পরিণত করি যা আপনি ঘুমালেও কাস্টমার আনে, কথা বলে, সেল করে।
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
@@ -86,19 +85,19 @@ export default function Hero() {
             style={{ textDecoration: 'none' }}
           >
             <IconWhatsApp width={16} height={16} />
-            ফ্রি অডিট বুক করুন
+            ফ্রি কনসালটেশন বুক করুন
           </a>
           <button
             className="btn-ghost"
             onClick={() => { trackCTA('AI Bot দেখুন', 'hero'); scrollTo('chatbot'); }}
           >
-            🤖 AI Bot লাইভ দেখুন ↓
+            🤖 AI মডারেটর লাইভ দেখুন ↓
           </button>
         </div>
 
         <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
           <span className="trust-dot" aria-hidden />
-          কোনো লক-ইন নেই রেজাল্ট দেখে সিদ্ধান্ত নিন
+          কোনো বাধ্যবাধকতা নেই, সিদ্ধান্ত পারফরম্যান্স দেখে। আমরা শুধু সার্ভিস বেচি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
         </div>
 
         {/* Proof stats bar */}
