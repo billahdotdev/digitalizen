@@ -3,19 +3,19 @@ import { IconCheck, IconWhatsApp } from './Icons.jsx';
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const SERVICES = [
-  { label: 'সুপার-ফাস্ট ল্যান্ডিং পেজ', sub: 'sub-1s load · Vite + React · zero CLS'      },
-  { label: '১০০% CAPI ট্র্যাকিং',       sub: 'Server-side · iOS-proof · GA4'               },
-  { label: 'AI Automation (n8n)',        sub: 'Lead → Sheet · Telegram alert · 24/7'         },
-  { label: 'Grafana Dashboard',          sub: 'Real-time ROAS · spend monitor'               },
-  { label: 'AI Chatbot (Custom)',        sub: 'Lead qualify · 2s response · Bangla'          },
-  { label: 'Meta Ads Management',        sub: 'Dhaka precision targeting · max ROAS'         },
+  { label: '১ সেকেন্ডে লোড হবে পেজ',     sub: 'Vite + React · zero CLS'                    },
+  { label: 'প্রতিটা টাকার ট্র্যাকিং',        sub: 'iOS-proof · Server-side · GA4'              },
+  { label: 'লিড এলেই সাথে সাথে alert',    sub: 'Auto-flow · ২৪/৭'                            },
+  { label: 'Real-time রেজাল্ট Dashboard',  sub: 'খরচ ও বিক্রির হিসাব live'                    },
+  { label: 'বাংলায় কথা বলা AI Bot',        sub: '২ সেকেন্ডে reply · custom-trained'           },
+  { label: 'Meta অ্যাড ম্যানেজমেন্ট',     sub: 'ঢাকা precision targeting · max ROAS'         },
 ];
 
 const FOUNDER = {
   initials: 'MB',
   role:     'Founder & Rainmaker',
   name:     'Masum Billah',
-  bio:      '৯+ বছর ধরে ব্র্যান্ডগুলোকে ডিজিটালে রেজাল্ট দিয়ে আসছি। Meta Ads থেকে শুরু করে পুরো Server-side Infrastructure — সব নিজেই করি।',
+  bio:      '৯+ বছর ধরে সাধারণ ব্যবসাগুলোকে ব্র্যান্ডে রূপ দিচ্ছি। অ্যাড, ওয়েবসাইট, AI বট, ট্র্যাকিং — পুরো সেলস ইঞ্জিনটা একা হাতে গড়ি, যাতে আপনাকে ১০ জনের সাথে কথা বলতে না হয়।',
   creds:    [
     'AI & Automation, NINA-Korea',
     'Full Stack Dev, IAC-BUET Certified',
@@ -41,11 +41,11 @@ export default function Services() {
         <div className="section-tag">// ০০১ — আমরা কী করি</div>
         <h2 id="services-h2" className="section-h2">
           বাংলাদেশের একমাত্র ওয়ান-টু-ওয়ান পার্সোনালাইজড<br />
-          <em>Technical Marketing Agency</em>
+          <em>Brand Engineering Studio</em>
         </h2>
         <p className="section-sub">
-          সাধারণ এজেন্সি শুধু বুস্ট দেয়। আমরা পুরো ইনফ্রাস্ট্রাকচার বানাই 
-          যেন আপনার বিজ্ঞাপনের প্রতিটি টাকা ট্র্যাক হয়, কাজ হয়।
+          সাধারণ এজেন্সি অ্যাড চালায়। আমরা সাধারণ ব্যবসাকে ব্র্যান্ডে engineer করি —
+          যেখানে কাস্টমার নিজেই আসে, প্রতিটা টাকার হিসাব থাকে।
         </p>
 
         <div className="services-grid">

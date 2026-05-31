@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 /* ── Data (previously in src/data/content.js) ─────────────────── */
 const BRAND = {
   name:     'digitalizen',
-  tagline:  'আপনার ডিজিটাল গ্রোথ পার্টনার।',
+  tagline:  'মালিকানা আপনার। ইনফ্রাস্ট্রাকচার আমাদের।',
   city:     'Dhaka, Bangladesh',
   whatsapp: '8801311773040',
 };

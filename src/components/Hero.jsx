@@ -59,7 +59,7 @@ export default function Hero() {
       <div className="hero-content">
         <div className="badge fade-up" style={{ '--d': '0ms' }}>
           <span className="badge-dot" aria-hidden />
-          AI-Powered · Server-side Infra
+          AI-Powered · Engineering-led
         </div>
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
@@ -71,8 +71,8 @@ export default function Hero() {
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
-          বেশিরভাগ এজেন্সি শুধু বুস্ট দেয়। আমরা পুরো ডিজিটাল
-          ইনফ্রাস্ট্রাকচার বানাই, যাতে প্রতিটি টাকার হিসাব থাকে।
+          বেশিরভাগ এজেন্সি শুধু অ্যাড চালায়। আমরা আপনার ব্যবসাকে এমন একটা
+          সেলস ইঞ্জিনে পরিণত করি — যা ঘুমালেও কাস্টমার আনে, কথা বলে, সেল করে।
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
