@@ -11,78 +11,59 @@ import {
 /* ═══════════════════════════════════════════════════════════════════════
    BOT LANDING — `/bot` route
    ─────────────────────────────────────────────────────────────────────
-   FINAL · BUSINESS-PLAN-ALIGNED BUILD
-
-   Aligns to the real infrastructure & service catalog:
-     • WhatsApp Business Cloud API (live AI bot)
-     • Whisper STT — Bangla voice handling
-     • Chatwoot HITL handoff — agent takes over when bot can't
-     • Dify Knowledge Base — custom-trained on client's biz
-     • GTM Server Container — server-side Meta CAPI + Google CAPI
-     • Self-hosted Oracle Cloud infra — data sovereignty
-     • Two pricing tiers shown:
-        — Lead Reactor       (৳15k setup + ৳5k/mo)
-        — Lead Reactor + CAPI (৳25k setup + ৳8k/mo) · F-commerce focus
-
-   FUNNEL — restrained · expensive feel · one CTA per section:
-     1.  Hero          — killer hook + live demo CTA
+   FUNNEL — one CTA per section, demo-first conversion objective:
+     1.  Hero          — hook + live bot demo CTA
      2.  Reality Check — pain amplification
-     3.  Industrial    — 6 capability cards (real infra mapped)
+     3.  Capabilities  — 6 capability proofs (real infra)
      4.  Trust         — past work gallery + founder card
-     5.  How it works  — 3-step demo guide + secondary CTA
-     6.  Use cases     — 4 BD industries
-     7.  Pricing tiers — Lead Reactor vs + CAPI (clear good/better)
-     8.  Closer        — final dual CTA in one premium glass card
+     5.  How it works  — 3-step demo guide + mid CTA
+     6.  Who it's for  — 3 use-case tiers (maps to packages)
+     7.  Pricing       — all 3 tiers, each with try-bot + inquiry CTA
+     8.  Closer        — final dual CTA
 
-   META-AD TRACKING (auto-fires on the right interactions):
-     • PageView          — Pixel init (index.html)
-     • ViewContent       — on mount → trackBotLandingView()
-     • Lead              — every WhatsApp deep-link → trackBotDemoStart(src)
-     • InitiateCheckout  — pricing tier or "Get yours" → trackBotInquiry/trackPricingCTA
+   META-AD TRACKING:
+     • ViewContent      — on mount → trackBotLandingView()
+     • Lead             — WhatsApp demo link → trackBotDemoStart(src)
+     • InitiateCheckout — tier inquiry → trackBotInquiry / trackPricingCTA
    ════════════════════════════════════════════════════════════════════ */
 
-const WA_BOT      = '8801311773040';   // Live AI bot — Meta Cloud API
+const WA_BOT      = '8801311773040';
 const TRY_MSG     = 'হ্যালো! আমি Digitalizen-এর AI Bot-এ কথা বলতে চাই।';
 const INQUIRY_MSG = 'হ্যালো! এই AI বটের মতো একটা আমার ব্যবসার জন্য চাই।';
 
 const buildBotHref = (msg) =>
   `https://wa.me/${WA_BOT}?text=${encodeURIComponent(msg)}`;
 
-/* ── Authentic WhatsApp double-tick (read-receipt blue) ──────────────── */
+/* ── WhatsApp double-tick ────────────────────────────────────────────── */
 const DoubleTick = () => (
   <svg
     viewBox="0 0 18 11"
     width="16" height="11"
     aria-hidden="true"
-    style={{
-      color: '#53BDEB',
-      verticalAlign: 'middle',
-      marginInlineStart: 4,
-      flexShrink: 0,
-    }}
+    style={{ color: '#53BDEB', verticalAlign: 'middle', marginInlineStart: 4, flexShrink: 0 }}
   >
     <path d="M11.5 1 L5.7 9.5 L2 6"  fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M16   1 L10.2 9.5 L6.5 6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-/* ── Reality check: 3 stark, contrasting statements ─────────────────── */
+/* ── Reality check ───────────────────────────────────────────────────── */
 const REALITY_CHECK = [
   {
-    val: 'মানুষ ক্লান্ত হয়,\ AI হয় না।',
+    val: 'মানুষ ক্লান্ত হয়, AI হয় না।',
     lbl: 'দিনরাত ২৪ ঘণ্টা একই এনার্জিতে সেলস ক্লোজ করে। কোনো ব্রেক নেই।',
   },
   {
-    val: 'মানুষ ভুলে যায়, \n AI কখনো ভোলে না,',
+    val: 'মানুষ ভুলে যায়, AI কখনো ভোলে না।',
     lbl: 'আপনার সেট করা ডেটা-ড্রিভেন রেসপন্স। কোনো অনুমান, কোনো ভুল নেই।',
   },
   {
-    val: 'মানুষ অজুহাত দেয়,\n AI শুধু সেল ক্লোজ করে।',
-    lbl: 'বোনাস বা ওভারটাইম ছাড়াই আপনার ইনবক্স সামলাবে এই নিখুঁত সেলস অপারেটর।',
-},
-];  
+    val: 'মানুষ অজুহাত দেয়, AI শুধু সেলস ক্লোজ করে।',
+    lbl: 'বোনাস বা ওভারটাইম ছাড়াই আপনার ইনবক্স সামলাবে এই নিখুঁত সেলস অপারেটর।',
+  },
+];
 
-/* ── Industrial Strength: outcomes, plain Bangla, no product names ───── */
+/* ── Capabilities ────────────────────────────────────────────────────── */
 const CAPABILITIES = [
   {
     t: '২৪/৭ অটো-রিপ্লাই',
@@ -110,16 +91,15 @@ const CAPABILITIES = [
   },
 ];
 
-/* ── Gallery: past work proof (.webp images from /public/images/) ────── */
-/* User will replace with originals — onError gracefully hides missing.  */
+/* ── Gallery ─────────────────────────────────────────────────────────── */
 const GALLERY = [
   { id: '001', name: 'DhakaTeez',  status: 'Live', img: '/images/dhakateez.webp' },
-  { id: '002', name: 'Auora',      status: 'Live', img: '/images/auora.webp'    },
-  { id: '003', name: 'GARMENTIK',  status: 'Live', img: '/images/garmentik.webp'},
-  { id: '004', name: 'Resto',      status: 'Live', img: '/images/resto.webp'    },
+  { id: '002', name: 'Auora',      status: 'Live', img: '/images/auora.webp'     },
+  { id: '003', name: 'GARMENTIK',  status: 'Live', img: '/images/garmentik.webp' },
+  { id: '004', name: 'Resto',      status: 'Live', img: '/images/resto.webp'     },
 ];
 
-/* ── Founder & Rainmaker (matches Services.jsx data) ─────────────────── */
+/* ── Founder ─────────────────────────────────────────────────────────── */
 const FOUNDER = {
   initials: 'MB',
   role:     'Founder & Rainmaker',
@@ -134,65 +114,107 @@ const FOUNDER = {
   ],
 };
 
-/* ── How it works: 3-step demo guide ─────────────────────────────────── */
+/* ── How it works ────────────────────────────────────────────────────── */
 const HOW = [
-  { n: '01', t: 'বাটনে ক্লিক করুন',           d: 'WhatsApp খুলবে — bot সরাসরি কথা শুরু করবে।' },
-  { n: '02', t: 'যা ইচ্ছা প্রশ্ন করুন',       d: 'সার্ভিস, প্রাইস, প্রসেস — text বা voice note, যেভাবে comfortable।' },
-  { n: '03', t: 'সলিউশন পান + ডিসাইড করুন',  d: 'পছন্দ হলে আপনার ব্যবসার জন্য একই bot বানিয়ে নিন।' },
+  { n: '01', t: 'বাটনে ক্লিক করুন',          d: 'WhatsApp খুলবে — bot সরাসরি কথা শুরু করবে।' },
+  { n: '02', t: 'যা ইচ্ছা প্রশ্ন করুন',      d: 'সার্ভিস, প্রাইস, প্রসেস — text বা voice note, যেভাবে comfortable।' },
+  { n: '03', t: 'সলিউশন পান + ডিসাইড করুন', d: 'পছন্দ হলে আপনার ব্যবসার জন্য একই bot বানিয়ে নিন।' },
 ];
 
-/* ── Use cases: industry resonance (BD-specific) ─────────────────────── */
-const USE_CASES = [
-  { tag: 'F-Commerce',  p: 'অর্ডার নেওয়া, পেমেন্ট গাইড, ডেলিভারি ট্র্যাকিং — Facebook DM থেকে WhatsApp-এ shift।' },
-  { tag: 'Real Estate', p: 'Property availability, viewing booking, document checklist — ২৪/৭ leads convert।' },
-  { tag: 'Coaching',    p: 'Course details, batch info, fees, demo class booking — ১০০% automated।' },
-  { tag: 'Service',     p: 'Quote request, appointment booking, FAQ — যেকোনো service business।' },
+/* ── Who it's for — maps 1:1 to the 3 packages ───────────────────────── */
+const WHO_FOR = [
+  {
+    serial: '01',
+    tag:    'চ্যাট-টু-ক্যাশ',
+    title:  'শুধু পেজ ও ইনবক্সে ব্যবসা করেন?',
+    body:   'ওয়েবসাইট নেই, Facebook পেজ ও WhatsApp-ই আপনার স্টোর। ইনবক্সে ম্যানুয়ালি রিপ্লাই দিতে দিতে ক্লান্ত, লিড মিস হচ্ছে — এই tier আপনার জন্য।',
+  },
+  {
+    serial: '02',
+    tag:    'হাইব্রিড ফানেল',
+    title:  'ওয়েবসাইট আছে, ইনবক্স থেকেও সেলস করেন?',
+    body:   'ওয়েবসাইটের ট্রাফিক ইনবক্সে হারিয়ে যাচ্ছে, দাম শুনে কাস্টমার চুপ হয়ে যাচ্ছে। দুটো চ্যানেলকে একসাথে সেলস মেশিনে রূপান্তর করতে এই tier।',
+  },
+  {
+    serial: '03',
+    tag:    'ফুল-স্ট্যাক ই-কমার্স',
+    title:  'ই-কমার্স সাইট, ফেক অর্ডার ও কার্ট ড্রপ সমস্যায়?',
+    body:   'ফেক COD অর্ডার, অ্যাবানডনড কার্ট আর ম্যানুয়াল কনফার্মেশনে প্রতিদিন হাজার টাকা লস হচ্ছে। জিরো ম্যানুয়াল কাজে ১০০% অটোমেশন চাইলে এই tier।',
+  },
 ];
 
-/* ── Pricing tiers: maps to real catalog (Lead Reactor + + CAPI) ─────── */
+/* ── Pricing tiers — all 3 packages ─────────────────────────────────── */
 const PRICING_TIERS = [
   {
     variant: 'frosted',
     serial:  '01',
-    tag:     'Standard · BD',
-    name:    'Lead Reactor',
+    tag:     'চ্যাট-টু-ক্যাশ · পেজ ও ইনবক্স',
+    name:    'মেসেজ সেলস সিস্টেম',
     unit:    '৳',
     amount:  '১৫,০০০',
     period:  ' setup + ৳৫,০০০/মাস',
+    setupNote: '*পেজ ও ইনবক্স-নির্ভর F-Commerce ব্যবসার জন্য',
     value:   15000,
     features: [
-      '২৪/৭ ইনস্ট্যান্ট রিপ্লাই — মানুষের সাহায্য ছাড়াই',
-      'Click-to-WhatsApp অ্যাডের সাথে সরাসরি ইন্টিগ্রেশন',
-      'প্রোডাক্ট ক্যাটালগ, অর্ডার ও বুকিং — বটের ভেতরেই',
-      'লিড ট্র্যাকিং ও কাস্টমার ডাটাবেজ — সব আপনার কাছে',
+      'ইনস্ট্যান্ট রিপ্লাই — জিরো ডিলে, একটি লিডও মিস হবে না',
+      'অটো ডেটা এন্ট্রি — চ্যাট থেকেই কাস্টমারের ইনফো সেভ',
+      'ফ্রি রি-টার্গেটিং — পুরোনো কাস্টমারদের ব্রডকাস্ট মেসেজ',
+      'WhatsApp API — অফিশিয়াল মেটা-সার্টিফাইড প্রফেশনাল সেটআপ',
       'বাংলা voice note সাপোর্ট — লিখতে না পারলেও চলবে',
-      'আপনার নিজস্ব system — অন্য কোনো সফটওয়্যারে ভাড়া না',
+      'আপনার নিজস্ব system — কেউ হঠাৎ বন্ধ করতে পারবে না',
     ],
-    cta:    'Lead Reactor চাই',
-    waMsg:  'হ্যালো! Lead Reactor package নিয়ে কথা বলতে চাই।',
-    source: 'tier_lead_reactor',
+    bottomLine: 'ইনবক্সে ম্যানুয়াল কাজের দিন শেষ।',
+    cta:      'এই প্যাকেজ চাই',
+    waMsg:    'হ্যালো! মেসেজ সেলস সিস্টেম নিয়ে কথা বলতে চাই।',
+    source:   'tier_message_sales',
   },
   {
     variant: 'electric',
-    badge:   'F-COMMERCE',
+    badge:   'BEST CONVERSION',
     serial:  '02',
-    tag:     'Premium · BD',
-    name:    'Lead Reactor Pro',
+    tag:     'হাইব্রিড ফানেল · ওয়েব ও ইনবক্স',
+    name:    'সেলস ফানেল সিস্টেম',
     unit:    '৳',
     amount:  '২৫,০০০',
     period:  ' setup + ৳৮,০০০/মাস',
+    setupNote: '*ওয়েবসাইট ও ইনবক্স — উভয় চ্যানেলের জন্য',
     value:   25000,
     features: [
-      'Lead Reactor-এর সবকিছু — অর্থাৎ পুরো বট সিস্টেম',
-      '+ iPhone-এও অ্যাড track হবে — কোনো ডেটা হারাবে না',
-      '+ Google অ্যাড থেকে আসা কাস্টমারও track',
-      '+ অ্যাড optimization আরো নিখুঁত — কম খরচে বেশি সেল',
-      '+ সব কাস্টমার data এক জায়গায়, dashboard-এ live',
-      'যাদের উপযুক্ত: ৳২০K+/মাস অ্যাড spend',
+      'AI সেলস-রিপ — মানুষের মতো চ্যাট করে সেলস ক্লোজ',
+      'স্মার্ট ফলো-আপ — লস্ট সেলস অটোমেটেড রিকভারি',
+      'ওয়েব টু ইনবক্স — ওয়েবসাইট ট্রাফিককে মেসেঞ্জারে কনভার্ট',
+      'ইনস্ট্যান্ট ট্রাস্ট — স্বয়ংক্রিয় অর্ডার কনফার্মেশন',
+      'iPhone-এও অ্যাড track — কোনো ডেটা হারাবে না',
+      'সব কাস্টমার data এক জায়গায়, dashboard-এ live',
     ],
-    cta:    'Pro version চাই',
-    waMsg:  'হ্যালো! Lead Reactor Pro নিয়ে কথা বলতে চাই।',
-    source: 'tier_lead_reactor_pro',
+    bottomLine: 'ডাবল প্ল্যাটফর্ম, ডাবল কনভার্শন রেট।',
+    cta:      'এই প্যাকেজ চাই',
+    waMsg:    'হ্যালো! সেলস ফানেল সিস্টেম নিয়ে কথা বলতে চাই।',
+    source:   'tier_sales_funnel',
+  },
+  {
+    variant: 'obsidian',
+    badge:   'BEST ROI',
+    serial:  '03',
+    tag:     'ফুল-স্ট্যাক ই-কমার্স',
+    name:    'সেলস অটোমেশন ইঞ্জিন',
+    unit:    '৳',
+    amount:  '৩৫,০০০',
+    period:  ' setup + ৳১২,০০০/মাস',
+    setupNote: '*১০০% অটোমেটেড ওয়েবসাইট-নির্ভর ব্র্যান্ডের জন্য',
+    value:   35000,
+    features: [
+      'অ্যান্টি-ফেক COD — OTP ভেরিফিকেশনে ফেক অর্ডার ও রিটার্ন লস বন্ধ',
+      'কার্ট রিকভারি — কার্টে ফেলে যাওয়া প্রোডাক্টের অটো AI রিমাইন্ডার',
+      'অমনিচ্যানেল বট — ওয়েব, মেসেঞ্জার ও WhatsApp-এ সেন্ট্রাল AI সাপোর্ট',
+      'অটো অ্যালার্ট — অর্ডার কনফার্মেশনে ব্র্যান্ডেড SMS ও ইমেইল',
+      'Google + Meta উভয় অ্যাডের server-side tracking',
+      'সব কাস্টমার data এক জায়গায়, dashboard-এ live',
+    ],
+    bottomLine: 'জিরো ফেক অর্ডার, ম্যাক্সিমাম প্রফিট মার্জিন।',
+    cta:      'এই প্যাকেজ চাই',
+    waMsg:    'হ্যালো! সেলস অটোমেশন ইঞ্জিন নিয়ে কথা বলতে চাই।',
+    source:   'tier_sales_engine',
   },
 ];
 
@@ -209,13 +231,11 @@ export default function BotLanding() {
     document.title = 'AI Sales Engine — Digitalizen';
   }, []);
 
-  const handleDemo = (source) => () => trackBotDemoStart(source);
-
+  const handleDemo    = (source) => () => trackBotDemoStart(source);
   const handleInquiry = (source) => () => {
     trackBotInquiry(source);
     trackCTA('Get bot for my business', source);
   };
-
   const handleTier = (tier) => () => {
     trackPricingCTA(tier.name, tier.value);
     trackBotInquiry(tier.source);
@@ -224,7 +244,6 @@ export default function BotLanding() {
   return (
     <div className="bl-page">
 
-      {/* Skip-to-content for keyboard / screen-reader users */}
       <a href="#bl-main" className="skip-link">Skip to content</a>
 
       {/* ─── Topbar ─────────────────────────────────────────────── */}
@@ -232,7 +251,7 @@ export default function BotLanding() {
         <a href="/" className="bl-logo" aria-label="Digitalizen — homepage">
           Digitalizen<em>.</em>
         </a>
-        <span className="bl-topbar-tag">// WhatsApp AI সেলস মেশিন </span>
+        <span className="bl-topbar-tag">// AI সেলস অটোমেশন ইঞ্জিন</span>
       </header>
 
       <main id="bl-main" tabIndex={-1}>
@@ -246,7 +265,7 @@ export default function BotLanding() {
           <div className="bl-hero-inner">
             <div className="bl-badge fade-up" style={{ '--d': '0ms' }}>
               <span className="bl-badge-dot" aria-hidden />
-              24/7 লাইভ • WhatsApp • বাংলায় ইনস্ট্যান্ট রিপ্লাই
+              24/7 লাইভ · WhatsApp · বাংলায় ইনস্ট্যান্ট রিপ্লাই
             </div>
 
             <h1 id="bl-hero-h" className="bl-h1 fade-up" style={{ '--d': '90ms' }}>
@@ -255,7 +274,7 @@ export default function BotLanding() {
             </h1>
 
             <p className="bl-hero-quote fade-up" style={{ '--d': '170ms' }}>
-              AI সেলস মেশিন! কাস্টমারের মুড বুঝে বাংলায় রিপ্লাই দেয়। <br />
+              AI সেলস মেশিন! কাস্টমারের মুড বুঝে বাংলায় রিপ্লাই দেয়।<br />
               বিশ্বাস হচ্ছে না? চ্যাট করে দেখুন!
             </p>
 
@@ -322,7 +341,7 @@ export default function BotLanding() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            2 · REALITY CHECK — pain amplification
+            2 · REALITY CHECK
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-section bl-section--alt">
           <div className="bl-section-inner">
@@ -333,7 +352,7 @@ export default function BotLanding() {
 
             <div className="bl-reality-band">
               {REALITY_CHECK.map((r) => (
-                <div key={r.lbl} className="bl-reality-cell">
+                <div key={r.val} className="bl-reality-cell">
                   <div className="bl-reality-val">{r.val}</div>
                   <div className="bl-reality-lbl">{r.lbl}</div>
                 </div>
@@ -352,7 +371,7 @@ export default function BotLanding() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            3 · INDUSTRIAL STRENGTH — capability proof (real infra)
+            3 · CAPABILITIES
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-section">
           <div className="bl-section-inner">
@@ -382,8 +401,7 @@ export default function BotLanding() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            4 · TRUST — past work gallery + founder card
-            Reuses .work-card + .founder-card from app.css.
+            4 · TRUST
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-section bl-section--alt">
           <div className="bl-section-inner">
@@ -394,7 +412,6 @@ export default function BotLanding() {
 
             <div className="bl-trust-grid">
 
-              {/* ── Gallery: 4 past work thumbs (re-uses .work-* classes) ── */}
               <div className="bl-trust-col">
                 <div className="bl-trust-col-h">// রিসেন্ট কাজ</div>
                 <div className="bl-gallery">
@@ -414,11 +431,7 @@ export default function BotLanding() {
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
                         <div className="work-scanlines" aria-hidden />
-                        <div
-                          className="work-scan"
-                          style={{ animationDelay: `${i * 0.6}s` }}
-                          aria-hidden
-                        />
+                        <div className="work-scan" style={{ animationDelay: `${i * 0.6}s` }} aria-hidden />
                         <div className="work-corner work-corner--tl" aria-hidden />
                         <div className="work-corner work-corner--br" aria-hidden />
                         <span className="work-thumb-label">{w.name}</span>
@@ -438,7 +451,6 @@ export default function BotLanding() {
                 </div>
               </div>
 
-              {/* ── Founder card (re-uses .founder-card classes) ── */}
               <div className="bl-trust-col">
                 <div className="bl-trust-col-h">// ফাউন্ডার</div>
                 <article className="founder-card" aria-label={`Founder: ${FOUNDER.name}`}>
@@ -484,7 +496,7 @@ export default function BotLanding() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            5 · HOW IT WORKS — demo invitation
+            5 · HOW IT WORKS
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-section">
           <div className="bl-section-inner">
@@ -519,20 +531,21 @@ export default function BotLanding() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            6 · USE CASES — industry resonance
+            6 · WHO IT'S FOR — maps to the 3 tiers
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-section bl-section--alt">
           <div className="bl-section-inner">
             <div className="bl-section-tag">// কাদের জন্য</div>
             <h2 className="bl-h2">
-              আপনার বিজনেসেও<br /><em>fit করবে</em>
+              আপনার বিজনেস মডেল<br /><em>কোনটা?</em>
             </h2>
 
             <div className="bl-uc-grid">
-              {USE_CASES.map((u) => (
-                <article key={u.tag} className="bl-uc">
-                  <span className="bl-uc-tag">{u.tag}</span>
-                  <p className="bl-uc-p">{u.p}</p>
+              {WHO_FOR.map((u) => (
+                <article key={u.serial} className="bl-uc">
+                  <span className="bl-uc-tag">{u.serial} · {u.tag}</span>
+                  <div className="bl-cap-t" style={{ marginBottom: '8px' }}>{u.title}</div>
+                  <p className="bl-uc-p">{u.body}</p>
                 </article>
               ))}
             </div>
@@ -540,14 +553,14 @@ export default function BotLanding() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            7 · PRICING TIERS — Lead Reactor vs + CAPI
-            Reuses .pk-card classes; tier click → trackPricingCTA
+            7 · PRICING — all 3 tiers
+            Each card: inquiry CTA (primary) + try-bot link (secondary)
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-section">
           <div className="bl-section-inner">
-            <div className="bl-section-tag">// প্যাকেজ</div>
+            <div className="bl-section-tag">// অটোমেশন প্যাকেজ</div>
             <h2 className="bl-h2">
-              দুটো প্যাকেজ —<br /><em>আপনার fit বেছে নিন</em>
+              আপনার বিজনেস মডেল<br /><em>অনুযায়ী প্ল্যান বেছে নিন</em>
             </h2>
             <p className="bl-section-sub">
               ৳১৫,০০০ setup থেকে শুরু · ৭-১৪ দিনে ডেলিভারি · কোনো hidden cost নেই।
@@ -572,6 +585,9 @@ export default function BotLanding() {
                     <span className="pk-amount">{p.amount}</span>
                     <span className="pk-period">{p.period}</span>
                   </div>
+                  {p.setupNote && (
+                    <div className="pk-setup-note">{p.setupNote}</div>
+                  )}
                   <ul className="pk-features">
                     {p.features.map((f) => (
                       <li key={f}>
@@ -580,37 +596,43 @@ export default function BotLanding() {
                       </li>
                     ))}
                   </ul>
+                  {p.bottomLine && (
+                    <p className="pk-bottom-line">{p.bottomLine}</p>
+                  )}
+
+                  {/* Primary: inquiry */}
                   <a
                     className="pk-btn"
                     href={buildBotHref(p.waMsg)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleTier(p)}
-                    style={{ textDecoration: 'none' }}
+                    style={{ textDecoration: 'none', marginTop: 'auto' }}
                   >
                     <span>{p.cta}</span>
                     <span aria-hidden>→</span>
                   </a>
+
+                  {/* Secondary: try live bot */}
+                  <a
+                    className="bl-tier-try"
+                    href={buildBotHref(TRY_MSG)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleDemo(`tier_try_${p.source}`)}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <IconWhatsApp width={15} height={15} />
+                    <span>আগে Bot try করুন</span>
+                  </a>
                 </article>
               ))}
             </div>
-
-            <p className="bl-pricing-note">
-              বড় bagged business / multi-channel দরকার?{' '}
-              <a
-                href={buildBotHref('হ্যালো! Sales Operator package নিয়ে কথা বলতে চাই।')}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleInquiry('tier_custom_inquiry')}
-              >
-                Sales Operator package নিয়ে কথা বলুন →
-              </a>
-            </p>
           </div>
         </section>
 
         {/* ═══════════════════════════════════════════════════════════
-            8 · CLOSER — final dual CTA in premium glass card
+            8 · CLOSER
             ═════════════════════════════════════════════════════════ */}
         <section className="bl-closer">
           <div className="bl-closer-card">
@@ -621,7 +643,7 @@ export default function BotLanding() {
             </h2>
             <p className="bl-closer-sub">
               উপরের বটের পারফরম্যান্সে ইমপ্রেসড?
-              আপনার ব্যবসার জন্যও এমন 'মানি মেকিং মেশিন' বানিয়ে দিতে পারি।
+              আপনার ব্যবসার জন্যও এমন সেলস মেশিন বানিয়ে দিতে পারি।
             </p>
 
             <div className="bl-cta-dual">
@@ -648,7 +670,7 @@ export default function BotLanding() {
               >
                 <IconWhatsApp width={20} height={20} />
                 <div className="bl-cta-body">
-                  <div className="bl-cta-t">আমার এআই ইঞ্জিন বুক করুন</div>
+                  <div className="bl-cta-t">আমার AI ইঞ্জিন বুক করুন</div>
                   <div className="bl-cta-s">সরাসরি Masum-এর সাথে কথা বলুন</div>
                 </div>
                 <span className="bl-cta-arrow" aria-hidden>→</span>
@@ -664,10 +686,8 @@ export default function BotLanding() {
 
       </main>
 
-      {/* ─── Sticky CTA bar — appears after hero scroll-out ─────── */}
       <StickyBotCta onClick={handleDemo('sticky_bar')} />
 
-      {/* ─── Footer ─────────────────────────────────────────────── */}
       <footer className="bl-footer">
         <div className="bl-footer-inner">
           <span>© 2026 Digitalizen · Dhaka, Manila</span>
@@ -680,9 +700,7 @@ export default function BotLanding() {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
-   StickyBotCta — mobile-only persistent demo button.
-   Appears when user has scrolled past the hero CTA, hides near footer
-   so it never blocks the final dual-CTA in the closer.
+   StickyBotCta — mobile-only persistent demo button
 ════════════════════════════════════════════════════════════════════════ */
 function StickyBotCta({ onClick }) {
   const [visible, setVisible] = React.useState(false);
@@ -690,11 +708,11 @@ function StickyBotCta({ onClick }) {
 
   React.useEffect(() => {
     const evaluate = () => {
-      const y     = window.scrollY;
-      const winH  = window.innerHeight;
-      const docH  = document.documentElement.scrollHeight;
-      const past  = y > winH * 0.7;          // past hero
-      const near  = y + winH > docH - 240;   // near footer
+      const y    = window.scrollY;
+      const winH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight;
+      const past = y > winH * 0.7;
+      const near = y + winH > docH - 240;
       setVisible(past && !near);
       ticking.current = false;
     };

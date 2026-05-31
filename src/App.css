@@ -883,6 +883,19 @@ nav.nav.nav--scrolled {
 }
 .pk-obsidian .pk-btn { background: rgba(255,255,255,.06); color: var(--text); border: 1px solid var(--border-2); }
 
+.bl-tier-try {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 0.82rem;
+  opacity: 0.65;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+.bl-tier-try:hover { opacity: 1; }
+
 /* ══════════════════════════════════════════════════════════════
    FAQ
 ══════════════════════════════════════════════════════════════ */
