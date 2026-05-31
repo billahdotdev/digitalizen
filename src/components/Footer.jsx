@@ -4,8 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 const BRAND = {
   name:     'digitalizen',
   tagline:  'মালিকানা আপনার। ইনফ্রাস্ট্রাকচার আমাদের।',
-  city:     'Dhaka, Bangladesh',
-  whatsapp: '8801311773040',
+  city:     'Dhaka, Manila',
+  whatsapp: '8801711992558',
 };
 
 const FOOTER_NAV = [
@@ -65,8 +65,8 @@ const SocialIcons = {
 };
 
 const SOCIALS = [
-  { name: 'Facebook',  href: 'https://facebook.com/digitalizen.bd',      Icon: SocialIcons.Facebook  },
-  { name: 'Instagram', href: 'https://instagram.com/digitalizen.bd',     Icon: SocialIcons.Instagram },
+  { name: 'Facebook',  href: 'https://facebook.com/digitalizen',      Icon: SocialIcons.Facebook  },
+  { name: 'Instagram', href: 'https://instagram.com/digita_lizen',     Icon: SocialIcons.Instagram },
   { name: 'LinkedIn',  href: 'https://linkedin.com/company/digitalizen', Icon: SocialIcons.LinkedIn  },
   { name: 'WhatsApp',  href: `https://wa.me/${BRAND.whatsapp}`,          Icon: SocialIcons.WhatsApp  },
   { name: 'YouTube',   href: 'https://youtube.com/@digitalizen',         Icon: SocialIcons.YouTube   },
@@ -79,7 +79,7 @@ const LEGAL = {
     body: `আপনার গোপনীয়তা আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ।
 
 আমরা যা সংগ্রহ করি:
-• আপনার নাম, ফোন নম্বর ও ব্র্যান্ডের নাম — শুধুমাত্র যোগাযোগের জন্য।
+• আপনার নাম, ফোন নম্বর ও ব্র্যান্ডের নাম শুধুমাত্র যোগাযোগের জন্য।
 • ওয়েবসাইট ব্যবহারের তথ্য (Google Analytics ও Meta Pixel) — বিজ্ঞাপন অপ্টিমাইজেশনের জন্য।
 
 আমরা যা করি না:
@@ -134,7 +134,7 @@ const LEGAL = {
 ২. ৩ কার্যদিবসের মধ্যে আবেদন পর্যালোচনা করা হবে।
 ৩. অনুমোদনের পরে ৫-৭ কার্যদিবসে রিফান্ড।
 
-যোগাযোগ: +880 1311-883040
+যোগাযোগ: +880 1711-992558
 
 শেষ আপডেট: জানুয়ারি ২০২৬`,
   },

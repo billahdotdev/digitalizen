@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { trackFormStart, trackFormSubmit, trackFormError, sha256 } from '../utils/tracking.js';
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-const WA_NUMBER = '8801311773040';
+const WA_NUMBER = '8801711992558';
 
 // Accepts BD numbers: 01XXXXXXXXX (11 digits) or +8801XXXXXXXXX (13 digits)
 // Also accepts spaces/dashes between groups for UX.
@@ -36,7 +36,7 @@ export default function Contact() {
 
   const handlePhoneBlur = () => {
     if (form.phone && !validatePhone(form.phone)) {
-      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন: 01712345678');
+      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন: 01311773040');
     }
   };
 
@@ -45,7 +45,7 @@ export default function Contact() {
 
     if (!form.name.trim() || !form.phone.trim()) return;
     if (!validatePhone(form.phone)) {
-      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন: 01712345678');
+      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন: 01311773040');
       return;
     }
     if (submitting.current) return;
@@ -105,7 +105,7 @@ export default function Contact() {
               <div className="form-success" role="status" aria-live="polite">
                 <div className="form-success-icon" aria-hidden>✓</div>
                 <div className="form-success-h">ধন্যবাদ! WhatsApp খুলছে…</div>
-                <p className="form-success-p">আপনার তথ্য নিয়ে WhatsApp-এ চ্যাট শুরু হবে। ২৪ ঘণ্টার মধ্যে রিপ্লাই পাবেন।</p>
+                <p className="form-success-p">আপনার তথ্য নিয়ে WhatsApp-এ চ্যাট শুরু হবে। রিপ্লাই পাবেন।</p>
               </div>
             ) : (
               <form onSubmit={submit} noValidate className="contact-form">
