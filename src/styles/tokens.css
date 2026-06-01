@@ -1,0 +1,174 @@
+/* ═══════════════════════════════════════════════════════════════
+   tokens.css — Design system foundations.
+
+   Palette, geometry, type, motion. Reset and shared keyframes.
+   Brand stays untouched. Sharp corners. Dark terminal luxury.
+═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Palette */
+  --bg:           #060d1a;
+  --bg-2:         #0a1526;
+  --surface:      #0d1b2e;
+  --surface-2:    #112035;
+  --surface-3:    #162540;
+  --accent:       #50C878;
+  --accent-dim:   #3dae62;
+  --accent-soft:  rgba(80, 200, 120, .08);
+  --accent-mid:   rgba(80, 200, 120, .18);
+  --text:         #e8edf5;
+  --muted:        rgba(232, 237, 245, .52);
+  --muted-2:      rgba(232, 237, 245, .28);
+  --muted-3:      rgba(232, 237, 245, .12);
+  --border:       rgba(232, 237, 245, .06);
+  --border-2:     rgba(232, 237, 245, .1);
+  --border-a:     rgba(80, 200, 120, .18);
+  --border-a2:    rgba(80, 200, 120, .32);
+
+  /* Glass */
+  --glass:        rgba(6, 13, 26, .78);
+  --glass-light:  rgba(13, 27, 46, .72);
+
+  /* Shadows and glow */
+  --glow:         0 0 48px rgba(80, 200, 120, .18);
+  --glow-btn:     0 8px 32px rgba(80, 200, 120, .38);
+  --shadow-card:  0 4px 32px rgba(0, 0, 0, .45);
+
+  /* Geometry */
+  --r:            0px;
+  --nav-h:        62px;
+  --max-w:        1140px;
+  --pad-x:        clamp(20px, 5vw, 48px);
+  --pad-s:        clamp(56px, 9vw, 104px);
+
+  /* Responsive ladder */
+  --bp-sm:        600px;
+  --bp-lg:        1000px;
+
+  /* Typography */
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
+  --sans:  'Inter', 'Noto Sans Bengali', system-ui, sans-serif;
+
+  /* Motion */
+  --ease:       cubic-bezier(.16, 1, .3, 1);
+  --ease-back:  cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* ── RESET ──────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+  font-size: 16px;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -8%, rgba(80, 200, 120, .09) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(80, 200, 120, .04) 0%, transparent 60%);
+}
+a    { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+img  { width: 100%; height: auto; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea { font-size: 1rem; font-family: inherit; }
+section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
+
+/* View Transitions, where supported. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: .3s;
+  animation-timing-function: var(--ease);
+}
+
+/* ── FOCUS ──────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── MOTION SAFE ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* ── SKIP LINK ──────────────────────────────────────────────── */
+.skip-link {
+  position: absolute; top: -100px; left: 8px;
+  background: var(--accent); color: #060d1a;
+  padding: 8px 14px; font-size: 12px; font-weight: 700;
+  z-index: 9999; transition: top .2s;
+}
+.skip-link:focus { top: 8px; }
+
+/* ── TOUCH TARGETS ──────────────────────────────────────────── */
+button, [role="button"] { min-height: 44px; min-width: 44px; }
+.nav-cta, .nav-link, .footer-link, .footer-legal-btn,
+.nav-drawer-link, .btn-primary, .btn-ghost, .wa-float { min-height: 44px; }
+
+/* ══════════════════════════════════════════════════════════════
+   KEYFRAMES — central registry.
+══════════════════════════════════════════════════════════════ */
+@keyframes blink    { 0%,100%{opacity:1} 50%{opacity:.15} }
+@keyframes pulse-g  { 0%,100%{box-shadow:0 0 0 0 rgba(80,200,120,.55)} 50%{box-shadow:0 0 0 6px rgba(80,200,120,0)} }
+@keyframes scan     { from{top:-2px} to{top:100%} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes dot-up   { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+@keyframes bar-fill { from{width:0} }
+@keyframes fade-up  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes wa-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+/* Pulsing border for Bot Try buttons. Side accents bleed in and out. */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: var(--border-a);
+    box-shadow:
+      inset 1px 0 0 var(--border-a),
+      inset -1px 0 0 var(--border-a),
+      0 0 0 0 rgba(80, 200, 120, 0);
+  }
+  50% {
+    border-color: var(--accent);
+    box-shadow:
+      inset 1px 0 0 var(--accent),
+      inset -1px 0 0 var(--accent),
+      0 0 0 6px rgba(80, 200, 120, .08);
+  }
+}
+
+/* Container queries support. Each section uses inline-size for layout. */
+.section-inner,
+.bl-section-inner,
+.chatbot-frame {
+  container-type: inline-size;
+}
+
+.fade-up {
+  animation: fade-up .7s var(--ease) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* ── PERF HINTS ────────────────────────────────────────────── */
+.section, nav.nav, footer.footer { contain: layout style; }
+html, body { max-width: 100%; overflow-x: hidden; }

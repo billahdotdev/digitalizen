@@ -1,0 +1,151 @@
+/* ═══════════════════════════════════════════════════════════════
+   responsive.css — Mobile first ladder.
+
+   Base styles in every other module target phones. This file adds
+   progressive upgrades for larger viewports.
+
+   Order is strict, narrow to wide. Each breakpoint inherits.
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── PHONE (< 600px) — small tweaks beyond the base styles ───── */
+@media (max-width: 599px) {
+  .hero-h1 { font-size: clamp(34px, 11vw, 48px); }
+
+  .hero-proof { flex-wrap: wrap; }
+  .hero-proof-sep { display: none; }
+  .hero-proof-item { min-width: 33%; }
+
+  .speed-card    { padding: 20px 16px; }
+  .speed-metrics { gap: 6px; }
+  .metric-val    { font-size: 18px; }
+  .metric-cell   { padding: 14px 8px; }
+
+  /* Speed URL row stacks. Input becomes full width, button under. */
+  .speed-url-row { flex-direction: column; gap: 0; }
+  .speed-input   {
+    width: 100%;
+    border-right: 1px solid var(--border);
+    border-bottom: none;
+  }
+  .speed-run-btn { width: 100%; border-top: 1px solid var(--accent); }
+
+  .contact-form-wrap { padding: 20px; }
+  .contact-h { font-size: clamp(26px, 7vw, 34px); }
+
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .footer-inner  { padding-top: 40px; }
+
+  .section-sub { margin-bottom: 28px; }
+
+  /* Process cards open by default on mobile, connector dots hidden. */
+  .process-gl-connector { display: none; }
+  .process-gl-desc { grid-template-rows: 1fr; margin-top: 12px; }
+  .process-gl-desc-inner { font-size: 12.5px; }
+
+  .legal-modal-title  { font-size: 18px; padding: 8px 22px 0; padding-right: 50px; }
+  .legal-modal-tag    { padding: 20px 22px 0; }
+  .legal-modal-body   { padding: 16px 22px; }
+  .legal-modal-close-btn {
+    margin: 0 22px 20px;
+    width: calc(100% - 44px);
+  }
+}
+
+/* ─── ≥ 600px (SM) — tablet portrait ─────────────────────────── */
+@media (min-width: 600px) {
+  .services-grid    { grid-template-columns: 1fr 1fr; }
+  .works-grid       { grid-template-columns: 1fr 1fr; }
+  .process-gl-grid  { grid-template-columns: 1fr 1fr; }
+
+  .roi-band {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .roi-cell + .roi-cell {
+    border-top: none;
+    border-left: 1px solid var(--border-2);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.6fr 1fr 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: row;
+    width: auto;
+  }
+  .hero-actions .btn-primary,
+  .hero-actions .btn-ghost { width: auto; }
+
+  .work-cta-card {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+  }
+  .gl-ask-btn { width: auto; }
+}
+
+/* ─── ≥ 720px — BotLanding mid breakpoints ───────────────────── */
+@media (min-width: 720px) {
+  .bl-reality-band {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .bl-reality-cell {
+    border-block-end: none;
+    border-inline-end: 1px solid var(--border);
+  }
+  .bl-reality-cell:last-child { border-inline-end: none; }
+
+  .bl-uc-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── ≥ 760px — BotLanding pricing 2 column + sticky bar reposition ─── */
+@media (min-width: 760px) {
+  .bl-pricing-grid { grid-template-columns: 1fr 1fr; }
+
+  .bl-sticky {
+    inset-inline: auto;
+    inset-block-end: 24px;
+    inset-inline-end: 24px;
+    inline-size: auto;
+  }
+}
+
+/* ─── ≥ 960px — BotLanding wide capabilities + trust 2-up ─────── */
+@media (min-width: 960px) {
+  .bl-cap-grid    { grid-template-columns: repeat(3, 1fr); }
+  .bl-trust-grid  { grid-template-columns: 1.15fr 1fr; }
+}
+
+/* ─── ≥ 1000px (LG) — Desktop ────────────────────────────────── */
+@media (min-width: 1000px) {
+  .process-gl-grid { grid-template-columns: repeat(4, 1fr); }
+  .pk-grid         { grid-template-columns: repeat(3, 1fr); }
+  .bl-pricing-grid { grid-template-columns: repeat(3, 1fr); }
+  .contact-grid    { grid-template-columns: 1fr 1.1fr; }
+
+  /* Nav switches from drawer to inline links. */
+  .nav-links     { display: flex; }
+  .nav-cta       { display: inline-flex; }
+  .nav-menu-btn  { display: none; }
+  .nav-drawer    {
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .nav-overlay   { display: none !important; }
+}
+
+/* ─── ≥ 1100px — refinements ───────────────────────────────── */
+@media (min-width: 1100px) {
+  .bl-h1 { font-size: clamp(48px, 5.5vw, 64px); }
+}
+
+/* ─── HOVER-CAPABLE pointer only ──────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .process-gl-card { cursor: pointer; }
+}
+
+/* ─── Coarse pointer, hide grid parallax flicker ───────────── */
+@media (hover: none), (pointer: coarse) {
+  .hero-grid { transition: none; }
+}

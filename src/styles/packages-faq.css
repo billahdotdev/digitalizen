@@ -1,0 +1,269 @@
+/* ══════════════════════════════════════════════════════════════
+   PACKAGES — three pricing tiers, sharp corners, aligned with
+   the chatbot section above. Same outer .section-inner.
+══════════════════════════════════════════════════════════════ */
+.pk-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.pk-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform .25s var(--ease);
+}
+.pk-card:hover { transform: translateY(-3px); }
+
+.pk-serial-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.pk-serial {
+  font-size: 10px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.pk-tag {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.pk-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin-bottom: 10px;
+}
+.pk-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.pk-unit   { font-size: 14px; color: var(--muted); }
+.pk-amount { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -.03em; }
+.pk-period { font-size: 13px; color: var(--muted); }
+.pk-setup-note {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+  letter-spacing: .03em;
+  margin-bottom: 20px;
+}
+
+.pk-features {
+  flex: 1;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pk-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.pk-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+.pk-bottom-line {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 14px;
+  font-style: italic;
+  opacity: .85;
+}
+
+.pk-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  text-decoration: none;
+  transition: opacity .2s, transform .2s;
+  margin-top: auto;
+}
+.pk-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+.pk-badge {
+  position: absolute;
+  top: -1px;
+  right: 20px;
+  background: var(--accent);
+  color: #060d1a;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 5px 12px;
+  letter-spacing: .1em;
+  font-family: var(--mono);
+  text-transform: uppercase;
+}
+
+/* Variants. All share padding so internal alignment matches. */
+.pk-frosted {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 28px;
+}
+.pk-frosted .pk-btn {
+  background: rgba(255, 255, 255, .06);
+  color: var(--text);
+  border: 1px solid var(--border-2);
+}
+
+.pk-electric {
+  background: rgba(80, 200, 120, .05);
+  border: 1px solid rgba(80, 200, 120, .3);
+  padding: 28px;
+  box-shadow: 0 0 40px rgba(80, 200, 120, .07);
+}
+.pk-electric .pk-amount { color: var(--accent); }
+.pk-electric .pk-btn { background: var(--accent); color: #060d1a; }
+
+.pk-obsidian {
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  padding: 28px;
+}
+.pk-obsidian .pk-btn {
+  background: rgba(255, 255, 255, .06);
+  color: var(--text);
+  border: 1px solid var(--border-2);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOT TRY BUTTON — secondary CTA on each package card.
+   Side borders match the AI moderator button in Hero. Pulsing
+   animation draws the eye without being garish.
+═══════════════════════════════════════════════════════════════ */
+.bl-tier-try {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  min-height: 44px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--text);
+  background: var(--accent-soft);
+  border: 1px solid var(--border-a);
+  text-decoration: none;
+  font-family: var(--sans);
+  transition: background .2s, color .2s;
+  position: relative;
+}
+.bl-tier-try:hover {
+  background: rgba(80, 200, 120, .14);
+  color: var(--accent);
+  animation-play-state: paused;
+}
+.bl-tier-try svg { color: var(--accent); }
+
+/* ══════════════════════════════════════════════════════════════
+   BOTTOM BANNER (Packages closing block)
+══════════════════════════════════════════════════════════════ */
+.bottom-banner {
+  margin-top: clamp(40px, 6vw, 64px);
+  padding: clamp(28px, 5vw, 48px) clamp(20px, 4vw, 40px);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  text-align: center;
+}
+.bottom-banner-title {
+  font-size: clamp(20px, 3.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.4;
+  color: var(--text);
+  margin-bottom: 16px;
+  text-wrap: balance;
+}
+.bottom-banner-sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 60ch;
+  margin: 0 auto 28px;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════════════════════════ */
+.faq-list { border-top: 1px solid var(--border); margin-top: 8px; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 0;
+  gap: 20px;
+  min-height: 44px;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: color .2s;
+}
+.faq-item--open .faq-btn { color: var(--accent); }
+.faq-q {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  line-height: 1.5;
+}
+.faq-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: color .2s, border-color .2s, transform .2s;
+}
+.faq-item--open .faq-icon {
+  border-color: var(--border-a);
+  color: var(--accent);
+  transform: rotate(180deg);
+}
+.faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .28s var(--ease);
+}
+.faq-body--open { grid-template-rows: 1fr; }
+.faq-body-inner {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.85;
+  padding-bottom: 0;
+  transition: padding-bottom .28s var(--ease);
+}
+.faq-body--open .faq-body-inner { padding-bottom: 22px; }

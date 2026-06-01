@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
+import { IconSearch, IconBuild, IconRocket, IconBot } from './Icons.jsx';
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const STEPS = [
   {
     num: '01', tag: 'AUDIT',  title: 'ফ্রি বিজনেস অডিট',
-    desc: 'আপনার বর্তমান ডিজিটাল সেটআপ দেখি। কোথায় টাকা নষ্ট হচ্ছে, কোথায় সুযোগ! পরিষ্কার রোডম্যাপ দিই।',
+    desc: 'আপনার বর্তমান ডিজিটাল সেটআপ দেখি। কোথায় টাকা নষ্ট হচ্ছে, কোথায় সুযোগ। পরিষ্কার রোডম্যাপ দিই।',
+    Icon: IconSearch,
   },
   {
     num: '02', tag: 'BUILD',  title: 'সেলস ইঞ্জিন তৈরি',
     desc: 'ল্যান্ডিং পেজ, AI বট, ট্র্যাকিং সিস্টেম সব একসাথে engineer করি। ভিত শক্ত না হলে যত টাকা অ্যাডে ঢালেন, ফাঁক দিয়ে বেরিয়ে যাবে।',
+    Icon: IconBuild,
   },
   {
     num: '03', tag: 'LAUNCH', title: 'Campaign চালু ও অপ্টিমাইজ',
-    desc: '৭ দিনে প্রাথমিক ডেটা। ৪–৬ সপ্তাহে ROAS সর্বোচ্চ পর্যায়ে। প্রতিটি সিদ্ধান্ত ডেটাভিত্তিক।',
+    desc: '৭ দিনে প্রাথমিক ডেটা। ৪ থেকে ৬ সপ্তাহে ROAS সর্বোচ্চ পর্যায়ে। প্রতিটি সিদ্ধান্ত ডেটাভিত্তিক।',
+    Icon: IconRocket,
   },
   {
     num: '04', tag: 'SCALE',  title: 'AI দিয়ে স্কেল',
-    desc: 'Real-time dashboard-এ আপনার ব্যবসার সব হিসাব। আপনি ঘুমালেও AI সিস্টেম কাস্টমার আনে, কথা বলে, সেল করে। আপনি শুধু রেজাল্ট দেখুন।',
+    desc: 'Real time dashboard এ আপনার ব্যবসার সব হিসাব। আপনি ঘুমালেও AI সিস্টেম কাস্টমার আনে, কথা বলে, সেল করে। আপনি শুধু রেজাল্ট দেখুন।',
+    Icon: IconBot,
   },
 ];
 
-const ICONS      = ['🔍', '🏗️', '🚀', '🤖'];
 const STEP_GLOWS = [
   'rgba(80,200,120,.22)',
   'rgba(80,200,120,.18)',
@@ -37,15 +41,16 @@ export default function Process() {
   return (
     <section className="section" id="process" aria-labelledby="process-h2">
       <div className="section-inner">
-        <div className="section-tag">// ০০২ — কীভাবে কাজ করি</div>
+        <div className="section-tag">// ০০২ · কীভাবে কাজ করি</div>
         <h2 id="process-h2" className="section-h2">৪ ধাপে রেজাল্ট</h2>
         <p className="section-sub">অনুমানে নয়, ডেটায় চলি। প্রতিটি ধাপ পরিষ্কার।</p>
 
-        <ol className="process-gl-grid" aria-label="Our 4-step process">
+        <ol className="process-gl-grid" aria-label="Our 4 step process">
           {STEPS.map((p, i) => {
             const isHovered = hovered === i;
             const isActive  = active  === i;
             const expanded  = isHovered || isActive;
+            const StepIcon  = p.Icon;
 
             return (
               <li
@@ -59,7 +64,7 @@ export default function Process() {
                 tabIndex={0}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggle(i)}
                 aria-expanded={isActive}
-                aria-label={`ধাপ ${p.num}: ${p.title}`}
+                aria-label={`ধাপ ${p.num}, ${p.title}`}
               >
                 <div className="process-gl-glow" aria-hidden />
                 <span className="process-gl-corner process-gl-corner--tl" aria-hidden />
@@ -67,7 +72,7 @@ export default function Process() {
 
                 <div className="process-gl-top">
                   <span className="process-gl-num">{p.num}</span>
-                  <span className="process-gl-icon" aria-hidden>{ICONS[i]}</span>
+                  <span className="process-gl-icon" aria-hidden><StepIcon /></span>
                 </div>
 
                 <span className="process-gl-tag">{p.tag}</span>

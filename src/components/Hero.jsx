@@ -1,34 +1,29 @@
 import React, { useEffect, useRef } from 'react';
-import { IconWhatsApp } from './Icons.jsx';
-import { trackCTA, trackSectionView } from '../utils/tracking.js';
+import { IconWhatsApp, IconBot, IconArrowDown } from './Icons.jsx';
+import { trackCTA, trackSectionView, trackChatbotOpen } from '../utils/tracking.js';
+import { generalHref, botHref, MSG } from '../utils/contact.js';
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const PROOF = [
-  { val: '৯',  em: '+', label: 'বছরের\nঅভিজ্ঞতা' },
-  { val: '৩',  em: 'x', label: 'গড় ROAS'        },
-  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড'         },
+  { val: '৯',  em: '+',         label: 'বছরের অভিজ্ঞতা' },
+  { val: '৩',  em: 'x',         label: 'গড় ROAS' },
+  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড' },
 ];
 
-const WA_NUMBER  = '8801311773040';
-const WA_MESSAGE = encodeURIComponent('হ্যালো! আমি ফ্রি অডিট বুক করতে চাই।');
-const WA_HREF    = `https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`;
+const CONSULT_HREF = generalHref(MSG.AUDIT);
+const BOT_HREF     = botHref(MSG.BOT_TRY);
 
 export default function Hero() {
   const gridRef = useRef(null);
 
   useEffect(() => trackSectionView('top', { content_category: 'hero' }), []);
 
+  /* Parallax grid. Desktop only. RAF throttled, no layout thrash. */
   useEffect(() => {
     const el = gridRef.current;
     if (!el) return;
-
-    /* Skip parallax on touch devices entirely — battery + jank cost
-       outweighs decorative value on phones. matchMedia returns true
-       on tablets/phones so they get static grid.                   */
     if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
 
-    /* RAF throttle: read clientX/Y eagerly, write transform once
-       per animation frame. Prevents layout-thrashing on rapid moves. */
     let rafId = null;
     let nextX = 0, nextY = 0;
 
@@ -49,7 +44,15 @@ export default function Hero() {
     };
   }, []);
 
-  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  /* Open the bot WhatsApp directly, but also smooth scroll to the live
+     preview section so users with the link blocked can still see it.   */
+  const onBotClick = () => {
+    trackCTA('AI Bot দেখুন', 'hero');
+    trackChatbotOpen('hero_ai_moderator');
+    setTimeout(() => {
+      document.getElementById('chatbot')?.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
+  };
 
   return (
     <section className="hero" id="top" aria-labelledby="hero-h1">
@@ -63,44 +66,48 @@ export default function Hero() {
         </div>
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
-          আমরা শুধু অ্যাড চালাই না,
-          <br />
-          <em>আপনার ব্যবসার জন্য</em>
-          <br />
+          আমরা শুধু অ্যাড চালাই না,<br />
+          <em>আপনার ব্যবসার জন্য</em><br />
           সেলস মেশিন তৈরি করি।
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
-          আমরা আপনার ব্যবসাকে এমন একটা সেলস ইঞ্জিনে পরিণত করি যা আপনি ঘুমালেও কাস্টমার আনে, কথা বলে, সেল করে।
+          আমরা আপনার ব্যবসাকে এমন একটা সেলস ইঞ্জিনে পরিণত করি<br />
+          যা আপনি ঘুমালেও কাস্টমার আনে, কথা বলে, সেল করে।
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
           <a
             className="btn-primary"
-            href={WA_HREF}
+            href={CONSULT_HREF}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackCTA('ফ্রি অডিট', 'hero')}
-            aria-label="WhatsApp-এ ফ্রি অডিট বুক করুন"
-            style={{ textDecoration: 'none' }}
+            onClick={() => trackCTA('ফ্রি কনসালটেশন', 'hero')}
+            aria-label="WhatsApp এ ফ্রি কনসালটেশন বুক করুন"
           >
             <IconWhatsApp width={16} height={16} />
             ফ্রি কনসালটেশন বুক করুন
           </a>
-          <button
-            className="btn-ghost"
-            onClick={() => { trackCTA('AI Bot দেখুন', 'hero'); scrollTo('chatbot'); }}
+          <a
+            className="btn-ghost btn-ai-moderator"
+            href={BOT_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onBotClick}
+            aria-label="AI মডারেটর লাইভ দেখুন, WhatsApp খুলবে"
           >
-            🤖 AI মডারেটর লাইভ দেখুন ↓
-          </button>
+            <IconBot width={16} height={16} />
+            AI মডারেটর লাইভ দেখুন
+            <IconArrowDown width={12} height={12} />
+          </a>
         </div>
 
         <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
           <span className="trust-dot" aria-hidden />
-          কোনো বাধ্যবাধকতা নেই, পারফরম্যান্স দেখে সিদ্ধান্ত। আমরা শুধু সার্ভিস সেল করি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
+          কোনো বাধ্যবাধকতা নেই। পারফরম্যান্স দেখে সিদ্ধান্ত। আমরা শুধু সার্ভিস<br />
+          সেল করি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
         </div>
 
-        {/* Proof stats bar */}
         <div className="hero-proof fade-up" style={{ '--d': '400ms' }} role="list" aria-label="Key stats">
           {PROOF.map((p, i) => (
             <React.Fragment key={p.label}>
@@ -109,7 +116,7 @@ export default function Hero() {
                 <div className="hero-proof-val">
                   {p.val}<em>{p.em}</em>
                 </div>
-                <div className="hero-proof-lbl">{p.label.replace('\n', ' ')}</div>
+                <div className="hero-proof-lbl">{p.label}</div>
               </div>
             </React.Fragment>
           ))}

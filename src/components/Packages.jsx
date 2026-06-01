@@ -1,32 +1,35 @@
 import React, { useEffect } from 'react';
-import { IconWhatsApp } from './Icons.jsx';
-import { trackPricingCTA, trackSectionView, trackBotDemoStart } from '../utils/tracking.js';
+import { IconWhatsApp, IconArrow } from './Icons.jsx';
+import { generalHref, botHref, MSG } from '../utils/contact.js';
+import {
+  trackPricingCTA,
+  trackSectionView,
+  trackBotDemoStart,
+  trackCTA,
+} from '../utils/tracking.js';
 
-const WA_BOT  = '8801311773040';
-const TRY_MSG = 'হ্যালো! আমি Digitalizen-এর AI Bot-এ কথা বলতে চাই।';
-
-const buildBotHref = (msg) =>
-  `https://wa.me/${WA_BOT}?text=${encodeURIComponent(msg)}`;
+/* Try the live bot (always goes to BOT number). */
+const TRY_HREF = botHref(MSG.BOT_TRY);
 
 /* ── Data: 3 Automation Tiers ─────────────────────────────────────────── */
 const PACKAGES = [
   {
     variant:   'frosted',
     serial:    '01',
-    tag:       'চ্যাট-টু-ক্যাশ',
+    tag:       'চ্যাট টু ক্যাশ',
     name:      'মেসেজ সেলস সিস্টেম',
     unit: '৳', amount: '১৫,০০০', period: ' সেটআপ + ৳৫,০০০/মাস',
-    setupNote: '*পেজ ও ইনবক্স-নির্ভর F-Commerce ব্যবসার জন্য',
+    setupNote: '*পেজ এবং ইনবক্স নির্ভর F Commerce ব্যবসার জন্য',
     value:     15000,
     bottomLine: 'ইনবক্সে ম্যানুয়াল কাজের দিন শেষ।',
     features: [
-      'ইনস্ট্যান্ট রিপ্লাই: জিরো ডিলে, একটি লিডও মিস হবে না।',
-      'অটো ডেটা এন্ট্রি: চ্যাট থেকেই কাস্টমারের ইনফো সেভ।',
-      'ফ্রি রি-টার্গেটিং: পুরোনো কাস্টমারদের ব্রডকাস্ট মেসেজ।',
-      'WhatsApp API: অফিশিয়াল মেটা-সার্টিফাইড প্রফেশনাল সেটআপ।',
+      'ইনস্ট্যান্ট রিপ্লাই, জিরো ডিলে। একটি লিডও মিস হবে না।',
+      'অটো ডেটা এন্ট্রি। চ্যাট থেকেই কাস্টমারের ইনফো সেভ।',
+      'ফ্রি রি টার্গেটিং। পুরোনো কাস্টমারদের ব্রডকাস্ট মেসেজ।',
+      'WhatsApp API। অফিশিয়াল মেটা সার্টিফাইড প্রফেশনাল সেটআপ।',
     ],
-    cta:      'অটোমেশন শুরু করুন →',
-    route:    '/bot',
+    cta:       'অটোমেশন শুরু করুন',
+    route:     '/bot',
     waInquiry: 'হ্যালো! মেসেজ সেলস সিস্টেম নিয়ে কথা বলতে চাই।',
   },
   {
@@ -36,66 +39,69 @@ const PACKAGES = [
     tag:       'হাইব্রিড ফানেল',
     name:      'সেলস ফানেল সিস্টেম',
     unit: '৳', amount: '২৫,০০০', period: ' সেটআপ + ৳৮,০০০/মাস',
-    setupNote: '*ওয়েবসাইট ও ইনবক্স — উভয় চ্যানেলের জন্য',
+    setupNote: '*ওয়েবসাইট এবং ইনবক্স, উভয় চ্যানেলের জন্য',
     value:     25000,
     bottomLine: 'ডাবল প্ল্যাটফর্ম, ডাবল কনভার্শন রেট।',
     features: [
-      'AI সেলস-রিপ: মানুষের মতো চ্যাট করে সেলস ক্লোজ।',
-      'স্মার্ট ফলো-আপ: যারা দাম শুনে চুপ, তাদের থেকে লস্ট সেলস রিকভারি।',
-      'ওয়েব টু ইনবক্স: ওয়েবসাইটের ট্রাফিককে সরাসরি মেসেঞ্জারে কনভার্ট।',
-      'ইনস্ট্যান্ট ট্রাস্ট: স্বয়ংক্রিয় অর্ডার কনফার্মেশন।',
+      'AI সেলস রিপ। মানুষের মতো চ্যাট করে সেলস ক্লোজ।',
+      'স্মার্ট ফলো আপ। যারা দাম শুনে চুপ, তাদের থেকে লস্ট সেলস রিকভারি।',
+      'ওয়েব টু ইনবক্স। ওয়েবসাইটের ট্রাফিককে সরাসরি মেসেঞ্জারে কনভার্ট।',
+      'ইনস্ট্যান্ট ট্রাস্ট। স্বয়ংক্রিয় অর্ডার কনফার্মেশন।',
     ],
-    cta:      'ফানেল সেটআপ করুন →',
+    cta:       'ফানেল সেটআপ করুন',
     waInquiry: 'হ্যালো! সেলস ফানেল সিস্টেম নিয়ে কথা বলতে চাই।',
   },
   {
     variant:   'obsidian',
     badge:     'BEST ROI',
     serial:    '03',
-    tag:       'ফুল-স্ট্যাক ই-কমার্স',
+    tag:       'ফুল স্ট্যাক ই কমার্স',
     name:      'সেলস অটোমেশন ইঞ্জিন',
     unit: '৳', amount: '৩৫,০০০', period: ' সেটআপ + ৳১২,০০০/মাস',
-    setupNote: '*১০০% অটোমেটেড ওয়েবসাইট-নির্ভর ব্র্যান্ডের জন্য',
+    setupNote: '*১০০% অটোমেটেড ওয়েবসাইট নির্ভর ব্র্যান্ডের জন্য',
     value:     35000,
     bottomLine: 'জিরো ফেক অর্ডার, ম্যাক্সিমাম প্রফিট মার্জিন।',
     features: [
-      'অ্যান্টি-ফেক COD: OTP ভেরিফিকেশনে ফেক অর্ডার ও রিটার্ন লস বন্ধ।',
-      'কার্ট রিকভারি: কার্টে ফেলে যাওয়া প্রোডাক্টের অটো AI রিমাইন্ডার।',
-      'অমনিচ্যানেল বট: ওয়েব, মেসেঞ্জার ও WhatsApp-এ সেন্ট্রাল AI সাপোর্ট।',
-      'অটো অ্যালার্ট: অর্ডার কনফার্মেশনে ব্র্যান্ডেড SMS ও ইমেইল।',
+      'অ্যান্টি ফেক COD। OTP ভেরিফিকেশনে ফেক অর্ডার এবং রিটার্ন লস বন্ধ।',
+      'কার্ট রিকভারি। কার্টে ফেলে যাওয়া প্রোডাক্টের অটো AI রিমাইন্ডার।',
+      'অমনিচ্যানেল বট। ওয়েব, মেসেঞ্জার এবং WhatsApp এ সেন্ট্রাল AI সাপোর্ট।',
+      'অটো অ্যালার্ট। অর্ডার কনফার্মেশনে ব্র্যান্ডেড SMS এবং ইমেইল।',
     ],
-    cta:      'সেলস ইঞ্জিন আনলক করুন →',
+    cta:       'সেলস ইঞ্জিন আনলক করুন',
     waInquiry: 'হ্যালো! সেলস অটোমেশন ইঞ্জিন নিয়ে কথা বলতে চাই।',
   },
 ];
+
+const BOTTOM_BANNER_HREF = generalHref(MSG.CONSULT);
 
 export default function Packages() {
   useEffect(() => {
     trackSectionView('pricing', { content_category: 'pricing' });
   }, []);
 
+  /* Primary CTA. Either routes to /bot showcase, or opens a general
+     consultancy WhatsApp chat for that specific plan.              */
   const go = (plan) => {
     trackPricingCTA(plan.name, plan.value || 0);
     if (plan.route) {
       window.location.assign(plan.route);
       return;
     }
-    window.open(buildBotHref(plan.waInquiry), '_blank', 'noopener,noreferrer');
+    const href = generalHref(plan.waInquiry);
+    window.open(href, '_blank', 'noopener,noreferrer');
   };
 
-  const tryBot = (planName) => {
-    trackBotDemoStart(`pkg_card_${planName}`);
-  };
+  const tryBot = (planName) => trackBotDemoStart(`pkg_card_${planName}`);
 
   return (
     <section className="section" id="pricing" aria-labelledby="pricing-h2">
       <div className="section-inner">
-        <div className="section-tag">// ০০৬ — অটোমেশন প্যাকেজ</div>
+        <div className="section-tag">// ০০৬ · অটোমেশন প্যাকেজ</div>
         <h2 id="pricing-h2" className="section-h2">
           আপনার ব্যবসার মডেল<br /><em>অনুযায়ী প্ল্যান বেছে নিন</em>
         </h2>
         <p className="section-sub">
-          শুধু চ্যাটবট না — আমরা আপনার পুরো সেলস প্রসেসটাকে অটোমেট করি,
+          শুধু চ্যাটবট না। আমরা আপনার পুরো সেলস প্রসেসটাকে অটোমেট করি,<br />
           যাতে আপনি ঘুমালেও ব্যবসা সচল থাকে।
         </p>
 
@@ -104,7 +110,7 @@ export default function Packages() {
             <article
               key={p.name}
               className={`pk-card pk-${p.variant}`}
-              aria-label={`${p.name} — ${p.amount}${p.period}`}
+              aria-label={`${p.name}, ${p.amount}${p.period}`}
             >
               {p.badge && <div className="pk-badge">{p.badge}</div>}
 
@@ -138,19 +144,20 @@ export default function Packages() {
                 <p className="pk-bottom-line">{p.bottomLine}</p>
               )}
 
-              {/* Primary CTA: inquiry / route */}
-              <button className="pk-btn" onClick={() => go(p)} style={{ marginTop: 'auto' }}>
+              {/* Primary CTA. Consultancy inquiry per plan. */}
+              <button className="pk-btn" onClick={() => go(p)}>
                 <span>{p.cta}</span>
+                <IconArrow />
               </button>
 
-              {/* Secondary CTA: try live bot */}
+              {/* Secondary CTA. Bot Try button.
+                  Pulsing animation + AI moderator style side border.   */}
               <a
-                className="bl-tier-try"
-                href={buildBotHref(TRY_MSG)}
+                className="bl-tier-try pulse-border"
+                href={TRY_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => tryBot(p.name)}
-                style={{ textDecoration: 'none' }}
               >
                 <IconWhatsApp width={15} height={15} />
                 <span>আগে Bot try করুন</span>
@@ -159,23 +166,26 @@ export default function Packages() {
           ))}
         </div>
 
-        {/* --- Bottom Banner --- */}
+        {/* Bottom banner. Goes to GENERAL contact. */}
         <div className="bottom-banner">
           <h3 className="bottom-banner-title">
-            "আপনার কি শুধু একটি চ্যাটবট দরকার, নাকি পুরো সেলস অটোমেশন ইঞ্জিন?"
+            "আপনার কি শুধু একটি চ্যাটবট দরকার,<br />নাকি পুরো সেলস অটোমেশন ইঞ্জিন?"
           </h3>
           <p className="bottom-banner-sub">
-            আমরা মার্কেটিং সাইকোলজি এবং অত্যাধুনিক টেকনোলজি একসাথে মিলিয়ে এমন কাস্টমাইজড সলিউশন
+            আমরা মার্কেটিং সাইকোলজি এবং অত্যাধুনিক টেকনোলজি একসাথে মিলিয়ে এমন কাস্টমাইজড সলিউশন<br />
             তৈরি করি, যা আপনার ব্যবসার প্রতিটি লিকেজ বন্ধ করে রেভিনিউ বাড়াতে বাধ্য।
           </p>
-          <button
+          <a
             className="pk-btn bottom-banner-btn"
-            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            href={BOTTOM_BANNER_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackCTA('ফ্রি কনসালটেশন', 'pricing_bottom')}
           >
-            <span>ফ্রি কনসালটেশন বুক করুন →</span>
-          </button>
+            <span>ফ্রি কনসালটেশন বুক করুন</span>
+            <IconArrow />
+          </a>
         </div>
-
       </div>
     </section>
   );

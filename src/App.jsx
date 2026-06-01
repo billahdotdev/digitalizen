@@ -19,16 +19,10 @@ const SECTIONS = [
   Works, ChatBot, SpeedTest, Packages, FAQ, Contact,
 ];
 
-/* ─── Zero-dependency path router ───────────────────────────────────────
-   Why no react-router?
-   ─ Single extra route doesn't justify 18 KB of router lib.
-   ─ window.location.pathname + popstate covers /bot (ad URL) and / (main).
-   ─ GitHub Pages SPA fallback (public/404.html) handles deep links.
-
-   To add a new route:
-     1. Create your component in src/components/
-     2. Add a case below in pathToView()
-   ────────────────────────────────────────────────────────────────────── */
+/* ── Zero dependency path router ─────────────────────────────────
+   Single extra route. Adding 18 KB of react-router is overkill.
+   window.location.pathname + popstate covers /bot and /.
+   GitHub Pages SPA fallback (public/404.html) handles deep links. */
 function pathToView(pathname) {
   const p = pathname.replace(/\/+$/, '').toLowerCase();
   if (p === '/bot') return 'bot';
@@ -41,7 +35,15 @@ function useRoute() {
   );
 
   useEffect(() => {
-    const onPop = () => setView(pathToView(window.location.pathname));
+    const onPop = () => {
+      const next = pathToView(window.location.pathname);
+      /* View Transitions API. Native, zero motion library cost. */
+      if (typeof document.startViewTransition === 'function') {
+        document.startViewTransition(() => setView(next));
+      } else {
+        setView(next);
+      }
+    };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
@@ -52,8 +54,8 @@ function useRoute() {
 export default function App() {
   const view = useRoute();
 
-  /* Init tracking only on the main site — BotLanding fires its own
-     dedicated Pixel events from inside the component.              */
+  /* Init tracking only on the main site. BotLanding fires its own
+     dedicated Pixel events from inside the component.            */
   useEffect(() => {
     if (view === 'main') initTracking();
   }, [view]);

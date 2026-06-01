@@ -6,11 +6,11 @@
     <meta name="theme-color" content="#060d1a" />
     <meta name="color-scheme" content="dark" />
 
-    <!-- ═════════════════════════════════════════════════════════════
+    <!-- ─────────────────────────────────────────────────────────────
          CONTENT SECURITY POLICY
-         Whitelists: Pixel, GTM, GA (incl. regional endpoints), fonts.
-         Tweak only if you add a new third-party (e.g. Hotjar, TikTok).
-    ═════════════════════════════════════════════════════════════ -->
+         Whitelists Pixel, GTM, GA (incl. regional endpoints) and fonts.
+         Adjust only when adding new third party tools.
+    ────────────────────────────────────────────────────────────── -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
       script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://*.google-analytics.com https://*.googletagmanager.com;
@@ -22,9 +22,10 @@
     " />
 
     <!-- ══ SEO ══ -->
-    <meta name="description" content="ঢাকার AI Sales Engine — WhatsApp Bot, Server-side CAPI, n8n Automation। Self-hosted infrastructure, 100% data sovereignty।" />
+    <meta name="description" content="ঢাকার AI Sales Engine। WhatsApp Bot, Server side CAPI, n8n Automation। Self hosted infrastructure, ১০০% data sovereignty।" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="Masum Billah · Digitalizen" />
+    <link rel="canonical" href="https://digitalizen.com.bd/" />
 
     <!-- ══ Open Graph (Meta ad link previews + general sharing) ══ -->
     <meta property="og:title" content="Digitalizen — AI Sales Engine for Bangladesh" />
@@ -38,34 +39,53 @@
     <meta property="og:locale" content="bn_BD" />
     <meta property="og:site_name" content="Digitalizen" />
 
-    <!-- Twitter Card (uniform with Open Graph) -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Digitalizen — AI Sales Engine for Bangladesh" />
     <meta name="twitter:description" content="২ সেকেন্ডে বাংলায় reply দেয় এমন WhatsApp AI Bot। এক্ষুনি live demo try করুন।" />
     <meta name="twitter:image" content="https://digitalizen.com.bd/og-image.jpg" />
 
-    <!-- Inline favicon (data URL — zero request) -->
+    <!-- Inline favicon (data URL, zero request) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23060d1a'/><text y='.9em' font-size='78' x='6' fill='%2350C878'>d</text></svg>" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
 
-    <title>Digitalizen — BD-র Technical Marketing Infrastructure</title>
+    <title>Digitalizen — BD র Technical Marketing Infrastructure</title>
 
-    <!-- ═════════════════════════════════════════════════════════════
-         PRECONNECTS — shave 100-300ms on every third-party call.
-         Order matters: Pixel & GA before fonts (analytics fires first).
-    ═════════════════════════════════════════════════════════════ -->
+    <!-- ─────────────────────────────────────────────────────────────
+         PRECONNECTS shave 100 to 300 ms on every third party call.
+         Order matters: Pixel and GA before fonts (analytics fires first).
+    ────────────────────────────────────────────────────────────── -->
     <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch"  href="https://wa.me" />
+    <link rel="dns-prefetch" href="https://wa.me" />
 
-    <!-- ═════════════════════════════════════════════════════════════
+    <!-- Preload hero LCP font weight, swap others. -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap"
+      />
+    </noscript>
+
+    <!-- ─────────────────────────────────────────────────────────────
          META PIXEL  ← REPLACE  YOUR_PIXEL_ID  before going live.
-         Loaded EARLY (before fonts/GA) so PageView fires reliably,
-         even when the user clicks the back button mid-load.
-         Get ID: business.facebook.com → Events Manager → Pixel ID
-    ═════════════════════════════════════════════════════════════ -->
+         Loaded EARLY (before fonts and GA) so PageView fires reliably,
+         even when the user clicks the back button mid load.
+    ────────────────────────────────────────────────────────────── -->
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -79,10 +99,9 @@
     fbq('track', 'PageView');
     </script>
 
-    <!-- ═════════════════════════════════════════════════════════════
+    <!-- ─────────────────────────────────────────────────────────────
          GOOGLE ANALYTICS 4  ← REPLACE  G-XXXXXXXXXX
-         Get it from: analytics.google.com → Admin → Data Streams → Web
-    ═════════════════════════════════════════════════════════════ -->
+    ────────────────────────────────────────────────────────────── -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -91,18 +110,11 @@
       gtag('config', 'G-XXXXXXXXXX', { send_page_view: true });
     </script>
 
-    <!-- ══ FONTS — non-blocking (after analytics inits) ══ -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" />
-    </noscript>
-
-    <!-- ══════════════════════════════════════════════════════════════
-         GitHub Pages SPA fallback restorer
+    <!-- ─────────────────────────────────────────────────────────────
+         GitHub Pages SPA fallback restorer.
          404.html captures the path → sessionStorage → restored here
-         BEFORE React mounts so /bot deep-links work on first paint.
-    ══════════════════════════════════════════════════════════════ -->
+         BEFORE React mounts so /bot deep links work on first paint.
+    ────────────────────────────────────────────────────────────── -->
     <script>
       (function () {
         var redirect = sessionStorage.getItem('spa_redirect');
@@ -119,30 +131,30 @@
         "@context": "https://schema.org",
         "@type": "ProfessionalService",
         "name": "Digitalizen",
-        "description": "AI Sales Engine + Server-side Tracking infrastructure for Bangladesh businesses.",
+        "description": "AI Sales Engine and Server side CAPI tracking infrastructure for Bangladesh businesses.",
         "url": "https://digitalizen.com.bd",
-        "telephone": "+8801311773040",
+        "telephone": "+8801711992558",
         "areaServed": "BD",
         "address": { "@type": "PostalAddress", "addressLocality": "Dhaka", "addressCountry": "BD" },
-        "founder": { "@type": "Person", "name": "Masum Billah", "jobTitle": "Founder & Rainmaker", "alumniOf": "BUET" },
-        "knowsAbout": ["WhatsApp AI Bot", "Server-side CAPI", "n8n Automation", "Meta Ads", "Chatwoot", "Landing Page Engineering"],
-        "priceRange": "৳15,000 – ৳45,000"
+        "founder": { "@type": "Person", "name": "Masum Billah", "jobTitle": "Founder and Rainmaker", "alumniOf": "BUET" },
+        "knowsAbout": ["WhatsApp AI Bot", "Server side CAPI", "n8n Automation", "Meta Ads", "Chatwoot", "Landing Page Engineering"],
+        "priceRange": "৳15,000 to ৳45,000"
       }
     </script>
   </head>
   <body>
-    <!-- Meta Pixel noscript fallback — also needs YOUR_PIXEL_ID -->
+    <!-- Meta Pixel noscript fallback, also needs YOUR_PIXEL_ID -->
     <noscript>
       <img height="1" width="1" style="display:none" alt=""
            src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1" />
     </noscript>
 
-    <!-- JS-disabled fallback — gives users a way to reach the bot -->
+    <!-- JS disabled fallback. Gives users a way to reach the team. -->
     <noscript>
       <div style="padding:24px;background:#060d1a;color:#e8edf5;text-align:center;font-family:system-ui,sans-serif">
         <p style="margin:0 0 12px"><strong>JavaScript লাগবে এই সাইট চালাতে।</strong></p>
-        <p style="margin:0">এক্ষুনি WhatsApp-এ কথা বলুন:
-          <a href="https://wa.me/8801311773040" style="color:#50C878;text-decoration:underline">+880 1311 773040</a>
+        <p style="margin:0">এক্ষুনি WhatsApp এ কথা বলুন:
+          <a href="https://wa.me/8801711992558" style="color:#50C878;text-decoration:underline">+880 1711 992558</a>
         </p>
       </div>
     </noscript>

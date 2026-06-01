@@ -1,70 +1,67 @@
 import React, { useState, useRef } from 'react';
-import { trackFormStart, trackFormSubmit, trackFormError, sha256 } from '../utils/tracking.js';
+import { IconCheckCircle, IconArrow } from './Icons.jsx';
+import { WA } from '../utils/contact.js';
+import { trackFormStart, trackFormSubmit, sha256 } from '../utils/tracking.js';
 
-// ─── CONFIG ────────────────────────────────────────────────────────────────
-const WA_NUMBER = '8801711992558';
+/* General contact form. Goes to GENERAL number (01711992558). */
+const WA_NUMBER = WA.GENERAL;
 
-// Accepts BD numbers: 01XXXXXXXXX (11 digits) or +8801XXXXXXXXX (13 digits)
-// Also accepts spaces/dashes between groups for UX.
+/* Accepts BD numbers, 01XXXXXXXXX (11 digits) or +8801XXXXXXXXX (13 digits).
+   Also accepts spaces and dashes between groups for UX.                    */
 const BD_PHONE_RE = /^(?:\+?88)?01[3-9]\d{8}$/;
 
-function normalizePhone(raw) {
-  return raw.replace(/[\s\-()]/g, '');
-}
+const normalizePhone = (raw) => raw.replace(/[\s\-()]/g, '');
+const validatePhone  = (raw) => BD_PHONE_RE.test(normalizePhone(raw));
 
-function validatePhone(raw) {
-  return BD_PHONE_RE.test(normalizePhone(raw));
-}
-
-// ─── COMPONENT ─────────────────────────────────────────────────────────────
 export default function Contact() {
   const [form,       setForm]       = useState({ name: '', phone: '', brand: '' });
   const [phoneError, setPhoneError] = useState('');
-  const [state,      setState]      = useState('idle'); // idle | sending | success | error
-  const startedRef  = useRef(false);
-  const submitting  = useRef(false); // double-submit guard
-
+  const [state,      setState]      = useState('idle');
+  const startedRef = useRef(false);
+  const submitting = useRef(false);
 
   const update = (k) => (e) => {
-    setForm(f => ({ ...f, [k]: e.target.value }));
-    if (k === 'phone') setPhoneError(''); // clear inline error on edit
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+    if (k === 'phone') setPhoneError('');
   };
 
   const handleFocus = () => {
-    if (!startedRef.current) { startedRef.current = true; trackFormStart('contact_audit'); }
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackFormStart('contact_audit');
+    }
   };
 
   const handlePhoneBlur = () => {
     if (form.phone && !validatePhone(form.phone)) {
-      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন: 01311773040');
+      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন, 01711992558');
     }
   };
 
   const submit = async (e) => {
     e.preventDefault();
-
     if (!form.name.trim() || !form.phone.trim()) return;
     if (!validatePhone(form.phone)) {
-      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন: 01311773040');
+      setPhoneError('সঠিক বাংলাদেশী নম্বর দিন। যেমন, 01711992558');
       return;
     }
     if (submitting.current) return;
     submitting.current = true;
-
     setState('sending');
 
     const phone = normalizePhone(form.phone);
-    const [hashedPhone, hashedName] = await Promise.all([sha256(phone), sha256(form.name.trim())]);
+    const [hashedPhone, hashedName] = await Promise.all([
+      sha256(phone),
+      sha256(form.name.trim()),
+    ]);
     trackFormSubmit('contact_audit', { ph: hashedPhone, fn: hashedName });
 
-    // Build a WhatsApp message with the form data
     const waText = encodeURIComponent(
-      `হ্যালো! আমি ফ্রি অডিট বুক করতে চাই।\n\nনাম: ${form.name.trim()}\nফোন: ${phone}${form.brand.trim() ? `\nব্র্যান্ড: ${form.brand.trim()}` : ''}`
+      `হ্যালো! আমি ফ্রি অডিট বুক করতে চাই।\n\nনাম, ${form.name.trim()}\nফোন, ${phone}${form.brand.trim() ? `\nব্র্যান্ড, ${form.brand.trim()}` : ''}`
     );
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${waText}`;
 
-    // Small delay so "পাঠানো হচ্ছে…" is visible, then open WhatsApp
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 600));
     setState('success');
     submitting.current = false;
     window.open(waUrl, '_blank', 'noopener,noreferrer');
@@ -73,7 +70,7 @@ export default function Contact() {
   return (
     <section className="section section--dark" id="contact" aria-labelledby="contact-h2">
       <div className="section-inner">
-        <div className="section-tag">// ০০৮ — যোগাযোগ</div>
+        <div className="section-tag">// ০০৮ · যোগাযোগ</div>
 
         <div className="contact-grid">
           <div className="contact-copy">
@@ -83,7 +80,7 @@ export default function Contact() {
               আপনার জন্য।
             </h2>
             <p className="contact-sub">
-              ৩০ মিনিটের কলে আপনার বিজনেসের ডিজিটাল গ্যাপ বের করি।
+              ৩০ মিনিটের কলে আপনার বিজনেসের ডিজিটাল গ্যাপ বের করি।<br />
               কোনো বিক্রির চাপ নেই।
             </p>
             <div className="availability">
@@ -91,7 +88,7 @@ export default function Contact() {
               এখন ২টি নতুন প্রজেক্ট নিচ্ছি
             </div>
             <div className="contact-perks">
-              {['ফ্রি', 'কোনো চুক্তি নেই', '২৪ ঘণ্টার মধ্যে রিপ্লাই'].map(p => (
+              {['ফ্রি', 'কোনো চুক্তি নেই', '২৪ ঘণ্টার মধ্যে রিপ্লাই'].map((p) => (
                 <div key={p} className="contact-perk">
                   <span className="contact-perk-dot" aria-hidden />
                   {p}
@@ -103,9 +100,13 @@ export default function Contact() {
           <div className="contact-form-wrap">
             {state === 'success' ? (
               <div className="form-success" role="status" aria-live="polite">
-                <div className="form-success-icon" aria-hidden>✓</div>
-                <div className="form-success-h">ধন্যবাদ! WhatsApp খুলছে…</div>
-                <p className="form-success-p">আপনার তথ্য নিয়ে WhatsApp-এ চ্যাট শুরু হবে। রিপ্লাই পাবেন।</p>
+                <div className="form-success-icon" aria-hidden>
+                  <IconCheckCircle />
+                </div>
+                <div className="form-success-h">ধন্যবাদ! WhatsApp খুলছে</div>
+                <p className="form-success-p">
+                  আপনার তথ্য নিয়ে WhatsApp এ চ্যাট শুরু হবে। রিপ্লাই পাবেন।
+                </p>
               </div>
             ) : (
               <form onSubmit={submit} noValidate className="contact-form">
@@ -148,13 +149,13 @@ export default function Contact() {
                   disabled={state === 'sending'}
                   aria-busy={state === 'sending'}
                 >
-                  <span>{state === 'sending' ? 'পাঠানো হচ্ছে…' : 'ফ্রি অডিট বুক করুন'}</span>
-                  <span aria-hidden>{state === 'sending' ? '…' : '→'}</span>
+                  <span>{state === 'sending' ? 'পাঠানো হচ্ছে' : 'ফ্রি অডিট বুক করুন'}</span>
+                  {state === 'sending' ? <span aria-hidden>…</span> : <IconArrow />}
                 </button>
 
                 {state === 'error' && (
                   <p className="form-error" role="alert">
-                    সাবমিট ব্যর্থ — WhatsApp-এ সরাসরি যোগাযোগ করুন।
+                    সাবমিট ব্যর্থ। WhatsApp এ সরাসরি যোগাযোগ করুন।
                   </p>
                 )}
               </form>
@@ -166,7 +167,6 @@ export default function Contact() {
   );
 }
 
-// ─── FIELD ─────────────────────────────────────────────────────────────────
 function Field({ label, error, onBlur, ...input }) {
   const id    = `f-${label.replace(/\s+/g, '-')}`;
   const errId = `${id}-err`;

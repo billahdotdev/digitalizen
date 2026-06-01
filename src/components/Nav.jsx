@@ -1,23 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { IconMenu, IconClose } from './Icons.jsx';
+import { IconMenu, IconClose, IconArrow } from './Icons.jsx';
+import { generalHref, MSG } from '../utils/contact.js';
 
-/* ── Data ─────────────────────────────────────────────────────── */
-const BRAND = {
-  name:     'digitalizen',
-  whatsapp: '+8801311773040',
-};
+/* ── Brand + navigation data ─────────────────────────────────── */
+const BRAND = { name: 'digitalizen' };
 
 const NAV = [
-  { id: 'services', label: 'সার্ভিস'  },
-  { id: 'process',  label: 'প্রসেস'   },
-  { id: 'works',    label: 'কাজ'      },
-  { id: 'chatbot',  label: 'AI Bot'   },
+  { id: 'services', label: 'সার্ভিস' },
+  { id: 'process',  label: 'প্রসেস' },
+  { id: 'works',    label: 'কাজ' },
+  { id: 'chatbot',  label: 'AI Bot' },
   { id: 'pricing',  label: 'প্যাকেজ' },
   { id: 'contact',  label: 'যোগাযোগ' },
 ];
 
-const WA_MSG  = encodeURIComponent('হ্যালো! আমি Digitalizen-এর সাথে কথা বলতে চাই।');
-const WA_HREF = `https://wa.me/${BRAND.whatsapp.replace(/\D/g, '')}?text=${WA_MSG}`;
+/* Nav WhatsApp button is a general contact link, not a bot demo. */
+const WA_HREF = generalHref(MSG.CONTACT);
 
 export default function Nav() {
   const [open,     setOpen]     = useState(false);
@@ -47,15 +45,21 @@ export default function Nav() {
 
   const go = (id) => {
     setOpen(false);
-    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    setTimeout(
+      () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      50
+    );
   };
 
-  const scrollTop = (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const scrollTop = (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <>
       <nav className={`nav${scrolled ? ' nav--scrolled' : ''}`} aria-label="Primary navigation">
-        <a href="#top" className="nav-logo" onClick={scrollTop} aria-label="Digitalizen — top of page">
+        <a href="#top" className="nav-logo" onClick={scrollTop} aria-label="Digitalizen, top of page">
           {BRAND.name}<em aria-hidden="true">.</em>
         </a>
 
@@ -72,7 +76,6 @@ export default function Nav() {
           href={WA_HREF}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ textDecoration: 'none' }}
         >
           WhatsApp করুন
         </a>
@@ -90,11 +93,7 @@ export default function Nav() {
       </nav>
 
       {open && (
-        <div
-          className="nav-overlay"
-          aria-hidden="true"
-          onClick={() => setOpen(false)}
-        />
+        <div className="nav-overlay" aria-hidden="true" onClick={() => setOpen(false)} />
       )}
 
       <div
@@ -140,11 +139,10 @@ export default function Nav() {
           href={WA_HREF}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ textDecoration: 'none' }}
           tabIndex={open ? 0 : -1}
         >
-          <span>ফ্রি অডিট বুক করুন</span>
-          <span aria-hidden>→</span>
+          <span>ফ্রি কনসালটেশন বুক করুন</span>
+          <IconArrow />
         </a>
       </div>
     </>
