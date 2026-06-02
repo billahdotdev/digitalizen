@@ -5,9 +5,9 @@ import { generalHref, botHref, MSG } from '../utils/contact.js';
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const PROOF = [
-  { val: '৯+',  em: '+',         label: 'বছরের অভিজ্ঞতা' },
-  { val: '৩',  em: 'x',         label: 'গড় ROAS' },
-  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড স্পিড' },
+  { val: '৯',  em: '+',         label: 'বছরের অভিজ্ঞতা' },
+  { val: '৩',  em: 'X',         label: 'গড় ROAS' },
+  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড' },
 ];
 
 const CONSULT_HREF = generalHref(MSG.AUDIT);
@@ -74,7 +74,7 @@ export default function Hero() {
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
           ১ সেকেন্ডের দেরি মানেই ২০% কাস্টমার হারানো। 
           আমরা আপনার ব্যবসার জন্য এমন এক 'ডিজিটাল ব্রেইন' ইঞ্জিনিয়ার করি, 
-          যা কাস্টমারের মুড বুঝে বাংলায় চ্যাট করে, ডেটা কালেক্ট করে এবং সেলস নিশ্চিত করে ২৪/৭!
+          যা ২৪/৭ কাস্টমারের মুড বুঝে বাংলায় চ্যাট করে, ডেটা কালেক্ট করে, সেল করে !
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
@@ -98,7 +98,7 @@ export default function Hero() {
             aria-label="AI মডারেটর লাইভ দেখুন, WhatsApp খুলবে"
           >
             <IconBot width={16} height={16} />
-            AI মডারেটরের সাথে চ্যাট করুন
+            AI মডারেটরের স্মার্টনেস টেস্ট করুন!
             <IconArrowDown width={12} height={12} />
           </a>
         </div>
