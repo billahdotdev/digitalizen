@@ -67,7 +67,7 @@ export default function Hero() {
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
           স্লো রিপ্লাই? ডেটা মিসিং? বাজেট লিক? <br />
-          <em>আল্টিমেট সলিউশন: AI Sales System!</em>
+          আল্টিমেট সলিউশন: <em>AI Sales System!</em>
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
