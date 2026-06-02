@@ -66,15 +66,14 @@ export default function Hero() {
         </div>
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
-          বিজ্ঞাপনে টাকা পোড়ানো বন্ধ করুন,<br />
-          <em>Automated Revenue Engine</em><br />
-           তৈরি করুন।
+          অ্যাড কস্ট অনুযায়ী রেজাল্ট না পেয়ে কত টাকা হারালেন? <br />প্রতিযোগিতায় টিকে থাকতে ইন্টিগ্রেট করুন<br />
+          <em>Automated Revenue Engine.</em>
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
           ১ সেকেন্ডের দেরি মানেই ২০% কাস্টমার হারানো। 
           আমরা আপনার ব্যবসার জন্য এমন এক 'ডিজিটাল ব্রেইন' ইঞ্জিনিয়ার করি, 
-          যা ২৪/৭ কাস্টমারের মুড বুঝে বাংলায় চ্যাট করে, ডেটা কালেক্ট করে, সেল করে !
+          যা ২৪/৭ কাস্টমারের মুড বুঝে বাংলায় চ্যাট করে, সেল করে !
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
@@ -105,8 +104,7 @@ export default function Hero() {
 
         <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
           <span className="trust-dot" aria-hidden />
-          কোনো বাধ্যবাধকতা নেই। আমরা শুধু সার্ভিস
-          সেল করি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
+          আমরা শুধু সার্ভিস সেল করি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
         </div>
 
         <div className="hero-proof fade-up" style={{ '--d': '400ms' }} role="list" aria-label="Key stats">
