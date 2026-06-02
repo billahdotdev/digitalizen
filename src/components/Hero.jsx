@@ -5,9 +5,9 @@ import { generalHref, botHref, MSG } from '../utils/contact.js';
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const PROOF = [
-  { val: '৯',  em: '+',         label: 'বছরের অভিজ্ঞতা' },
+  { val: '৯+',  em: '+',         label: 'বছরের অভিজ্ঞতা' },
   { val: '৩',  em: 'x',         label: 'গড় ROAS' },
-  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড' },
+  { val: '১',  em: 'সেকেন্ডে', label: 'পেজ লোড স্পিড' },
 ];
 
 const CONSULT_HREF = generalHref(MSG.AUDIT);
@@ -62,18 +62,19 @@ export default function Hero() {
       <div className="hero-content">
         <div className="badge fade-up" style={{ '--d': '0ms' }}>
           <span className="badge-dot" aria-hidden />
-          Architecting Tomorrow’s AI Sales Systems
+           ২০২৬ সালের টেকনিক্যাল মার্কেটিং ইনফ্রাস্ট্রাকচার
         </div>
 
         <h1 id="hero-h1" className="hero-h1 fade-up" style={{ '--d': '80ms' }}>
-          আমরা শুধু অ্যাড চালাই না,<br />
-          <em>আপনার ব্যবসার জন্য</em><br />
-          সেলস মেশিন তৈরি করি।
+          বিজ্ঞাপনে টাকা পোড়ানো বন্ধ করুন,<br />
+          <em>Automated Revenue Engine</em><br />
+           তৈরি করুন।
         </h1>
 
         <p className="hero-sub fade-up" style={{ '--d': '160ms' }}>
-          আমরা আপনার ব্যবসাকে এমন একটা সেলস ইঞ্জিনে পরিণত করি<br />
-          যা আপনি ঘুমালেও কাস্টমার আনে, কথা বলে, সেল করে।
+          আমরা সাধারণ এজেন্সি নই যারা শুধু অ্যাড রান করে। 
+          আমরা আপনার ব্যবসার জন্য একটি 'ডিজিটাল ব্রেইন' আর্কিটেক্ট করি, 
+          যা ১ সেকেন্ডে রিপ্লাই দেয় এবং ২৪/৭ কাস্টমার ক্লোজ করে।
         </p>
 
         <div className="hero-actions fade-up" style={{ '--d': '240ms' }}>
@@ -86,7 +87,7 @@ export default function Hero() {
             aria-label="WhatsApp এ ফ্রি কনসালটেশন বুক করুন"
           >
             <IconWhatsApp width={16} height={16} />
-            ফ্রি কনসালটেশন বুক করুন
+            ফ্রি রেভিনিউ অডিট বুক করুন
           </a>
           <a
             className="btn-ghost btn-ai-moderator"
@@ -104,7 +105,7 @@ export default function Hero() {
 
         <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
           <span className="trust-dot" aria-hidden />
-          কোনো বাধ্যবাধকতা নেই। পারফরম্যান্স দেখে সিদ্ধান্ত। আমরা শুধু সার্ভিস<br />
+          কোনো বাধ্যবাধকতা নেই। আমরা শুধু সার্ভিস
           সেল করি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
         </div>
 
