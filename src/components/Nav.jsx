@@ -6,10 +6,10 @@ import { generalHref, MSG } from '../utils/contact.js';
 const BRAND = { name: 'digitalizen' };
 
 const NAV = [
-  { id: 'services', label: 'সার্ভিস' },
-  { id: 'process',  label: 'প্রসেস' },
-  { id: 'works',    label: 'কাজ' },
-  { id: 'chatbot',  label: 'AI Bot' },
+  { id: 'services', label: 'আমরা কি করি?' },
+  { id: 'process',  label: ' কিভাবে করি?' },
+  { id: 'works',    label: '২৪/৭ সেলস মেশিন' },
+  { id: 'chatbot',  label: '২৪/৭ AI মডারেটর' },
   { id: 'pricing',  label: 'প্যাকেজ' },
   { id: 'contact',  label: 'যোগাযোগ' },
 ];
