@@ -98,7 +98,7 @@ export default function Hero() {
             aria-label="AI মডারেটর লাইভ দেখুন, WhatsApp খুলবে"
           >
             <IconBot width={16} height={16} />
-            AI মডারেটর লাইভ দেখুন
+            AI মডারেটরের সাথে চ্যাট করুন
             <IconArrowDown width={12} height={12} />
           </a>
         </div>
