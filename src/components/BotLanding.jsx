@@ -269,7 +269,7 @@ export default function BotLanding() {
             </h1>
 
             <p className="bl-hero-quote fade-up" style={{ '--d': '170ms' }}>
-              AI সেলস মেশিন। কাস্টমারের মুড বুঝে বাংলায় রিপ্লাই দেয়।<br />
+              আপনার দরকার "AI মডারেটর"। কাস্টমারের মুড বুঝে বাংলায় রিপ্লাই দেয়।<br />
               বিশ্বাস হচ্ছে না? চ্যাট করে দেখুন।
             </p>
 
@@ -330,7 +330,7 @@ export default function BotLanding() {
             </a>
 
             <p className="bl-cta-fine fade-up" style={{ '--d': '410ms' }}>
-              WhatsApp খুলবে · ২ সেকেন্ডে রিপ্লাই · কোনো signup নেই
+              WhatsApp খুলবে · ২ সেকেন্ডে রিপ্লাই · কোনো শর্ত নেই
             </p>
           </div>
         </section>
@@ -356,7 +356,7 @@ export default function BotLanding() {
               <span className="bl-warning-icon" aria-hidden>!</span>
               <p className="bl-warning-text">
                 <strong>সতর্কবার্তা,</strong>{' '}
-                আপনার কম্পিটিটর অলরেডি এআই অ্যাডাপ্ট করেছে।
+                কম্পিটিটর অলরেডি এআই অ্যাডাপ্ট করেছে।
                 আপনি কি ম্যানুয়াল রিপ্লাইয়ের যুগে পড়ে কাস্টমার হারাবেন?
               </p>
             </div>
@@ -371,7 +371,7 @@ export default function BotLanding() {
               শুধু একটা চ্যাটবট না।<br /><em>সম্পূর্ণ সেলস মেশিন।</em>
             </h2>
             <p className="bl-section-sub">
-              যে কারণে আমাদের AI AI মডারেটর সাধারণ বট থেকে আলাদা।<br />
+              যে কারণে আমাদের "AI মডারেটর" সাধারণ বট থেকে আলাদা।<br />
               কাস্টমার বুঝবেই না সে বটের সাথে কথা বলছে।
             </p>
 
@@ -396,12 +396,12 @@ export default function BotLanding() {
           <div className="bl-section-inner">
             <div className="bl-section-tag">// ট্রাস্ট · কে আছে পেছনে</div>
             <h2 className="bl-h2">
-              ৯+ বছর experience<br /><em>প্রমাণসহ</em>
+              ৯+ বছরের অভিজ্ঞতা<br /><em>0% মিথ্যা প্রতিশ্রুতি</em>
             </h2>
 
             <div className="bl-trust-grid">
               <div className="bl-trust-col">
-                <div className="bl-trust-col-h">// রিসেন্ট কাজ</div>
+                <div className="bl-trust-col-h">// রিসেন্ট কাজের কিছু নমুনা</div>
                 <div className="bl-gallery">
                   {GALLERY.map((w, i) => (
                     <article
