@@ -17,7 +17,7 @@ export default function Works() {
   return (
     <section className="section" id="works" aria-labelledby="works-h2">
       <div className="section-inner">
-        <div className="section-tag">// ০০৩ · আমাদের কাজ</div>
+        <div className="section-tag">// ০০৩ ইঞ্জিনিয়ারড গ্রোথ ইনফ্রাস্ট্রাকচার</div>
         <h2 id="works-h2" className="section-h2">
           ল্যান্ডিং পেজ<br /><em>আপনার ২৪/৭ সেলস ইঞ্জিন</em>
         </h2>

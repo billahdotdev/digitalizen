@@ -185,7 +185,7 @@ export default function SpeedTest() {
   const onKey = (e) => { if (e.key === 'Enter') run(); };
 
   const testedUrl = url.trim() || 'আমার সাইট';
-  const botMsg    = `হ্যালো! ${testedUrl} এর speed test করতে চাই কিন্তু automated tool কাজ করছে না। AI Bot এ কথা বলতে চাই।`;
+  const botMsg    = `হ্যালো! ${testedUrl} এর speed test করতে চাই কিন্তু automated tool কাজ করছে না। AI অ্যাসিস্ট্যান্ট এর সাথে কথা বলতে চাই।`;
   const humanMsg  = `হ্যালো Masum! ${testedUrl} এর performance audit দরকার। সরাসরি কথা বলতে চাই।`;
 
   return (
@@ -266,7 +266,7 @@ export default function SpeedTest() {
                 >
                   <IconWhatsApp width={18} height={18} className="accent" />
                   <div>
-                    <div className="speed-err-t">Masum কে সরাসরি</div>
+                    <div className="speed-err-t">সরাসরি মাসুম কে জানান</div>
                     <div className="speed-err-s muted">Manual audit · personal touch</div>
                   </div>
                 </a>
