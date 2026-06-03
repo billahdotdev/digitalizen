@@ -105,7 +105,7 @@ export default function Hero() {
 
         <div className="trust-strip fade-up" style={{ '--d': '320ms' }}>
           <span className="trust-dot" aria-hidden />
-          আমরা শুধু সার্ভিস সেল করি না, ১০০% রেসপন্সিবিলিটি নিয়ে কাজ করি।
+          ১০০% রেসপন্সিবিলিটি | 0% ফেইক প্রমিস
         </div>
 
         <div className="hero-proof fade-up" style={{ '--d': '400ms' }} role="list" aria-label="Key stats">
