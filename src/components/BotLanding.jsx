@@ -550,13 +550,13 @@ export default function BotLanding() {
         {/* 7 · PRICING ──────────────────────────────────────────── */}
         <section className="bl-section">
           <div className="bl-section-inner">
-            <div className="bl-section-tag">// অটোমেশন প্যাকেজ</div>
+            <div className="bl-section-tag">// ইনভেস্টমেন্ট ইন গ্রোথ ইনফ্রাস্ট্রাকচার</div>
             <h2 className="bl-h2">
-              আপনার বিজনেস মডেল<br /><em>অনুযায়ী প্ল্যান বেছে নিন</em>
+              বিজ্ঞাপনে টাকা পোড়ানো বন্ধ করে—<br /><em>বেছে নিন আপনার রেভিনিউ ইঞ্জিন</em>
             </h2>
             <p className="bl-section-sub">
-              ৳১৫,০০০ setup থেকে শুরু · ৭ থেকে ১৪ দিনে ডেলিভারি · কোনো hidden cost নেই।<br />
-              bKash, Nagad, ব্যাংক ট্রান্সফার, সব accept।
+             ৳১০,০০০ গ্রোথ ইনভেস্টমেন্ট থেকে শুরু · মাত্র ৫ থেকে ৭ দিনে আপনার নিজস্ব ইনফ্রাস্ট্রাকচারে ডেলিভারি · কোনো হিডেন কস্ট বা ডিজিটাল দাসত্ব নেই।<br />
+             বিকাশ, নগদ ও ব্যাংক ট্রান্সফার—সব পেমেন্ট মেথড আমরা সাপোর্ট করি।
             </p>
 
             <div className="bl-pricing-grid">
@@ -613,7 +613,7 @@ export default function BotLanding() {
                     onClick={handleDemo(`tier_try_${p.source}`)}
                   >
                     <IconWhatsApp width={15} height={15} />
-                    <span>আগে Bot try করুন</span>
+                    <span>AI মডারেটরের স্মার্টনেস টেস্ট করুন!</span>
                   </a>
                 </article>
               ))}
@@ -644,8 +644,8 @@ export default function BotLanding() {
               >
                 <IconWhatsApp width={20} height={20} />
                 <div className="bl-cta-body">
-                  <div className="bl-cta-t">আগে Bot try করি</div>
-                  <div className="bl-cta-s">২ মিনিট লাগবে · কোনো commitment নেই</div>
+                  <div className="bl-cta-t">AI মডারেটরের স্মার্টনেস টেস্ট করুন!</div>
+                  <div className="bl-cta-s">২ মিনিট টেস্ট করুন · কোনো শর্ত নেই</div>
                 </div>
               </a>
 
