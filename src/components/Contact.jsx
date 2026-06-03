@@ -87,14 +87,7 @@ export default function Contact() {
               <span className="avail-dot" aria-hidden />
               এখন ২টি নতুন প্রজেক্ট নিচ্ছি
             </div>
-            <div className="contact-perks">
-              {['ফ্রি', 'কোনো চুক্তি নেই', '২৪ ঘণ্টার মধ্যে রিপ্লাই'].map((p) => (
-                <div key={p} className="contact-perk">
-                  <span className="contact-perk-dot" aria-hidden />
-                  {p}
-                </div>
-              ))}
-            </div>
+            
           </div>
 
           <div className="contact-form-wrap">
