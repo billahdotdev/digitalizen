@@ -260,7 +260,7 @@ export default function BotLanding() {
           <div className="bl-hero-inner">
             <div className="bl-badge fade-up" style={{ '--d': '0ms' }}>
               <span className="bl-badge-dot" aria-hidden />
-              24/7 লাইভ · WhatsApp · বাংলায় ইনস্ট্যান্ট রিপ্লাই
+              AI মডারেটর·24/7 বাংলায় ইনস্ট্যান্ট রিপ্লাই
             </div>
 
             <h1 id="bl-hero-h" className="bl-h1 fade-up" style={{ '--d': '90ms' }}>
@@ -281,11 +281,11 @@ export default function BotLanding() {
             >
               <div className="bl-chat-head">
                 <div className="bl-chat-head-icon" aria-hidden>
-                  AI
+                  Digi
                   <span className="bl-chat-head-dot" />
                 </div>
                 <div className="bl-chat-head-meta">
-                  <strong>Digitalizen AI</strong>
+                  <strong>AI Modaretor</strong>
                   <span><span className="bl-chat-live" aria-hidden /> অনলাইন · বাংলায় রিপ্লাই দিচ্ছে</span>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export default function BotLanding() {
               aria-label="WhatsApp এ AI bot try করুন"
             >
               <IconWhatsApp width={20} height={20} />
-              AI অ্যাসিস্ট্যান্ট। ট্রাই করুন।
+              AI অ্যাসিস্ট্যান্টের সাথে চ্যাট করে দেখুন!
             </a>
 
             <p className="bl-cta-fine fade-up" style={{ '--d': '410ms' }}>
@@ -340,7 +340,7 @@ export default function BotLanding() {
           <div className="bl-section-inner">
             <div className="bl-section-tag">// রিয়েলিটি চেক</div>
             <h2 className="bl-h2">
-              আপনি যখন ঘুমান,<br />আপনার বিজনেস কি তখন <em>ইনকাম করে?</em>
+              আপনি যখন ঘুমান,<br />আপনার বিজনেস কি তখনও <em>ইনকাম করে?</em>
             </h2>
 
             <div className="bl-reality-band">
