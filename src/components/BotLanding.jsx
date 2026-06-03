@@ -285,7 +285,7 @@ export default function BotLanding() {
                   <span className="bl-chat-head-dot" />
                 </div>
                 <div className="bl-chat-head-meta">
-                  <strong>AI Modaretor</strong>
+                  <strong>ডিজিটালাইজেন এর বানানো AI মডারেটর</strong>
                   <span><span className="bl-chat-live" aria-hidden /> অনলাইন · বাংলায় রিপ্লাই দিচ্ছে</span>
                 </div>
               </div>
