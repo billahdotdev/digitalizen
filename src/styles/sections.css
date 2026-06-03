@@ -96,7 +96,7 @@
   border: 1px solid var(--border-a);
   background: var(--accent-soft);
   padding: 7px 16px 7px 12px;
-  border-radius: 100px;
+  border-radius: 0;
   font-size: 11px;
   color: var(--accent);
   letter-spacing: .05em;
