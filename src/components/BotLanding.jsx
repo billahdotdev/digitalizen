@@ -368,10 +368,10 @@ export default function BotLanding() {
           <div className="bl-section-inner">
             <div className="bl-section-tag">// ইন্ডাস্ট্রিয়াল স্ট্রেংথ</div>
             <h2 className="bl-h2">
-              শুধু চ্যাট না।<br /><em>সম্পূর্ণ সেলস মেশিন।</em>
+              শুধু একটা চ্যাটবট না।<br /><em>সম্পূর্ণ সেলস মেশিন।</em>
             </h2>
             <p className="bl-section-sub">
-              যে কারণে আমাদের AI সাধারণ বট থেকে আলাদা।<br />
+              যে কারণে আমাদের AI AI মডারেটর সাধারণ বট থেকে আলাদা।<br />
               কাস্টমার বুঝবেই না সে বটের সাথে কথা বলছে।
             </p>
 
