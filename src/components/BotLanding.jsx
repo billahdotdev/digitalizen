@@ -498,8 +498,8 @@ export default function BotLanding() {
         {/* 5 · HOW IT WORKS ─────────────────────────────────────── */}
         <section className="bl-section">
           <div className="bl-section-inner">
-            <div className="bl-section-tag">// লাইভ ডেমো · ৩ ধাপ</div>
-            <h2 className="bl-h2">২ মিনিটে demo</h2>
+            <div className="bl-section-tag">//আপনার গ্রোথ ইঞ্জিনের লাইভ প্রিভিউ</div>
+            <h2 className="bl-h2">২ মিনিটে পরীক্ষা করুন আপনার এআই মডারেটরকে</h2>
 
             <ol className="bl-how" aria-label="Demo steps">
               {HOW.map((s) => (
