@@ -93,7 +93,7 @@ const FOUNDER = {
   imageSrc: '/images/masum.webp',
   bio:      '৯+ বছর ধরে হাই-গ্রোথ ব্র্যান্ডের "বাজেট লিক" বন্ধ করে তাদের জন্য প্রেডিক্টেবল রেভিনিউ ইঞ্জিন আর্কিটেক্ট করছি। আমি কেবল বিজ্ঞাপন দিই না; সার্ভার-সাইড ট্র্যাকিং থেকে বাংলায় কথা বলা AI বট—পুরো গ্রোথ ইনফ্রাস্ট্রাকচার একা হাতে ইঞ্জিনিয়ার করি যাতে আপনার স্কেলিং হয় টেকনিক্যাল জটলামুক্ত এবং টেনশন-ফ্রি।',
   creds: [
-    'AI and Automation, NINA Korea',
+    'AI and Automation, NIA Korea',
     'Full Stack Dev, IAC BUET Certified',
     'Marketing, AMA Philippines',
     'Web Mastery, University of Helsinki',

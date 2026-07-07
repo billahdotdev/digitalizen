@@ -18,7 +18,7 @@ const FOUNDER = {
   name:     'Masum Billah',
   bio:      '৯+ বছর ধরে সাধারণ ব্যবসাগুলোকে ব্র্যান্ডে রূপ দিচ্ছি। অ্যাড, ওয়েবসাইট, AI বট, ট্র্যাকিং, পুরো সেলস ইঞ্জিনটা একা হাতে গড়ি, যাতে আপনাকে ১০ জনের সাথে কথা বলতে না হয়।',
   creds: [
-    'AI and Automation, NINA Korea',
+    'AI and Automation, NIA Korea',
     'Full Stack Dev, IAC BUET Certified',
     'Marketing, AMA Philippines',
     'Web Mastery, University of Helsinki',
