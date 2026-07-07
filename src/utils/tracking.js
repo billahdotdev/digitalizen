@@ -1,6 +1,31 @@
 // tracking.js — analytics brain (Meta CAPI + GA4 + custom events)
 
-const px = (...a) => typeof window.fbq === 'function' && window.fbq(...a);
+const CAPI_URL = 'https://digitalizen-capi.billahdotdev.workers.dev/';
+const _cookie = (n) =>
+  document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)'))?.[1];
+
+const capi = (event_name, custom_data, event_id) => {
+  try {
+    fetch(CAPI_URL, {
+      method: 'POST',
+      keepalive: true, /* click-then-navigate (wa.me) হলেও request বাঁচে */
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_name,
+        event_id,
+        url: location.href,
+        fbp: _cookie('_fbp'),
+        fbc: _cookie('_fbc'),
+        custom_data,
+      }),
+    });
+  } catch { /* tracking কখনো UX ভাঙবে না */ }
+};
+
+const px = (...a) => {
+  if (typeof window.fbq === 'function') window.fbq(...a);
+  if (a[0] === 'track') capi(a[1], a[2], a[3]?.eventID || `${a[1]}_${Date.now()}`);
+};
 const ga = (...a) => typeof window.gtag === 'function' && window.gtag(...a);
 
 export async function sha256(str) {

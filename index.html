@@ -11,10 +11,10 @@
          Whitelists Pixel, GTM, GA (incl. regional endpoints) and fonts.
          Adjust only when adding new third party tools.
     ────────────────────────────────────────────────────────────── -->
-    <meta http-equiv="Content-Security-Policy" content="
+   <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
       script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.googletagmanager.com https://*.google-analytics.com https://*.googletagmanager.com;
-      connect-src 'self' https://www.facebook.com https://connect.facebook.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.googleapis.com https://stats.g.doubleclick.net;
+      connect-src 'self' https://digitalizen-capi.billahdotdev.workers.dev https://www.facebook.com https://connect.facebook.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.googleapis.com https://stats.g.doubleclick.net;
       img-src 'self' data: https://www.facebook.com https://*.google-analytics.com https://*.googletagmanager.com https://stats.g.doubleclick.net;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com;
