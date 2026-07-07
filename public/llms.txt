@@ -22,13 +22,18 @@
 
 ## Packages (as listed on the website)
 
+All packages combine tech setup with unlimited monthly ad-campaign
+management (ad budget and Meta/SMS gateway usage fees are paid by the client).
+
 | Package | Setup | Monthly |
 |---------|-------|---------|
-| মেসেজ সেলস সিস্টেম (Message Sales System) | ৳15,000 | ৳5,000 |
-| সেলস ফানেল সিস্টেম (Sales Funnel System) | ৳25,000 | ৳8,000 |
-| সেলস অটোমেশন ইঞ্জিন (Sales Automation Engine) | ৳35,000 | ৳12,000 |
+| মেসেজ সেলস সিস্টেম (Message Sales System) | ৳10,000 | ৳10,000 |
+| সেলস ফানেল সিস্টেম (Sales Funnel System) | ৳30,000 | ৳20,000 |
+| সেলস অটোমেশন ইঞ্জিন (Sales Automation Engine) | ৳50,000 | ৳30,000 |
 
-Custom scopes are quoted in a WhatsApp conversation.
+Single services (e.g., only a landing page, only tracking, only an AI bot)
+are also available as custom-quoted work — priced "from ৳X" per requirement,
+quoted in a WhatsApp conversation.
 
 ## Founder
 
