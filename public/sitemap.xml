@@ -8,53 +8,28 @@
   <!-- ── Home ─────────────────────────────────────────── -->
   <url>
     <loc>https://digitalizen.billah.dev/</loc>
-    <lastmod>2026-03-15</lastmod>
+    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <!-- Bilingual: same URL serves Bengali + English -->
-    <xhtml:link rel="alternate" hreflang="en"      href="https://digitalizen.billah.dev/" />
-    <xhtml:link rel="alternate" hreflang="bn-BD"   href="https://digitalizen.billah.dev/" />
+    <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/" />
+    <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/" />
     <image:image>
       <image:loc>https://digitalizen.billah.dev/og-image.jpg</image:loc>
-      <image:title>Digitalizen — Performance Marketing Agency Dhaka Bangladesh</image:title>
-      <image:caption>Bangladesh's top digital marketing agency: SEO, Google Ads, Meta Ads, TikTok Ads</image:caption>
+      <image:title>Digitalizen — AI Sales Engine for Bangladesh</image:title>
+      <image:caption>Bengali WhatsApp AI sales bot, server-side tracking (Meta CAPI), one-second landing pages</image:caption>
     </image:image>
   </url>
 
-  <!-- ── Free Resources ───────────────────────────────── -->
+  <!-- ── AI Bot landing (Meta ad destination) ─────────── -->
   <url>
-    <loc>https://digitalizen.billah.dev/free</loc>
-    <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/free" />
-    <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/free" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/free" />
+    <loc>https://digitalizen.billah.dev/bot</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/bot" />
+    <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/bot" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/bot" />
   </url>
-
-  <!-- ── Free Gift ─────────────────────────────────────── -->
-  <url>
-    <loc>https://digitalizen.billah.dev/free-gift</loc>
-    <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en"        href="https://digitalizen.billah.dev/free-gift" />
-    <xhtml:link rel="alternate" hreflang="bn-BD"     href="https://digitalizen.billah.dev/free-gift" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/free-gift" />
-  </url>
-
-  <!-- ── Gallery / Portfolio ──────────────────────────── -->
-  <url>
-    <loc>https://digitalizen.billah.dev/gallery</loc>
-    <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="en"      href="https://digitalizen.billah.dev/gallery" />
-    <xhtml:link rel="alternate" hreflang="bn-BD"   href="https://digitalizen.billah.dev/gallery" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://digitalizen.billah.dev/gallery" />
-  </url>
-
-  <!-- NOTE: /access is noindex — intentionally excluded from sitemap -->
 
 </urlset>

@@ -1,11 +1,11 @@
 {
-  "name": "Digitalizen — Performance Marketing Agency",
+  "name": "Digitalizen — AI Sales Engine",
   "short_name": "Digitalizen",
-  "description": "ঢাকার পারফরম্যান্স মার্কেটিং এজেন্সি। Meta Ads, Google Ads, SEO ও TikTok Ads-এ রিয়েল ROAS।",
+  "description": "ঢাকার AI Sales Engine। WhatsApp AI Bot, Server-side CAPI tracking, ১ সেকেন্ডে লোড হওয়া landing page।",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5F7FF",
-  "theme_color": "#1F4BFF",
+  "background_color": "#060d1a",
+  "theme_color": "#060d1a",
   "lang": "bn-BD",
   "orientation": "portrait-primary",
   "icons": [
@@ -28,7 +28,7 @@
       "src": "/og-image.jpg",
       "sizes": "1200x630",
       "type": "image/jpeg",
-      "label": "Digitalizen Homepage"
+      "label": "Digitalizen — AI Sales Engine for Bangladesh"
     }
   ]
 }
