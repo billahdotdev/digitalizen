@@ -198,7 +198,7 @@ export function trackBotInquiry(source = 'unknown') {
   px(
     'track',
     'InitiateCheckout',
-    { content_name: 'bot_for_my_business', value: 15000, currency: 'BDT', source },
+    { content_name: 'bot_for_my_business', value: 10000, currency: 'BDT', source },
     { eventID: event_id }
   );
 }
